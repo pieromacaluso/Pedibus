@@ -24,7 +24,7 @@
 
 <div class="container">
 
-    <div>
+    <div class="row">
         <h1>Benvenuto</h1>
     </div>
 
@@ -34,13 +34,15 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="firstVM">First name</label>
-                        <input type="text" name="first" id="firstVM" th:field="*{first}" class="form-control"  placeholder="First Name" value="">
+                        <input type="text" name="first" id="firstVM" th:field="*{first}" class="form-control"
+                               placeholder="First Name" value="">
                         <div th:if="${#fields.hasErrors('first')}" th:errors="*{first}">FirstName Error</div>
 
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="lastName">Last name</label>
-                        <input type="text" name="last" th:field="*{last}" class="form-control" id="lastName" placeholder="Last nam" value="">
+                        <input type="text" name="last" th:field="*{last}" class="form-control" id="lastName"
+                               placeholder="Last name" value="">
                         <div th:if="${#fields.hasErrors('last')}" th:errors="*{last}">LastName Error</div>
                     </div>
                 </div>
@@ -48,29 +50,44 @@
 
                 <div class="mb-3">
                     <label for="email">Email</label>
-                    <input type="email" name="email" th:field="*{email}" class="form-control" id="email" value="" placeholder="you@example.com">
+                    <input type="email" name="email" th:field="*{email}" class="form-control" id="email" value=""
+                           placeholder="you@example.com">
                     <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="pass">Password</label>
-                    <input type="pass" name="pass" th:field="*{pass}" class="form-control" value="" id="pass" placeholder="Password">
-                    <div th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}">Pass Error</div>
+                    <input type="password" name="pass" th:field="*{pass}" class="form-control" value="" id="pass"
+                           placeholder="Password">
+                    <div th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}"></div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="ripass">Ripeti password</label>
-                    <input type="pass" name="riPass" class="form-control" value="" id="ripass" placeholder="Password">
-                    <!--Controllo validità non fatta per questo campo.-->
+                    <label for="pass1">Ripeti password</label>
+                    <input type="password" name="pass1" class="form-control" value="" id="pass1"
+                           placeholder="Repeat Password">
+                    <div th:if="${#fields.hasErrors('pass1')}" th:errors="*{pass1}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <div th:text="*{passMatchError}">
+
+                    </div>
                 </div>
 
 
                 <hr class="mb-4">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" name="privacy" class="custom-control-input" id="privacy">
-                    <label th:for="privacy" class="custom-control-label" for="privacy">Accettazione informativa sulla
-                        privacy</label>
+                <div class="mb-3">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" th:field="*{privacy}" name="privacy" class="custom-control-input"
+                               id="privacy">
+                        <label th:for="privacy" class="custom-control-label" for="privacy">Accettazione informativa
+                            sulla
+                            privacy</label>
+                    </div>
+                    <div th:if="${#fields.hasErrors('privacy')}" th:errors="*{privacy}"></div>
                 </div>
+
 
                 <hr class="mb-4">
 
