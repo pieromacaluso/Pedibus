@@ -24,59 +24,51 @@
 
 <div class="container">
 
+    <div>
+        <h1>Benvenuto</h1>
+    </div>
 
     <div class="row">
         <div class="col-md-8 order-md-1">
-            <form class="needs-validation" novalidate="">
+            <form action="#" th:action="@{/register}" th:object="${uservm}" method="post">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="firstName">First name</label>
-                        <input type="text" th:field="*{first}" class="form-control" id="firstName" placeholder=""
-                               value="" required="">
-                        <!--<div th:if="${#fields.hasErrors('first')}" th:errors="*{first}">First Error</div>-->
-                        <div class="invalid-feedback">
-                            Valid first name is required.
-                        </div>
+                        <label for="firstVM">First name</label>
+                        <input type="text" name="first" id="firstVM" th:field="*{first}" class="form-control"  placeholder="First Name" value="">
+                        <div th:if="${#fields.hasErrors('first')}" th:errors="*{first}">FirstName Error</div>
+
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="lastName">Last name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
-                        <div class="invalid-feedback">
-                            Valid last name is required.
-                        </div>
+                        <input type="text" name="last" th:field="*{last}" class="form-control" id="lastName" placeholder="Last nam" value="">
+                        <div th:if="${#fields.hasErrors('last')}" th:errors="*{last}">LastName Error</div>
                     </div>
                 </div>
 
 
                 <div class="mb-3">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="you@example.com">
-                    <div class="invalid-feedback">
-                        Please enter a valid email address for shipping updates.
-                    </div>
+                    <input type="email" name="email" th:field="*{email}" class="form-control" id="email" value="" placeholder="you@example.com">
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="pass">Password</label>
-                    <input type="pass" class="form-control" id="pass" placeholder="Password">
-                    <div class="invalid-feedback">
-                        Please enter a valid password.
-                    </div>
+                    <input type="pass" name="pass" th:field="*{pass}" class="form-control" value="" id="pass" placeholder="Password">
+                    <div th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}">Pass Error</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="ripass">Ripeti password</label>
-                    <input type="pass" class="form-control" id="ripass" placeholder="Password">
-                    <div class="invalid-feedback">
-                        Please enter a valid password.
-                    </div>
+                    <input type="pass" name="riPass" class="form-control" value="" id="ripass" placeholder="Password">
+                    <!--Controllo validità non fatta per questo campo.-->
                 </div>
 
 
                 <hr class="mb-4">
                 <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="same-address">
-                    <label class="custom-control-label" for="same-address">Accettazione informativa sulla
+                    <input type="checkbox" name="privacy" class="custom-control-input" id="privacy">
+                    <label th:for="privacy" class="custom-control-label" for="privacy">Accettazione informativa sulla
                         privacy</label>
                 </div>
 

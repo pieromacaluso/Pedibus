@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
@@ -24,28 +25,37 @@ public class HomeController {
     @Autowired
     private ConcurrentHashMap<String,UserVM> users;
 
-@GetMapping("/register")
-public String processForm(@Valid UserVM vm, BindingResult res, Model m){
-    //logger.info(vm.toString());
-
-
-    if(res.hasErrors()) {
-        /*FieldError err=res.getFieldError("first");
-        if(err!=null){
-
-        }*/
-
-
-        m.addAttribute("first","ciao");
+    /*Metodo implementato per restituire la schermata home (in questo caso quella di login che ha il link per il redirect a quella di registrazione)
+    * */
+    @GetMapping("/")
+    public String home(){
+        return "login";
     }
-        /*if(users.containsKey(vm.getEmail())){
-            //esiste
-            m.addAttribute("message","User "+ vm.getEmail()+" non disponibile");
+
+    /*Metodo usato per l'apertura della pagina tramite richiesta get.
+    * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM usato dal form html tramite il campo th:object="${userVM}".
+    * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
+    * */
+    @GetMapping("/register")
+    public String viewFormRegistration(@ModelAttribute("uservm") UserVM uvm, Model m){
+        return "register";
+    }
+
+
+    /*Metodo usato per elaborare il form compilato dall'utente.
+    * la validazione sui campi è fatta tramite i vincoli scritti in UserVM.
+    * Gli errori sono riportati al client grazie agli appositi div che controllano se ci sono errori di validazione per ogni campo del form
+    * */
+    @PostMapping ("/register")
+    public String processForm(@Valid @ModelAttribute("uservm") UserVM uvm , BindingResult res, Model m){
+
+        if(res.hasErrors()) {
+
+
         }else{
-            //non esiste
-            users.put(vm.getEmail(),vm);
-            m.addAttribute("message","User "+ vm.getEmail()+" registrato");
-        }*/
+
+        }
+
     return "register";
 }
 
