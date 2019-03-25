@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)https://getbootstrap.com/docs/4.1/examples/checkout/ -->
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--TODO: TRIVIAL - Modificare o eliminare successive tre linee-->
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="https://getbootstrap.com/favicon.ico">
 
-    <title>Checkout example for Bootstrap</title>
+    <title>Register</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.1/examples/checkout/">
 
@@ -17,56 +17,61 @@
           rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
 
-    <style></style>
+    <link href="css/style.css" rel="stylesheet">
+
 </head>
 
-<body class="bg-light">
+<body class="text-center h-100">
 
-<div class="container">
+<div class="container h-100">
+    <div class="row h-100 justify-content-center text-center align-items-center">
+        <form action="#" th:action="@{/register}" th:object="${uservm}" method="post" class="form-register">
+            <div class="form-group">
+                <img height="100px" src="images/add.svg" alt="Logo" class="svg">
+            </div>
+            <div class="form-group">
+                <h1 class="h3 mb-3 font-weight-normal">Welcome</h1>
+            </div>
+            <div class="form-group">
 
-    <div class="row">
-        <h1>Benvenuto</h1>
-    </div>
-
-    <div class="row">
-        <div class="col-md-8 order-md-1">
-            <form action="#" th:action="@{/register}" th:object="${uservm}" method="post">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="firstVM">First name</label>
+                        <label for="firstVM" class="sr-only">First name</label>
                         <input type="text" name="first" id="firstVM" th:field="*{first}" class="form-control"
                                placeholder="First Name" value="">
-                        <div th:if="${#fields.hasErrors('first')}" th:errors="*{first}">FirstName Error</div>
+                        <div class="error" th:if="${#fields.hasErrors('first')}" th:errors="*{first}">FirstName Error
+                        </div>
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="lastName">Last name</label>
+                        <label for="lastName" class="sr-only">Last name</label>
                         <input type="text" name="last" th:field="*{last}" class="form-control" id="lastName"
                                placeholder="Last name" value="">
-                        <div th:if="${#fields.hasErrors('last')}" th:errors="*{last}">LastName Error</div>
+                        <div class="error" th:if="${#fields.hasErrors('last')}" th:errors="*{last}">LastName Error</div>
                     </div>
                 </div>
 
 
                 <div class="mb-3">
-                    <label for="email">Email</label>
+                    <label for="email" class="sr-only">Email</label>
                     <input type="email" name="email" th:field="*{email}" class="form-control" id="email" value=""
-                           placeholder="you@example.com">
-                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+                           placeholder="Email address">
+                    <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
                 </div>
 
+
                 <div class="mb-3">
-                    <label for="pass">Password</label>
+                    <label for="pass" class="sr-only">Password</label>
                     <input type="password" name="pass" th:field="*{pass}" class="form-control" value="" id="pass"
                            placeholder="Password">
-                    <div th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}"></div>
+                    <div class="error" th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}"></div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="pass1">Ripeti password</label>
+                    <label for="pass1" class="sr-only">Ripeti password</label>
                     <input type="password" name="pass1" class="form-control" value="" id="pass1"
                            placeholder="Repeat Password">
-                    <div th:if="${#fields.hasErrors('pass1')}" th:errors="*{pass1}"></div>
+                    <div class="error" th:if="${#fields.hasErrors('pass1')}" th:errors="*{pass1}"></div>
                 </div>
 
                 <div class="mb-3">
@@ -76,61 +81,79 @@
                 </div>
 
 
-                <hr class="mb-4">
+                <!--<hr class="mb-4">-->
                 <div class="mb-3">
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" th:field="*{privacy}" name="privacy" class="custom-control-input"
                                id="privacy">
-                        <label th:for="privacy" class="custom-control-label" for="privacy">Accettazione informativa
-                            sulla
-                            privacy</label>
+                        <label th:for="privacy" class="custom-control-label" for="privacy">I hereby authorize the
+                            treatment of my personal data</label>
                     </div>
-                    <div th:if="${#fields.hasErrors('privacy')}" th:errors="*{privacy}"></div>
+                    <div class="error" th:if="${#fields.hasErrors('privacy')}" th:errors="*{privacy}"></div>
                 </div>
 
 
-                <hr class="mb-4">
+                <!--<hr class="mb-4">-->
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
+                <a class="btn btn-lg btn-outline-primary btn-block" href="/login">Login</a>
+            </div>
 
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-            </form>
-        </div>
+
+            <p class="mt-5 mb-3 text-muted">Applicazioni Internet - a.a. 2018/2019</p>
+
+
+        </form>
     </div>
 
 
 </div>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="./Checkout example for Bootstrap_files/jquery-3.3.1.slim.min.js.download"
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-<script src="./Checkout example for Bootstrap_files/popper.min.js.download"></script>
-<script src="./Checkout example for Bootstrap_files/bootstrap.min.js.download"></script>
-<script src="./Checkout example for Bootstrap_files/holder.min.js.download"></script>
-<script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function () {
-        'use strict';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 
-        window.addEventListener('load', function () {
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
+<!--TODO: Verificare se utile, altrimenti eliminare commento -->
+<!--&lt;!&ndash; Bootstrap core JavaScript-->
+<!--================================================== &ndash;&gt;-->
+<!--&lt;!&ndash; Placed at the end of the document so the pages load faster &ndash;&gt;-->
+<!--<script src="./Checkout example for Bootstrap_files/jquery-3.3.1.slim.min.js.download"-->
+<!--integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"-->
+<!--crossorigin="anonymous"></script>-->
+<!--<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>-->
+<!--<script src="./Checkout example for Bootstrap_files/popper.min.js.download"></script>-->
+<!--<script src="./Checkout example for Bootstrap_files/bootstrap.min.js.download"></script>-->
+<!--<script src="./Checkout example for Bootstrap_files/holder.min.js.download"></script>-->
+<!--<script>-->
+<!--// Example starter JavaScript for disabling form submissions if there are invalid fields-->
+<!--(function () {-->
+<!--'use strict';-->
 
-            // Loop over them and prevent submission
-            var validation = Array.prototype.filter.call(forms, function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
-</script>
+<!--window.addEventListener('load', function () {-->
+<!--// Fetch all the forms we want to apply custom Bootstrap validation styles to-->
+<!--var forms = document.getElementsByClassName('needs-validation');-->
+
+<!--// Loop over them and prevent submission-->
+<!--var validation = Array.prototype.filter.call(forms, function (form) {-->
+<!--form.addEventListener('submit', function (event) {-->
+<!--if (form.checkValidity() === false) {-->
+<!--event.preventDefault();-->
+<!--event.stopPropagation();-->
+<!--}-->
+<!--form.classList.add('was-validated');-->
+<!--}, false);-->
+<!--});-->
+<!--}, false);-->
+<!--})();-->
+<!--</script>-->
 
 
 </body>
