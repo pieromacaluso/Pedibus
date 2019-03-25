@@ -1,6 +1,7 @@
 package it.polito.mmap.esercizio1.controllers;
 
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import it.polito.mmap.esercizio1.viewModels.UserVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +55,13 @@ public class HomeController {
 
         //Match password code
         //probabilmente non è la soluzione migliore, ma in thymeleaf non riesco ad accedere ai GlobalError che sono quegli errori derivanti da annotazioni di classe
-        if (res.hasGlobalErrors()) {
-            for (ObjectError err : res.getGlobalErrors()) {
-                //todo bisogna capire come controllare che sia l'errore che vogliamo noi, per adesso va bene comunque avendone solo uno
-                //if (err.contains(ConstraintValidator < FieldsValueMatch, err >))
-                uvm.setPassMatchError(err.getDefaultMessage());
+        if (res.hasErrors()) {
+            if (res.hasGlobalErrors()) {
+                for (ObjectError err : res.getGlobalErrors()) {
+                    //todo bisogna capire come controllare che sia l'errore che vogliamo noi, per adesso va bene comunque avendone solo uno
+                    //if (err.contains(ConstraintValidator < FieldsValueMatch, err >))
+                    uvm.setPassMatchError(err.getDefaultMessage());
+                }
             }
             return "register";
         } else {
@@ -70,7 +73,6 @@ public class HomeController {
             logger.info(uvm.getEmail() + " registrato correttamente.size map post insert: " + users.size());
             return "privatehome";                   //pagina per mostrare la parte privata
         }
-
     }
 
 
