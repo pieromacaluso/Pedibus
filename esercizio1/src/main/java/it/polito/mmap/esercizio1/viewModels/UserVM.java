@@ -1,13 +1,15 @@
 package it.polito.mmap.esercizio1.viewModels;
 
+import it.polito.mmap.esercizio1.customValidators.DuplicateEmail;
 import it.polito.mmap.esercizio1.customValidators.FieldsValueMatch;
 import lombok.Data;
-import org.springframework.context.annotation.Configuration;
-
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
+
+//CustomValidator dichiarato nel relativo package, controlla che le pw siano uguali
+//A differenza degli altri Validator si riferisce all'oggetto e non a un campo. Vedi posizione
 @FieldsValueMatch(
         field = "pass",
         fieldMatch = "pass1",
@@ -22,6 +24,8 @@ public class UserVM {
     @Size(min = 3,max = 50)
     private String last;
 
+    //@DuplicateEmail è un Custom validator definito nel relativo package, controlla che la mail non sia già in uso
+    @DuplicateEmail
     @Email
     @Size(min = 7,max = 255)
     private String email;

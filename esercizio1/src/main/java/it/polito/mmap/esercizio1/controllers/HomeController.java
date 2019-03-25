@@ -49,6 +49,8 @@ public class HomeController {
      * */
     @PostMapping("/register")
     public String processForm(@Valid @ModelAttribute("uservm") UserVM uvm, BindingResult res, Model m) {
+        //Per stampare tutti gli errori prodotti dal processo di validazione
+        //res.getAllErrors().stream().forEach(err -> logger.info(err.getDefaultMessage()));
 
         //Match password code
         //probabilmente non è la soluzione migliore, ma in thymeleaf non riesco ad accedere ai GlobalError che sono quegli errori derivanti da annotazioni di classe
@@ -59,28 +61,25 @@ public class HomeController {
                 uvm.setPassMatchError(err.getDefaultMessage());
             }
             return "register";
-        }else{
+        } else {
             //Registrazione utente
-            if(users.containsKey(uvm.getEmail())){          //controllo email già presente
-                m.addAttribute("message","Email già registrata.");
-                return "register";
-            }else{
-                //non esistente
-                    users.put(uvm.getEmail(),uvm);          //inserimento in elenco del nuovo utente
-                    m.addAttribute("message",uvm.getEmail()+" registrato correttamente");
-                    logger.info(uvm.getEmail()+" registrato correttamente.size map post insert: "+users.size());
-                    return "privatehome";                   //pagina per mostrare la parte privata
-            }
 
+            //non esistente
+            users.put(uvm.getEmail(), uvm);          //inserimento in elenco del nuovo utente
+            m.addAttribute("message", uvm.getEmail() + " registrato correttamente");
+            logger.info(uvm.getEmail() + " registrato correttamente.size map post insert: " + users.size());
+            return "privatehome";                   //pagina per mostrare la parte privata
         }
+
     }
+
 
     /*Metodo usato per l'apertura della pagina tramite richiesta get.
      * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM usato dal form html tramite il campo th:object="${userVM}".
      * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
      * */
     @GetMapping("/login")
-    public String login(@ModelAttribute("uservmLogin") UserVM uvm){
+    public String login(@ModelAttribute("uservmLogin") UserVM uvm) {
         return "login";
     }
 
@@ -115,11 +114,11 @@ public class HomeController {
     }*/
 
     /*Metodo usato per evitare che la risorsa venga richiesta tramite url
-    * si esegue una redirect sulla pagina di login
-    * UserVM come parametro per permettere la realizzazione della pagina di login
-    * */
+     * si esegue una redirect sulla pagina di login
+     * UserVM come parametro per permettere la realizzazione della pagina di login
+     * */
     @GetMapping("/privatehome")
-    public String privateHome(@ModelAttribute("uservm") UserVM uvm){
+    public String privateHome(@ModelAttribute("uservm") UserVM uvm) {
         return "login";
     }
 

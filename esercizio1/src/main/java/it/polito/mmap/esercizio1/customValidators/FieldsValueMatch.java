@@ -1,5 +1,5 @@
 /*
-Definisco una nuova annotazione
+Definisco una nuova annotazione che mi permette di controllare l'uguaglianza di due campi all'interno di un oggetto
 
 source => https://www.baeldung.com/spring-mvc-custom-validator
 
