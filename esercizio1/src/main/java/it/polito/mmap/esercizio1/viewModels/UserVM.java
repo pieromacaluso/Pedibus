@@ -36,8 +36,8 @@ public class UserVM {
     @Size(min = 3,max = 64)
     private String pass1;
 
-    //probabilmente non è la soluzione migliore, ma in thymeleaf non riesco ad accedere ai GlobalError che sono quegli errori derivanti da annotazioni di classe
-    private String passMatchError;
+//    //probabilmente non è la soluzione migliore, ma in thymeleaf non riesco ad accedere ai GlobalError che sono quegli errori derivanti da annotazioni di classe
+//    private String passMatchError;
 
     @AssertTrue //possiamo usare questa modificando il messaggio o definirne una nostra
     boolean privacy;
