@@ -25,29 +25,46 @@ public class HomeController {
     @Autowired
     private ConcurrentHashMap<String, UserVM> users;
 
-    /*Metodo implementato per restituire la schermata home (in questo caso quella di login che ha il link per il redirect a quella di registrazione)
-     * */
+
+    /**
+     * Metodo implementato per restituire la schermata home
+     * (in questo caso quella di login che ha il link per il redirect a quella di registrazione)
+     *
+     * @return String "login"
+     */
     @GetMapping("/")
     public String home() {
         return "login";
     }
 
-    /*Metodo usato per l'apertura della pagina tramite richiesta get.
-     * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM usato dal form html tramite il campo th:object="${userVM}".
+    /**
+     * Metodo usato per l'apertura della pagina tramite richiesta get.
+     * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM usato dal form html
+     * tramite il campo th:object="${userVM}".
      * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
-     * */
+     *
+     * @param uvm UserVM object
+     * @param m Model
+     * @return String "register"
+     */
     @GetMapping("/register")
     public String viewFormRegistration(@ModelAttribute("uservm") UserVM uvm, Model m) {
         return "register";
     }
 
-
-    /*Metodo usato per elaborare il form compilato dall'utente.
+    /**
+     * Metodo usato per elaborare il form compilato dall'utente.
      * la validazione sui campi è fatta tramite i vincoli scritti in UserVM.
-     * Gli errori sono riportati al client grazie agli appositi div che controllano se ci sono errori di validazione per ogni campo del form
+     * Gli errori sono riportati al client grazie agli appositi div che controllano
+     * se ci sono errori di validazione per ogni campo del form
      * la registrazione consiste in un semplice inserimento in lista, non bisogna gestire le sessioni per questo lab
      * Per questo lab la password è salvata in chiaro.
-     * */
+     *
+     * @param uvm UserVM object
+     * @param res BindingResult
+     * @param m Model
+     * @return String
+     */
     @PostMapping("/register")
     public String processForm(@Valid @ModelAttribute("uservm") UserVM uvm, BindingResult res, Model m) {
         //Per stampare tutti gli errori prodotti dal processo di validazione
@@ -76,10 +93,15 @@ public class HomeController {
     }
 
 
-    /*Metodo usato per l'apertura della pagina tramite richiesta get.
-     * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM usato dal form html tramite il campo th:object="${userVM}".
+    /**
+     * Metodo usato per l'apertura della pagina tramite richiesta get.
+     * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM
+     * usato dal form html tramite il campo th:object="${userVM}".
      * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
-     * */
+     *
+     * @param uvm UserVM object
+     * @return String
+     */
     @GetMapping("/login")
     public String login(@ModelAttribute("uservmLogin") UserVM uvm) {
         return "login";
@@ -115,10 +137,14 @@ public class HomeController {
 
     }*/
 
-    /*Metodo usato per evitare che la risorsa venga richiesta tramite url
+    /**
+     * Metodo usato per evitare che la risorsa venga richiesta tramite url
      * si esegue una redirect sulla pagina di login
      * UserVM come parametro per permettere la realizzazione della pagina di login
-     * */
+     *
+     * @param uvm UserVM object
+     * @return String
+     */
     @GetMapping("/privatehome")
     public String privateHome(@ModelAttribute("uservm") UserVM uvm) {
         return "login";
