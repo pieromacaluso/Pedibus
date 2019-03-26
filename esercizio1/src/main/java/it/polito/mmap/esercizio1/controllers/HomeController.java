@@ -1,7 +1,6 @@
 package it.polito.mmap.esercizio1.controllers;
 
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import it.polito.mmap.esercizio1.viewModels.UserVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ public class HomeController {
      * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
      *
      * @param uvm UserVM object
-     * @param m Model
+     * @param m   Model
      * @return String "register"
      */
     @GetMapping("/register")
@@ -62,7 +61,7 @@ public class HomeController {
      *
      * @param uvm UserVM object
      * @param res BindingResult
-     * @param m Model
+     * @param m   Model
      * @return String
      */
     @PostMapping("/register")
@@ -70,25 +69,14 @@ public class HomeController {
         //Per stampare tutti gli errori prodotti dal processo di validazione
         //res.getAllErrors().stream().forEach(err -> logger.info(err.getDefaultMessage()));
 
-        //Match password code
-        //probabilmente non è la soluzione migliore, ma in thymeleaf non riesco ad accedere ai GlobalError che sono quegli errori derivanti da annotazioni di classe
-        if (res.hasErrors()) {
-//            if (res.hasGlobalErrors()) {
-//                for (ObjectError err : res.getGlobalErrors()) {
-//                    //todo bisogna capire come controllare che sia l'errore che vogliamo noi, per adesso va bene comunque avendone solo uno
-//                    //if (err.contains(ConstraintValidator < FieldsValueMatch, err >))
-//                    uvm.setPassMatchError(err.getDefaultMessage());
-//                }
-//            }
-            return "register";
-        } else {
-            //Registrazione utente
-
-            //non esistente
+        if (!res.hasErrors()) {
+            //Registrazione utente non esistente
             users.put(uvm.getEmail(), uvm);          //inserimento in elenco del nuovo utente
             m.addAttribute("message", uvm.getEmail() + " registrato correttamente");
             logger.info(uvm.getEmail() + " registrato correttamente.size map post insert: " + users.size());
             return "privatehome";                   //pagina per mostrare la parte privata
+        } else {
+            return "register";
         }
     }
 
