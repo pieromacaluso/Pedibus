@@ -14,15 +14,17 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = DuplicateEmailValidator.class)
+@Constraint(validatedBy = EmaiIlsPresentValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DuplicateEmail {
+public @interface EmailIsPresent {
 
     String message() default "Mail già in uso";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    boolean expectedResult();
 
 }

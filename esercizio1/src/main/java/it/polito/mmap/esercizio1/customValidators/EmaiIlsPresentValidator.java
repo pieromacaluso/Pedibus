@@ -8,19 +8,22 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DuplicateEmailValidator implements ConstraintValidator<DuplicateEmail, String> {
+public class EmaiIlsPresentValidator implements ConstraintValidator<EmailIsPresent, String> {
 
     @Autowired
     ConcurrentHashMap<String, UserVM> users;
 
+    private boolean expectedResult;
+
     @Override
-    public void initialize(DuplicateEmail email) {
+    public void initialize(EmailIsPresent constraintAnnotation) {
+        this.expectedResult = constraintAnnotation.expectedResult();
     }
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
 
-        return !users.containsKey(email);
+        return users.containsKey(email) == expectedResult;
     }
 
 }

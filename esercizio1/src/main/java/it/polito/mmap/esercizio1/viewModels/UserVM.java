@@ -1,6 +1,6 @@
 package it.polito.mmap.esercizio1.viewModels;
 
-import it.polito.mmap.esercizio1.customValidators.DuplicateEmail;
+import it.polito.mmap.esercizio1.customValidators.EmailIsPresent;
 import it.polito.mmap.esercizio1.customValidators.FieldsValueMatch;
 import lombok.Data;
 import javax.validation.constraints.AssertTrue;
@@ -24,8 +24,8 @@ public class UserVM {
     @Size(min = 3,max = 50)
     private String last;
 
-    //@DuplicateEmail è un Custom validator definito nel relativo package, controlla che la mail non sia già in uso
-    @DuplicateEmail
+    //@EmailIsPresent è un Custom validator definito nel relativo package, controlla che la mail non sia già in uso
+    @EmailIsPresent(expectedResult = false)
     @Email
     @Size(min = 7,max = 255)
     private String email;
