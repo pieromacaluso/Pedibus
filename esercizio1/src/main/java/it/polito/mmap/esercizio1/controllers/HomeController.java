@@ -72,8 +72,10 @@ public class HomeController {
         if (!res.hasErrors()) {
             //Registrazione utente non esistente
             users.put(uvm.getEmail(), uvm);          //inserimento in elenco del nuovo utente
-            m.addAttribute("message", uvm.getEmail() + " registrato correttamente");
-            logger.info(uvm.getEmail() + " registrato correttamente.size map post insert: " + users.size());
+//            m.addAttribute("message", uvm.getEmail() + " registrato correttamente");
+            // Metto tra attributi FormUserRegistration per visualizzare dati a video
+            logger.info(uvm.getEmail() + " registrato correttamente. Size map post insert: " + users.size());
+            m.addAttribute("user", uvm);
             return "privatehome";                   //pagina per mostrare la parte privata
         } else {
             return "register";
@@ -112,28 +114,44 @@ public class HomeController {
             ma sarebbe meglio che l'utente ricevesse sempre un messaggio generico
             del tipo "Password or Email are not correct" per evitare problemi di sicurezza
          */
+
+        /*
+         * PIERO:
+         * Il metodo viene semplificato molto se inserita un'annotazione di Type come
+         * @LoginChecker. Unico problema è che controlla la presenza della mail,
+         * prima di verificare che quest'ultima sia validata. (DEBUG)
+         */
         if (res.hasErrors()) {
-            m.addAttribute("message", "Validation Errors");
             return "login";
         } else {
-            if (users.containsKey(uvm.getEmail())) {
-                //utente registrato
-                FormUserRegistration u = users.get(uvm.getEmail());
-                if (uvm.getPass().compareTo(u.getPass()) == 0) {
-                    //pass corretta
-                    logger.info(uvm.getEmail() + " ha effettuato il login correttamente.");
-                    return "privatehome";
-                } else {
-                    m.addAttribute("message", "Password errata.");
-                    return "login";
-                }
-            } else {
-                //utente non registrato
-                m.addAttribute("message", "Utente non registrato.");
-                return "login";
-            }
+            logger.info(uvm.getEmail() + " ha effettuato il login correttamente.");
+            // Metto tra attributi FormUserRegistration per visualizzare dati a video
+            m.addAttribute("user", users.get(uvm.getEmail()));
+            return "privatehome";
         }
-
+        // OLD VERSION
+//            if (res.hasErrors()) {
+////            m.addAttribute("message", "Email and/or password incorrect.");
+//            return "login";
+//        } else {
+////            if (users.containsKey(uvm.getEmail())) {
+//            // Utente registrato
+////                FormUserRegistration u = users.get(uvm.getEmail());
+////                if (uvm.getPass().compareTo(u.getPass()) == 0) {
+//            //pass corretta
+//            logger.info(uvm.getEmail() + " ha effettuato il login correttamente.");
+//            m.addAttribute("user", users.get(uvm.getEmail()));
+//            return "privatehome";
+////                } else {
+////                    // Password Errata
+////                    m.addAttribute("message", "Email and/or password incorrect.");
+////                    return "login";
+////                }
+////            } else {
+////                //utente non registrato
+////                m.addAttribute("message", "Utente non registrato.");
+////                return "login";
+////            }
     }
 
     /**
