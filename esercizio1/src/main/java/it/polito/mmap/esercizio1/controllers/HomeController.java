@@ -1,14 +1,14 @@
 package it.polito.mmap.esercizio1.controllers;
 
 
-import it.polito.mmap.esercizio1.viewModels.UserVM;
+import it.polito.mmap.esercizio1.viewModels.FormUserLogin;
+import it.polito.mmap.esercizio1.viewModels.FormUserRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +22,7 @@ public class HomeController {
 
 
     @Autowired
-    private ConcurrentHashMap<String, UserVM> users;
+    private ConcurrentHashMap<String, FormUserRegistration> users;
 
 
     /**
@@ -38,34 +38,34 @@ public class HomeController {
 
     /**
      * Metodo usato per l'apertura della pagina tramite richiesta get.
-     * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM usato dal form html
+     * Tramite l'annotazione @ModelAttribute("formUserRegistration") viene creato un oggetto FormUserRegistration usato dal form html
      * tramite il campo th:object="${userVM}".
      * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
      *
-     * @param uvm UserVM object
+     * @param uvm FormUserRegistration object
      * @param m   Model
      * @return String "register"
      */
     @GetMapping("/register")
-    public String viewFormRegistration(@ModelAttribute("uservm") UserVM uvm, Model m) {
+    public String viewFormRegistration(@ModelAttribute("formUserRegistration") FormUserRegistration uvm, Model m) {
         return "register";
     }
 
     /**
      * Metodo usato per elaborare il form compilato dall'utente.
-     * la validazione sui campi è fatta tramite i vincoli scritti in UserVM.
+     * la validazione sui campi è fatta tramite i vincoli scritti in FormUserRegistration.
      * Gli errori sono riportati al client grazie agli appositi div che controllano
      * se ci sono errori di validazione per ogni campo del form
      * la registrazione consiste in un semplice inserimento in lista, non bisogna gestire le sessioni per questo lab
      * Per questo lab la password è salvata in chiaro.
      *
-     * @param uvm UserVM object
+     * @param uvm FormUserRegistration object
      * @param res BindingResult
      * @param m   Model
      * @return String
      */
     @PostMapping("/register")
-    public String processForm(@Valid @ModelAttribute("uservm") UserVM uvm, BindingResult res, Model m) {
+    public String processForm(@Valid @ModelAttribute("formUserRegistration") FormUserRegistration uvm, BindingResult res, Model m) {
         //Per stampare tutti gli errori prodotti dal processo di validazione
         //res.getAllErrors().stream().forEach(err -> logger.info(err.getDefaultMessage()));
 
@@ -83,58 +83,69 @@ public class HomeController {
 
     /**
      * Metodo usato per l'apertura della pagina tramite richiesta get.
-     * Tramite l'annotazione @ModelAttribute("uservm") viene creato un oggetto UserVM
+     * Tramite l'annotazione @ModelAttribute("formUserRegistration") viene creato un oggetto FormUserRegistration
      * usato dal form html tramite il campo th:object="${userVM}".
      * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
      *
-     * @param uvm UserVM object
+     * @param uvm FormUserRegistration object
      * @return String
      */
     @GetMapping("/login")
-    public String login(@ModelAttribute("uservmLogin") UserVM uvm) {
+    public String login(@ModelAttribute("formUserLogin") FormUserRegistration uvm) {
         return "login";
     }
 
-    //todo sistemare html per usare un oggetto nel form come in fase di registrazione
-    /*Metodo per implementare il meccanismo di login.
-    Basato sul controllo dell'elenco degli utenti iscritti e del confronto della password.
-    In caso di errori si riporta la pagina di login con l'errore,altrimenti si ha una redirect sulla pagina privata
-    * */
-    /*@PostMapping("/login")
-    public String loginForm(@Valid @ModelAttribute("uservmLogin") UserVM uvm , BindingResult res, Model m){
-        if(res.hasErrors()){
-            m.addAttribute("message","Errori validation.");
+    /**
+     * Metodo per implementare il meccanismo di login.
+     * Basato sul controllo dell'elenco degli utenti iscritti e del confronto della password.
+     * In caso di errori si riporta la pagina di login con l'errore,altrimenti si ha una redirect
+     * sulla pagina privata
+     *
+     * @param uvm FormUserLogin object
+     * @param res BindingResult
+     * @param m   Model
+     * @return String
+     */
+    @PostMapping("/login")
+    public String loginForm(@Valid @ModelAttribute("formUserLogin") FormUserLogin uvm, BindingResult res, Model m) {
+        /* TODO: Questo metodo può essere utile per capire il tipo d'errore,
+            ma sarebbe meglio che l'utente ricevesse sempre un messaggio generico
+            del tipo "Password or Email are not correct" per evitare problemi di sicurezza
+         */
+        if (res.hasErrors()) {
+            m.addAttribute("message", "Validation Errors");
             return "login";
-        }else{
-            if(users.containsKey(uvm.getEmail())){
+        } else {
+            if (users.containsKey(uvm.getEmail())) {
                 //utente registrato
-                UserVM u=users.get(uvm.getEmail());
-                if(uvm.getPass().compareTo(u.getPass())==0){
+                FormUserRegistration u = users.get(uvm.getEmail());
+                if (uvm.getPass().compareTo(u.getPass()) == 0) {
                     //pass corretta
+                    logger.info(uvm.getEmail() + " ha effettuato il login correttamente.");
                     return "privatehome";
-                }else{
-                    m.addAttribute("message","Password errata.");
+                } else {
+                    m.addAttribute("message", "Password errata.");
                     return "login";
                 }
-            }else{
+            } else {
                 //utente non registrato
-                m.addAttribute("message","Utente non registrato.");
+                m.addAttribute("message", "Utente non registrato.");
                 return "login";
             }
         }
 
-    }*/
+    }
 
     /**
      * Metodo usato per evitare che la risorsa venga richiesta tramite url
      * si esegue una redirect sulla pagina di login
-     * UserVM come parametro per permettere la realizzazione della pagina di login
+     * FormUserRegistration come parametro per permettere la realizzazione della pagina di login
      *
-     * @param uvm UserVM object
+     * @param uvm FormUserRegistration object
      * @return String
      */
     @GetMapping("/privatehome")
-    public String privateHome(@ModelAttribute("uservm") UserVM uvm) {
+    public String privateHome(@ModelAttribute("uservm") FormUserRegistration uvm) {
         return "login";
     }
 

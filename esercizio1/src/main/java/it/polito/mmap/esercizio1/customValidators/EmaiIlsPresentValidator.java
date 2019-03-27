@@ -1,7 +1,7 @@
 package it.polito.mmap.esercizio1.customValidators;
 
 
-import it.polito.mmap.esercizio1.viewModels.UserVM;
+import it.polito.mmap.esercizio1.viewModels.FormUserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EmaiIlsPresentValidator implements ConstraintValidator<EmailIsPresent, String> {
 
     @Autowired
-    ConcurrentHashMap<String, UserVM> users;
+    ConcurrentHashMap<String, FormUserRegistration> users;
 
     private boolean expectedResult;
 

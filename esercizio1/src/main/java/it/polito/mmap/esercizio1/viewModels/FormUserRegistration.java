@@ -1,5 +1,6 @@
 package it.polito.mmap.esercizio1.viewModels;
 
+import it.polito.mmap.esercizio1.controllers.HomeController;
 import it.polito.mmap.esercizio1.customValidators.EmailIsPresent;
 import it.polito.mmap.esercizio1.customValidators.FieldsValueMatch;
 import lombok.Data;
@@ -16,7 +17,7 @@ import javax.validation.constraints.Size;
         message = "Passwords do not match!"
 )
 @Data
-public class UserVM {
+public class FormUserRegistration {
 
     @Size(min = 3,max = 50)
     private String first;
@@ -38,5 +39,6 @@ public class UserVM {
 
     @AssertTrue //possiamo usare questa modificando il messaggio o definirne una nostra
     boolean privacy;
+
 
 }

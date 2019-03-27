@@ -25,7 +25,8 @@
 
 <div class="container h-100">
     <div class="row h-100 justify-content-center text-center align-items-center">
-        <form action="#" th:action="@{/register}" th:object="${uservm}" method="post" class="form-register">
+        <form action="#" class="form-register" method="post" th:action="@{/register}"
+              th:object="${formUserRegistration}">
             <div class="form-group">
                 <img height="100px" src="images/add.svg" alt="Logo" class="svg">
             </div>
