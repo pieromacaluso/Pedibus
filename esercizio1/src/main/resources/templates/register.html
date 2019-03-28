@@ -76,7 +76,9 @@
                 </div>
 
                 <div th:if="${#fields.hasGlobalErrors()}" class="error mb-3">
-                    <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">...</p>
+                    <p th:each="err : ${#fields.globalErrors()}" >
+                        <span th:if="${err.matches('Passwords do not match!')}" th:text="( ${err} )"></span>
+                    </p>
                 </div>
 
 
