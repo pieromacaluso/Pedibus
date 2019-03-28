@@ -37,16 +37,16 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="firstVM" class="sr-only">First name</label>
-                        <input type="text" name="first" id="firstVM" th:field="*{first}" class="form-control"
+                        <label class="sr-only" for="first">First name</label>
+                        <input class="form-control" id="first" name="first" th:field="*{first}" type="text"
                                placeholder="First Name" value="">
                         <div class="error" th:if="${#fields.hasErrors('first')}" th:errors="*{first}">FirstName Error
                         </div>
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="lastName" class="sr-only">Last name</label>
-                        <input type="text" name="last" th:field="*{last}" class="form-control" id="lastName"
+                        <label class="sr-only" for="last">Last name</label>
+                        <input class="form-control" id="last" name="last" th:field="*{last}" type="text"
                                placeholder="Last name" value="">
                         <div class="error" th:if="${#fields.hasErrors('last')}" th:errors="*{last}">LastName Error</div>
                     </div>
