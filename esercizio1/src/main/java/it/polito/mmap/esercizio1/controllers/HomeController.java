@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,14 +94,14 @@ public class HomeController {
      * @return String
      */
     @GetMapping("/login")
-    public String login(@ModelAttribute("formUserLogin") FormUserRegistration uvm) {
+    public String login(@ModelAttribute("formUserLogin") FormUserLogin uvm) {
         return "login";
     }
 
     /**
      * Metodo per implementare il meccanismo di login.
      * Basato sul controllo dell'elenco degli utenti iscritti e del confronto della password.
-     * In caso di errori si riporta la pagina di login con l'errore,altrimenti si ha una redirect
+     * In caso di errori si riporta la pagina di login con l'errore, altrimenti si ha una redirect
      * sulla pagina privata
      *
      * @param uvm FormUserLogin object
@@ -110,48 +111,22 @@ public class HomeController {
      */
     @PostMapping("/login")
     public String loginForm(@Valid @ModelAttribute("formUserLogin") FormUserLogin uvm, BindingResult res, Model m) {
-        /* TODO: Questo metodo può essere utile per capire il tipo d'errore,
-            ma sarebbe meglio che l'utente ricevesse sempre un messaggio generico
-            del tipo "Password or Email are not correct" per evitare problemi di sicurezza
-         */
-
-        /*
-         * PIERO:
-         * Il metodo viene semplificato molto se inserita un'annotazione di Type come
-         * @LoginChecker. Unico problema è che controlla la presenza della mail,
-         * prima di verificare che quest'ultima sia validata. (DEBUG)
-         */
-        if (res.hasErrors()) {
-            return "login";
-        } else {
+        if (!res.hasErrors() && uvm.getPass().equals(users.get(uvm.getEmail()).getPass())) {
+            // Login Corretto
             logger.info(uvm.getEmail() + " ha effettuato il login correttamente.");
-            // Metto tra attributi FormUserRegistration per visualizzare dati a video
             m.addAttribute("user", users.get(uvm.getEmail()));
             return "privatehome";
+        } else {
+            // Login errato
+            /*
+                Aggiunge un ulteriore errore globale per annunciare incorrettezza dei dati di accesso.
+                Non si mostrano gli errori dei campi per fare in modo di mantenere intatta la sicurezza
+                del form di login. Si lascia per qualsiasi tipologia di errore un errore generico che non permette
+                di inferire la natura del vero errore
+             */
+            res.addError(new ObjectError("formUserLogin", "Email and/or Password are incorrect"));
+            return "login";
         }
-        // OLD VERSION
-//            if (res.hasErrors()) {
-////            m.addAttribute("message", "Email and/or password incorrect.");
-//            return "login";
-//        } else {
-////            if (users.containsKey(uvm.getEmail())) {
-//            // Utente registrato
-////                FormUserRegistration u = users.get(uvm.getEmail());
-////                if (uvm.getPass().compareTo(u.getPass()) == 0) {
-//            //pass corretta
-//            logger.info(uvm.getEmail() + " ha effettuato il login correttamente.");
-//            m.addAttribute("user", users.get(uvm.getEmail()));
-//            return "privatehome";
-////                } else {
-////                    // Password Errata
-////                    m.addAttribute("message", "Email and/or password incorrect.");
-////                    return "login";
-////                }
-////            } else {
-////                //utente non registrato
-////                m.addAttribute("message", "Utente non registrato.");
-////                return "login";
-////            }
     }
 
     /**
