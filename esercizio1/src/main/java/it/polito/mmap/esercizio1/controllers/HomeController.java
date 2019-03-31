@@ -32,7 +32,7 @@ public class HomeController {
      * @return String "login"
      */
     @GetMapping("/")
-    public String home() {
+    public String home(@ModelAttribute("formUserLogin") FormUserLogin uvm) {
         return "login";
     }
 
