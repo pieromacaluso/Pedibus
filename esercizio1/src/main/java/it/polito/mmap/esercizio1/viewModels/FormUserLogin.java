@@ -11,9 +11,9 @@ import javax.validation.constraints.Size;
 @LoginChecker
 public class FormUserLogin {
 
-    @EmailIsPresent(expectedResult = true, message = "Mail not valid")
     @Email
     @Size(min = 7, max = 255)
+    @EmailIsPresent(expectedResult = true, message = "Mail not valid")
     private String email;
 
     @Size(min = 3, max = 64)
