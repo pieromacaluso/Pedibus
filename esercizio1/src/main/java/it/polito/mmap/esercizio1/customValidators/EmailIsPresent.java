@@ -19,7 +19,7 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailIsPresent {
 
-    String message() default "Mail already in use";
+    String message() default "";
 
     Class<?>[] groups() default {};
 

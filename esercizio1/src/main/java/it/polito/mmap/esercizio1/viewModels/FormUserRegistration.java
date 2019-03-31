@@ -19,25 +19,26 @@ import javax.validation.constraints.Size;
 @Data
 public class FormUserRegistration {
 
-    @Size(min = 3,max = 50)
+    @Size(min = 3,max = 50, message = "Insert a valid name")
     private String first;
 
-    @Size(min = 3,max = 50)
+    @Size(min = 3,max = 50, message = "Insert a valid surname")
     private String last;
 
     //@EmailIsPresent è un Custom validator definito nel relativo package, controlla che la mail non sia già in uso
-    @EmailIsPresent(expectedResult = false)
+    @EmailIsPresent(expectedResult = false, message = "Mail not available")
     @Email
-    @Size(min = 7,max = 255)
+    @Size(min = 7,max = 25, message = "Mail length should be between 7 and 255")
     private String email;
 
-    @Size(min = 3,max = 64)
+    //si può anche usare "{Size.FormUserRegistration.pass}" con questa chiave settata in messages.properties
+    @Size(min = 3,max = 64, message = "Password length should be between 3 and 64")
     private String pass;
 
-    @Size(min = 3,max = 64)
+    @Size(min = 3,max = 64, message = "Password length should be between 3 and 64")
     private String pass1;
 
-    @AssertTrue //possiamo usare questa modificando il messaggio o definirne una nostra
+    @AssertTrue
     boolean privacy;
 
 
