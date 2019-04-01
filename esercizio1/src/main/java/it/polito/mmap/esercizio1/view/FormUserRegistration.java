@@ -1,8 +1,7 @@
-package it.polito.mmap.esercizio1.viewModels;
+package it.polito.mmap.esercizio1.view;
 
-import it.polito.mmap.esercizio1.controllers.HomeController;
-import it.polito.mmap.esercizio1.customValidators.EmailIsPresent;
-import it.polito.mmap.esercizio1.customValidators.FieldsValueMatch;
+import it.polito.mmap.esercizio1.validator.EmailIsPresent;
+import it.polito.mmap.esercizio1.validator.FieldsValueMatch;
 import lombok.Data;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
@@ -38,7 +37,7 @@ public class FormUserRegistration {
     private String pass1;
 
     @AssertTrue
-    boolean privacy;
+    private boolean privacy;
 
 
 }

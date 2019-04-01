@@ -1,8 +1,9 @@
-package it.polito.mmap.esercizio1.controllers;
+package it.polito.mmap.esercizio1.control;
 
 
-import it.polito.mmap.esercizio1.viewModels.FormUserLogin;
-import it.polito.mmap.esercizio1.viewModels.FormUserRegistration;
+import it.polito.mmap.esercizio1.model.User;
+import it.polito.mmap.esercizio1.view.FormUserLogin;
+import it.polito.mmap.esercizio1.view.FormUserRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
@@ -23,7 +25,7 @@ public class HomeController {
 
 
     @Autowired
-    private ConcurrentHashMap<String, FormUserRegistration> users;
+    private ConcurrentHashMap<String, User> users;
 
 
     /**
@@ -71,13 +73,22 @@ public class HomeController {
         //res.getAllErrors().stream().forEach(err -> logger.info(err.getDefaultMessage()));
 
         if (!res.hasErrors()) {
-            //Registrazione utente non esistente
-            users.put(uvm.getEmail(), uvm);          //inserimento in elenco del nuovo utente
-//            m.addAttribute("message", uvm.getEmail() + " registrato correttamente");
-            // Metto tra attributi FormUserRegistration per visualizzare dati a video
+            // Registrazione utente non esistente
+            // Inserimento in elenco del nuovo utente
+            User user = User.builder()
+                    .first(uvm.getFirst())
+                    .last(uvm.getLast())
+                    .pass(uvm.getPass())
+                    .email(uvm.getEmail())
+                    .privacy(uvm.isPrivacy())
+                    .registrationDate(new Date())
+                    .build();
+            users.put(uvm.getEmail(), user);
             logger.info(uvm.getEmail() + " registrato correttamente. Size map post insert: " + users.size());
-            m.addAttribute("user", uvm);
-            return "privatehome";                   //pagina per mostrare la parte privata
+            // Metto tra attributi User per visualizzare dati a video in PrivateHome
+            m.addAttribute("user", user);
+            //pagina per mostrare la parte privata
+            return "privatehome";
         } else {
             return "register";
         }

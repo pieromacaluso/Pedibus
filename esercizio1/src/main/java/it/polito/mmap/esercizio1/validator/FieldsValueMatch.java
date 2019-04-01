@@ -18,7 +18,7 @@ The List sub-interface allows us to define multiple FieldsValueMatch annotations
 })
  */
 
-package it.polito.mmap.esercizio1.customValidators;
+package it.polito.mmap.esercizio1.validator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

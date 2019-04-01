@@ -28,24 +28,28 @@
         <div class="h3 w-100">These are your data:</div>
         <table class="table table-dark">
             <tr>
-                <th>firstName</th>
+                <th>First Name</th>
                 <td th:text="${user.first}">keyvalue</td>
             </tr>
             <tr>
-                <th>lastName</th>
+                <th>Last Name</th>
                 <td th:text="${user.last}">keyvalue</td>
             </tr>
             <tr>
-                <th>email</th>
+                <th>Email</th>
                 <td th:text="${user.email}">keyvalue</td>
             </tr>
             <tr>
-                <th>password</th>
+                <th>Password</th>
                 <td th:text="${user.pass}">keyvalue</td>
             </tr>
             <tr>
-                <th>privacy</th>
+                <th>Privacy</th>
                 <td th:text="${user.privacy}">keyvalue</td>
+            </tr>
+            <tr>
+                <th>Registration Timestamp</th>
+                <td th:text="${user.registrationDate}">keyvalue</td>
             </tr>
         </table>
 
