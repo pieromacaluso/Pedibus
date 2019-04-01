@@ -129,6 +129,7 @@ public class HomeController {
         }
     }
 
+    // TODO: Rimuovi o decommenta
     /**
      * Metodo usato per evitare che la risorsa venga richiesta tramite url
      * si esegue una redirect sulla pagina di login
@@ -137,9 +138,10 @@ public class HomeController {
      * @param uvm FormUserRegistration object
      * @return String
      */
-    @GetMapping("/privatehome")
-    public String privateHome(@ModelAttribute("uservm") FormUserRegistration uvm) {
-        return "login";
-    }
+//    @GetMapping("/privatehome")
+//    public String privateHome(@ModelAttribute("formUserLogin") FormUserLogin uvm) {
+//
+//        return "login";
+//    }
 
 }
