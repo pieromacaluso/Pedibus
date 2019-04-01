@@ -49,5 +49,5 @@ body {
 }
 
 .svg {
-    filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg);
+    filter: invert(0.35) sepia(1) saturate(10) hue-rotate(180deg)
 }
