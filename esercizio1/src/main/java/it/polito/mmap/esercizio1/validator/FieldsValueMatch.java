@@ -1,23 +1,3 @@
-/*
-Definisco una nuova annotazione che mi permette di controllare l'uguaglianza di due campi all'interno di un oggetto
-
-source => https://www.baeldung.com/spring-mvc-custom-validator
-
-The List sub-interface allows us to define multiple FieldsValueMatch annotations on a class.
-@FieldsValueMatch.List({
-        @FieldsValueMatch(
-                field = "password",
-                fieldMatch = "verifyPassword",
-                message = "Passwords do not match!"
-        ),
-        @FieldsValueMatch(
-                field = "email",
-                fieldMatch = "verifyEmail",
-                message = "Email addresses do not match!"
-        )
-})
- */
-
 package it.polito.mmap.esercizio1.validator;
 
 import java.lang.annotation.ElementType;

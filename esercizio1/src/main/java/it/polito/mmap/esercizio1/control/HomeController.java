@@ -29,10 +29,10 @@ public class HomeController {
 
 
     /**
-     * Metodo implementato per restituire la schermata home
-     * (in questo caso quella di login che ha il link per il redirect a quella di registrazione)
+     * Mapping verso la home dell'applicazione (pagina di login)
      *
-     * @return String "login"
+     * @param uvm FormUserLogin
+     * @return String
      */
     @GetMapping("/")
     public String home(@ModelAttribute("formUserLogin") FormUserLogin uvm) {
@@ -40,41 +40,29 @@ public class HomeController {
     }
 
     /**
-     * Metodo usato per l'apertura della pagina tramite richiesta get.
-     * Tramite l'annotazione @ModelAttribute("formUserRegistration") viene creato un oggetto FormUserRegistration usato dal form html
-     * tramite il campo th:object="${userVM}".
-     * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
+     * Mapping verso la pagina di registrazione dell'applicazione
      *
-     * @param uvm FormUserRegistration object
-     * @param m   Model
-     * @return String "register"
+     * @param uvm FormUserRegistration
+     * @return String
      */
     @GetMapping("/register")
-    public String viewFormRegistration(@ModelAttribute("formUserRegistration") FormUserRegistration uvm, Model m) {
+    public String viewFormRegistration(@ModelAttribute("formUserRegistration") FormUserRegistration uvm) {
         return "register";
     }
 
     /**
-     * Metodo usato per elaborare il form compilato dall'utente.
-     * la validazione sui campi è fatta tramite i vincoli scritti in FormUserRegistration.
-     * Gli errori sono riportati al client grazie agli appositi div che controllano
-     * se ci sono errori di validazione per ogni campo del form
-     * la registrazione consiste in un semplice inserimento in lista, non bisogna gestire le sessioni per questo lab
-     * Per questo lab la password è salvata in chiaro.
+     * Elaborazione del form di registrazione compilato dall'utente.
+     * In caso di successo si viene reindirizzati alla propria pagina privata,
+     * altrimenti si ritorna alla pagina di registrazione.
      *
-     * @param uvm FormUserRegistration object
+     * @param uvm FormUserRegistration
      * @param res BindingResult
      * @param m   Model
      * @return String
      */
     @PostMapping("/register")
     public String processForm(@Valid @ModelAttribute("formUserRegistration") FormUserRegistration uvm, BindingResult res, Model m) {
-        //Per stampare tutti gli errori prodotti dal processo di validazione
-        //res.getAllErrors().stream().forEach(err -> logger.info(err.getDefaultMessage()));
-
         if (!res.hasErrors()) {
-            // Registrazione utente non esistente
-            // Inserimento in elenco del nuovo utente
             User user = User.builder()
                     .first(uvm.getFirst())
                     .last(uvm.getLast())
@@ -84,10 +72,9 @@ public class HomeController {
                     .registrationDate(new Date())
                     .build();
             users.put(uvm.getEmail(), user);
-            logger.info(uvm.getEmail() + " registrato correttamente. Size map post insert: " + users.size());
-            // Metto tra attributi User per visualizzare dati a video in PrivateHome
+            logger.info(uvm.getEmail() + " registrato correttamente.");
+            // Metto tra attributi l'oggetto User per visualizzare dati in PrivateHome
             m.addAttribute("user", user);
-            //pagina per mostrare la parte privata
             return "privatehome";
         } else {
             return "register";
@@ -96,12 +83,9 @@ public class HomeController {
 
 
     /**
-     * Metodo usato per l'apertura della pagina tramite richiesta get.
-     * Tramite l'annotazione @ModelAttribute("formUserRegistration") viene creato un oggetto FormUserRegistration
-     * usato dal form html tramite il campo th:object="${userVM}".
-     * E' necessario per poter generare i messaggi di errore per ogni singolo campo del form stesso.
+     * Mapping verso la pagina di login dell'applicazione.
      *
-     * @param uvm FormUserRegistration object
+     * @param uvm FormUserRegistration
      * @return String
      */
     @GetMapping("/login")
@@ -110,12 +94,11 @@ public class HomeController {
     }
 
     /**
-     * Metodo per implementare il meccanismo di login.
-     * Basato sul controllo dell'elenco degli utenti iscritti e del confronto della password.
-     * In caso di errori si riporta la pagina di login con l'errore, altrimenti si ha una redirect
-     * sulla pagina privata
+     * Elaborazione del form di login compilato dall'utente.
+     * In caso di successo si viene reindirizzati alla propria pagina privata,
+     * altrimenti si ritorna alla pagina di login.
      *
-     * @param uvm FormUserLogin object
+     * @param uvm FormUserLogin
      * @param res BindingResult
      * @param m   Model
      * @return String
@@ -129,30 +112,9 @@ public class HomeController {
             return "privatehome";
         } else {
             // Login errato
-            /*
-                Aggiunge un ulteriore errore globale per annunciare incorrettezza dei dati di accesso.
-                Non si mostrano gli errori dei campi per fare in modo di mantenere intatta la sicurezza
-                del form di login. Si lascia per qualsiasi tipologia di errore un errore generico che non permette
-                di inferire la natura del vero errore
-             */
+            // Errore globale generico per notificare l'errore senza svelare la vera natura all'utente (sicurezza)
             res.addError(new ObjectError("formUserLogin", "Email and/or Password are incorrect"));
             return "login";
         }
     }
-
-    // TODO: Rimuovi o decommenta
-    /**
-     * Metodo usato per evitare che la risorsa venga richiesta tramite url
-     * si esegue una redirect sulla pagina di login
-     * FormUserRegistration come parametro per permettere la realizzazione della pagina di login
-     *
-     * @param uvm FormUserRegistration object
-     * @return String
-     */
-//    @GetMapping("/privatehome")
-//    public String privateHome(@ModelAttribute("formUserLogin") FormUserLogin uvm) {
-//
-//        return "login";
-//    }
-
 }

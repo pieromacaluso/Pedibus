@@ -1,8 +1,3 @@
-/*
-Definisco una nuova annotazione che mi permette di controllare che il campo email non sia già usato da un altro utente
-source => https://www.baeldung.com/spring-mvc-custom-validator
- */
-
 package it.polito.mmap.esercizio1.validator;
 
 import java.lang.annotation.Documented;

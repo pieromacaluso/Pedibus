@@ -2,6 +2,7 @@ package it.polito.mmap.esercizio1.view;
 
 import it.polito.mmap.esercizio1.validator.EmailIsPresent;
 import lombok.Data;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 

@@ -1,12 +1,8 @@
-/*
-faccio diventare l'annotazione dichiarata in FieldsValueMatch.java un validator
-source => https://www.baeldung.com/spring-mvc-custom-validator
- */
-
 package it.polito.mmap.esercizio1.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
 import org.springframework.beans.BeanWrapperImpl;
 
 public class FieldsValueMatchValidator implements ConstraintValidator<FieldsValueMatch, Object> {

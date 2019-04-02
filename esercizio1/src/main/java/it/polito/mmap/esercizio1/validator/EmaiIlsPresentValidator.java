@@ -1,6 +1,5 @@
 package it.polito.mmap.esercizio1.validator;
 
-
 import it.polito.mmap.esercizio1.model.User;
 import it.polito.mmap.esercizio1.view.FormUserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;

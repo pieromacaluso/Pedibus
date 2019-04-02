@@ -1,9 +1,3 @@
-/*
-source -> https://www.baeldung.com/spring-custom-validation-message-source
-Ci permette di usare gli accoppiamenti chiave - valore definiti in messages.properties
-
- */
-
 package it.polito.mmap.esercizio1.configuration;
 
 import org.springframework.context.MessageSource;

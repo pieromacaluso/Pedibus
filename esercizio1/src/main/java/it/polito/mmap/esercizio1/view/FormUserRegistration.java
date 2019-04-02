@@ -3,13 +3,12 @@ package it.polito.mmap.esercizio1.view;
 import it.polito.mmap.esercizio1.validator.EmailIsPresent;
 import it.polito.mmap.esercizio1.validator.FieldsValueMatch;
 import lombok.Data;
+
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 
-//CustomValidator dichiarato nel relativo package, controlla che le pw siano uguali
-//A differenza degli altri Validator si riferisce all'oggetto e non a un campo. Vedi posizione
 @FieldsValueMatch(
         field = "pass",
         fieldMatch = "pass1",
@@ -18,22 +17,21 @@ import javax.validation.constraints.Size;
 @Data
 public class FormUserRegistration {
 
-    @Size(min = 3,max = 50)
+    @Size(min = 3, max = 50)
     private String first;
 
-    @Size(min = 3,max = 50)
+    @Size(min = 3, max = 50)
     private String last;
 
-    //@EmailIsPresent è un Custom validator definito nel relativo package, controlla che la mail non sia già in uso
     @Email
-    @Size(min = 7,max = 25)
+    @Size(min = 7, max = 25)
     @EmailIsPresent(expectedResult = false, message = "Mail not available")
     private String email;
 
-    @Size(min = 3,max = 64)
+    @Size(min = 3, max = 64)
     private String pass;
 
-    @Size(min = 3,max = 64)
+    @Size(min = 3, max = 64)
     private String pass1;
 
     @AssertTrue
