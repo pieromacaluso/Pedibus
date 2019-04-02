@@ -1,4 +1,4 @@
-package it.polito.mmap.esercizio1.model;
+package it.polito.mmap.esercitazione1.model;
 
 import lombok.Builder;
 import lombok.Data;

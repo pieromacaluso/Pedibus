@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>it.polito.mmap</groupId>
-    <artifactId>esercizio1</artifactId>
+    <artifactId>esercitazione1</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>esercizio1</name>
+    <name>esercitazione1</name>
     <description>Esercitazione 1 - Applicazioni Internet</description>
 
     <properties>

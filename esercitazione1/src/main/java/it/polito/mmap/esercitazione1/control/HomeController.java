@@ -1,9 +1,9 @@
-package it.polito.mmap.esercizio1.control;
+package it.polito.mmap.esercitazione1.control;
 
 
-import it.polito.mmap.esercizio1.model.User;
-import it.polito.mmap.esercizio1.view.FormUserLogin;
-import it.polito.mmap.esercizio1.view.FormUserRegistration;
+import it.polito.mmap.esercitazione1.model.User;
+import it.polito.mmap.esercitazione1.view.FormUserLogin;
+import it.polito.mmap.esercitazione1.view.FormUserRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
-package it.polito.mmap.esercizio1;
+package it.polito.mmap.esercitazione1;
 
-import it.polito.mmap.esercizio1.model.User;
+import it.polito.mmap.esercitazione1.model.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
-public class Esercizio1Application {
+public class Esercitazione1Application {
 
     @Bean
     public ConcurrentHashMap<String, User> users() {
@@ -16,7 +16,7 @@ public class Esercizio1Application {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Esercizio1Application.class, args);
+        SpringApplication.run(Esercitazione1Application.class, args);
     }
 
 }

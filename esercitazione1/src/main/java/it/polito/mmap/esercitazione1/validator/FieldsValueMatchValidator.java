@@ -1,4 +1,4 @@
-package it.polito.mmap.esercizio1.validator;
+package it.polito.mmap.esercitazione1.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

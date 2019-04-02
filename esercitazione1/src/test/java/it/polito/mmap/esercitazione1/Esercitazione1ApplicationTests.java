@@ -1,4 +1,4 @@
-package it.polito.mmap.esercizio1;
+package it.polito.mmap.esercitazione1;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class Esercizio1ApplicationTests {
+public class Esercitazione1ApplicationTests {
 
     @Test
     public void contextLoads() {

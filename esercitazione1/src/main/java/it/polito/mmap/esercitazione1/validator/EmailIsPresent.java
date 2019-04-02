@@ -1,4 +1,4 @@
-package it.polito.mmap.esercizio1.validator;
+package it.polito.mmap.esercitazione1.validator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

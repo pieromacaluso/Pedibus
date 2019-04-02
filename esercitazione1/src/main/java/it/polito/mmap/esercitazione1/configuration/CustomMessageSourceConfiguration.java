@@ -1,4 +1,4 @@
-package it.polito.mmap.esercizio1.configuration;
+package it.polito.mmap.esercitazione1.configuration;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
