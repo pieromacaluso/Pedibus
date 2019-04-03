@@ -11,4 +11,4 @@ Repository dei laboratori e del progetto finale del corso "Applicazioni Internet
 - [Marco Florian](https://github.com/MarcoFlo) - s247030
 - [Piero Macaluso](https://github.com/pieromacaluso) - s252894
 - [Angelo Turco](https://github.com/angeloturco) - s255270
-- [GJCode](https://github.com/GJGits) *TODO: Name and Matricola*
+- [Marco Nanci](https://github.com/GJGits) - s255089
