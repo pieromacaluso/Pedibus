@@ -1,0 +1,20 @@
+// linee
+{
+   id: autoincrement(key),
+   nome: nomeFile,
+   admin: root
+}
+// fermate
+{
+  id: autoincrement(key),
+  id-linea: chiave esterna (vedi sopra),
+  nome: nome letto da file,
+  orario: letto da file
+}
+// prenotazioni
+{
+  id: nome bambino (key part 1)
+  data: data prenotazione (key part 2)
+  verso: true (andata) false(ritorno) (key part 3)
+  idFermata: chiave esterna vedi sopra
+}
