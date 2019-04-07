@@ -30,6 +30,7 @@ public class UserMongoRepositoryTest {
         // save and check id
         userMongoRepository.save(user1);
         userMongoRepository.save(user2);
+        System.out.println(user1+" and "+user2+" saved");
         assertNotNull(user1.getId());
         assertNotNull(user2.getId());
 
