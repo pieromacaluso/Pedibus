@@ -1,0 +1,1 @@
+Tale package conterrà i vari oggetti costruiti in lettura del db
