@@ -1,1 +1,0 @@
-Tale package conterrà i vari oggetti java manipolati dalla logica dell'applicazione

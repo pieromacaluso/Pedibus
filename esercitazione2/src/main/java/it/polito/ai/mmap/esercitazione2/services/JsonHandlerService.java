@@ -1,7 +1,7 @@
 package it.polito.ai.mmap.esercitazione2.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.esercitazione2.objectDTO.Linea;
+import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +13,12 @@ import java.io.IOException;
 @Service
 public class JsonHandlerService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    MongoService mongoService;
     /**
      * Metodo che legge i JSON delle fermate e li salva sul DB
      *
@@ -23,8 +26,6 @@ public class JsonHandlerService {
      * @return void
      */
     public void readPiedibusLines() {
-
-
         int countPiedibusLine = 0;
         try {
             countPiedibusLine = ResourceUtils.getFile("classpath:lines//").list().length;
@@ -36,11 +37,9 @@ public class JsonHandlerService {
         for (int i = 1; i < countPiedibusLine; i++) {
             try {
 
-                Linea linea = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i +".json"), Linea.class);
-                logger.info(linea.getNome());
-                //TODO add linea to db
-
-
+                LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i +".json"), LineaDTO.class);
+                logger.info(lineaDTO.getNome());
+                mongoService.addLineToMongo(lineaDTO);
             } catch (IOException e) {
                 e.printStackTrace();
             }
