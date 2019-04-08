@@ -1,0 +1,10 @@
+package it.polito.ai.mmap.esercitazione2.objectDTO;
+
+import lombok.Data;
+
+@Data
+public class Fermata {
+    private float id;
+    private String nome;
+    private String orario;
+}
