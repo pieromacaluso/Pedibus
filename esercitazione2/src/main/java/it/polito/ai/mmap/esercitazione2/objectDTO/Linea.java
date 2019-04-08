@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.esercitazione2.objectDTO;
 
 import lombok.Data;
+
 import java.util.ArrayList;
 
 @Data
