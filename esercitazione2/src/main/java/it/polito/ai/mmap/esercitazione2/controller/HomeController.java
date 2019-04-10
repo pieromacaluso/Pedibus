@@ -19,18 +19,18 @@ public class HomeController {
 
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     JsonHandlerService jsonHandlerService;
 
     @PostConstruct
-    public void init() throws Exception{
-        System.out.println("Vengo lanciato!");
+    public void init() throws Exception {
+        jsonHandlerService.readPiedibusLines();
     }
 
     // Mapping verso la home dell'applicazione
     @GetMapping("/")
     public String home() {
-        jsonHandlerService.readPiedibusLines();
         return "home";
     }
 

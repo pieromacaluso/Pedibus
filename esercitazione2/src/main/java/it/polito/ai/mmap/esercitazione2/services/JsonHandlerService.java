@@ -38,7 +38,7 @@ public class JsonHandlerService {
             try {
 
                 LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i +".json"), LineaDTO.class);
-                logger.info(lineaDTO.getNome());
+                logger.info(lineaDTO.toString());
                 mongoService.addLineToMongo(lineaDTO);
             } catch (IOException e) {
                 e.printStackTrace();
