@@ -2,6 +2,7 @@ package it.polito.ai.mmap.esercitazione2.controller;
 
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,13 +11,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+
 @Controller
+
 public class HomeController {
 
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     JsonHandlerService jsonHandlerService;
+
+    @PostConstruct
+    public void init() throws Exception{
+        System.out.println("Vengo lanciato!");
+    }
 
     // Mapping verso la home dell'applicazione
     @GetMapping("/")

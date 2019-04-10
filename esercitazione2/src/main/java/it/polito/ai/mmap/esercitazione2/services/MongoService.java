@@ -21,7 +21,7 @@ public class MongoService {
      */
     public void addLineToMongo(LineaDTO lineaDTO)
     {
-        listaMongoRepository.save(lineaDTO);
+        //listaMongoRepository.save(lineaDTO);
 
     }
 }
