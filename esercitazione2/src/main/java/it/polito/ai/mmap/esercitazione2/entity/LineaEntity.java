@@ -38,7 +38,7 @@ public class LineaEntity {
         for (FermataDTO dto1 : lineaDTO.getAndata())
             andata.add((int) dto1.getId());
         for (FermataDTO dto2 : lineaDTO.getRitorno())
-            andata.add((int) dto2.getId());
+            ritorno.add((int) dto2.getId());
     }
 
 }
