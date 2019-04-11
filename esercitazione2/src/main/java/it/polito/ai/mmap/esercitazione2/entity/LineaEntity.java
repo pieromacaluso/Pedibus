@@ -28,6 +28,10 @@ public class LineaEntity {
 
     /*  TODO: trovare modo piu' leggibile */
 
+    /**
+     * Conversione da Entity a DTO
+     * @param lineaDTO
+     */
     public LineaEntity(LineaDTO lineaDTO) {
         this.id = lineaDTO.getId();
         this.nome = lineaDTO.getNome();

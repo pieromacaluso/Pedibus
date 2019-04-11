@@ -27,28 +27,32 @@ public class HomeController {
     @PostConstruct
     public void init() throws Exception {
         logger.info("Caricamento linee in corso...");
-        jsonHandlerService.readPiedibusLines();
+        jsonHandlerService.readPiedibusLines();             //todo verificare se possibile evitare se non ci sono modifiche
         logger.info("Caricamento linee completato.");
     }
 
-    // Mapping verso la home dell'applicazione
+    /**
+     * Mapping verso la home dell'applicazione
+     */
     @GetMapping("/")
     public String home() {
         return "home";
     }
 
-    //Restituisce una lista JSON con i nomi delle lines presenti nel DBMS
-    /*Creazione classe NomeListaDTO per creare un Json contentente solo il nome della linea presente nel db e non tutti i suoi dettagli.
-    * */
+    /**
+     * Restituisce una lista JSON con solo i nomi delle lines presenti nel DBMS
+     */
     @GetMapping("/lines")
     public String getLines() {
         return jsonHandlerService.getAllNameLines();
     }
 
-    //Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno;
+    /**
+     * Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno
+     */
     @GetMapping("/lines/{nome_linea}")
-    public String getStopsLine() {
-        return "stopsJSON";
+    public String getStopsLine(@PathVariable("nome_linea") String name) {
+        return jsonHandlerService.getLine(name);
     }
 
     /*

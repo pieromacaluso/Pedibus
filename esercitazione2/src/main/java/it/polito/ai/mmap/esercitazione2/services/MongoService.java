@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +46,7 @@ public class MongoService {
      * @param listaFermate
      */
 
-    public void addFermate(ArrayList<FermataDTO> listaFermate) {
+    public void addFermate(List<FermataDTO> listaFermate) {
 
         fermataRepository.saveAll(listaFermate
                 .stream()
@@ -58,5 +60,20 @@ public class MongoService {
      */
     public List<LineaEntity> getAllLines() {
         return lineaMongoRepository.findAll();
+    }
+
+    public LineaEntity getLine(String lineName) {
+        return lineaMongoRepository.findByNome(lineName);       //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
+    }
+
+    /**
+     * Legge da db tutte le fermate presenti nella lista idFermata
+     * @param idFermate
+     * @return ordinato per orario
+     */
+    public List<FermataEntity> getFermate(List<Integer> idFermate) {
+        List<FermataEntity> fermate=(List<FermataEntity>) fermataRepository.findAllById(idFermate);
+        fermate.sort(Comparator.comparing(FermataEntity::getOrario));                                  //ordinate per orario e non per id
+        return fermate;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.hateoas.ResourceSupport;
 
 @Data
 public class NomeLineaDTO {
+    //Classe NomeListaDTO per creare un Json contentente solo il nome della linea presente nel db e non tutti i suoi dettagli.
     private String nome;
 
     public NomeLineaDTO(String name){

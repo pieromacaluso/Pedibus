@@ -2,6 +2,7 @@ package it.polito.ai.mmap.esercitazione2.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.esercitazione2.entity.FermataEntity;
 import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.NomeLineaDTO;
@@ -70,5 +71,18 @@ public class JsonHandlerService {
             return "lineNonDisponibili";            //todo check se necessario
         }
 
+    }
+
+    public String getLine(String lineName){
+        LineaEntity lineaEntity=mongoService.getLine(lineName);
+        List<FermataEntity> fermateAndata=mongoService.getFermate(lineaEntity.getAndata());
+        List<FermataEntity> fermateRitorno=mongoService.getFermate(lineaEntity.getRitorno());
+
+        LineaDTO lineaDTO=new LineaDTO(lineaEntity,fermateAndata,fermateRitorno);
+        try {
+            return objectMapper.writeValueAsString(lineaDTO);
+        }catch (JsonProcessingException e){
+            return "lineaNonDisponibile";            //todo check se necessario
+        }
     }
 }

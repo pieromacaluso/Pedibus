@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "stops")
 public class FermataEntity {
     @Id
-    private float id;
+    private Integer id;
     private String name;
     private String orario;
 
@@ -19,6 +19,10 @@ public class FermataEntity {
 
     }
 
+    /**
+     * Conversione da DTO ad Entity
+     * @param fermataDTO
+     */
     public FermataEntity(FermataDTO fermataDTO) {
         this.id = fermataDTO.getId();
         this.name = fermataDTO.getNome();
