@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 @Data
 public class LineaDTO {
-    private float id;
+    private Integer id;
     private String nome;
     private String admin;
     ArrayList<FermataDTO> andata = new ArrayList<>();

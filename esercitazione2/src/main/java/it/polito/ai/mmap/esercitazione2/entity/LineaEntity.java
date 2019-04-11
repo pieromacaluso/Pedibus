@@ -16,7 +16,7 @@ import java.util.List;
 public class LineaEntity {
 
     @Id
-    private float id;
+    private Integer id;
     private String nome;
     private String admin;
     List<Integer> andata;
@@ -26,8 +26,7 @@ public class LineaEntity {
 
     }
 
-    /* TODO: verificare necessita float
-     * TODO: trovare modo piu' leggibile */
+    /*  TODO: trovare modo piu' leggibile */
 
     public LineaEntity(LineaDTO lineaDTO) {
         this.id = lineaDTO.getId();

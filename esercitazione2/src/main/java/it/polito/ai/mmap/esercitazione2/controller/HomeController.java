@@ -1,19 +1,17 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
+import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 
-@Controller
+@RestController
 
 public class HomeController {
 
@@ -22,10 +20,15 @@ public class HomeController {
 
     @Autowired
     JsonHandlerService jsonHandlerService;
+    //MongoService mongoService;
 
+    /*Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus
+    * */
     @PostConstruct
     public void init() throws Exception {
+        logger.info("Caricamento linee in corso...");
         jsonHandlerService.readPiedibusLines();
+        logger.info("Caricamento linee completato.");
     }
 
     // Mapping verso la home dell'applicazione
@@ -35,16 +38,16 @@ public class HomeController {
     }
 
     //Restituisce una lista JSON con i nomi delle lines presenti nel DBMS
+    /*Creazione classe NomeListaDTO per creare un Json contentente solo il nome della linea presente nel db e non tutti i suoi dettagli.
+    * */
     @GetMapping("/lines")
     public String getLines() {
-
-        return "linesJSON";
+        return jsonHandlerService.getAllNameLines();
     }
 
     //Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno;
     @GetMapping("/lines/{nome_linea}")
     public String getStopsLine() {
-
         return "stopsJSON";
     }
 
@@ -65,7 +68,7 @@ public class HomeController {
      */
     @PostMapping("/reservation/{nome_linea}/{data}")
     public String postReservation() {
-
+        //TODO usare @RequestBody per convertire automaticamente il json in ingresso in un oggetto prenotazione
         return "reservationJSON";
     }
 

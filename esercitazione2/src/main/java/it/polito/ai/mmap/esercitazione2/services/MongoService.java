@@ -5,7 +5,7 @@ import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione2.objectDTO.FermataDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione2.repository.FermataRepository;
-import it.polito.ai.mmap.esercitazione2.repository.ListaMongoRepository;
+import it.polito.ai.mmap.esercitazione2.repository.LineaMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class MongoService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private ListaMongoRepository listaMongoRepository;
+    private LineaMongoRepository lineaMongoRepository;
 
     @Autowired
     private FermataRepository fermataRepository;
@@ -34,7 +34,7 @@ public class MongoService {
      */
     public void addLinea(LineaDTO lineaDTO) {
         LineaEntity lineaEntity = new LineaEntity(lineaDTO);
-        listaMongoRepository.save(lineaEntity);
+        lineaMongoRepository.save(lineaEntity);
 
     }
 
@@ -50,5 +50,13 @@ public class MongoService {
                 .stream()
                 .map(FermataEntity::new)
                 .collect(Collectors.toList()));
+    }
+
+    /**
+     * Salva fermate dul DB
+     *
+     */
+    public List<LineaEntity> getAllLines() {
+        return lineaMongoRepository.findAll();
     }
 }
