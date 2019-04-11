@@ -6,6 +6,9 @@ import lombok.Data;
 import org.springframework.hateoas.ResourceSupport;
 import java.util.ArrayList;
 
+/**
+ * Classe che mappa da java a json l'oggetto chiesto da GET /lines/{nome_linea}
+ */
 
 @Data
 public class LineaResource extends ResourceSupport {

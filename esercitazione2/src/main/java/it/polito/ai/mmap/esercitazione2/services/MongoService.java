@@ -54,10 +54,7 @@ public class MongoService {
                 .collect(Collectors.toList()));
     }
 
-    /**
-     * Salva fermate dul DB
-     *
-     */
+
     public List<LineaEntity> getAllLines() {
         return lineaMongoRepository.findAll();
     }

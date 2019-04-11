@@ -1,19 +1,13 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
 import it.polito.ai.mmap.esercitazione2.resources.LineaResource;
+import it.polito.ai.mmap.esercitazione2.resources.ListLineeNameResource;
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
-import it.polito.ai.mmap.esercitazione2.services.MongoService;
+import it.polito.ai.mmap.esercitazione2.services.LineService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resources;
 
 import javax.annotation.PostConstruct;
 
@@ -25,9 +19,11 @@ public class HomeController {
 
     @Autowired
     JsonHandlerService jsonHandlerService;
-    //MongoService mongoService;
+    @Autowired
+    LineService lineService;
 
-    /*Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus
+    /**
+     * Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus
      * */
     @PostConstruct
     public void init() throws Exception {
@@ -45,11 +41,11 @@ public class HomeController {
     }
 
     /**
-     * Restituisce una lista JSON con solo i nomi delle lines presenti nel DBMS
+     * Restituisce una JSON con una lista dei nomi delle lines presenti nel DBMS
      */
     @GetMapping("/lines")
-    public String getLines() {
-        return jsonHandlerService.getAllNameLines();
+    public ListLineeNameResource getLines() {
+        return new ListLineeNameResource(lineService.getAllLines());
     }
 
     /**
@@ -57,8 +53,8 @@ public class HomeController {
      */
     @GetMapping("/lines/{nome_linea}")
     public LineaResource getStopsLine(@PathVariable("nome_linea") String name) {
-        LineaResource lineaResource = new LineaResource(jsonHandlerService.getLine(name));
-        //lineaResource.add(ControllerLinkBuilder.linkTo(HomeController.class).slash(jsonHandlerService).withSelfRel());
+        LineaResource lineaResource = new LineaResource(lineService.getLine(name));
+        //lineaResource.add(ControllerLinkBuilder.linkTo(HomeController.class).slash(jsonHandlerService).withSelfRel()); TODO capire l'utilità dei link
 
         return lineaResource;
     }
