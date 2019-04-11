@@ -1,18 +1,23 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
+import it.polito.ai.mmap.esercitazione2.resources.LineaResource;
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resources;
 
 import javax.annotation.PostConstruct;
 
 @RestController
-
 public class HomeController {
 
 
@@ -23,7 +28,7 @@ public class HomeController {
     //MongoService mongoService;
 
     /*Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus
-    * */
+     * */
     @PostConstruct
     public void init() throws Exception {
         logger.info("Caricamento linee in corso...");
@@ -51,11 +56,14 @@ public class HomeController {
      * Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno
      */
     @GetMapping("/lines/{nome_linea}")
-    public String getStopsLine(@PathVariable("nome_linea") String name) {
-        return jsonHandlerService.getLine(name);
+    public LineaResource getStopsLine(@PathVariable("nome_linea") String name) {
+        LineaResource lineaResource = new LineaResource(jsonHandlerService.getLine(name));
+        //lineaResource.add(ControllerLinkBuilder.linkTo(HomeController.class).slash(jsonHandlerService).withSelfRel());
+
+        return lineaResource;
     }
 
-    /*
+    /**
      * Restituisce un oggetto JSON contenente due liste,riportanti, per ogni fermata di andata e ritorno, l’elenco delle
      *  persone che devono essere prese in carico o lasciate in corrispondenza della fermata
      */

@@ -73,16 +73,12 @@ public class JsonHandlerService {
 
     }
 
-    public String getLine(String lineName){
+    public LineaDTO getLine(String lineName){
         LineaEntity lineaEntity=mongoService.getLine(lineName);
         List<FermataEntity> fermateAndata=mongoService.getFermate(lineaEntity.getAndata());
         List<FermataEntity> fermateRitorno=mongoService.getFermate(lineaEntity.getRitorno());
 
-        LineaDTO lineaDTO=new LineaDTO(lineaEntity,fermateAndata,fermateRitorno);
-        try {
-            return objectMapper.writeValueAsString(lineaDTO);
-        }catch (JsonProcessingException e){
-            return "lineaNonDisponibile";            //todo check se necessario
-        }
+        return new LineaDTO(lineaEntity,fermateAndata,fermateRitorno);
+
     }
 }
