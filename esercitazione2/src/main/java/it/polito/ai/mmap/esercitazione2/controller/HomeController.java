@@ -1,7 +1,7 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
-import it.polito.ai.mmap.esercitazione2.resources.LineaResource;
-import it.polito.ai.mmap.esercitazione2.resources.ListLineeNameResource;
+import it.polito.ai.mmap.esercitazione2.resources.LinesNomeLineaResource;
+import it.polito.ai.mmap.esercitazione2.resources.LinesResource;
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione2.services.LineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,19 +44,19 @@ public class HomeController {
      * Restituisce una JSON con una lista dei nomi delle lines presenti nel DBMS
      */
     @GetMapping("/lines")
-    public ListLineeNameResource getLines() {
-        return new ListLineeNameResource(lineService.getAllLines());
+    public LinesResource getLines() {
+        return new LinesResource(lineService.getAllLines());
     }
 
     /**
      * Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno
      */
     @GetMapping("/lines/{nome_linea}")
-    public LineaResource getStopsLine(@PathVariable("nome_linea") String name) {
-        LineaResource lineaResource = new LineaResource(lineService.getLine(name));
-        //lineaResource.add(ControllerLinkBuilder.linkTo(HomeController.class).slash(jsonHandlerService).withSelfRel()); TODO capire l'utilità dei link
+    public LinesNomeLineaResource getStopsLine(@PathVariable("nome_linea") String name) {
+        LinesNomeLineaResource linesNomeLineaResource = new LinesNomeLineaResource(lineService.getLine(name));
+        //linesNomeLineaResource.add(ControllerLinkBuilder.linkTo(HomeController.class).slash(jsonHandlerService).withSelfRel()); TODO capire l'utilità dei link
 
-        return lineaResource;
+        return linesNomeLineaResource;
     }
 
     /**

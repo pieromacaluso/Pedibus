@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
  *
  */
 @Data
-public class ListLineeNameResource extends ResourceSupport {
+public class LinesResource extends ResourceSupport {
     ArrayList<String> listLineeName = new ArrayList<>();
 
-    public ListLineeNameResource(ArrayList<LineaDTO> listLineaDTO) {
+    public LinesResource(ArrayList<LineaDTO> listLineaDTO) {
         listLineeName.addAll(listLineaDTO.stream().map(lineaDTO -> lineaDTO.getNome()).collect(Collectors.toList()));
     }
 }

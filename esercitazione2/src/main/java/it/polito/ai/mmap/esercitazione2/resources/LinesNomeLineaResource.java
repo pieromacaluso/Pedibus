@@ -11,11 +11,11 @@ import java.util.ArrayList;
  */
 
 @Data
-public class LineaResource extends ResourceSupport {
+public class LinesNomeLineaResource extends ResourceSupport {
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
 
-    public LineaResource(LineaDTO lineaDTO) {
+    public LinesNomeLineaResource(LineaDTO lineaDTO) {
         this.andata = lineaDTO.getAndata();
         this.ritorno = lineaDTO.getRitorno();
     }
