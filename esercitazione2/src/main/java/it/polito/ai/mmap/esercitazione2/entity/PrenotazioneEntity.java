@@ -28,7 +28,7 @@ public class PrenotazioneEntity {
         idFermata = prenotazioneDTO.getIdFermata();
     }
 
-
+    //TODO capire se Serializable serve
     @Value
     public class compositeKeyPrenotazione implements Serializable {
         private String nomeAlunno;
