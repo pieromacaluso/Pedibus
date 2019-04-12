@@ -14,8 +14,8 @@ public class LineaDTO {
     private Integer id;
     private String nome;
     private String admin;
-    ArrayList<FermataDTO> andata = new ArrayList<>();
-    ArrayList<FermataDTO> ritorno = new ArrayList<>();
+    ArrayList<FermataDTO> andata;
+    ArrayList<FermataDTO> ritorno;
 
     public LineaDTO(){}
 
@@ -30,7 +30,7 @@ public class LineaDTO {
         this.id = line.getId();
         this.nome = line.getNome();
         this.admin = line.getAdmin();
-        this.andata.addAll(andata.stream().map(FermataDTO::new).collect(Collectors.toList()));
-        this.ritorno.addAll(ritorno.stream().map(FermataDTO::new).collect(Collectors.toList()));
+        this.andata = andata.stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
+        this.ritorno = ritorno.stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
     }
 }
