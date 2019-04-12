@@ -2,10 +2,20 @@ package it.polito.ai.mmap.esercitazione2.entity;
 
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import lombok.Data;
+import lombok.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
+
+/**
+ * TODO cancellare
+ * source:
+ * https://github.com/cybuch/sample-spring-data-mongo-composite-key/blob/master/src/main/java/ovh/cybuch/composite/key/StudentChairman.java
+ */
 @Data
 @Document(collection = "reservations")
 public class PrenotazioneEntity {
@@ -15,18 +25,15 @@ public class PrenotazioneEntity {
     private Integer idFermata;
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
-        id = new CompositeKey();
-        id.setNomeAlunno(prenotazioneDTO.getNomeAlunno());
-        id.setData(prenotazioneDTO.getData());
-        id.setVerso(prenotazioneDTO.getVerso());
+        id = new CompositeKey(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
         idFermata = prenotazioneDTO.getIdFermata();
-
     }
 
-    @Data
-    static class CompositeKey {
+
+    @Value
+    public class CompositeKey implements Serializable {
         private String nomeAlunno;
-        private Date data;
+        private LocalDate data;
         private boolean verso;
     }
 

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.Date;
 
 @RestController
@@ -81,7 +82,7 @@ public class HomeController {
      * TODO restituisce un identificatore univoco della prenotazione creata
      */
     @PostMapping("/reservation/{nome_linea}/{data}")
-    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data) {
+    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
 
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
         mongoService.addPrenotazione(prenotazioneDTO);
