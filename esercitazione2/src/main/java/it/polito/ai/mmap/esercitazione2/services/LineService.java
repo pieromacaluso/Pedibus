@@ -27,7 +27,7 @@ public class LineService {
      */
     public ArrayList<LineaDTO> getAllLines() {
         ArrayList<LineaDTO> result = new ArrayList<>();
-        result.addAll(mongoService.getAllLines().stream().map(lineaEntity -> new LineaDTO(lineaEntity, mongoService.getFermate(lineaEntity.getAndata()), mongoService.getFermate(lineaEntity.getRitorno()))).collect(Collectors.toList()));
+        result.addAll(mongoService.getAllLines().stream().map(lineaEntity -> new LineaDTO(lineaEntity, mongoService)).collect(Collectors.toList()));
         return result;
     }
 
@@ -38,7 +38,7 @@ public class LineService {
      */
     public LineaDTO getLine(String lineName) {
         LineaEntity lineaEntity = mongoService.getLine(lineName);
-        return new LineaDTO(lineaEntity, mongoService.getFermate(lineaEntity.getAndata()), mongoService.getFermate(lineaEntity.getRitorno()));
+        return new LineaDTO(lineaEntity, mongoService);
 
     }
 }
