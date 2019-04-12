@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 
 /**
@@ -20,18 +19,18 @@ import java.util.Date;
 @Document(collection = "reservations")
 public class PrenotazioneEntity {
     @Id
-    private CompositeKey id;
+    private compositeKeyPrenotazione id;
 
     private Integer idFermata;
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
-        id = new CompositeKey(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
+        id = new compositeKeyPrenotazione(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
         idFermata = prenotazioneDTO.getIdFermata();
     }
 
 
     @Value
-    public class CompositeKey implements Serializable {
+    public class compositeKeyPrenotazione implements Serializable {
         private String nomeAlunno;
         private LocalDate data;
         private boolean verso;
