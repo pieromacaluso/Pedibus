@@ -1,15 +1,20 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
+import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione2.resources.LinesNomeLineaResource;
 import it.polito.ai.mmap.esercitazione2.resources.LinesResource;
+import it.polito.ai.mmap.esercitazione2.resources.PrenotazioneResource;
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione2.services.LineService;
+import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.util.Date;
 
 @RestController
 public class HomeController {
@@ -21,10 +26,12 @@ public class HomeController {
     JsonHandlerService jsonHandlerService;
     @Autowired
     LineService lineService;
+    @Autowired
+    MongoService mongoService;
 
     /**
      * Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus
-     * */
+     */
     @PostConstruct
     public void init() throws Exception {
         logger.info("Caricamento linee in corso...");
@@ -61,7 +68,7 @@ public class HomeController {
 
     /**
      * Restituisce un oggetto JSON contenente due liste,riportanti, per ogni fermata di andata e ritorno, l’elenco delle
-     *  persone che devono essere prese in carico o lasciate in corrispondenza della fermata
+     * persone che devono essere prese in carico o lasciate in corrispondenza della fermata
      */
     @GetMapping("/reservation/{nome_linea}/{data}")
     public String getReservations() {
@@ -69,14 +76,16 @@ public class HomeController {
         return "reservationsJSON";
     }
 
-    /*
-     * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui
-     *  sale/scende e il verso di percorrenza (andata/ritorno); restituisce un identificatore univoco della prenotazione
-     *  creata
+    /**
+     * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
+     * TODO restituisce un identificatore univoco della prenotazione creata
      */
     @PostMapping("/reservation/{nome_linea}/{data}")
-    public String postReservation() {
-        //TODO usare @RequestBody per convertire automaticamente il json in ingresso in un oggetto prenotazione
+    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data) {
+
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        mongoService.addPrenotazione(prenotazioneDTO);
+
         return "reservationJSON";
     }
 

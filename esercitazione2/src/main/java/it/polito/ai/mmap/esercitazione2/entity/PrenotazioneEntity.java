@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione2.entity;
 
+import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,16 +14,19 @@ public class PrenotazioneEntity {
 
     private Integer idFermata;
 
-    public PrenotazioneEntity(Integer idChild, Date data, boolean verso) {
-        id.setIdChild(idChild);
-        id.setData(data);
-        id.setVerso(verso);
+    public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
+        id = new CompositeKey();
+        id.setNomeAlunno(prenotazioneDTO.getNomeAlunno());
+        id.setData(prenotazioneDTO.getData());
+        id.setVerso(prenotazioneDTO.getVerso());
+        idFermata = prenotazioneDTO.getIdFermata();
+
     }
 
     @Data
     static class CompositeKey {
-        private Integer idChild;
-        private Date data; //TODO è il formato migliore ?
+        private String nomeAlunno;
+        private Date data;
         private boolean verso;
     }
 

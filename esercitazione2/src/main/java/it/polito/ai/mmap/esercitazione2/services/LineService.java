@@ -17,9 +17,6 @@ public class LineService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
     MongoService mongoService;
 
 
@@ -39,7 +36,6 @@ public class LineService {
      * @param lineName
      * @return LineaDTO
      */
-
     public LineaDTO getLine(String lineName) {
         LineaEntity lineaEntity = mongoService.getLine(lineName);
         return new LineaDTO(lineaEntity, mongoService.getFermate(lineaEntity.getAndata()), mongoService.getFermate(lineaEntity.getRitorno()));

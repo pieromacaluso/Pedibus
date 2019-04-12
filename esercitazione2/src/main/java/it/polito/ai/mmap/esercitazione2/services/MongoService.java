@@ -2,17 +2,18 @@ package it.polito.ai.mmap.esercitazione2.services;
 
 import it.polito.ai.mmap.esercitazione2.entity.FermataEntity;
 import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
+import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione2.objectDTO.FermataDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
+import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione2.repository.FermataRepository;
-import it.polito.ai.mmap.esercitazione2.repository.LineaMongoRepository;
+import it.polito.ai.mmap.esercitazione2.repository.LineaRepository;
+import it.polito.ai.mmap.esercitazione2.repository.PrenotazioneRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,10 +24,14 @@ public class MongoService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private LineaMongoRepository lineaMongoRepository;
+    private LineaRepository lineaRepository;
 
     @Autowired
     private FermataRepository fermataRepository;
+
+    @Autowired
+    private PrenotazioneRepository prenotazioneRepository;
+
 
 
     /**
@@ -36,7 +41,7 @@ public class MongoService {
      */
     public void addLinea(LineaDTO lineaDTO) {
         LineaEntity lineaEntity = new LineaEntity(lineaDTO);
-        lineaMongoRepository.save(lineaEntity);
+        lineaRepository.save(lineaEntity);
 
     }
 
@@ -56,21 +61,36 @@ public class MongoService {
 
 
     public List<LineaEntity> getAllLines() {
-        return lineaMongoRepository.findAll();
+        return lineaRepository.findAll();
     }
 
     public LineaEntity getLine(String lineName) {
-        return lineaMongoRepository.findByNome(lineName);       //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
+        return lineaRepository.findByNome(lineName);       //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
     }
 
     /**
      * Legge da db tutte le fermate presenti nella lista idFermata
+     *
      * @param idFermate
      * @return ordinato per orario
      */
     public List<FermataEntity> getFermate(List<Integer> idFermate) {
-        List<FermataEntity> fermate=(List<FermataEntity>) fermataRepository.findAllById(idFermate);
+        List<FermataEntity> fermate = (List<FermataEntity>) fermataRepository.findAllById(idFermate);
         fermate.sort(Comparator.comparing(FermataEntity::getOrario));                                  //ordinate per orario e non per id
         return fermate;
     }
+
+    /**
+     * Aggiunge una prenotazione al db
+     * TODO deve restituire un id_prenotazione
+     *
+     * @param prenotazioneDTO
+     */
+    public void addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
+        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
+        prenotazioneRepository.save(prenotazioneEntity);
+        //return prenotazioneEntity.getId();
+    }
+
+
 }
