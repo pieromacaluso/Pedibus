@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 
 @RestController
@@ -81,13 +83,15 @@ public class HomeController {
      * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
      * TODO restituisce un identificatore univoco della prenotazione creata
      */
-    @PostMapping("/reservation/{nome_linea}/{data}")
-    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+    @PostMapping("/reservations/{nome_linea}/{data}")
+    public PrenotazioneResource postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
 
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), LocalDate.parse(data,formatter));
         mongoService.addPrenotazione(prenotazioneDTO);
+        PrenotazioneResource response = new PrenotazioneResource(prenotazioneDTO);
 
-        return "reservationJSON";
+        return response;
     }
 
     /*
@@ -95,9 +99,7 @@ public class HomeController {
      *
      */
     @PutMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public String updateReservation() {
-
-        return "updatedJSON";
+    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") String reservationId) {
     }
 
     /*
@@ -105,18 +107,14 @@ public class HomeController {
      *
      */
     @DeleteMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public String deleteReservation() {
-
-        return "deleted";
+    public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") String reservationId) {
     }
 
     /*
      * Restituisce la prenotazione
      */
     @GetMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public String getReservation() {
-
-        return "reservation";
+    public void getReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @PathVariable("reservation_id") String reservationId)     {
     }
 
 

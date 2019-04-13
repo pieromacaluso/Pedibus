@@ -33,7 +33,6 @@ public class MongoService {
     private PrenotazioneRepository prenotazioneRepository;
 
 
-
     /**
      * Salva una linea sul DB
      *
@@ -81,7 +80,8 @@ public class MongoService {
     }
 
     /**
-     * Aggiunge una prenotazione al db
+     * Aggiunge una prenotazione al db. Metodo utilizzato anche per update
+     * in quanto se _id presente mongoDb sostituisce l'intero documento.
      * TODO deve restituire un id_prenotazione
      *
      * @param prenotazioneDTO
@@ -89,8 +89,20 @@ public class MongoService {
     public void addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
         prenotazioneRepository.save(prenotazioneEntity);
-        //return prenotazioneEntity.getId();
     }
 
+    /**
+     * Elimina prenotazione selezionata
+     *
+     * @param prenotazioneDTO
+     */
 
+    public void deletePrenotazione(PrenotazioneDTO prenotazioneDTO) {
+        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
+        prenotazioneRepository.delete(prenotazioneEntity);
+    }
+
+    public void findPrenotazione(PrenotazioneDTO prenotazioneDTO) {
+        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
+    }
 }

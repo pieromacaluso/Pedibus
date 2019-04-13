@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
  */
 @Data
 public class LinesResource extends ResourceSupport {
+
+
     ArrayList<String> listLineeName = new ArrayList<>();
 
     public LinesResource(ArrayList<LineaDTO> listLineaDTO) {
