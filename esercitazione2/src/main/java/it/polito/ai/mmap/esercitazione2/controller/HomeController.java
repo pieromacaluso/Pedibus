@@ -84,14 +84,11 @@ public class HomeController {
      * TODO restituisce un identificatore univoco della prenotazione creata
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
-    public PrenotazioneResource postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), LocalDate.parse(data,formatter));
-        mongoService.addPrenotazione(prenotazioneDTO);
-        PrenotazioneResource response = new PrenotazioneResource(prenotazioneDTO);
-
-        return response;
+    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        //TODO bug -> inserendo 2018-04-12 mi scrive su db: 2018-04-11T22:00:00.000+00:00 sia usando l'annotazione che usando il formatter
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        return mongoService.addPrenotazione(prenotazioneDTO).toString();
     }
 
     /*

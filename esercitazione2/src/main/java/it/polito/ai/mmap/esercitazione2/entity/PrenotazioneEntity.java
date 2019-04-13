@@ -19,23 +19,14 @@ import java.time.LocalDate;
 @Document(collection = "reservations")
 public class PrenotazioneEntity {
     @Id
-    private compositeKeyPrenotazione id;
+    private CompositeKeyPrenotazione id;
 
     private Integer idFermata;
     private Integer idLinea;
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
-        id = new compositeKeyPrenotazione(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
+        id = new CompositeKeyPrenotazione(prenotazioneDTO.getNomeAlunno(), prenotazioneDTO.getData(), prenotazioneDTO.getVerso());
         idFermata = prenotazioneDTO.getIdFermata();
         idLinea = prenotazioneDTO.getLineaDTO().getId();
     }
-
-    //TODO capire se Serializable serve
-    @Value
-    public class compositeKeyPrenotazione implements Serializable {
-        private String nomeAlunno;
-        private LocalDate data;
-        private boolean verso;
-    }
-
 }

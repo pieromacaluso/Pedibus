@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione2.services;
 
+import it.polito.ai.mmap.esercitazione2.entity.CompositeKeyPrenotazione;
 import it.polito.ai.mmap.esercitazione2.entity.FermataEntity;
 import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
@@ -86,9 +87,9 @@ public class MongoService {
      *
      * @param prenotazioneDTO
      */
-    public void addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
+    public CompositeKeyPrenotazione addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-        prenotazioneRepository.save(prenotazioneEntity);
+        return prenotazioneRepository.save(prenotazioneEntity).getId();
     }
 
     /**
