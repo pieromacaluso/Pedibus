@@ -28,8 +28,6 @@ public class LineaEntity {
 
     }
 
-    /*  TODO: trovare modo piu' leggibile */
-
     /**
      * Conversione da Entity a DTO
      *
@@ -39,12 +37,8 @@ public class LineaEntity {
         this.id = lineaDTO.getId();
         this.nome = lineaDTO.getNome();
         this.admin = lineaDTO.getAdmin();
-        andata = new ArrayList<>();
-        ritorno = new ArrayList<>();
-        for (FermataDTO dto1 : lineaDTO.getAndata())
-            andata.add((int) dto1.getId());
-        for (FermataDTO dto2 : lineaDTO.getRitorno())
-            ritorno.add((int) dto2.getId());
+        this.andata = lineaDTO.getAndata().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toList());
+        this.ritorno = lineaDTO.getRitorno().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toList());
     }
 
 
