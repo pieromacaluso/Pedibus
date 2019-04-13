@@ -20,6 +20,10 @@ public class PrenotazioneResource extends ResourceSupport
     Integer idFermata;
     Boolean verso;
 
+    public PrenotazioneResource() {
+        super();
+    }
+
     public PrenotazioneResource(PrenotazioneDTO dto) {
         nomeAlunno = dto.getNomeAlunno();
         idFermata = dto.getIdFermata();

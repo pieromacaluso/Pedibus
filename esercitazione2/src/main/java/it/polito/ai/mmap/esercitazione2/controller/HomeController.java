@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -83,9 +84,10 @@ public class HomeController {
      * TODO restituisce un identificatore univoco della prenotazione creata
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
-    public PrenotazioneResource postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+    public PrenotazioneResource postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
 
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), LocalDate.parse(data,formatter));
         mongoService.addPrenotazione(prenotazioneDTO);
         PrenotazioneResource response = new PrenotazioneResource(prenotazioneDTO);
 
@@ -97,9 +99,11 @@ public class HomeController {
      *
      */
     @PutMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public String updateReservation() {
+    public PrenotazioneResource updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @PathVariable("reservation_id") String reservationId) {
 
-        return "updatedJSON";
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        mongoService.addPrenotazione(prenotazioneDTO);
+        return new PrenotazioneResource(prenotazioneDTO);
     }
 
     /*
@@ -107,18 +111,20 @@ public class HomeController {
      *
      */
     @DeleteMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public String deleteReservation() {
-
-        return "deleted";
+    public PrenotazioneResource deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @PathVariable("reservation_id") String reservationId) {
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        mongoService.deletePrenotazione(prenotazioneDTO);
+        return prenotazioneResource;
     }
 
     /*
      * Restituisce la prenotazione
      */
     @GetMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public String getReservation() {
-
-        return "reservation";
+    public PrenotazioneResource getReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @PathVariable("reservation_id") String reservationId)     {
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        mongoService.findPrenotazione(prenotazioneDTO);
+        return prenotazioneResource;
     }
 
 
