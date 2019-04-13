@@ -22,10 +22,12 @@ public class PrenotazioneEntity {
     private compositeKeyPrenotazione id;
 
     private Integer idFermata;
+    private Integer idLinea;
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
         id = new compositeKeyPrenotazione(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
         idFermata = prenotazioneDTO.getIdFermata();
+        idLinea = prenotazioneDTO.getLineaDTO().getId();
     }
 
     //TODO capire se Serializable serve
