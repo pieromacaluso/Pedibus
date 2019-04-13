@@ -89,7 +89,6 @@ public class MongoService {
     public void addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
         prenotazioneRepository.save(prenotazioneEntity);
-        //return prenotazioneEntity.getId();
     }
 
     /**
