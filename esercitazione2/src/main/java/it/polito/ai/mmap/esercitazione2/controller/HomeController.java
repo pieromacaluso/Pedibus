@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 
 @RestController
@@ -81,13 +82,14 @@ public class HomeController {
      * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
      * TODO restituisce un identificatore univoco della prenotazione creata
      */
-    @PostMapping("/reservation/{nome_linea}/{data}")
-    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+    @PostMapping("/reservations/{nome_linea}/{data}")
+    public PrenotazioneResource postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
 
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
         mongoService.addPrenotazione(prenotazioneDTO);
+        PrenotazioneResource response = new PrenotazioneResource(prenotazioneDTO);
 
-        return "reservationJSON";
+        return response;
     }
 
     /*
