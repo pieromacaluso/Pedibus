@@ -100,6 +100,7 @@ public class MongoService {
     public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, CompositeKeyPrenotazione compositeKeyPrenotazione)
     {
         PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(compositeKeyPrenotazione);
+        //TODO al posto della delete si può provare a usare prenotazioneEntity.setQUALCOSA e poi save, non so se si può fare perchè andiamo anche ad aggiornare la key
         prenotazioneRepository.delete(prenotazioneEntity);
         addPrenotazione(prenotazioneDTO);
     }
