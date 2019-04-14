@@ -13,6 +13,12 @@ public class CompositeKeyPrenotazione implements Serializable {
     private String data;
     private boolean verso;
 
+    //non cancellare
+    public CompositeKeyPrenotazione()
+    {
+
+    }
+
     public CompositeKeyPrenotazione(String nomeAlunno, String data, boolean verso)
     {
         this.nomeAlunno = nomeAlunno;

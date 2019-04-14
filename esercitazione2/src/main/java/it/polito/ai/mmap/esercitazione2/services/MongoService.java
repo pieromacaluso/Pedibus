@@ -99,9 +99,7 @@ public class MongoService {
      */
     public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, CompositeKeyPrenotazione compositeKeyPrenotazione)
     {
-        logger.info("id_prenotazione: "+compositeKeyPrenotazione.toString());
         PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(compositeKeyPrenotazione);
-        logger.info("CompositeKey presa dal db: "+ prenotazioneEntity.getId().toString());
         prenotazioneRepository.delete(prenotazioneEntity);
         addPrenotazione(prenotazioneDTO);
     }

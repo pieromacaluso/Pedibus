@@ -99,7 +99,6 @@ public class HomeController {
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  String data, @PathVariable("reservation_id") String reservationId) {
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
-        logger.info("ottengo prenotazioneDTO con valore: " + prenotazioneDTO);
         CompositeKeyPrenotazione compositeKeyPrenotazione = new CompositeKeyPrenotazione(reservationId);
         mongoService.updatePrenotazione(prenotazioneDTO,compositeKeyPrenotazione);
     }
