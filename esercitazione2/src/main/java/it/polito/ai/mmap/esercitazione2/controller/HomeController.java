@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
+import it.polito.ai.mmap.esercitazione2.entity.CompositeKeyPrenotazione;
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione2.resources.LinesNomeLineaResource;
 import it.polito.ai.mmap.esercitazione2.resources.LinesResource;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,34 +86,37 @@ public class HomeController {
      * TODO restituisce un identificatore univoco della prenotazione creata
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
-    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
-        //TODO bug -> inserendo 2018-04-12 mi scrive su db: 2018-04-11T22:00:00.000+00:00 sia usando l'annotazione che usando il formatter
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime data) {
+        //TODO bug della data spiegato bene sugli issue
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        logger.info(data.toString());
         return mongoService.addPrenotazione(prenotazioneDTO).toString();
     }
 
-    /*
+    /**
      * Invia un oggetto JSON che permette di aggiornare i dati relativi alla prenotazione indicata
-     *
+     * il reservation_id ci permette di identificare la prenotazione da modificare, il body contiene i dati aggiornati
      */
-    @PutMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") String reservationId) {
+    @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
+    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime data, @PathVariable("reservation_id") String reservationId) {
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        CompositeKeyPrenotazione compositeKeyPrenotazione = new CompositeKeyPrenotazione(reservationId);
+        mongoService.updatePrenotazione(prenotazioneDTO,compositeKeyPrenotazione);
     }
 
     /*
      * Elimina la prenotazione indicata
      *
      */
-    @DeleteMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
+    @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") String reservationId) {
     }
 
     /*
      * Restituisce la prenotazione
      */
-    @GetMapping("/reservation/{nome_linea}/{data}/{reservation_id}")
-    public void getReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @PathVariable("reservation_id") String reservationId)     {
+    @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
+    public void getReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @PathVariable("reservation_id") String reservationId) {
     }
 
 

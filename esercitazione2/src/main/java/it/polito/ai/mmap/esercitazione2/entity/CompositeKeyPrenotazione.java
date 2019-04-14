@@ -1,18 +1,21 @@
 package it.polito.ai.mmap.esercitazione2.entity;
 
+import lombok.Data;
 import lombok.Value;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 //TODO capire se Serializable serve
 
+@Data
 public class CompositeKeyPrenotazione implements Serializable {
     private String nomeAlunno;
-    private LocalDate data;
+    private LocalDateTime data;
     private boolean verso;
 
-    public CompositeKeyPrenotazione(String nomeAlunno, LocalDate data, boolean verso)
+    public CompositeKeyPrenotazione(String nomeAlunno, LocalDateTime data, boolean verso)
     {
         this.nomeAlunno = nomeAlunno;
         this.data = data;
@@ -23,7 +26,7 @@ public class CompositeKeyPrenotazione implements Serializable {
     {
         String[] key = idPrenotazione.split("_");
         nomeAlunno = key[0];
-        data = LocalDate.parse(key[1]);
+        data = LocalDateTime.parse(key[1]);
         verso = Boolean.parseBoolean(key[2]);
 
     }

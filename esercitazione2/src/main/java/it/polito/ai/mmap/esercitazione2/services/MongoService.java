@@ -93,15 +93,29 @@ public class MongoService {
     }
 
     /**
+     * TODO implementazione stupida che fa find/delete/save, sarebbe da raggruppare in unica operazione definita per la prenotazioneRepository
+     * @param prenotazioneDTO contiene i nuovi dati
+     * @param compositeKeyPrenotazione ci permette di identificare la prenotazione da modificare
+     */
+    public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, CompositeKeyPrenotazione compositeKeyPrenotazione)
+    {
+        logger.info("id_prenotazione: "+compositeKeyPrenotazione.toString());
+        PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(compositeKeyPrenotazione);
+        logger.info("CompositeKey presa dal db: "+ prenotazioneEntity.getId().toString());
+        prenotazioneRepository.delete(prenotazioneEntity);
+        addPrenotazione(prenotazioneDTO);
+    }
+
+    /**
      * Elimina prenotazione selezionata
      *
      * @param prenotazioneDTO
      */
-
     public void deletePrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
         prenotazioneRepository.delete(prenotazioneEntity);
     }
+
 
     public void findPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
