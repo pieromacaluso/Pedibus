@@ -7,15 +7,13 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-//TODO capire se Serializable serve
-
 @Data
 public class CompositeKeyPrenotazione implements Serializable {
     private String nomeAlunno;
-    private LocalDateTime data;
+    private String data;
     private boolean verso;
 
-    public CompositeKeyPrenotazione(String nomeAlunno, LocalDateTime data, boolean verso)
+    public CompositeKeyPrenotazione(String nomeAlunno, String data, boolean verso)
     {
         this.nomeAlunno = nomeAlunno;
         this.data = data;
@@ -26,13 +24,13 @@ public class CompositeKeyPrenotazione implements Serializable {
     {
         String[] key = idPrenotazione.split("_");
         nomeAlunno = key[0];
-        data = LocalDateTime.parse(key[1]);
+        data = key[1];
         verso = Boolean.parseBoolean(key[2]);
 
     }
     @Override
     public String toString()
     {
-        return nomeAlunno + "_" + data.toString() + "_" + verso;
+        return nomeAlunno + "_" + data + "_" + verso;
     }
 }

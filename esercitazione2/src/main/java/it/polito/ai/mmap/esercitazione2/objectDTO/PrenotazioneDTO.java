@@ -9,13 +9,13 @@ import java.util.Date;
 
 @Data
 public class PrenotazioneDTO {
-    LocalDateTime data;
+    String data;
     LineaDTO lineaDTO;
     Boolean verso;
     Integer idFermata;
     String nomeAlunno;
 
-    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, LineaDTO lineaDTO, LocalDateTime data) {
+    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, LineaDTO lineaDTO, String data) {
         this.data = data;
         this.lineaDTO = lineaDTO;
         verso = prenotazioneResource.getVerso();

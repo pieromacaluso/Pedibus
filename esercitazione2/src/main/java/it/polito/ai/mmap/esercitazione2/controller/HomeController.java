@@ -2,6 +2,7 @@ package it.polito.ai.mmap.esercitazione2.controller;
 
 import it.polito.ai.mmap.esercitazione2.entity.CompositeKeyPrenotazione;
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
+import it.polito.ai.mmap.esercitazione2.resources.GetReservationsNomeLineaDataResource;
 import it.polito.ai.mmap.esercitazione2.resources.LinesNomeLineaResource;
 import it.polito.ai.mmap.esercitazione2.resources.LinesResource;
 import it.polito.ai.mmap.esercitazione2.resources.PrenotazioneResource;
@@ -76,9 +77,9 @@ public class HomeController {
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata
      */
     @GetMapping("/reservation/{nome_linea}/{data}")
-    public String getReservations() {
+    public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
 
-        return "reservationsJSON";
+        return null;
     }
 
     /**
@@ -86,10 +87,8 @@ public class HomeController {
      * TODO restituisce un identificatore univoco della prenotazione creata
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
-    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime data) {
-        //TODO bug della data spiegato bene sugli issue
+    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
-        logger.info(data.toString());
         return mongoService.addPrenotazione(prenotazioneDTO).toString();
     }
 
@@ -98,8 +97,9 @@ public class HomeController {
      * il reservation_id ci permette di identificare la prenotazione da modificare, il body contiene i dati aggiornati
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime data, @PathVariable("reservation_id") String reservationId) {
+    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  String data, @PathVariable("reservation_id") String reservationId) {
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        logger.info("ottengo prenotazioneDTO con valore: " + prenotazioneDTO);
         CompositeKeyPrenotazione compositeKeyPrenotazione = new CompositeKeyPrenotazione(reservationId);
         mongoService.updatePrenotazione(prenotazioneDTO,compositeKeyPrenotazione);
     }

@@ -20,11 +20,16 @@ import java.time.LocalDate;
 public class PrenotazioneEntity {
     @Id
     private CompositeKeyPrenotazione id;
-
+    private PrenotazioneDTO prenotazioneDTO;
     private Integer idFermata;
     private Integer idLinea;
 
+    // non eliminare
+    public PrenotazioneEntity() {
+    }
+
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
+        this.prenotazioneDTO = prenotazioneDTO;
         id = new CompositeKeyPrenotazione(prenotazioneDTO.getNomeAlunno(), prenotazioneDTO.getData(), prenotazioneDTO.getVerso());
         idFermata = prenotazioneDTO.getIdFermata();
         idLinea = prenotazioneDTO.getLineaDTO().getId();
