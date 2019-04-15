@@ -34,4 +34,13 @@ public class PrenotazioneEntity {
         idFermata = prenotazioneDTO.getIdFermata();
         idLinea = prenotazioneDTO.getLineaDTO().getId();
     }
+
+    public void update(PrenotazioneDTO prenotazioneDTO) {
+        //non viene modificato l'id perchè si vuole solo aggiornare i campi della stessa prenotazione
+        this.nomeAlunno=prenotazioneDTO.getNomeAlunno();
+        this.data=prenotazioneDTO.getData();
+        this.verso=prenotazioneDTO.getVerso();
+        this.idFermata = prenotazioneDTO.getIdFermata();
+        this.idLinea = prenotazioneDTO.getLineaDTO().getId();
+    }
 }

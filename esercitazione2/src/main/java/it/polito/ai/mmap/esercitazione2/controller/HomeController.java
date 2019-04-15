@@ -71,19 +71,18 @@ public class HomeController {
      */
     @GetMapping("/reservation/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-
-        return null;
+        return new GetReservationsNomeLineaDataResource(nomeLinea,data);
     }
 
     /**
      * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
-     * TODO restituisce un identificatore univoco della prenotazione creata
+     * restituisce un identificatore univoco della prenotazione creata
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
-        ObjectId id=mongoService.addPrenotazione(prenotazioneDTO);
-        return id.toString();
+        String id=mongoService.addPrenotazione(prenotazioneDTO);
+        return id;      //todo verificare se va bene,in caso di errore ritorna "prenotazione non valida"
     }
 
     /**

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,28 +82,32 @@ public class MongoService {
     }
 
     /**
-     * Aggiunge una prenotazione al db. Metodo utilizzato anche per update
-     * in quanto se _id presente mongoDb sostituisce l'intero documento.
-     * TODO deve restituire un id_prenotazione
+     * Aggiunge una nuova prenotazione al db. Controlla se esiste già una prenotazione per lo stesso utente nello
+     * stesso giorno con lo stesso verso, in tal caso l'inserimento non viene eseguito
      *
      * @param prenotazioneDTO
      */
-    public ObjectId addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
+    public String addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-        //todo check prenotazione in conflitto con altre già esistenti
-        return prenotazioneRepository.save(prenotazioneEntity).getId();
+        PrenotazioneEntity checkPren=prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
+        String id;
+        if(checkPren==null)
+            id=prenotazioneRepository.save(prenotazioneEntity).getId().toString();
+        else
+            id="Prenotazione non valida";
+        return id;
     }
 
     /**
-     * TODO implementazione stupida che fa find/delete/save, sarebbe da raggruppare in unica operazione definita per la prenotazioneRepository
+     *Metodo utilizzato per aggiornare una vecchia prenotazione tramite il suo reservationId con uno dei
+     * nuovi campi passati dall'utente
      * @param prenotazioneDTO contiene i nuovi dati
      */
     public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId)
     {
         PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(reservationId);
-        //TODO al posto della delete si può provare a usare prenotazioneEntity.setQUALCOSA e poi save, per non cambiare l'id della reservation
-        prenotazioneRepository.delete(prenotazioneEntity);
-        addPrenotazione(prenotazioneDTO);
+        prenotazioneEntity.update(prenotazioneDTO);
+        prenotazioneRepository.save(prenotazioneEntity);
     }
 
     /**
@@ -118,5 +123,9 @@ public class MongoService {
 
     public void findPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
+    }
+
+    public List<String> findAlunniFermata(String data,Integer id,boolean verso) {
+        return prenotazioneRepository.findAllNomeAlunnoByDataAndIdFermataAndVerso(data,id,verso);
     }
 }
