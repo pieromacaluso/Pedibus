@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,6 +68,9 @@ public class MongoService {
     public LineaEntity getLine(String lineName) {
         return lineaRepository.findByNome(lineName);       //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
     }
+    public Optional<LineaEntity> getLine(Integer idLinea){
+        return lineaRepository.findById(idLinea);       //ToDo perchè deve essere per forza Optional?
+    }
 
     /**
      * Legge da db tutte le fermate presenti nella lista idFermata
@@ -80,6 +83,7 @@ public class MongoService {
         fermate.sort(Comparator.comparing(FermataEntity::getOrario));                                  //ordinate per orario e non per id
         return fermate;
     }
+
 
     /**
      * Aggiunge una nuova prenotazione al db. Controlla se esiste già una prenotazione per lo stesso utente nello
@@ -98,6 +102,7 @@ public class MongoService {
         return id;
     }
 
+
     /**
      *Metodo utilizzato per aggiornare una vecchia prenotazione tramite il suo reservationId con uno dei
      * nuovi campi passati dall'utente
@@ -108,6 +113,10 @@ public class MongoService {
         PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(reservationId);
         prenotazioneEntity.update(prenotazioneDTO);
         prenotazioneRepository.save(prenotazioneEntity);
+    }
+
+    public PrenotazioneEntity getPrenotazione(ObjectId reservationId){
+        return prenotazioneRepository.findById(reservationId);
     }
 
     /**
@@ -126,6 +135,8 @@ public class MongoService {
     }
 
     public List<String> findAlunniFermata(String data,Integer id,boolean verso) {
-        return prenotazioneRepository.findAllNomeAlunnoByDataAndIdFermataAndVerso(data,id,verso);
+        List<PrenotazioneEntity> prenotazioni=prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data,id,verso);
+        return prenotazioni.stream().map(p->p.getNomeAlunno()).collect(Collectors.toList());
+
     }
 }

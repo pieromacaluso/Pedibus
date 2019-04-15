@@ -6,19 +6,22 @@ import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione2.services.LineService;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ResourceSupport;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Classe che mappa da java a json l'oggetto chiesto da GET /reservations/{nome_linea}/{data}
  */
+@Data
 public class GetReservationsNomeLineaDataResource extends ResourceSupport {
 
-    LineService lineService;
-    MongoService mongoService;
-
+    List<FermataDTOAlunni> alunniPerFermataAndata=new ArrayList<>();
+    List<FermataDTOAlunni> alunniPerFermataRitorno=new ArrayList<>();
 
     @Data
     public static class FermataDTOAlunni {
@@ -30,15 +33,24 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
         }
     }
 
-    public GetReservationsNomeLineaDataResource(String nomeLina,String data){
-        LineaDTO linea=lineService.getLine(nomeLina);                   //todo non funziona e check nomelinea non esistente
-        List<FermataDTO> fermateAndata=linea.getAndata();
-        fermateAndata.stream().map(fermataDTO -> new FermataDTOAlunni(fermataDTO)).forEach((f)->{
+    public GetReservationsNomeLineaDataResource(String nomeLina,String data,LineService lineService,MongoService mongoService){
+
+        //LineaDTO linea=lineService.getLine(nomeLina);                   //todo check nomelinea non esistente
+
+        alunniPerFermataAndata=(lineService.getLine(nomeLina)).getAndata().stream() //ordinati temporalmente, quindi seguendo l'andamento del percorso
+                .map(fermataDTO -> new FermataDTOAlunni(fermataDTO))
+                .collect(Collectors.toList());
+        alunniPerFermataAndata.forEach((f)->{
                 f.setAlunni(mongoService.findAlunniFermata(data,f.getFermata().getId(),true));    //true per indicare l'andata
         });
-        List<FermataDTO> fermateRitorno=lineService.getLine(nomeLina).getRitorno();
-        fermateAndata.stream().map(fermataDTO -> new FermataDTOAlunni(fermataDTO)).forEach((f)->{
-            f.setAlunni(mongoService.findAlunniFermata(data,f.getFermata().getId(),false));    //true per indicare l'andata
-        });
+
+        alunniPerFermataRitorno=(lineService.getLine(nomeLina)).getRitorno().stream()
+                .map(fermataDTO -> new FermataDTOAlunni(fermataDTO))
+                .collect(Collectors.toList());
+        alunniPerFermataRitorno.forEach((f)->{
+                    f.setAlunni(mongoService.findAlunniFermata(data,f.getFermata().getId(),false));    //false per indicare il ritorno
+                });
+
+        System.out.println("Studenti per fermate ottenuti");
     }
 }

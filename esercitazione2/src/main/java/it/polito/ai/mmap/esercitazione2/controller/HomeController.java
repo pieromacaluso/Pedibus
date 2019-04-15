@@ -1,5 +1,7 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
+import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
+import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione2.resources.GetReservationsNomeLineaDataResource;
@@ -71,7 +73,7 @@ public class HomeController {
      */
     @GetMapping("/reservation/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        return new GetReservationsNomeLineaDataResource(nomeLinea,data);
+        return new GetReservationsNomeLineaDataResource(nomeLinea,data,lineService,mongoService);
     }
 
     /**
@@ -95,20 +97,32 @@ public class HomeController {
         mongoService.updatePrenotazione(prenotazioneDTO,reservationId);
     }
 
-    /*
+    /**
      * Elimina la prenotazione indicata
      *
      */
-    @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") String reservationId) {
-
+    @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")        //todo da controllare
+    public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        //todo check che prenotazioneDTO così creata corrisponda alla prenotazione con il reservationId passato
+        mongoService.deletePrenotazione(prenotazioneDTO);
     }
 
-    /*
+    /**
      * Restituisce la prenotazione
+     * @param prenotazioneResource
+     * @param nomeLinea
+     * @param data
+     * @param reservationId
+     * @return
      */
-    @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public void getReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data, @PathVariable("reservation_id") String reservationId) {
+    @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}") //todo da rivedere
+    public PrenotazioneDTO getReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        //todo check che prenotazioneDTO così creata corrisponda alla prenotazione con il reservationId passato
+        PrenotazioneEntity prenotazioneEntity=mongoService.getPrenotazione(reservationId);
+        LineaEntity lineaEntity=(mongoService.getLine(prenotazioneEntity.getIdLinea())).get();
+        LineaDTO lineaDTO=new LineaDTO(lineaEntity,mongoService);
+        return new PrenotazioneDTO(prenotazioneEntity,lineaDTO);
     }
 
 

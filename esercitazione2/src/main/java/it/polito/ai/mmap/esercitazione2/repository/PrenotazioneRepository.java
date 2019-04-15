@@ -10,5 +10,5 @@ public interface PrenotazioneRepository extends MongoRepository<PrenotazioneEnti
 
     PrenotazioneEntity findById(ObjectId id);
     PrenotazioneEntity findByNomeAlunnoAndDataAndVerso(String nome,String data,boolean verso);
-    List<String> findAllNomeAlunnoByDataAndIdFermataAndVerso(String data,Integer id,boolean verso);
+    List<PrenotazioneEntity> findAllByDataAndIdFermataAndVerso(String data,Integer id,boolean verso);
 }
