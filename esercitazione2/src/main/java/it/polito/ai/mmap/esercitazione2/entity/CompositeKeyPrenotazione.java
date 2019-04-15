@@ -7,6 +7,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * todo da eliminare
+ */
+
+
 @Data
 public class CompositeKeyPrenotazione implements Serializable {
     private String nomeAlunno;

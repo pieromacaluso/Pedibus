@@ -1,10 +1,10 @@
 package it.polito.ai.mmap.esercitazione2.repository;
 
-import it.polito.ai.mmap.esercitazione2.entity.CompositeKeyPrenotazione;
 import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface PrenotazioneRepository extends MongoRepository<PrenotazioneEntity, Integer> {
 
-    PrenotazioneEntity findById(CompositeKeyPrenotazione compositeKeyPrenotazione);
+    PrenotazioneEntity findById(ObjectId id);
 }

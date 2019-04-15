@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class PrenotazioneDTO {
     String data;
-    LineaDTO lineaDTO;
+    LineaDTO lineaDTO;          //todo utile avere tutti i dettagli della linea dietro? valutare se utile sostituire con l'id della linea
     Boolean verso;
     Integer idFermata;
     String nomeAlunno;

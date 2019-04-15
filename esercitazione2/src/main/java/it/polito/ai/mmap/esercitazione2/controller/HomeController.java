@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
-import it.polito.ai.mmap.esercitazione2.entity.CompositeKeyPrenotazione;
 import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione2.resources.GetReservationsNomeLineaDataResource;
@@ -8,6 +7,7 @@ import it.polito.ai.mmap.esercitazione2.resources.PrenotazioneResource;
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione2.services.LineService;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -82,7 +82,8 @@ public class HomeController {
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
-        return mongoService.addPrenotazione(prenotazioneDTO).toString();
+        ObjectId id=mongoService.addPrenotazione(prenotazioneDTO);
+        return id.toString();
     }
 
     /**
@@ -90,10 +91,9 @@ public class HomeController {
      * il reservation_id ci permette di identificare la prenotazione da modificare, il body contiene i dati aggiornati
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  String data, @PathVariable("reservation_id") String reservationId) {
+    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  String data, @PathVariable("reservation_id") ObjectId reservationId) {
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
-        CompositeKeyPrenotazione compositeKeyPrenotazione = new CompositeKeyPrenotazione(reservationId);
-        mongoService.updatePrenotazione(prenotazioneDTO,compositeKeyPrenotazione);
+        mongoService.updatePrenotazione(prenotazioneDTO,reservationId);
     }
 
     /*

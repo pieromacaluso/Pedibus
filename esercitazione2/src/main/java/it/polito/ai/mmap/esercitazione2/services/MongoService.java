@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.esercitazione2.services;
 
-import it.polito.ai.mmap.esercitazione2.entity.CompositeKeyPrenotazione;
 import it.polito.ai.mmap.esercitazione2.entity.FermataEntity;
 import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
@@ -10,6 +9,7 @@ import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione2.repository.FermataRepository;
 import it.polito.ai.mmap.esercitazione2.repository.LineaRepository;
 import it.polito.ai.mmap.esercitazione2.repository.PrenotazioneRepository;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,20 +87,20 @@ public class MongoService {
      *
      * @param prenotazioneDTO
      */
-    public CompositeKeyPrenotazione addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
+    public ObjectId addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
+        //todo check prenotazione in conflitto con altre già esistenti
         return prenotazioneRepository.save(prenotazioneEntity).getId();
     }
 
     /**
      * TODO implementazione stupida che fa find/delete/save, sarebbe da raggruppare in unica operazione definita per la prenotazioneRepository
      * @param prenotazioneDTO contiene i nuovi dati
-     * @param compositeKeyPrenotazione ci permette di identificare la prenotazione da modificare
      */
-    public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, CompositeKeyPrenotazione compositeKeyPrenotazione)
+    public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId)
     {
-        PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(compositeKeyPrenotazione);
-        //TODO al posto della delete si può provare a usare prenotazioneEntity.setQUALCOSA e poi save, non so se si può fare perchè andiamo anche ad aggiornare la key
+        PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(reservationId);
+        //TODO al posto della delete si può provare a usare prenotazioneEntity.setQUALCOSA e poi save, per non cambiare l'id della reservation
         prenotazioneRepository.delete(prenotazioneEntity);
         addPrenotazione(prenotazioneDTO);
     }
