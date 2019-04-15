@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 //TODO nome della classe da rivedere, ma questi metodi non centravano con JsonHandlerService
 
@@ -28,6 +29,16 @@ public class LineService {
     public ArrayList<LineaDTO> getAllLines() {
         ArrayList<LineaDTO> result = new ArrayList<>();
         result.addAll(mongoService.getAllLines().stream().map(lineaEntity -> new LineaDTO(lineaEntity, mongoService)).collect(Collectors.toList()));
+        return result;
+    }
+
+    /**
+     * Metodo che restituisce una lista di string contenente i nomi delle linee
+     * @return List<String>
+     */
+    public List<String> getAllLinesName() {
+        ArrayList<String> result = new ArrayList<>();
+        result.addAll(mongoService.getAllLines().stream().map(lineaEntity -> lineaEntity.getNome()).collect(Collectors.toList()));
         return result;
     }
 

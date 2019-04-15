@@ -1,10 +1,9 @@
 package it.polito.ai.mmap.esercitazione2.controller;
 
 import it.polito.ai.mmap.esercitazione2.entity.CompositeKeyPrenotazione;
+import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione2.resources.GetReservationsNomeLineaDataResource;
-import it.polito.ai.mmap.esercitazione2.resources.LinesNomeLineaResource;
-import it.polito.ai.mmap.esercitazione2.resources.LinesResource;
 import it.polito.ai.mmap.esercitazione2.resources.PrenotazioneResource;
 import it.polito.ai.mmap.esercitazione2.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione2.services.LineService;
@@ -17,10 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 @RestController
 public class HomeController {
@@ -57,19 +53,16 @@ public class HomeController {
      * Restituisce una JSON con una lista dei nomi delle lines presenti nel DBMS
      */
     @GetMapping("/lines")
-    public LinesResource getLines() {
-        return new LinesResource(lineService.getAllLines());
+    public List<String> getLines() {
+        return lineService.getAllLinesName();
     }
 
     /**
      * Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno
      */
     @GetMapping("/lines/{nome_linea}")
-    public LinesNomeLineaResource getStopsLine(@PathVariable("nome_linea") String name) {
-        LinesNomeLineaResource linesNomeLineaResource = new LinesNomeLineaResource(lineService.getLine(name));
-        //linesNomeLineaResource.add(ControllerLinkBuilder.linkTo(HomeController.class).slash(jsonHandlerService).withSelfRel()); TODO capire l'utilità dei link
-
-        return linesNomeLineaResource;
+    public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
+        return lineService.getLine(name);
     }
 
     /**
@@ -109,6 +102,7 @@ public class HomeController {
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") String reservationId) {
+
     }
 
     /*
