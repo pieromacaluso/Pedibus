@@ -124,9 +124,16 @@ public class MongoService {
      *
      * @param prenotazioneDTO
      */
-    public void deletePrenotazione(PrenotazioneDTO prenotazioneDTO) {
-        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-        prenotazioneRepository.delete(prenotazioneEntity);
+    public void deletePrenotazione(PrenotazioneDTO prenotazioneDTO,ObjectId reservationId) {
+        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO); //todo check prenotazione dto corrispondente a quel reservationId
+        prenotazioneEntity.setId(reservationId);
+        PrenotazioneEntity checkPren=prenotazioneRepository.findById(reservationId);
+        if(prenotazioneEntity.equals(checkPren)){
+            prenotazioneRepository.delete(prenotazioneEntity);
+        }else{
+            //todo vedere se ritornare qualcosa
+        }
+
     }
 
 

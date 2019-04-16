@@ -43,4 +43,5 @@ public class PrenotazioneEntity {
         this.idFermata = prenotazioneDTO.getIdFermata();
         this.idLinea = prenotazioneDTO.getLineaDTO().getId();
     }
+
 }
