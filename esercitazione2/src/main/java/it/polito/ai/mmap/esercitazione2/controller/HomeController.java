@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
@@ -76,9 +77,14 @@ public class HomeController {
      * Restituisce un oggetto JSON contenente due liste,riportanti, per ogni fermata di andata e ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata
      */
-    @GetMapping("/reservations/{nome_linea}/{data}")
+    /*@GetMapping("/reservations/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         return new GetReservationsNomeLineaDataResource(nomeLinea,data,lineService,mongoService);
+    }*/
+    @GetMapping("/reservations/{nome_linea}/{data}")
+    public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
+        Date date=getDate(data);
+        return new GetReservationsNomeLineaDataResource(nomeLinea,date,lineService,mongoService);
     }
 
     /**
@@ -87,10 +93,12 @@ public class HomeController {
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), data);
+        Date date=getDate(data);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), date);
         String id=mongoService.addPrenotazione(prenotazioneDTO);
         return id;      //todo verificare se va bene,in caso di errore ritorna "prenotazione non valida"
     }
+
 
     /**
      * Invia un oggetto JSON che permette di aggiornare i dati relativi alla prenotazione indicata
@@ -98,7 +106,8 @@ public class HomeController {
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), data);
+        Date date=getDate(data);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), date);
         mongoService.updatePrenotazione(prenotazioneDTO,reservationId);
     }
 
@@ -106,9 +115,10 @@ public class HomeController {
      * Elimina la prenotazione indicata
      *
      */
-    @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
+    @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")        //todo check forse non cancella dal db
     public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), data);
+        Date date=getDate(data);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), date);
         mongoService.deletePrenotazione(prenotazioneDTO,reservationId);
     }
 
@@ -121,7 +131,6 @@ public class HomeController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        ZonedDateTime date=getDate(data);
         PrenotazioneEntity prenotazioneEntity=mongoService.getPrenotazione(reservationId);
         LineaEntity lineaEntity=mongoService.getLine(nomeLinea);
         if(lineaEntity.getId()==prenotazioneEntity.getIdLinea()){
@@ -131,13 +140,13 @@ public class HomeController {
         }
     }
 
-    public ZonedDateTime getDate(String data){      //data nel formato AAAA-MM-DD
+    public Date getDate(String data){      //data nel formato AAAA-MM-DD
         StringTokenizer t = new StringTokenizer(data,"-");
         int AAAA=Integer.valueOf(t.nextToken());
         int MM=Integer.valueOf(t.nextToken());
         int DD=Integer.valueOf(t.nextToken());
-        ZonedDateTime londonTime=ZonedDateTime.of(AAAA,MM,DD,12,00,00,00, ZoneId.of("Europe/London"));
-        return londonTime;
+        ZoneOffset zoneOffset=ZoneOffset.of("+00:00");
+        ZonedDateTime londonTime=ZonedDateTime.of(AAAA,MM,DD,12,00,00,00, zoneOffset);
+        return Date.from(londonTime.toInstant());
     }
-
 }

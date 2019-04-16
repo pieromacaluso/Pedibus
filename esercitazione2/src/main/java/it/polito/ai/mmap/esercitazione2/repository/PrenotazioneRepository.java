@@ -4,11 +4,12 @@ import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Date;
 import java.util.List;
 
 public interface PrenotazioneRepository extends MongoRepository<PrenotazioneEntity, Integer> {
 
     PrenotazioneEntity findById(ObjectId id);
-    PrenotazioneEntity findByNomeAlunnoAndDataAndVerso(String nome,String data,boolean verso);
-    List<PrenotazioneEntity> findAllByDataAndIdFermataAndVerso(String data,Integer id,boolean verso);
+    PrenotazioneEntity findByNomeAlunnoAndDataAndVerso(String nome,Date data,boolean verso);
+    List<PrenotazioneEntity> findAllByDataAndIdFermataAndVerso(Date data, Integer id, boolean verso);
 }

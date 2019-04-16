@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 public class PrenotazioneDTO {
     String nomeAlunno;
-    String data;
+    Date data;
     Integer idFermata;
     Integer idLinea;
     Boolean verso;
@@ -22,7 +22,7 @@ public class PrenotazioneDTO {
 
 
 
-    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, Integer idLinea, String data) {
+    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, Integer idLinea, Date data) {
         this.data = data;
         this.idLinea = idLinea;
         verso = prenotazioneResource.getVerso();
