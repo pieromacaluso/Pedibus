@@ -16,7 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 @RestController
 public class HomeController {
@@ -114,7 +121,7 @@ public class HomeController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-
+        ZonedDateTime date=getDate(data);
         PrenotazioneEntity prenotazioneEntity=mongoService.getPrenotazione(reservationId);
         LineaEntity lineaEntity=mongoService.getLine(nomeLinea);
         if(lineaEntity.getId()==prenotazioneEntity.getIdLinea()){
@@ -124,5 +131,13 @@ public class HomeController {
         }
     }
 
+    public ZonedDateTime getDate(String data){      //data nel formato AAAA-MM-DD
+        StringTokenizer t = new StringTokenizer(data,"-");
+        int AAAA=Integer.valueOf(t.nextToken());
+        int MM=Integer.valueOf(t.nextToken());
+        int DD=Integer.valueOf(t.nextToken());
+        ZonedDateTime londonTime=ZonedDateTime.of(AAAA,MM,DD,12,00,00,00, ZoneId.of("Europe/London"));
+        return londonTime;
+    }
 
 }
