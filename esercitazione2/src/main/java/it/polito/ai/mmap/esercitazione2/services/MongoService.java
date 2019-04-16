@@ -63,6 +63,16 @@ public class MongoService {
     }
 
     /**
+     * Mi da un fermataDTO partendo dal suo id
+     *
+     * @param idFermata
+     * @return
+     */
+    public FermataDTO getFermataById(Integer idFermata) {
+        return new FermataDTO(fermataRepository.findById(idFermata).get());
+    }
+
+    /**
      * Salva una linea sul DB
      *
      * @param lineaDTO
@@ -99,76 +109,78 @@ public class MongoService {
 
 
     /**
-     * Aggiunge una nuova prenotazione al db. Controlla se esiste già una prenotazione per lo stesso utente nello
-     * stesso giorno con lo stesso verso, in tal caso l'inserimento non viene eseguito
+     * Aggiunge una nuova prenotazione al db. Controlla:
+     * - se per quella Linea esiste una fermata con quel id
+     * - se esiste già una prenotazione per lo stesso utente nello stesso giorno con lo stesso verso, in tal caso l'inserimento non viene eseguito
      *
      * @param prenotazioneDTO
      */
     public String addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
-        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-        PrenotazioneEntity checkPren = prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(), prenotazioneDTO.getData(), prenotazioneDTO.getVerso());
-        String id;
-        if (checkPren == null)
-            id = prenotazioneRepository.save(prenotazioneEntity).getId().toString();
-        else
-            id = "Prenotazione non valida";
-        return id;
-        //return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
-    }
-
-
-    /**
-     * Metodo utilizzato per aggiornare una vecchia prenotazione tramite il suo reservationId con uno dei
-     * nuovi campi passati dall'utente
-     *
-     * @param prenotazioneDTO contiene i nuovi dati
-     */
-    public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId) {
-        PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(reservationId);
-        prenotazioneEntity.update(prenotazioneDTO);
-        prenotazioneRepository.save(prenotazioneEntity);
-    }
-
-
-    public PrenotazioneEntity getPrenotazione(ObjectId reservationId) {
-        return prenotazioneRepository.findById(reservationId);
-    }
-
-    /**
-     * Elimina la prenotazione indicata dall'objectId controllando che i dettagli siano consistenti
-     * @param nomeLinea
-     * @param data
-     * @param reservationId
-     */
-    public void deletePrenotazione(String nomeLinea, Date data, ObjectId reservationId ) {
-        PrenotazioneEntity checkPren = prenotazioneRepository.findById(reservationId);
-        if (checkPren.getData().equals(data) && getLineById(checkPren.getIdLinea()).getNome().equals(nomeLinea))
-        {
-            prenotazioneRepository.delete(checkPren);
+        FermataDTO fermataDTO = this.getFermataById(prenotazioneDTO.getIdFermata());
+        if (this.getLineById(prenotazioneDTO.getIdLinea()).getAndata().contains(fermataDTO) || this.getLineById(prenotazioneDTO.getIdLinea()).getRitorno().contains(fermataDTO)) {
+            PrenotazioneEntity checkPren = prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(), prenotazioneDTO.getData(), prenotazioneDTO.getVerso());
+            if (checkPren == null) {
+                PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
+                return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
+            } else {
+                throw new IllegalArgumentException();
+            }
         }
-        else
-        {
+        else {
             throw new IllegalArgumentException();
         }
-
     }
 
 
-    public void findPrenotazione(PrenotazioneDTO prenotazioneDTO) {
-        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-    }
+        /**
+         * Metodo utilizzato per aggiornare una vecchia prenotazione tramite il suo reservationId con uno dei
+         * nuovi campi passati dall'utente
+         *
+         * @param prenotazioneDTO contiene i nuovi dati
+         */
+        public void updatePrenotazione (PrenotazioneDTO prenotazioneDTO, ObjectId reservationId){
+            PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(reservationId);
+            prenotazioneEntity.update(prenotazioneDTO);
+            prenotazioneRepository.save(prenotazioneEntity);
+        }
 
-    public List<String> findAlunniFermata(Date data, Integer id, boolean verso) {
-        List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
-        return prenotazioni.stream().map(p -> p.getNomeAlunno()).collect(Collectors.toList());
 
-    }
+        public PrenotazioneEntity getPrenotazione (ObjectId reservationId){
+            return prenotazioneRepository.findById(reservationId);
+        }
 
-    public boolean LineaUpdated(LineaDTO lineaDTO) {
-        LineaEntity linea = new LineaEntity(lineaDTO);
-        String ultimaModifica = lineaRepository.findByNome(linea.getNome()).getUltimaModifica();
-        if (ultimaModifica != null) // se il campo ultimaModifica non e' presente forse torna null
-            return linea.getUltimaModifica().compareToIgnoreCase(ultimaModifica) >= 0;
-        else return false;
+        /**
+         * Elimina la prenotazione indicata dall'objectId controllando che i dettagli siano consistenti
+         * @param nomeLinea
+         * @param data
+         * @param reservationId
+         */
+        public void deletePrenotazione (String nomeLinea, Date data, ObjectId reservationId ){
+            PrenotazioneEntity checkPren = prenotazioneRepository.findById(reservationId);
+            if (checkPren.getData().equals(data) && getLineById(checkPren.getIdLinea()).getNome().equals(nomeLinea)) {
+                prenotazioneRepository.delete(checkPren);
+            } else {
+                throw new IllegalArgumentException();
+            }
+
+        }
+
+
+        public void findPrenotazione (PrenotazioneDTO prenotazioneDTO){
+            PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
+        }
+
+        public List<String> findAlunniFermata (Date data, Integer id,boolean verso){
+            List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
+            return prenotazioni.stream().map(p -> p.getNomeAlunno()).collect(Collectors.toList());
+
+        }
+
+        public boolean LineaUpdated (LineaDTO lineaDTO){
+            LineaEntity linea = new LineaEntity(lineaDTO);
+            String ultimaModifica = lineaRepository.findByNome(linea.getNome()).getUltimaModifica();
+            if (ultimaModifica != null) // se il campo ultimaModifica non e' presente forse torna null
+                return linea.getUltimaModifica().compareToIgnoreCase(ultimaModifica) >= 0;
+            else return false;
+        }
     }
-}
