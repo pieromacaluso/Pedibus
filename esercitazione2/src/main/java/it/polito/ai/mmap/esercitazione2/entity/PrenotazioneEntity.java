@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Data
-@Document(collection = "Prenotazioni")
+@Document(collection = "reservations")
 public class PrenotazioneEntity {
     @Id
     private ObjectId id;

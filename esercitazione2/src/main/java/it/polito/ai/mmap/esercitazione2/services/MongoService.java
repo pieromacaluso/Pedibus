@@ -79,13 +79,13 @@ public class MongoService {
      * @param lineName
      * @return LineaDTO
      */
-    public LineaDTO getLine(String lineName) {
+    public LineaDTO getLineByName(String lineName) {
         return new LineaDTO(lineaRepository.findByNome(lineName), this); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
 
     }
 
-    public Optional<LineaEntity> getLine(Integer idLinea) {
-        return lineaRepository.findById(idLinea);       //ToDo perchè deve essere per forza Optional?
+    public LineaDTO getLineById(Integer idLinea) {
+        return new LineaDTO(lineaRepository.findById(idLinea).get(), this);
     }
 
 
@@ -135,19 +135,22 @@ public class MongoService {
     }
 
     /**
-     * Elimina prenotazione selezionata
-     *
-     * @param prenotazioneDTO
+     * Elimina la prenotazione indicata dall'objectId controllando che i dettagli siano consistenti
+     * @param nomeLinea
+     * @param data
+     * @param reservationId
      */
-    public void deletePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId) {
-        PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO); //todo check prenotazione dto corrispondente a quel reservationId
-        prenotazioneEntity.setId(reservationId);
+    public void deletePrenotazione(String nomeLinea, Date data, ObjectId reservationId ) {
         PrenotazioneEntity checkPren = prenotazioneRepository.findById(reservationId);
-        if (prenotazioneEntity.equals(checkPren)) {
-            prenotazioneRepository.delete(prenotazioneEntity);
-        } else {
-            //todo vedere se ritornare qualcosa
+        if (checkPren.getData().equals(data) && getLineById(checkPren.getIdLinea()).getNome().equals(nomeLinea))
+        {
+            prenotazioneRepository.delete(checkPren);
         }
+        else
+        {
+            throw new IllegalArgumentException();
+        }
+
     }
 
 

@@ -15,10 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -68,7 +64,7 @@ public class HomeController {
      */
     @GetMapping("/lines/{nome_linea}")
     public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
-        return mongoService.getLine(name);
+        return mongoService.getLineByName(name);
     }
 
     /**
@@ -88,7 +84,7 @@ public class HomeController {
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         Date date=getDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLine(nomeLinea).getId(), date);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getId(), date);
         String id=mongoService.addPrenotazione(prenotazioneDTO);
         return id;      //todo verificare se va bene,in caso di errore ritorna "prenotazione non valida"
     }
@@ -101,7 +97,7 @@ public class HomeController {
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date date=getDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLine(nomeLinea).getId(), date);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getId(), date);
         mongoService.updatePrenotazione(prenotazioneDTO,reservationId);
     }
 
@@ -112,8 +108,7 @@ public class HomeController {
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")        //todo check forse non cancella dal db
     public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date date=getDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(mongoService.getPrenotazione(reservationId), mongoService.getLine(nomeLinea).getId());
-        mongoService.deletePrenotazione(prenotazioneDTO,reservationId);
+        mongoService.deletePrenotazione(nomeLinea,date, reservationId);
     }
 
     /**
@@ -126,11 +121,11 @@ public class HomeController {
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         PrenotazioneEntity prenotazioneEntity=mongoService.getPrenotazione(reservationId);
-        LineaEntity lineaEntity=new LineaEntity(mongoService.getLine(nomeLinea));
+        LineaEntity lineaEntity=new LineaEntity(mongoService.getLineByName(nomeLinea));
         if(lineaEntity.getId()==prenotazioneEntity.getIdLinea()){
             return new PrenotazioneDTO(prenotazioneEntity,lineaEntity.getId());
         }else{
-            return null;    //todo parametro da restituire per errore
+            throw new IllegalArgumentException();
         }
     }
 
