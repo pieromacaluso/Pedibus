@@ -43,7 +43,7 @@ public class HomeController {
     @PostConstruct
     public void init() throws Exception {
         logger.info("Caricamento linee in corso...");
-        jsonHandlerService.readPiedibusLines();             //todo verificare se possibile evitare se non ci sono modifiche
+        jsonHandlerService.readPiedibusLines();
         logger.info("Caricamento linee completato.");
     }
 
@@ -110,9 +110,9 @@ public class HomeController {
      *
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")        //todo check forse non cancella dal db
-    public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+    public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date date=getDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLine(nomeLinea).getId(), date);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(mongoService.getPrenotazione(reservationId), mongoService.getLine(nomeLinea).getId());
         mongoService.deletePrenotazione(prenotazioneDTO,reservationId);
     }
 
