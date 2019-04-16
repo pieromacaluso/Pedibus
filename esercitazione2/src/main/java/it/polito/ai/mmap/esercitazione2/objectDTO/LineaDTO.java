@@ -21,11 +21,12 @@ public class LineaDTO {
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
 
-    public LineaDTO(){}
+    public LineaDTO() {
+    }
 
     /**
-     * TODO sarebbe bello passargli solo la LineaEntity e poi usare un mongoService per recuperarsi le altre informazioni, ma @Autowired non funziona su oggetti dichairati con new (?)
      * Crea una lineaDTO inserendo tutte le info sulle fermate
+     *
      * @param line
      * @param mongoService
      */

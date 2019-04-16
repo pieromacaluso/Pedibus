@@ -69,7 +69,11 @@ public class HomeController {
      */
     @GetMapping("/lines/{nome_linea}")
     public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
-        return lineService.getLine(name);
+
+            return lineService.getLine(name);
+
+
+
     }
 
     /**
