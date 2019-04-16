@@ -36,17 +36,6 @@ public class MongoService {
 
 
     /**
-     * Salva una linea sul DB
-     *
-     * @param lineaDTO
-     */
-    public void addLinea(LineaDTO lineaDTO) {
-        LineaEntity lineaEntity = new LineaEntity(lineaDTO);
-        lineaRepository.save(lineaEntity);
-
-    }
-
-    /**
      * Salva fermate dul DB
      *
      * @param listaFermate
@@ -60,18 +49,6 @@ public class MongoService {
                 .collect(Collectors.toList()));
     }
 
-
-    public List<LineaEntity> getAllLines() {
-        return lineaRepository.findAll();
-    }
-
-    public LineaEntity getLine(String lineName) {
-        return lineaRepository.findByNome(lineName);       //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
-    }
-    public Optional<LineaEntity> getLine(Integer idLinea){
-        return lineaRepository.findById(idLinea);       //ToDo perchè deve essere per forza Optional?
-    }
-
     /**
      * Legge da db tutte le fermate presenti nella lista idFermata
      *
@@ -83,6 +60,39 @@ public class MongoService {
         fermate.sort(Comparator.comparing(FermataEntity::getOrario));                                  //ordinate per orario e non per id
         return fermate;
     }
+
+    /**
+     * Salva una linea sul DB
+     *
+     * @param lineaDTO
+     */
+    public void addLinea(LineaDTO lineaDTO) {
+        LineaEntity lineaEntity = new LineaEntity(lineaDTO);
+        lineaRepository.save(lineaEntity);
+
+    }
+
+    /**
+     * Metodo che restituisce una LineaDTO a partire dal suo nome
+     * @param lineName
+     * @return LineaDTO
+     */
+    public LineaDTO getLine(String lineName) {
+        return new LineaDTO( lineaRepository.findByNome(lineName), this); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
+
+    }
+    public Optional<LineaEntity> getLine(Integer idLinea){
+        return lineaRepository.findById(idLinea);       //ToDo perchè deve essere per forza Optional?
+    }
+
+
+    public List<LineaEntity> getAllLines() {
+        return lineaRepository.findAll();
+    }
+
+
+
+
 
 
     /**

@@ -2,15 +2,11 @@ package it.polito.ai.mmap.esercitazione2.resources;
 
 
 import it.polito.ai.mmap.esercitazione2.objectDTO.FermataDTO;
-import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
-import it.polito.ai.mmap.esercitazione2.services.LineService;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ResourceSupport;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,18 +29,18 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
         }
     }
 
-    public GetReservationsNomeLineaDataResource(String nomeLina,String data,LineService lineService,MongoService mongoService){
+    public GetReservationsNomeLineaDataResource(String nomeLina,String data, MongoService mongoService){
 
         //LineaDTO linea=lineService.getLine(nomeLina);                   //todo check nomelinea non esistente
 
-        alunniPerFermataAndata=(lineService.getLine(nomeLina)).getAndata().stream() //ordinati temporalmente, quindi seguendo l'andamento del percorso
+        alunniPerFermataAndata=(mongoService.getLine(nomeLina)).getAndata().stream() //ordinati temporalmente, quindi seguendo l'andamento del percorso
                 .map(fermataDTO -> new FermataDTOAlunni(fermataDTO))
                 .collect(Collectors.toList());
         alunniPerFermataAndata.forEach((f)->{
                 f.setAlunni(mongoService.findAlunniFermata(data,f.getFermata().getId(),true));    //true per indicare l'andata
         });
 
-        alunniPerFermataRitorno=(lineService.getLine(nomeLina)).getRitorno().stream()
+        alunniPerFermataRitorno=(mongoService.getLine(nomeLina)).getRitorno().stream()
                 .map(fermataDTO -> new FermataDTOAlunni(fermataDTO))
                 .collect(Collectors.toList());
         alunniPerFermataRitorno.forEach((f)->{
