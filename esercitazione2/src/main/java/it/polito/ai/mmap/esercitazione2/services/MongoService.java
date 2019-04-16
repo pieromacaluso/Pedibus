@@ -90,6 +90,9 @@ public class MongoService {
     public List<LineaEntity> getAllLines() {
         return lineaRepository.findAll();
     }
+    public List<String> getAllLinesNames() {
+        return lineaRepository.findAll().stream().map(f->f.getNome()).collect(Collectors.toList());
+    }
 
 
 
@@ -104,14 +107,14 @@ public class MongoService {
      */
     public String addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-       /* PrenotazioneEntity checkPren=prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
+       PrenotazioneEntity checkPren=prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
         String id;
         if(checkPren==null)
             id=prenotazioneRepository.save(prenotazioneEntity).getId().toString();
         else
             id="Prenotazione non valida";
-        return id;*/
-       return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
+        return id;
+       //return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
     }
 
 
