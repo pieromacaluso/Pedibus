@@ -2,15 +2,13 @@ package it.polito.ai.mmap.esercitazione2.objectDTO;
 
 import it.polito.ai.mmap.esercitazione2.entity.FermataEntity;
 import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
+import it.polito.ai.mmap.esercitazione2.repository.FermataRepository;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -29,13 +27,19 @@ public class LineaDTO {
      * Crea una lineaDTO inserendo tutte le info sulle fermate
      *
      * @param line
-     * @param mongoService
+     * @param
      */
-    public LineaDTO(LineaEntity line, MongoService mongoService) {
+    public LineaDTO(LineaEntity line, FermataRepository fermataRepository) {
         this.id = line.getId();
         this.nome = line.getNome();
         this.admin = line.getAdmin();
-        this.andata = mongoService.getFermate(line.getAndata()).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
-        this.ritorno = mongoService.getFermate(line.getAndata()).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
+
+        //TODO il repository non dovrebbe servire e manca il sort (?)
+        //fermate.sort(Comparator.comparing(FermataEntity::getOrario));
+        //this.andata = fermataRepository.findAllById(line.getAndata()).stream().map(fermataEntity -> new FermataDTO(fermataEntity)).collect(Collectors.toCollection(ArrayList::new));
+        //this.ritorno = fermataRepository.findAllById(line.getRitorno()).stream().map(fermataEntity -> new FermataDTO(fermataEntity)).collect(Collectors.toCollection(ArrayList::new));
+        this.andata = fermataRepository.findAllByNomeLineaAndVerso(nome,true).stream().map(fermataEntity -> new FermataDTO(fermataEntity)).collect(Collectors.toCollection(ArrayList::new)); //TODO True è andata giusto ?
+        this.ritorno = fermataRepository.findAllByNomeLineaAndVerso(nome,false).stream().map(fermataEntity -> new FermataDTO(fermataEntity)).collect(Collectors.toCollection(ArrayList::new));
+
     }
 }

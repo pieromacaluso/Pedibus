@@ -19,7 +19,7 @@ public class PrenotazioneEntity {
     private String nomeAlunno;
     private Date data;
     private boolean verso;
-    private Integer idFermata;
+    private String idFermata;
     private Integer idLinea;
 
     // non eliminare

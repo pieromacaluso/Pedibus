@@ -65,6 +65,8 @@ public class HomeController {
      */
     @GetMapping("/lines/{nome_linea}")
     public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
+        LineaDTO lineaDTO = mongoService.getLineByName(name);
+        lineaDTO.getAndata().stream().forEach(fer -> logger.info(fer.getNome()));
         return mongoService.getLineByName(name);
     }
 
@@ -111,7 +113,7 @@ public class HomeController {
     }
 
     /**
-     * Restituisce la prenotazione
+     * Restituisce la prenotazione controllando che nomeLinea e Data corrispondano a quelli del reservation_id
      *
      * @param nomeLinea
      * @param data
@@ -120,13 +122,13 @@ public class HomeController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        PrenotazioneEntity prenotazioneEntity = mongoService.getPrenotazione(reservationId);
-        LineaEntity lineaEntity = new LineaEntity(mongoService.getLineByName(nomeLinea));
-        if (lineaEntity.getId() == prenotazioneEntity.getIdLinea()) {
-            return new PrenotazioneDTO(prenotazioneEntity, lineaEntity.getId());
-        } else {
+        Date dataFormatted = getDate(data);
+        PrenotazioneEntity checkPren = mongoService.getPrenotazione(reservationId);
+
+        if (mongoService.getLineByName(nomeLinea).getId() == checkPren.getIdLinea() && dataFormatted.equals(checkPren.getData()))
+            return new PrenotazioneDTO(checkPren);
+        else
             throw new IllegalArgumentException();
-        }
     }
 
     public Date getDate(String data) {      //data nel formato AAAA-MM-DD

@@ -37,20 +37,28 @@ public class JsonHandlerService {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
+        mongoService.removeFermate(); //TODO al momento le cancello e riscrivo ogni volta perchè non sovrascrive
         for (int i = 1; i < countPiedibusLine; i++) {
             try {
 
                 LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i + ".json"), LineaDTO.class);
-                // aggiorno la linea solo se non aggiornata
-                if (!mongoService.LineaUpdated(lineaDTO)) {
-                    mongoService.addLinea(lineaDTO);
-                    mongoService.addFermate(lineaDTO.getAndata());
-                    mongoService.addFermate(lineaDTO.getRitorno());
-                    logger.info("Linea " + lineaDTO.getId() + " caricata e salvata.");
-                } else {
-                    logger.info("Linea " + lineaDTO.getId() + "gia' aggiornata.");
-                }
+                // aggiorno la linea solo se non aggiornata //TODO per debug
+                //if (!mongoService.LineaUpdated(lineaDTO) || mongoService.LineaUpdated(lineaDTO)) {
+                lineaDTO.getAndata().stream().forEach(fermataDTO -> {
+                    fermataDTO.setVerso(true); //TODO andata è true vero ?
+                    fermataDTO.setNomeLinea(lineaDTO.getNome());
+                });
+                lineaDTO.getRitorno().stream().forEach(fermataDTO -> {
+                    fermataDTO.setVerso(false); //TODO andata è true vero ?
+                    fermataDTO.setNomeLinea(lineaDTO.getNome());
+                });
+
+                mongoService.addFermate(lineaDTO.getAndata());
+                mongoService.addFermate(lineaDTO.getRitorno());
+                mongoService.addLinea(lineaDTO);
+                logger.info("Linea " + lineaDTO.getId() + " caricata e salvata.");
+                //} else
+                //    logger.info("Linea " + lineaDTO.getId() + "gia' aggiornata.");
 
 
             } catch (IOException e) {

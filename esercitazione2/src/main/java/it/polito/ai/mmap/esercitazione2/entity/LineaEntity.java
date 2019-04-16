@@ -2,8 +2,12 @@ package it.polito.ai.mmap.esercitazione2.entity;
 
 import it.polito.ai.mmap.esercitazione2.objectDTO.FermataDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
+import it.polito.ai.mmap.esercitazione2.repository.FermataRepository;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import lombok.Data;
+import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,9 +26,11 @@ public class LineaEntity {
     private Integer id;
     private String nome;
     private String admin;
-    private List<Integer> andata;
-    private List<Integer> ritorno;
+    private ArrayList<String> andata;
+    private ArrayList<String> ritorno;
     private String ultimaModifica;
+
+
 
     public LineaEntity() {
 
@@ -35,12 +41,14 @@ public class LineaEntity {
      *
      * @param lineaDTO
      */
-    public LineaEntity(LineaDTO lineaDTO) {
+    public LineaEntity(LineaDTO lineaDTO, FermataRepository fermataRepository) {
+
         this.id = lineaDTO.getId();
         this.nome = lineaDTO.getNome();
         this.admin = lineaDTO.getAdmin();
-        this.andata = lineaDTO.getAndata().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toList());
-        this.ritorno = lineaDTO.getRitorno().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toList());
+//TODO il repository non dovrebbe servire
+        this.andata = fermataRepository.findAllByNomeLineaAndVerso(nome,true).stream().map(fermataEntity -> fermataEntity.getId()).collect(Collectors.toCollection(ArrayList::new)); //TODO True è andata giusto ?
+        this.ritorno = fermataRepository.findAllByNomeLineaAndVerso(nome,false).stream().map(fermataEntity -> fermataEntity.getId()).collect(Collectors.toCollection(ArrayList::new));
         this.ultimaModifica = "" + LocalDate.now().getDayOfMonth() + "-" + LocalDate.now().getMonthValue() + "-" + LocalDate.now().getYear();
     }
 

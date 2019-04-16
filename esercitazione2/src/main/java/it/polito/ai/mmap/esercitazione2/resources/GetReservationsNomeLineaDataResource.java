@@ -31,9 +31,6 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
     }
 
     public GetReservationsNomeLineaDataResource(String nomeLina, Date data, MongoService mongoService){
-
-        //LineaDTO linea=lineService.getLineByName(nomeLina);                   //todo check nomelinea non esistente
-
         alunniPerFermataAndata=(mongoService.getLineByName(nomeLina)).getAndata().stream() //ordinati temporalmente, quindi seguendo l'andamento del percorso
                 .map(fermataDTO -> new FermataDTOAlunni(fermataDTO))
                 .collect(Collectors.toList());
@@ -47,7 +44,5 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
         alunniPerFermataRitorno.forEach((f)->{
                     f.setAlunni(mongoService.findAlunniFermata(data,f.getFermata().getId(),false));    //false per indicare il ritorno
                 });
-
-        System.out.println("Studenti per fermate ottenuti");
     }
 }

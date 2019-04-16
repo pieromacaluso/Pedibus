@@ -4,6 +4,7 @@ import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione2.resources.PrenotazioneResource;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import lombok.Data;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ import java.util.Date;
 public class PrenotazioneDTO {
     String nomeAlunno;
     Date data;
-    Integer idFermata;
+    String idFermata;
     Integer idLinea;
     Boolean verso;
 
@@ -29,9 +30,9 @@ public class PrenotazioneDTO {
         idFermata = prenotazioneResource.getIdFermata();
         nomeAlunno = prenotazioneResource.getNomeAlunno();
     }
-    public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity, Integer idLinea) {
+    public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity) {
         this.data = prenotazioneEntity.getData();
-        this.idLinea = idLinea;
+        this.idLinea = prenotazioneEntity.getIdLinea();
         verso = prenotazioneEntity.isVerso();
         idFermata = prenotazioneEntity.getIdFermata();
         nomeAlunno = prenotazioneEntity.getNomeAlunno();
