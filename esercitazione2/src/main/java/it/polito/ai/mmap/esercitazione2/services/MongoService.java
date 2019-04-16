@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -103,14 +104,16 @@ public class MongoService {
      */
     public String addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-        PrenotazioneEntity checkPren=prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
+       /* PrenotazioneEntity checkPren=prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
         String id;
         if(checkPren==null)
             id=prenotazioneRepository.save(prenotazioneEntity).getId().toString();
         else
             id="Prenotazione non valida";
-        return id;
+        return id;*/
+       return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
     }
+
 
 
     /**
@@ -124,6 +127,7 @@ public class MongoService {
         prenotazioneEntity.update(prenotazioneDTO);
         prenotazioneRepository.save(prenotazioneEntity);
     }
+
 
     public PrenotazioneEntity getPrenotazione(ObjectId reservationId){
         return prenotazioneRepository.findById(reservationId);
@@ -143,7 +147,6 @@ public class MongoService {
         }else{
             //todo vedere se ritornare qualcosa
         }
-
     }
 
 
@@ -151,7 +154,7 @@ public class MongoService {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
     }
 
-    public List<String> findAlunniFermata(String data,Integer id,boolean verso) {
+    public List<String> findAlunniFermata(Date data,Integer id,boolean verso) {
         List<PrenotazioneEntity> prenotazioni=prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data,id,verso);
         return prenotazioni.stream().map(p->p.getNomeAlunno()).collect(Collectors.toList());
 

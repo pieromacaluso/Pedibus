@@ -9,14 +9,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Data
-@Document(collection = "reservations")
+@Document(collection = "prenotazioneEntityData")
 public class PrenotazioneEntity {
     @Id
     private ObjectId id;
     private String nomeAlunno;
-    private String data;
+    private Date data;
     private boolean verso;
     private Integer idFermata;
     private Integer idLinea;
