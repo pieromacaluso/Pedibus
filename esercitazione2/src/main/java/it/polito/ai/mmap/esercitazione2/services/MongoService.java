@@ -75,14 +75,16 @@ public class MongoService {
 
     /**
      * Metodo che restituisce una LineaDTO a partire dal suo nome
+     *
      * @param lineName
      * @return LineaDTO
      */
     public LineaDTO getLine(String lineName) {
-        return new LineaDTO( lineaRepository.findByNome(lineName), this); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
+        return new LineaDTO(lineaRepository.findByNome(lineName), this); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
 
     }
-    public Optional<LineaEntity> getLine(Integer idLinea){
+
+    public Optional<LineaEntity> getLine(Integer idLinea) {
         return lineaRepository.findById(idLinea);       //ToDo perchè deve essere per forza Optional?
     }
 
@@ -90,13 +92,10 @@ public class MongoService {
     public List<LineaEntity> getAllLines() {
         return lineaRepository.findAll();
     }
+
     public List<String> getAllLinesNames() {
-        return lineaRepository.findAll().stream().map(f->f.getNome()).collect(Collectors.toList());
+        return lineaRepository.findAll().stream().map(f -> f.getNome()).collect(Collectors.toList());
     }
-
-
-
-
 
 
     /**
@@ -107,32 +106,31 @@ public class MongoService {
      */
     public String addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
-       PrenotazioneEntity checkPren=prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(),prenotazioneDTO.getData(),prenotazioneDTO.getVerso());
+        PrenotazioneEntity checkPren = prenotazioneRepository.findByNomeAlunnoAndDataAndVerso(prenotazioneDTO.getNomeAlunno(), prenotazioneDTO.getData(), prenotazioneDTO.getVerso());
         String id;
-        if(checkPren==null)
-            id=prenotazioneRepository.save(prenotazioneEntity).getId().toString();
+        if (checkPren == null)
+            id = prenotazioneRepository.save(prenotazioneEntity).getId().toString();
         else
-            id="Prenotazione non valida";
+            id = "Prenotazione non valida";
         return id;
-       //return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
+        //return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
     }
 
 
-
     /**
-     *Metodo utilizzato per aggiornare una vecchia prenotazione tramite il suo reservationId con uno dei
+     * Metodo utilizzato per aggiornare una vecchia prenotazione tramite il suo reservationId con uno dei
      * nuovi campi passati dall'utente
+     *
      * @param prenotazioneDTO contiene i nuovi dati
      */
-    public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId)
-    {
+    public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId) {
         PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(reservationId);
         prenotazioneEntity.update(prenotazioneDTO);
         prenotazioneRepository.save(prenotazioneEntity);
     }
 
 
-    public PrenotazioneEntity getPrenotazione(ObjectId reservationId){
+    public PrenotazioneEntity getPrenotazione(ObjectId reservationId) {
         return prenotazioneRepository.findById(reservationId);
     }
 
@@ -141,13 +139,13 @@ public class MongoService {
      *
      * @param prenotazioneDTO
      */
-    public void deletePrenotazione(PrenotazioneDTO prenotazioneDTO,ObjectId reservationId) {
+    public void deletePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId) {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO); //todo check prenotazione dto corrispondente a quel reservationId
         prenotazioneEntity.setId(reservationId);
-        PrenotazioneEntity checkPren=prenotazioneRepository.findById(reservationId);
-        if(prenotazioneEntity.equals(checkPren)){
+        PrenotazioneEntity checkPren = prenotazioneRepository.findById(reservationId);
+        if (prenotazioneEntity.equals(checkPren)) {
             prenotazioneRepository.delete(prenotazioneEntity);
-        }else{
+        } else {
             //todo vedere se ritornare qualcosa
         }
     }
@@ -157,9 +155,17 @@ public class MongoService {
         PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
     }
 
-    public List<String> findAlunniFermata(Date data,Integer id,boolean verso) {
-        List<PrenotazioneEntity> prenotazioni=prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data,id,verso);
-        return prenotazioni.stream().map(p->p.getNomeAlunno()).collect(Collectors.toList());
+    public List<String> findAlunniFermata(Date data, Integer id, boolean verso) {
+        List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
+        return prenotazioni.stream().map(p -> p.getNomeAlunno()).collect(Collectors.toList());
 
+    }
+
+    public boolean LineaUpdated(LineaDTO lineaDTO) {
+        LineaEntity linea = new LineaEntity(lineaDTO);
+        String ultimaModifica = lineaRepository.findByNome(linea.getNome()).getUltimaModifica();
+        if (ultimaModifica != null) // se il campo ultimaModifica non e' presente forse torna null
+            return linea.getUltimaModifica().compareToIgnoreCase(ultimaModifica) >= 0;
+        else return false;
     }
 }

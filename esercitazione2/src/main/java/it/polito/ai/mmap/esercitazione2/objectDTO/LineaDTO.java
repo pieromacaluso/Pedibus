@@ -6,6 +6,7 @@ import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,8 +19,8 @@ public class LineaDTO {
     private Integer id;
     private String nome;
     private String admin;
-    ArrayList<FermataDTO> andata;
-    ArrayList<FermataDTO> ritorno;
+    private ArrayList<FermataDTO> andata;
+    private ArrayList<FermataDTO> ritorno;
 
     public LineaDTO() {
     }

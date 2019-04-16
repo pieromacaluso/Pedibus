@@ -42,11 +42,17 @@ public class JsonHandlerService {
             try {
 
                 LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i + ".json"), LineaDTO.class);
-                //logger.info(lineaDTO.toString());
-                mongoService.addLinea(lineaDTO);
-                mongoService.addFermate(lineaDTO.getAndata());
-                mongoService.addFermate(lineaDTO.getRitorno());
-                logger.info("Linea " + lineaDTO.getId() + " caricata e salvata.");
+                // aggiorno la linea solo se non aggiornata
+                if (!mongoService.LineaUpdated(lineaDTO)) {
+                    mongoService.addLinea(lineaDTO);
+                    mongoService.addFermate(lineaDTO.getAndata());
+                    mongoService.addFermate(lineaDTO.getRitorno());
+                    logger.info("Linea " + lineaDTO.getId() + " caricata e salvata.");
+                } else {
+                    logger.info("Linea " + lineaDTO.getId() + "gia' aggiornata.");
+                }
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

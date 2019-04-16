@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +22,9 @@ public class LineaEntity {
     private Integer id;
     private String nome;
     private String admin;
-    List<Integer> andata;
-    List<Integer> ritorno;
+    private List<Integer> andata;
+    private List<Integer> ritorno;
+    private String ultimaModifica;
 
     public LineaEntity() {
 
@@ -39,6 +41,7 @@ public class LineaEntity {
         this.admin = lineaDTO.getAdmin();
         this.andata = lineaDTO.getAndata().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toList());
         this.ritorno = lineaDTO.getRitorno().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toList());
+        this.ultimaModifica = "" + LocalDate.now().getDayOfMonth() + "-" + LocalDate.now().getMonthValue() + "-" + LocalDate.now().getYear();
     }
 
 

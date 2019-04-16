@@ -1,0 +1,46 @@
+POST http://localhost:8080/reservations/linea1/20-10-2019
+Content-Type: application/json
+
+{
+  "nomeAlunno": "Marco Nanci",
+  "data": "20-10-2019",
+  "verso": true,
+  "idFermata": 1,
+  "idLinea": 1
+}
+
+###
+
+POST http://localhost:8080/reservations/linea1/20-10-2019
+Content-Type: application/json
+
+{
+  "nomeAlunno": "Marco Nanci",
+  "data": "20-10-2019",
+  "verso": true,
+  "idFermata": 1,
+  "idLinea": 1
+}
+
+<> 2019-04-15T103224.200.txt
+
+###
+
+POST http://localhost:8080/reservations/linea1/20-10-2019
+Accept: application/json
+Cache-Control: no-cache
+
+{     "nomeAlunno": "Marco Nanci",     "data": "20-10-1019",     "verso": true,     "idFermata": 1,     "idLinea": 1 }
+
+<> 2019-04-15T102622.415.json
+
+###
+
+POST http://localhost:8080/reservations/linea1/20-10-2019
+Accept: application/json
+Cache-Control: no-cache
+
+{     "nomeAlunno": "Marco Nanci",     "data": "20-10-1019",     "verso": true,     "idFermata": 1,     "idLinea": 1 }
+
+###
+
