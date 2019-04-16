@@ -4,15 +4,15 @@ import it.polito.ai.mmap.esercitazione2.entity.FermataEntity;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 
 @Data
 public class FermataDTO {
 
-    private String id;
+    private Integer id;
     private String nome;
     private String orario;
-    private String nomeLinea;
-    private Boolean verso;
+
 
     public FermataDTO() {
     }
@@ -26,8 +26,6 @@ public class FermataDTO {
         id = fermataEntity.getId();
         nome = fermataEntity.getName();
         orario = fermataEntity.getOrario();
-        this.verso = fermataEntity.getVerso();
-        this.nomeLinea = fermataEntity.getNomeLinea();
     }
 
 }

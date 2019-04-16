@@ -2,13 +2,9 @@ package it.polito.ai.mmap.esercitazione2.entity;
 
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
 import lombok.Data;
-import lombok.Value;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -19,7 +15,7 @@ public class PrenotazioneEntity {
     private String nomeAlunno;
     private Date data;
     private boolean verso;
-    private String idFermata;
+    private Integer idFermata;
     private Integer idLinea;
 
     // non eliminare

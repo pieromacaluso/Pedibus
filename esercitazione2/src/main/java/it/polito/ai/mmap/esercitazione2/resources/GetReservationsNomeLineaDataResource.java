@@ -5,7 +5,6 @@ import it.polito.ai.mmap.esercitazione2.objectDTO.FermataDTO;
 import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import lombok.Data;
 import org.springframework.hateoas.ResourceSupport;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +30,7 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
     }
 
     public GetReservationsNomeLineaDataResource(String nomeLina, Date data, MongoService mongoService){
+
         alunniPerFermataAndata=(mongoService.getLineByName(nomeLina)).getAndata().stream() //ordinati temporalmente, quindi seguendo l'andamento del percorso
                 .map(fermataDTO -> new FermataDTOAlunni(fermataDTO))
                 .collect(Collectors.toList());

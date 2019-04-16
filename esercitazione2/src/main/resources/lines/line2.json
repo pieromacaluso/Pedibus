@@ -4,36 +4,44 @@
   "admin": "Sandro",
   "andata": [
     {
+      "id": 100,
       "nome": "Olimpico",
       "orario": "07:20"
     },
     {
+      "id": 101,
       "nome": "Caserma Morelli",
       "orario": "07:30"
     },
     {
+      "id": 102,
       "nome": "Orbassano",
       "orario": "07:40"
     },
     {
+      "id": 103,
       "nome": "Scuola",
       "orario": "08:00"
     }
   ],
   "ritorno": [
     {
+      "id": 104,
       "nome": "Scuola",
       "orario": "13:10"
     },
     {
+      "id": 105,
       "nome": "Orbassano",
       "orario": "13:30"
     },
     {
+      "id": 106,
       "nome": "Caserma Morelli",
       "orario": "13:45"
     },
     {
+      "id": 107,
       "nome": "Olimpico",
       "orario": "14:00"
     }

@@ -61,7 +61,7 @@ public class MongoService {
      * @param idFermata
      * @return
      */
-    public FermataDTO getFermataById(String idFermata) {
+    public FermataDTO getFermataById(Integer idFermata) {
         return new FermataDTO(fermataRepository.findById(idFermata).get());
     }
 
@@ -71,12 +71,7 @@ public class MongoService {
      * @param lineaDTO
      */
     public void addLinea(LineaDTO lineaDTO) {
-        LineaEntity lineaEntity = new LineaEntity(lineaDTO, fermataRepository);
-        if(lineaEntity.getAndata().get(0) == null)
-            logger.info("eccoci");
-
-        else
-            logger.info(lineaEntity.getAndata().get(0));
+        LineaEntity lineaEntity = new LineaEntity(lineaDTO);
         lineaRepository.save(lineaEntity);
 
     }
@@ -88,10 +83,7 @@ public class MongoService {
      * @return LineaDTO
      */
     public LineaDTO getLineByName(String lineName) {
-        LineaEntity lineaEntity = lineaRepository.findByNome(lineName);
-        lineaEntity.getAndata().stream().forEach(fer -> logger.info("entity"+fer));
-        return new LineaDTO(lineaEntity, fermataRepository); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
-
+        return new LineaDTO(lineaRepository.findByNome(lineName),fermataRepository); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
     }
 
     public LineaDTO getLineById(Integer idLinea) {
@@ -150,8 +142,6 @@ public class MongoService {
     private Boolean isValidPrenotation(PrenotazioneDTO prenotazioneDTO) {
         FermataDTO fermataDTO = this.getFermataById(prenotazioneDTO.getIdFermata());
         if (this.getLineById(prenotazioneDTO.getIdLinea()).getAndata().contains(fermataDTO) || this.getLineById(prenotazioneDTO.getIdLinea()).getRitorno().contains(fermataDTO)) {
-
-            logger.info("ok");
             return true;
         } else
             throw new IllegalArgumentException();
@@ -178,14 +168,14 @@ public class MongoService {
 
     }
 
-    public List<String> findAlunniFermata(Date data, String id, boolean verso) {
+    public List<String> findAlunniFermata(Date data, Integer id, boolean verso) {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
         return prenotazioni.stream().map(p -> p.getNomeAlunno()).collect(Collectors.toList());
 
     }
 
     public boolean LineaUpdated(LineaDTO lineaDTO) {
-        LineaEntity linea = new LineaEntity(lineaDTO,fermataRepository);
+        LineaEntity linea = new LineaEntity(lineaDTO);
         LineaEntity lineaEntity = lineaRepository.findByNome(linea.getNome());
         if (lineaEntity == null) //TODO da rivedere, messo alla buona se no crasha se le linee non sono già state caricate su db
         {

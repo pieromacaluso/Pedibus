@@ -65,8 +65,6 @@ public class HomeController {
      */
     @GetMapping("/lines/{nome_linea}")
     public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
-        LineaDTO lineaDTO = mongoService.getLineByName(name);
-        lineaDTO.getAndata().stream().forEach(fer -> logger.info(fer.getNome()));
         return mongoService.getLineByName(name);
     }
 
