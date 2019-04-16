@@ -15,22 +15,23 @@ public class PrenotazioneDTO {
     String nomeAlunno;
     String data;
     Integer idFermata;
+    Integer idLinea;
     Boolean verso;
-    LineaDTO lineaDTO;          //todo utile avere tutti i dettagli della linea dietro? valutare se utile sostituire con l'id della linea
 
 
 
 
-    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, LineaDTO lineaDTO, String data) {
+
+    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, Integer idLinea, String data) {
         this.data = data;
-        this.lineaDTO = lineaDTO;
+        this.idLinea = idLinea;
         verso = prenotazioneResource.getVerso();
         idFermata = prenotazioneResource.getIdFermata();
         nomeAlunno = prenotazioneResource.getNomeAlunno();
     }
-    public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity, LineaDTO lineaDTO) {
+    public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity, Integer idLinea) {
         this.data = prenotazioneEntity.getData();
-        this.lineaDTO = lineaDTO;
+        this.idLinea = idLinea;
         verso = prenotazioneEntity.isVerso();
         idFermata = prenotazioneEntity.getIdFermata();
         nomeAlunno = prenotazioneEntity.getNomeAlunno();

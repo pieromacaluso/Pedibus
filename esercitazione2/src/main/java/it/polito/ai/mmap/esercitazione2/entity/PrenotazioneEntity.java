@@ -15,7 +15,6 @@ import java.time.LocalDate;
 public class PrenotazioneEntity {
     @Id
     private ObjectId id;
-    //private CompositeKeyPrenotazione id;
     private String nomeAlunno;
     private String data;
     private boolean verso;
@@ -27,12 +26,11 @@ public class PrenotazioneEntity {
     }
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
-        //id = new CompositeKeyPrenotazione(prenotazioneDTO.getNomeAlunno(), prenotazioneDTO.getData(), prenotazioneDTO.getVerso());
         nomeAlunno=prenotazioneDTO.getNomeAlunno();
         data=prenotazioneDTO.getData();
         verso=prenotazioneDTO.getVerso();
         idFermata = prenotazioneDTO.getIdFermata();
-        idLinea = prenotazioneDTO.getLineaDTO().getId();
+        idLinea = prenotazioneDTO.getIdLinea();
     }
 
     public void update(PrenotazioneDTO prenotazioneDTO) {
@@ -41,7 +39,7 @@ public class PrenotazioneEntity {
         this.data=prenotazioneDTO.getData();
         this.verso=prenotazioneDTO.getVerso();
         this.idFermata = prenotazioneDTO.getIdFermata();
-        this.idLinea = prenotazioneDTO.getLineaDTO().getId();
+        this.idLinea = prenotazioneDTO.getIdLinea();
     }
 
 }

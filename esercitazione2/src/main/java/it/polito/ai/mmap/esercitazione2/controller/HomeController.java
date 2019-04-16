@@ -69,7 +69,7 @@ public class HomeController {
      * Restituisce un oggetto JSON contenente due liste,riportanti, per ogni fermata di andata e ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata
      */
-    @GetMapping("/reservation/{nome_linea}/{data}")
+    @GetMapping("/reservations/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         return new GetReservationsNomeLineaDataResource(nomeLinea,data,lineService,mongoService);
     }
@@ -80,7 +80,7 @@ public class HomeController {
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), data);
         String id=mongoService.addPrenotazione(prenotazioneDTO);
         return id;      //todo verificare se va bene,in caso di errore ritorna "prenotazione non valida"
     }
@@ -91,7 +91,7 @@ public class HomeController {
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data")  String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), data);
         mongoService.updatePrenotazione(prenotazioneDTO,reservationId);
     }
 
@@ -101,7 +101,7 @@ public class HomeController {
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea), data);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineService.getLine(nomeLinea).getId(), data);
         mongoService.deletePrenotazione(prenotazioneDTO,reservationId);
     }
 
@@ -118,8 +118,7 @@ public class HomeController {
         PrenotazioneEntity prenotazioneEntity=mongoService.getPrenotazione(reservationId);
         LineaEntity lineaEntity=mongoService.getLine(nomeLinea);
         if(lineaEntity.getId()==prenotazioneEntity.getIdLinea()){
-            LineaDTO lineaDTO=new LineaDTO(lineaEntity,mongoService);
-            return new PrenotazioneDTO(prenotazioneEntity,lineaDTO);
+            return new PrenotazioneDTO(prenotazioneEntity,lineaEntity.getId());
         }else{
             return null;    //todo parametro da restituire per errore
         }
