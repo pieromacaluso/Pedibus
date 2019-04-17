@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -131,13 +132,11 @@ public class HomeController {
             throw new IllegalArgumentException("Linea non esistente");
     }
 
-    public Date getDate(String data) {      //data nel formato AAAA-MM-DD
-        StringTokenizer t = new StringTokenizer(data, "-");
-        int AAAA = Integer.valueOf(t.nextToken());
-        int MM = Integer.valueOf(t.nextToken());
-        int DD = Integer.valueOf(t.nextToken());
-        ZoneOffset zoneOffset = ZoneOffset.of("+00:00");
-        ZonedDateTime londonTime = ZonedDateTime.of(AAAA, MM, DD, 12, 00, 00, 00, zoneOffset);
+    public Date getDate(String data) {
+        String completeData = data + " 12:00 GMT+00:00"; //data nel formato AAAA-MM-DD
+        String pattern = "yyyy-MM-dd HH:mm z";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
         return Date.from(londonTime.toInstant());
     }
 }
