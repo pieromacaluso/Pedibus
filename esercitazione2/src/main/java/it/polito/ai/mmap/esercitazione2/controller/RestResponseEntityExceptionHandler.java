@@ -21,11 +21,10 @@ public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value
-            = { IllegalArgumentException.class, IllegalStateException.class, NullPointerException.class, DateTimeException.class})
+            = {IllegalArgumentException.class, IllegalStateException.class, NullPointerException.class, DateTimeException.class})
     protected ResponseEntity<Object> handleConflict(
             RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder().errorMessage(ex.getMessage()).build();
-        return handleExceptionInternal(ex, e,
-                new HttpHeaders(), HttpStatus.CONFLICT, request);
+        return handleExceptionInternal(ex, e, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 }
