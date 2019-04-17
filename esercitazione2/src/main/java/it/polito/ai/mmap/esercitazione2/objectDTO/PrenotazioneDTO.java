@@ -20,6 +20,7 @@ public class PrenotazioneDTO {
     public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, Integer idLinea, Date data) {
         this.data = data;
         this.idLinea = idLinea;
+
         verso = prenotazioneResource.getVerso();
         idFermata = prenotazioneResource.getIdFermata();
         nomeAlunno = prenotazioneResource.getNomeAlunno();

@@ -129,7 +129,7 @@ public class HomeController {
         if (mongoService.getLineByName(nomeLinea).getId().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))
             return new PrenotazioneDTO(checkPren);
         else
-            throw new IllegalArgumentException("Linea non esistente");
+            throw new IllegalArgumentException("Prenotazione non esistente");
     }
 
     public Date getDate(String data) {

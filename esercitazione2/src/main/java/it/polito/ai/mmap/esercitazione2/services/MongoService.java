@@ -50,8 +50,7 @@ public class MongoService {
                 .collect(Collectors.toList()));
     }
 
-    public void removeFermate()
-    {
+    public void removeFermate() {
         fermataRepository.deleteAll();
     }
 
@@ -83,7 +82,7 @@ public class MongoService {
      * @return LineaDTO
      */
     public LineaDTO getLineByName(String lineName) {
-        return new LineaDTO(lineaRepository.findByNome(lineName),fermataRepository); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
+        return new LineaDTO(lineaRepository.findByNome(lineName), fermataRepository); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
     }
 
     public LineaDTO getLineById(Integer idLinea) {
@@ -143,10 +142,13 @@ public class MongoService {
      */
     private Boolean isValidPrenotation(PrenotazioneDTO prenotazioneDTO) {
         FermataDTO fermataDTO = this.getFermataById(prenotazioneDTO.getIdFermata());
-        if (this.getLineById(prenotazioneDTO.getIdLinea()).getAndata().contains(fermataDTO) || this.getLineById(prenotazioneDTO.getIdLinea()).getRitorno().contains(fermataDTO)) {
+        if ((this.getLineById(prenotazioneDTO.getIdLinea()).getAndata().contains(fermataDTO)
+                && prenotazioneDTO.getVerso()) ||
+                (this.getLineById(prenotazioneDTO.getIdLinea()).getRitorno().contains(fermataDTO)
+                        && !prenotazioneDTO.getVerso())) {
             return true;
         } else
-            throw new IllegalArgumentException("Prenotazione non valida");
+            return false;
     }
 
     public PrenotazioneEntity getPrenotazione(ObjectId reservationId) {
