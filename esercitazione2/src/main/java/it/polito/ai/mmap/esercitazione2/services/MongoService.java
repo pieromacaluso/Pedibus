@@ -182,8 +182,9 @@ public class MongoService {
             return false;
         }
         String ultimaModifica = lineaEntity.getUltimaModifica();
-        if (ultimaModifica != null) //TODO se il campo ultimaModifica non e' presente forse torna null
+        if (ultimaModifica != null)
             return linea.getUltimaModifica().compareToIgnoreCase(ultimaModifica) >= 0;
         else return false;
     }
+
 }
