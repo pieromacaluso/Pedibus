@@ -174,7 +174,7 @@ public class MongoService {
 
     }
 
-    public boolean LineaUpdated(LineaDTO lineaDTO) {
+    public boolean isLineaUpdated(LineaDTO lineaDTO) {
         LineaEntity linea = new LineaEntity(lineaDTO);
         LineaEntity lineaEntity = lineaRepository.findByNome(linea.getNome());
         if (lineaEntity == null) //TODO da rivedere, messo alla buona se no crasha se le linee non sono già state caricate su db

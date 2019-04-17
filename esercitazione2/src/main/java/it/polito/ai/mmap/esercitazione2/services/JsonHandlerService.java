@@ -36,6 +36,7 @@ public class JsonHandlerService {
             countPiedibusLine++;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            //TODO fermare server
         }
         for (int i = 1; i < countPiedibusLine; i++) {
             try {
@@ -50,6 +51,7 @@ public class JsonHandlerService {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                //TODO fermare server
             }
         }
     }
