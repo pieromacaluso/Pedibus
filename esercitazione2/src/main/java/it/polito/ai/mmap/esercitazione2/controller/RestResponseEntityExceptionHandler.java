@@ -5,6 +5,7 @@ package it.polito.ai.mmap.esercitazione2.controller;
  * https://www.baeldung.com/exception-handling-for-rest-with-spring
  */
 
+import it.polito.ai.mmap.esercitazione2.objectDTO.ErrorDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class RestResponseEntityExceptionHandler
             = { IllegalArgumentException.class, IllegalStateException.class, NullPointerException.class, DateTimeException.class})
     protected ResponseEntity<Object> handleConflict(
             RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = "Request error";
-        return handleExceptionInternal(ex, bodyOfResponse,
+        ErrorDTO e = ErrorDTO.builder().errorMessage(ex.getMessage()).build();
+        return handleExceptionInternal(ex, e,
                 new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 }

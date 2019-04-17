@@ -125,10 +125,10 @@ public class HomeController {
         Date dataFormatted = getDate(data);
         PrenotazioneEntity checkPren = mongoService.getPrenotazione(reservationId);
 
-        if (mongoService.getLineByName(nomeLinea).getId() == checkPren.getIdLinea() && dataFormatted.equals(checkPren.getData()))
+        if (mongoService.getLineByName(nomeLinea).getId().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))
             return new PrenotazioneDTO(checkPren);
         else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Linea non esistente");
     }
 
     public Date getDate(String data) {      //data nel formato AAAA-MM-DD

@@ -114,7 +114,7 @@ public class MongoService {
             PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
             return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
         } else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Prenotazione già presente o non valida");
     }
 
     /**
@@ -144,7 +144,7 @@ public class MongoService {
         if (this.getLineById(prenotazioneDTO.getIdLinea()).getAndata().contains(fermataDTO) || this.getLineById(prenotazioneDTO.getIdLinea()).getRitorno().contains(fermataDTO)) {
             return true;
         } else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Prenotazione non valida");
     }
 
     public PrenotazioneEntity getPrenotazione(ObjectId reservationId) {
@@ -163,7 +163,7 @@ public class MongoService {
         if (checkPren.getData().equals(data) && getLineById(checkPren.getIdLinea()).getNome().equals(nomeLinea)) {
             prenotazioneRepository.delete(checkPren);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Errore in cancellazione");
         }
 
     }
