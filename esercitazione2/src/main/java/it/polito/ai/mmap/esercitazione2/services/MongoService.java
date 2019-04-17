@@ -123,11 +123,13 @@ public class MongoService {
      *
      * @param prenotazioneDTO contiene i nuovi dati
      */
-    public void updatePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId) {
+    public String updatePrenotazione(PrenotazioneDTO prenotazioneDTO, ObjectId reservationId) {
         if (isValidPrenotation(prenotazioneDTO)) {
             PrenotazioneEntity prenotazioneEntity = prenotazioneRepository.findById(reservationId);
             prenotazioneEntity.update(prenotazioneDTO);
-            prenotazioneRepository.save(prenotazioneEntity);
+            return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
+        } else {
+            throw new IllegalArgumentException("Aggiornamento prenotazione non valida");
         }
     }
 
