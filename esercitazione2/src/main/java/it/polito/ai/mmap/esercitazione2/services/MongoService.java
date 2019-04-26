@@ -82,7 +82,7 @@ public class MongoService {
      * @return LineaDTO
      */
     public LineaDTO getLineByName(String lineName) {
-        return new LineaDTO(lineaRepository.findByNome(lineName), fermataRepository); //ToDo check unica linea con tale nome, forse farlo in fase di caricamento db
+        return new LineaDTO(lineaRepository.findByNome(lineName), fermataRepository);
     }
 
     public LineaDTO getLineById(Integer idLinea) {
@@ -177,18 +177,4 @@ public class MongoService {
         return prenotazioni.stream().map(p -> p.getNomeAlunno()).collect(Collectors.toList());
 
     }
-
-    public boolean isLineaUpdated(LineaDTO lineaDTO) {
-        LineaEntity linea = new LineaEntity(lineaDTO);
-        LineaEntity lineaEntity = lineaRepository.findByNome(linea.getNome());
-        if (lineaEntity == null) //TODO da rivedere, messo alla buona se no crasha se le linee non sono già state caricate su db
-        {
-            return false;
-        }
-        String ultimaModifica = lineaEntity.getUltimaModifica();
-        if (ultimaModifica != null)
-            return linea.getUltimaModifica().compareToIgnoreCase(ultimaModifica) >= 0;
-        else return false;
-    }
-
 }

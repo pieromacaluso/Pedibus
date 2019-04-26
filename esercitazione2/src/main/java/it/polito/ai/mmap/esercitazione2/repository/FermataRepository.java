@@ -9,5 +9,4 @@ import java.util.Optional;
 
 public interface FermataRepository extends MongoRepository<FermataEntity, Integer> {
     Optional<FermataEntity> findById(Integer id);
-    //TODO chiedere perchè se definisci qui dentro findAllById non funziona, se invece non lo definisci si
 }

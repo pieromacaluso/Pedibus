@@ -1,6 +1,4 @@
 package it.polito.ai.mmap.esercitazione2.controller;
-//TODO fermare server o comunque gestire il fatto che non ci sia connessione a internet
-
 
 import it.polito.ai.mmap.esercitazione2.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione2.entity.PrenotazioneEntity;
