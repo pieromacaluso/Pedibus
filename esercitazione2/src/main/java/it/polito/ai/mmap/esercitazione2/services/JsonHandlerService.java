@@ -15,6 +15,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,13 +31,11 @@ public class JsonHandlerService {
 
     /**
      * Metodo che legge i JSON delle fermate e li salva sul DB
-     *
-     * @return void
      */
     public void readPiedibusLines() {
         int countPiedibusLine = 0;
         try {
-            countPiedibusLine = ResourceUtils.getFile("classpath:lines//").list().length;
+            countPiedibusLine = Objects.requireNonNull(ResourceUtils.getFile("classpath:lines//").list()).length;
             countPiedibusLine++;
         } catch (IOException e) {
             logger.error("Directory lines inesistente");
