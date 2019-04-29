@@ -177,4 +177,10 @@ public class MongoService {
         return prenotazioni.stream().map(p -> p.getNomeAlunno()).collect(Collectors.toList());
 
     }
+
+    public void dropAll() {
+        prenotazioneRepository.deleteAll();
+        lineaRepository.deleteAll();
+        fermataRepository.deleteAll();
+    }
 }
