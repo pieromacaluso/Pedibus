@@ -10,6 +10,7 @@ import it.polito.ai.mmap.esercitazione2.services.MongoService;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -21,14 +22,13 @@ import java.util.List;
 @RestController
 public class HomeController {
 
-    private final JsonHandlerService jsonHandlerService;
-    private final MongoService mongoService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public HomeController(JsonHandlerService jsonHandlerService, MongoService mongoService) {
-        this.jsonHandlerService = jsonHandlerService;
-        this.mongoService = mongoService;
-    }
+    @Autowired
+    JsonHandlerService jsonHandlerService;
+
+    @Autowired
+    MongoService mongoService;
 
     /**
      * Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus.

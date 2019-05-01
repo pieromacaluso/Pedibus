@@ -14,6 +14,7 @@ import it.polito.ai.mmap.esercitazione2.repository.FermataRepository;
 import it.polito.ai.mmap.esercitazione2.repository.LineaRepository;
 import it.polito.ai.mmap.esercitazione2.repository.PrenotazioneRepository;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,15 +25,12 @@ import java.util.stream.Collectors;
 @Service
 public class MongoService {
 
-    private final LineaRepository lineaRepository;
-    private final FermataRepository fermataRepository;
-    private final PrenotazioneRepository prenotazioneRepository;
-
-    public MongoService(LineaRepository lineaRepository, FermataRepository fermataRepository, PrenotazioneRepository prenotazioneRepository) {
-        this.lineaRepository = lineaRepository;
-        this.fermataRepository = fermataRepository;
-        this.prenotazioneRepository = prenotazioneRepository;
-    }
+    @Autowired
+    LineaRepository lineaRepository;
+    @Autowired
+    FermataRepository fermataRepository;
+    @Autowired
+    PrenotazioneRepository prenotazioneRepository;
 
     /**
      * Salva lista Fermate sul DB
