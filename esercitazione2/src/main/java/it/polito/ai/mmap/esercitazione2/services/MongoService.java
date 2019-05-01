@@ -74,7 +74,7 @@ public class MongoService {
         if (check.isPresent()) {
             return new FermataDTO(check.get());
         } else {
-            throw new FermataNotFoundException("Fermata con ID " + idFermata + "non trovata!");
+            throw new FermataNotFoundException("Fermata con ID " + idFermata + " non trovata!");
         }
     }
 
@@ -208,7 +208,7 @@ public class MongoService {
         if (prenotazione.isPresent()) {
             return prenotazione.get();
         } else {
-            throw new PrenotazioneNotFoundException("Prenotazione " + reservationId + "non trovata");
+            throw new PrenotazioneNotFoundException("Prenotazione " + reservationId + " non trovata");
         }
 
     }
