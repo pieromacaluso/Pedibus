@@ -1,7 +1,9 @@
 package it.polito.ai.mmap.esercitazione2.resources;
 
 import it.polito.ai.mmap.esercitazione2.objectDTO.PrenotazioneDTO;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.ResourceSupport;
 
 /**
@@ -13,6 +15,7 @@ import org.springframework.hateoas.ResourceSupport;
  *
  */
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class PrenotazioneResource extends ResourceSupport
 {

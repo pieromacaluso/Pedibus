@@ -3,6 +3,7 @@ package it.polito.ai.mmap.esercitazione2.resources;
 import it.polito.ai.mmap.esercitazione2.objectDTO.FermataDTO;
 import it.polito.ai.mmap.esercitazione2.objectDTO.LineaDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.ResourceSupport;
 import java.util.ArrayList;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
  * Classe che mappa da java a json l'oggetto chiesto da GET /lines/{nome_linea}
  */
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class LinesNomeLineaResource extends ResourceSupport {
     ArrayList<FermataDTO> andata;
