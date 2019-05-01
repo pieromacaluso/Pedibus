@@ -35,13 +35,9 @@ public class Esercitazione2ApplicationTests {
     @Autowired
     private MockMvc mockMvc;
 
-    /**
-     * GET /lines test
-     *
-     * @throws Exception
-     */
+
     @Test
-    public void A00_getLines() throws Exception {
+    public void getLines() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         logger.info("Test GET /lines ...");
         List<String> expectedResult = new ArrayList<>();
@@ -57,13 +53,8 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
     }
 
-    /**
-     * GET /lines/linea1 test
-     *
-     * @throws Exception
-     */
     @Test
-    public void B00_getLine() throws Exception {
+    public void getLine() throws Exception {
         String linea = "linea1";
         logger.info("Test GET /lines/" + linea + " ...");
 
@@ -76,7 +67,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void C00_insertReservation_wrongVerso() throws Exception {
+    public void insertReservation_wrongVerso() throws Exception {
         Prenotazione res = Prenotazione.builder().nomeAlunno("Piero").idFermata(1).verso(false).build();
         ObjectMapper mapper = new ObjectMapper();
         String resJson = mapper.writeValueAsString(res);
@@ -93,7 +84,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void C01_insertReservation_correctVerso() throws Exception {
+    public void insertReservation_correctVerso() throws Exception {
         Prenotazione res = Prenotazione.builder().nomeAlunno("Piero").idFermata(1).verso(true).build();
         ObjectMapper mapper = new ObjectMapper();
         String resJson = mapper.writeValueAsString(res);
@@ -116,7 +107,24 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void C03_getReservation_check() throws Exception {
+    public void insertReservation_wrongLine() throws Exception {
+        Prenotazione res = Prenotazione.builder().nomeAlunno("Piero").idFermata(1).verso(false).build();
+        ObjectMapper mapper = new ObjectMapper();
+        String resJson = mapper.writeValueAsString(res);
+
+        logger.info("Inserimento errato " + res + "...");
+        logger.info("POST /reservations/linea3/2019-01-01/ con linea errata ...");
+
+        this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
+                .contentType(MediaType.APPLICATION_JSON).content(resJson))
+                .andExpect(status().isInternalServerError());
+
+        logger.info("PASSED");
+
+    }
+
+    @Test
+    public void getReservation_check() throws Exception {
         Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
         ObjectMapper mapper = new ObjectMapper();
         String resJson = mapper.writeValueAsString(res);
@@ -147,7 +155,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void C04_insertReservation_duplicate() throws Exception {
+    public void insertReservation_duplicate() throws Exception {
         Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
         ObjectMapper mapper = new ObjectMapper();
         String resJson = mapper.writeValueAsString(res);
@@ -174,7 +182,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void C05_getReservation_checkReservationPositionInLine() throws Exception {
+    public void getReservation_checkReservationPositionInLine() throws Exception {
         Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
         ObjectMapper mapper = new ObjectMapper();
         String resJson = mapper.writeValueAsString(res);
@@ -203,7 +211,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void C06_putReservation_updateWrong() throws Exception {
+    public void putReservation_updateWrong() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
@@ -234,7 +242,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void C07_putReservation_updateCorrect_checkPosition() throws Exception {
+    public void putReservation_updateCorrect_checkPosition() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
@@ -271,6 +279,19 @@ public class Esercitazione2ApplicationTests {
         this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        logger.info("DONE");
+    }
+
+    @Test
+    public void deleteReservation_randomID() throws Exception {
+        logger.info("Cancellazione a caso errata con numero...");
+        this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/12345")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        logger.info("Cancellazione a caso errata con objectID...");
+        this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/5cc9c667c947dc1d2eb496ee")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
         logger.info("DONE");
     }
 }
