@@ -6,10 +6,11 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface PrenotazioneRepository extends MongoRepository<PrenotazioneEntity, Integer> {
 
-    PrenotazioneEntity findById(ObjectId id);
-    PrenotazioneEntity findByNomeAlunnoAndDataAndVerso(String nome,Date data,boolean verso);
+    Optional<PrenotazioneEntity> findById(ObjectId id);
+    Optional<PrenotazioneEntity> findByNomeAlunnoAndDataAndVerso(String nome, Date data, boolean verso);
     List<PrenotazioneEntity> findAllByDataAndIdFermataAndVerso(Date data, Integer id, boolean verso);
 }
