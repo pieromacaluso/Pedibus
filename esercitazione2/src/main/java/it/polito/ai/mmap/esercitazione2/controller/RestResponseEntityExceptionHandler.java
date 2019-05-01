@@ -20,18 +20,21 @@ import java.sql.Timestamp;
 import java.time.DateTimeException;
 
 @ControllerAdvice
-public class RestResponseEntityExceptionHandler
-        extends ResponseEntityExceptionHandler {
+public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    @ExceptionHandler(value
-            = {IllegalArgumentException.class, IllegalStateException.class, NullPointerException.class,
-            DateTimeException.class, LineaNotFoundException.class, PrenotazioneNotValidException.class,
-            PrenotazioneNotFoundException.class, FermataNotFoundException.class})
-    protected ResponseEntity<Object> handleConflict(
-            RuntimeException ex, WebRequest request) {
+    @ExceptionHandler(value = {
+            IllegalArgumentException.class,
+            IllegalStateException.class,
+            NullPointerException.class,
+            DateTimeException.class,
+            LineaNotFoundException.class,
+            PrenotazioneNotValidException.class,
+            PrenotazioneNotFoundException.class,
+            FermataNotFoundException.class})
+    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
                 .timestamp(new Timestamp(System.currentTimeMillis()))
