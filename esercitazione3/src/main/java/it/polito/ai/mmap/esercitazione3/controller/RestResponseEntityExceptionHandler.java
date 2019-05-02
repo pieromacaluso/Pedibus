@@ -1,9 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.exception.FermataNotFoundException;
-import it.polito.ai.mmap.esercitazione3.exception.LineaNotFoundException;
-import it.polito.ai.mmap.esercitazione3.exception.PrenotazioneNotFoundException;
-import it.polito.ai.mmap.esercitazione3.exception.PrenotazioneNotValidException;
+import it.polito.ai.mmap.esercitazione3.exception.*;
 import it.polito.ai.mmap.esercitazione3.objectDTO.ErrorDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +30,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             LineaNotFoundException.class,
             PrenotazioneNotValidException.class,
             PrenotazioneNotFoundException.class,
-            FermataNotFoundException.class})
+            FermataNotFoundException.class,
+            UserAlreadyPresentException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
