@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -26,10 +28,13 @@ public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<UserEntity> check = userRepository.findByEmail(email);
-        if(!check.isPresent()) {
+        if (!check.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
         UserEntity userEntity = check.get();
@@ -38,10 +43,15 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerUser(UserDTO userDTO) {
-        if (isUserPresent(userDTO.getEmail())) {
-            throw new UserAlreadyPresentException("User already registered");
+
+        try {
+            loadUserByUsername(userDTO.getEmail());
+
+        } catch (UsernameNotFoundException ex) {
+            userDTO.setPass(passwordEncoder.encode(userDTO.getPass()));
+            userRepository.save(new UserEntity(userDTO));
         }
-        userRepository.save(new UserEntity(userDTO));
+
     }
 
     public Boolean areCredentialsValid(UserDTO userDTO) {
@@ -50,17 +60,11 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity;
         if (!check.isPresent())
             return false;
-        else
-        {
+        else {
             userEntity = check.get();
         }
         //if (userEntity.getEmail().equals(userDTO.getEmail()) && )
         return false;
-    }
-
-    private Boolean isUserPresent(String email) {
-        Optional<UserEntity> check = userRepository.findByEmail(email);
-        return check.isPresent();
     }
 
 
