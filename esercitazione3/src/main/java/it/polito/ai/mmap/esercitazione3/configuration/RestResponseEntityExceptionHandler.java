@@ -1,4 +1,4 @@
-package it.polito.ai.mmap.esercitazione3.controller;
+package it.polito.ai.mmap.esercitazione3.configuration;
 
 import it.polito.ai.mmap.esercitazione3.exception.*;
 import it.polito.ai.mmap.esercitazione3.objectDTO.ErrorDTO;
