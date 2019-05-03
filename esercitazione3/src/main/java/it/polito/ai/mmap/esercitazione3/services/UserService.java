@@ -97,13 +97,7 @@ public class UserService implements UserDetailsService {
             return false;
         }
 
-        //TODO capire come fare il match delle password
-        if (passwordEncoder.matches(userEntity.getPassword(), userDTO.getPassword()))
-            logger.info("password matchano");
-        else
-            logger.info("password non matchano");
-
-        if (userEntity.isEnabled() && passwordEncoder.matches(userEntity.getPassword(), userDTO.getPassword())) {
+        if (userEntity.isEnabled() && passwordEncoder.matches(userDTO.getPassword(), userEntity.getPassword())) {
             logger.info("Utente loggato correttamente");
             return true;
         } else {
