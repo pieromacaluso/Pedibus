@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 public class AuthenticationRestController {
@@ -19,6 +20,7 @@ public class AuthenticationRestController {
 
     @Autowired
     UserService userService;
+
     @PostMapping("/login")
     public String login() {
         return null;
@@ -26,13 +28,12 @@ public class AuthenticationRestController {
 
 
     @PostMapping("/register")
-    public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
-
-        //userService.loadUserByUsername(userDTO.getEmail()).getAuthorities().stream().forEach(aut -> logger.info(aut.toString()));
-        if (bindingResult.hasErrors())
+    public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, Principal principal) {
+        if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().stream().forEach(err -> logger.error(err.toString()));
+            return;
+        }
         userService.registerUser(userDTO);
-
     }
 
     @GetMapping("/confirm/{randomUUID")

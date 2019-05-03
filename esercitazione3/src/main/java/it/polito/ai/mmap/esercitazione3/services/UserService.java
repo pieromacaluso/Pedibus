@@ -43,15 +43,11 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerUser(UserDTO userDTO) {
-
-        try {
-            loadUserByUsername(userDTO.getEmail());
-
-        } catch (UsernameNotFoundException ex) {
-            userDTO.setPass(passwordEncoder.encode(userDTO.getPass()));
-            userRepository.save(new UserEntity(userDTO));
+        Optional<UserEntity> check = userRepository.findByEmail(userDTO.getEmail());
+        if (check.isPresent()) {
+            throw new UserAlreadyPresentException("User already registered");
         }
-
+        userRepository.save(new UserEntity(userDTO));
     }
 
     public Boolean areCredentialsValid(UserDTO userDTO) {
