@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.*;
 
 /**
+ * Classe che implementa l'interfaccia UserDetails
+ * Il nostro username è la mail
  *
  */
 

@@ -7,6 +7,10 @@ import org.springframework.hateoas.ResourceSupport;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
+
+/**
+ * UserDTO che fa anche da resource e viene validato con le apposite annotazioni
+ */
 @FieldsValueMatch(
         field = "pass",
         fieldMatch = "passMatch",

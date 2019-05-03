@@ -17,6 +17,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     UserService userService;
 
+
+    /**
+     * Si specifica come si accede alle risorse
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -30,6 +36,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     }
 
+    /**
+     * Invece di usare il service standard usiamo un UserDetailsService da noi definito
+     * @param builder
+     * @throws Exception
+     */
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
         builder.userDetailsService(userService);

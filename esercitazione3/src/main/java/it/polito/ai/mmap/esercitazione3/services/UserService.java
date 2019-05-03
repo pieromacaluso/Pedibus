@@ -9,12 +9,9 @@ import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +31,16 @@ public class UserService implements UserDetailsService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private GMailSender gMailSender;
+
+    /**
+     * Metodo che ci restituisce un UserEntity a partire dall'email
+     * Implementazione fissata dalla classe UserDetailsService
+     * @param email
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<UserEntity> check = userRepository.findByUsername(email);
@@ -44,7 +51,14 @@ public class UserService implements UserDetailsService {
         return userEntity;
     }
 
-    public void registerUser(UserDTO userDTO) {
+    /**
+     * Metodo che gestisce la registrazione
+     * Lancia un eccezione nel caso ci sia già un utente con la mail indicata,
+     * se no lo salva su db e invia una mail di conferma
+     * @param userDTO
+     * @throws UserAlreadyPresentException
+     */
+    public void registerUser(UserDTO userDTO) throws UserAlreadyPresentException {
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
         if (check.isPresent()) {
             throw new UserAlreadyPresentException("User already registered");
@@ -52,8 +66,14 @@ public class UserService implements UserDetailsService {
         RoleEntity userRole = roleRepository.findByRole("user");
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
         userRepository.save(userEntity);
+        gMailSender.sendEmail(userDTO);
     }
 
+    /**
+     * Metodo che controlla la validità delle credenziali per un utente
+     * @param userDTO
+     * @return
+     */
     public Boolean areCredentialsValid(UserDTO userDTO) {
 
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
@@ -66,6 +86,5 @@ public class UserService implements UserDetailsService {
         //if (userEntity.getEmail().equals(userDTO.getEmail()) && )
         return false;
     }
-
 
 }
