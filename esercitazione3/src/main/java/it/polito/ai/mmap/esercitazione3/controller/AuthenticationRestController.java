@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
+import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.slf4j.Logger;
@@ -7,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 
 @RestController
@@ -25,7 +25,7 @@ public class AuthenticationRestController {
     }
 
     /**
-     * L'utente invia un json con le sue nuove credenziali, le validiamo con un validator, se rispettano
+     * Riceviamo un json con le sue nuove credenziali, le validiamo con un validator, se rispettano
      * i criteri lo registriamo e inviamo una mail per l'attivazione dell'account, se no restituiamo un errore
      * @param userDTO
      * @param bindingResult
@@ -44,9 +44,15 @@ public class AuthenticationRestController {
 
     }
 
+    /**
+     * Riceviamo un’indirizzo di posta elettronica di cui si vuole ricuperare la
+     * password. Se l’indirizzo corrisponde a quello di un utente registrato, invia un messaggio di
+     * posta elettronica all’utente contenente un link random per la modifica della password.
+     * Risponde sempre 200 - Ok
+     */
     @PostMapping("/recover")
-    public void recover() {
-
+    public void recover(@RequestBody String email) {
+        userService.recoverAccount(email);
     }
 
     @PostMapping("/recover/{randomUUID}")

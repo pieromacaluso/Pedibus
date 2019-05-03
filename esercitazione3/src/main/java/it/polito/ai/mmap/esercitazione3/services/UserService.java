@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    private GMailSender gMailSender;
+    private GMailService gMailService;
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
@@ -68,7 +68,7 @@ public class UserService implements UserDetailsService {
         RoleEntity userRole = roleRepository.findByRole("user");
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
         userRepository.save(userEntity);
-        gMailSender.sendEmail(userDTO);
+        gMailService.sendRegisterEmail(userEntity.getUsername());
     }
 
     /**
@@ -104,5 +104,11 @@ public class UserService implements UserDetailsService {
             logger.info("Login fail - password non matchano o utente non abilitato");
             return false;
         }
+    }
+
+
+    public void recoverAccount(String email) throws UsernameNotFoundException {
+        loadUserByUsername(email); //se non esiste lancia un eccezione
+        gMailService.sendRecoverEmail(email);
     }
 }
