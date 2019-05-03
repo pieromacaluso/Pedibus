@@ -1,9 +1,11 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
+import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import org.bson.types.ObjectId;
@@ -31,6 +33,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RecoverTokenRepository tokenRepository;
 
     @Autowired
     private GMailService gMailService;
@@ -130,10 +135,10 @@ public class UserService implements UserDetailsService {
      * @param userDTO
      * @throws UsernameNotFoundException se non trova l'user
      */
-    public void updateUserPassword(UserDTO userDTO, ObjectId randomUUID) throws UsernameNotFoundException {
+    public void updateUserPassword(UserDTO userDTO, String randomUUID) throws UsernameNotFoundException {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-
-        if (userEntity.getId().equals(randomUUID)) {
+        RecoverTokenEntity tokenEntity = tokenRepository.findByEmail(userDTO.getEmail());
+        if (tokenEntity != null && tokenEntity.getTokenValue().compareTo(randomUUID) == 0) {
             userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             userEntity = userRepository.save(userEntity);
         } else {
@@ -142,11 +147,9 @@ public class UserService implements UserDetailsService {
     }
 
 
-
-
-
     public void recoverAccount(String email) throws UsernameNotFoundException {
         UserEntity userEntity = (UserEntity) loadUserByUsername(email); //se non esiste lancia un eccezione
         gMailService.sendRecoverEmail(userEntity);
+
     }
 }

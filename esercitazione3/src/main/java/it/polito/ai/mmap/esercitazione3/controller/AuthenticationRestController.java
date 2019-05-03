@@ -71,7 +71,7 @@ public class AuthenticationRestController {
      * return 200 – Ok, in caso negativo restituisce 404 – Not found
      */
     @PostMapping("/recover/{randomUUID}")
-    public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") ObjectId randomUUID) {
+    public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().stream().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
             return; //TODO 404

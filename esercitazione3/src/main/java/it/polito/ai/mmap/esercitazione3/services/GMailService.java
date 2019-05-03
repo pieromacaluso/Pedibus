@@ -1,6 +1,8 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
+import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,11 @@ public class GMailService {
     private JavaMailSender mailSender;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private RecoverTokenRepository tokenRepository;
+
 
     public void sendRegisterEmail(UserEntity userEntity) {
         String href = baseURL + "confirm/" + userEntity.getId();
@@ -31,9 +37,10 @@ public class GMailService {
     }
 
     public void sendRecoverEmail(UserEntity userEntity) {
-        // TODO: settare link per rispettare sicurezza
-        String href = baseURL + "";
-        sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='#'>Link</a>");
+        RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
+        tokenRepository.save(tokenEntity);
+        String href = baseURL + "recover/" + tokenEntity.getTokenValue();
+        sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>");
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
