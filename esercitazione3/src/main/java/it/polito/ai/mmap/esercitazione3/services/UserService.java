@@ -70,6 +70,17 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
+     * @param email
+     */
+    public void enableUser(String email)
+    {
+        UserEntity userEntity = (UserEntity) loadUserByUsername(email);
+        userEntity.setEnabled(true);
+        userRepository.save(userEntity);
+    }
+
+    /**
      * Metodo che controlla la validità delle credenziali per un utente
      * @param userDTO
      * @return

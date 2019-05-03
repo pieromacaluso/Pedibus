@@ -28,7 +28,7 @@ public class GMailSender {
         try {
             // true = multi part message
             helper = new MimeMessageHelper(message, true);
-            helper.setTo("golla.programmazione@gmail.com");
+            helper.setTo(userDTO.getEmail());
             // true = text/html
             helper.setText("<p>Clicca per confermare account</p><a href='#'>Link</a>", true);
             mailSender.send(message);
