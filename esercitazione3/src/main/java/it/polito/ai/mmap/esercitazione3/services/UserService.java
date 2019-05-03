@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.*;
 
 @Service
@@ -55,12 +54,35 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Metodo che gestisce la registrazione
-     * Lancia un eccezione nel caso ci sia già un utente con la mail indicata,
-     * se no lo salva su db e invia una mail di conferma
+     * Metodo che controlla la validità delle credenziali per un utente
      *
      * @param userDTO
-     * @throws UserAlreadyPresentException
+     * @return
+     */
+    public Boolean isLoginValid(UserDTO userDTO) {
+        UserEntity userEntity;
+        try {
+            userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
+        } catch (UsernameNotFoundException e) {
+            logger.info("Login fail - Utente non trovato");
+            return false;
+        }
+
+        if (userEntity.isEnabled() && passwordEncoder.matches(userDTO.getPassword(), userEntity.getPassword())) {
+            logger.info("Utente loggato correttamente");
+            return true;
+        } else {
+            logger.info("Login fail - password non matchano o utente non abilitato");
+            return false;
+        }
+    }
+
+    /**
+     * Metodo che gestisce la registrazione
+     * salva su db e invia una mail di conferma
+     *
+     * @param userDTO
+     * @throws UserAlreadyPresentException nel caso ci sia già un utente con la mail indicata
      */
     public void registerUser(UserDTO userDTO) throws UserAlreadyPresentException {
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
@@ -71,23 +93,6 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
         userEntity = userRepository.save(userEntity);
         gMailService.sendRegisterEmail(userEntity);
-    }
-
-    /**
-     * Metodo che ci permette di aggiornare la password di un utente
-     *
-     * @param userDTO
-     * @throws UsernameNotFoundException se non trova l'user
-     */
-    public void updateUserPassword(UserDTO userDTO, ObjectId randomUUID) throws UsernameNotFoundException {
-        UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-
-        if (userEntity.getId().equals(randomUUID)) {
-            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            userEntity = userRepository.save(userEntity);
-        } else {
-            return; //TODO 404
-        }
     }
 
     /**
@@ -115,29 +120,29 @@ public class UserService implements UserDetailsService {
             return; //TODO già confermato
     }
 
+
     /**
-     * Metodo che controlla la validità delle credenziali per un utente
+     * Metodo che ci permette di aggiornare la password di un utente
+     * Verifica che il codice random:
+     * - sia uno di quelli che abbiamo generato
+     * - non sia scaduto. //TODO
      *
      * @param userDTO
-     * @return
+     * @throws UsernameNotFoundException se non trova l'user
      */
-    public Boolean isLoginValid(UserDTO userDTO) {
-        UserEntity userEntity;
-        try {
-            userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-        } catch (UsernameNotFoundException e) {
-            logger.info("Login fail - Utente non trovato");
-            return false;
-        }
+    public void updateUserPassword(UserDTO userDTO, ObjectId randomUUID) throws UsernameNotFoundException {
+        UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
 
-        if (userEntity.isEnabled() && passwordEncoder.matches(userDTO.getPassword(), userEntity.getPassword())) {
-            logger.info("Utente loggato correttamente");
-            return true;
+        if (userEntity.getId().equals(randomUUID)) {
+            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userEntity = userRepository.save(userEntity);
         } else {
-            logger.info("Login fail - password non matchano o utente non abilitato");
-            return false;
+            return; //TODO 404
         }
     }
+
+
+
 
 
     public void recoverAccount(String email) throws UsernameNotFoundException {

@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.bson.types.ObjectId;
@@ -28,7 +27,7 @@ public class AuthenticationRestController {
     }
 
     /**
-     * Riceviamo un json con le sue nuove credenziali, le validiamo con un validator, se rispettano
+     * Riceviamo un json con le nuove credenziali, le validiamo con un validator, se rispettano
      * i criteri lo registriamo e inviamo una mail per l'attivazione dell'account, se no restituiamo un errore
      *
      * @param userDTO
@@ -64,10 +63,6 @@ public class AuthenticationRestController {
     }
 
     /**
-     * Verifica che il codice random:
-     * - sia uno di quelli che abbiamo generato
-     * - non sia scaduto. //TODO
-     *
      * @param userDTO       come in /register
      * @param bindingResult
      * @param randomUUID
