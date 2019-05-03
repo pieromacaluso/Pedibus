@@ -75,17 +75,28 @@ public class UserService implements UserDetailsService {
 
     /**
      * Metodo che ci permette di aggiornare la password di un utente
+     *
      * @param userDTO
      * @throws UsernameNotFoundException se non trova l'user
      */
-    public void updateUserPassword(UserDTO userDTO) throws UsernameNotFoundException{
+    public void updateUserPassword(UserDTO userDTO, ObjectId randomUUID) throws UsernameNotFoundException {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-        userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        userEntity = userRepository.save(userEntity);
+
+        if (userEntity.getId().equals(randomUUID)) {
+            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userEntity = userRepository.save(userEntity);
+        } else {
+            return; //TODO 404
+        }
     }
 
     /**
-     * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
+     * verifica che il codice random:
+     * - corrisponda ad uno degli utenti in corso di verifica -DONE
+     * - controlla che tale registrazione non sia scaduta -TODO
+     * <p>
+     * tutto ok -> porta utente allo stato attivo e restituisce 200 – Ok
+     * altrimenti -> restituisce 404 – Not found
      *
      * @param randomUUID
      */
@@ -100,10 +111,10 @@ public class UserService implements UserDetailsService {
         if (!userEntity.isEnabled()) {
             userEntity.setEnabled(true);
             userRepository.save(userEntity);
-        }
-        else
+        } else
             return; //TODO già confermato
     }
+
     /**
      * Metodo che controlla la validità delle credenziali per un utente
      *

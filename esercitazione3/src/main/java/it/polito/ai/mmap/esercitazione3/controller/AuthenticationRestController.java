@@ -43,6 +43,10 @@ public class AuthenticationRestController {
         userService.registerUser(userDTO);
     }
 
+    /**
+     * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
+     * @param randomUUID
+     */
     @GetMapping("/confirm/{randomUUID}")
     public void confirm(@PathVariable("randomUUID") ObjectId randomUUID) {
         userService.enableUser(randomUUID);
@@ -62,7 +66,7 @@ public class AuthenticationRestController {
     /**
      * Verifica che il codice random:
      * - sia uno di quelli che abbiamo generato
-     * - non sia scaduto.
+     * - non sia scaduto. //TODO
      *
      * @param userDTO       come in /register
      * @param bindingResult
@@ -72,14 +76,14 @@ public class AuthenticationRestController {
      * return 200 – Ok, in caso negativo restituisce 404 – Not found
      */
     @PostMapping("/recover/{randomUUID}")
-    public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
+    public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") ObjectId randomUUID) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().stream().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
             return; //TODO 404
         }
-        //TODO if randomUUID isNotValid
+
         try {
-            userService.updateUserPassword(userDTO);
+            userService.updateUserPassword(userDTO, randomUUID);
         } catch (UsernameNotFoundException e) {
             return; //TODO 404
         }
