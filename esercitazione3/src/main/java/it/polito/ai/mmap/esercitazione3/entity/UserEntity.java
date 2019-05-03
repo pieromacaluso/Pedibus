@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
+/**
+ *
+ */
 
 @Data
 @Document(collection = "users")
@@ -29,13 +32,15 @@ public class UserEntity implements UserDetails {
     public UserEntity() {
     }
 
-    public UserEntity(UserDTO userDTO) {
+    public UserEntity(UserDTO userDTO, ArrayList userRoles) {
         username = userDTO.getEmail();
         password = userDTO.getPass();
         isAccountNonExpired = true;
         isAccountNonLocked = true;
         isCredentialsNonExpired = true;
         isEnabled = false;
+        roleList = userRoles;
+
     }
 
     @Override
@@ -46,7 +51,6 @@ public class UserEntity implements UserDetails {
 
         return grantedAuthorities;
     }
-
 
 
 }

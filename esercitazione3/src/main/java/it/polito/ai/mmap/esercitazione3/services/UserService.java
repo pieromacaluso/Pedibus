@@ -41,8 +41,7 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
         UserEntity userEntity = check.get();
-        List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("user"));
-        return new User(userEntity.getEmail(), userEntity.getPass(), authorities);
+        return userEntity;
     }
 
     public void registerUser(UserDTO userDTO) {
@@ -51,13 +50,7 @@ public class UserService implements UserDetailsService {
             throw new UserAlreadyPresentException("User already registered");
         }
         RoleEntity userRole = roleRepository.findByRole("user");
-
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(userDTO.getEmail());
-        userEntity.setPass(passwordEncoder.encode(userDTO.getPass()));
-        userEntity.setActivationState(false);
-        userEntity.setRoles(new ArrayList<>(Arrays.asList(userRole)));
-
+        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)));
         userRepository.save(userEntity);
     }
 
