@@ -307,22 +307,5 @@ public class Esercitazione3ApplicationTests {
     @Value("${spring.mail.username}")
     String fromEmail;
 
-    @Test
-    public void testSendEmail() throws UnsupportedEncodingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        // true = multi part message
-        MimeMessageHelper helper = null;
-        try {
-            helper = new MimeMessageHelper(message, true);
-            helper.setTo("golla.programmazione@gmail.com");
-            // true = text/html
-            helper.setText("<p>Clicca per confermare account</p><a href='#'>Link</a>", true);
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-
-    }
-
 
 }
