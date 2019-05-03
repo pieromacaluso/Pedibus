@@ -72,6 +72,17 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * Metodo che ci permette di aggiornare la password di un utente
+     * @param userDTO
+     * @throws UsernameNotFoundException se non trova l'user
+     */
+    public void updateUserPassword(UserDTO userDTO) throws UsernameNotFoundException{
+        UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
+        userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userRepository.save(userEntity);
+    }
+
+    /**
      * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
      *
      * @param email
