@@ -9,13 +9,20 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +41,8 @@ public class Esercitazione3ApplicationTests {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private JavaMailSender mailSender;
 
 
     @Test
@@ -294,4 +303,26 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isInternalServerError());
         logger.info("DONE");
     }
+
+    @Value("${spring.mail.username}")
+    String fromEmail;
+
+    @Test
+    public void testSendEmail() throws UnsupportedEncodingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        // true = multi part message
+        MimeMessageHelper helper = null;
+        try {
+            helper = new MimeMessageHelper(message, true);
+            helper.setTo("golla.programmazione@gmail.com");
+            // true = text/html
+            helper.setText("<p>Clicca per confermare account</p><a href='#'>Link</a>", true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 }
