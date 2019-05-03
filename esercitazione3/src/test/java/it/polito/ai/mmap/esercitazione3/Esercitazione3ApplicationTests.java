@@ -304,8 +304,5 @@ public class Esercitazione3ApplicationTests {
         logger.info("DONE");
     }
 
-    @Value("${spring.mail.username}")
-    String fromEmail;
-
 
 }
