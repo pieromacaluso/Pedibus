@@ -90,9 +90,9 @@ public class UserService implements UserDetailsService {
             throw new UserAlreadyPresentException("User already registered");
         }
         RoleEntity userRole = roleRepository.findByRole("user");
-        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
-        userEntity = userRepository.save(userEntity);
-        gMailService.sendRegisterEmail(userEntity);
+        final UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
+        userRepository.save(userEntity);
+        new Thread(() -> gMailService.sendRegisterEmail(userEntity)).start();
     }
 
     /**
