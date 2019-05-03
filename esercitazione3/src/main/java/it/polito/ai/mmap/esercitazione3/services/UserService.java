@@ -6,6 +6,7 @@ import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.*;
 
 @Service
@@ -67,8 +69,8 @@ public class UserService implements UserDetailsService {
         }
         RoleEntity userRole = roleRepository.findByRole("user");
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
-        userRepository.save(userEntity);
-        gMailService.sendRegisterEmail(userEntity.getUsername());
+        userEntity = userRepository.save(userEntity);
+        gMailService.sendRegisterEmail(userEntity);
     }
 
     /**
@@ -79,20 +81,29 @@ public class UserService implements UserDetailsService {
     public void updateUserPassword(UserDTO userDTO) throws UsernameNotFoundException{
         UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
         userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        userRepository.save(userEntity);
+        userEntity = userRepository.save(userEntity);
     }
 
     /**
      * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
      *
-     * @param email
+     * @param randomUUID
      */
-    public void enableUser(String email) {
-        UserEntity userEntity = (UserEntity) loadUserByUsername(email);
-        userEntity.setEnabled(true);
-        userRepository.save(userEntity);
+    public void enableUser(ObjectId randomUUID) {
+        Optional<UserEntity> check = userRepository.findById(randomUUID);
+        UserEntity userEntity;
+        if (check.isPresent()) {
+            userEntity = check.get();
+        } else {
+            return; //TODO uuid non riconosciuto
+        }
+        if (!userEntity.isEnabled()) {
+            userEntity.setEnabled(true);
+            userRepository.save(userEntity);
+        }
+        else
+            return; //TODO già confermato
     }
-
     /**
      * Metodo che controlla la validità delle credenziali per un utente
      *
@@ -119,7 +130,7 @@ public class UserService implements UserDetailsService {
 
 
     public void recoverAccount(String email) throws UsernameNotFoundException {
-        loadUserByUsername(email); //se non esiste lancia un eccezione
-        gMailService.sendRecoverEmail(email);
+        UserEntity userEntity = (UserEntity) loadUserByUsername(email); //se non esiste lancia un eccezione
+        gMailService.sendRecoverEmail(userEntity);
     }
 }

@@ -3,6 +3,7 @@ package it.polito.ai.mmap.esercitazione3.controller;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,9 @@ public class AuthenticationRestController {
         userService.registerUser(userDTO);
     }
 
-    @GetMapping("/confirm/{randomUUID")
-    public void confirm(@PathVariable("randomUUID") String randomUUID) {
-
+    @GetMapping("/confirm/{randomUUID}")
+    public void confirm(@PathVariable("randomUUID") ObjectId randomUUID) {
+        userService.enableUser(randomUUID);
     }
 
     /**
@@ -62,12 +63,13 @@ public class AuthenticationRestController {
      * Verifica che il codice random:
      * - sia uno di quelli che abbiamo generato
      * - non sia scaduto.
+     *
+     * @param userDTO       come in /register
+     * @param bindingResult
+     * @param randomUUID
      * @Valid delle password
      * In caso vada tutto bene aggiorna la base dati degli utenti con la nuova password
      * return 200 – Ok, in caso negativo restituisce 404 – Not found
-     * @param userDTO come in /register
-     * @param bindingResult
-     * @param randomUUID
      */
     @PostMapping("/recover/{randomUUID}")
     public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {

@@ -1,5 +1,7 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
+import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +20,18 @@ public class GMailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendRegisterEmail(String email) {
-        sendMail(email, "<p>Clicca per confermare account</p><a href='#'>Link</a>");
-        logger.info("Inviata register email a: " + email);
+    @Autowired
+    UserRepository userRepository;
+
+    public void sendRegisterEmail(UserEntity userEntity) {
+        String msg = "http://localhost:8080/confirm/" + userEntity.getId();
+        sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + msg + "'>Confirmation Link</a>");
+        logger.info("Inviata register email a: " + userEntity.getUsername());
     }
 
-    public void sendRecoverEmail(String email) {
-        sendMail(email, "<p>Clicca per modificare la password</p><a href='#'>Link</a>");
-        logger.info("Inviata recover email a: " + email);
+    public void sendRecoverEmail(UserEntity userEntity) {
+        sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='#'>Link</a>");
+        logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
     // TODO: settare link per rispettare sicurezza
