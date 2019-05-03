@@ -6,6 +6,10 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 @Data
 @Document(collection = "users")
 public class UserEntity {
@@ -14,6 +18,7 @@ public class UserEntity {
     private String email;
     private String pass;
     private Boolean activationState;
+    private ArrayList<RoleEntity> roles;
 
 
     public UserEntity() {}
