@@ -37,6 +37,7 @@ public class UserService implements UserDetailsService {
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
      * Implementazione fissata dalla classe UserDetailsService
+     *
      * @param email
      * @return
      * @throws UsernameNotFoundException
@@ -55,6 +56,7 @@ public class UserService implements UserDetailsService {
      * Metodo che gestisce la registrazione
      * Lancia un eccezione nel caso ci sia già un utente con la mail indicata,
      * se no lo salva su db e invia una mail di conferma
+     *
      * @param userDTO
      * @throws UserAlreadyPresentException
      */
@@ -66,15 +68,15 @@ public class UserService implements UserDetailsService {
         RoleEntity userRole = roleRepository.findByRole("user");
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
         userRepository.save(userEntity);
-        gMailSender.sendEmail(userDTO);
+        new Thread(() -> gMailSender.sendEmail(userDTO)).start();
     }
 
     /**
      * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
+     *
      * @param email
      */
-    public void enableUser(String email)
-    {
+    public void enableUser(String email) {
         UserEntity userEntity = (UserEntity) loadUserByUsername(email);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
@@ -82,6 +84,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * Metodo che controlla la validità delle credenziali per un utente
+     *
      * @param userDTO
      * @return
      */
