@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
  * UserDTO che fa anche da resource e viene validato con le apposite annotazioni
  */
 @FieldsValueMatch(
-        field = "pass",
+        field = "password",
         fieldMatch = "passMatch",
         message = "Passwords do not match!"
 )
@@ -23,7 +23,7 @@ public class UserDTO extends ResourceSupport {
     private String email;
 
     @Size(min = 3, max = 64)
-    private String pass;
+    private String password;
 
     @Size(min = 3, max = 64)
     private String passMatch;

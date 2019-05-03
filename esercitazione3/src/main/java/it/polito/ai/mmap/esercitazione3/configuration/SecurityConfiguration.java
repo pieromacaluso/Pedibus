@@ -20,6 +20,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Si specifica come si accede alle risorse
+     *
      * @param http
      * @throws Exception
      */
@@ -29,21 +30,36 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/register").permitAll()
                 .and()
+                .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/confirm/*").permitAll()
+                .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()
                 .and().httpBasic()
                 .and().sessionManagement().disable();
 
+//        //TODO permetto tutto per comodità
+//        http
+//                .csrf().disable()
+//                .authorizeRequests().anyRequest().permitAll()
+//                .and().httpBasic()
+//                .and().sessionManagement().disable();
+
+
     }
 
     /**
      * Invece di usare il service standard usiamo un UserDetailsService da noi definito
+     *
      * @param builder
      * @throws Exception
      */
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
-        builder.userDetailsService(userService);
+        builder.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
     @Bean

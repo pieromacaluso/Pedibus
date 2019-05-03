@@ -6,6 +6,7 @@ import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class UserService implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    private GMailSender gMailSender;
+    private GMailService gMailService;
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
@@ -53,12 +54,35 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Metodo che gestisce la registrazione
-     * Lancia un eccezione nel caso ci sia già un utente con la mail indicata,
-     * se no lo salva su db e invia una mail di conferma
+     * Metodo che controlla la validità delle credenziali per un utente
      *
      * @param userDTO
-     * @throws UserAlreadyPresentException
+     * @return
+     */
+    public Boolean isLoginValid(UserDTO userDTO) {
+        UserEntity userEntity;
+        try {
+            userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
+        } catch (UsernameNotFoundException e) {
+            logger.info("Login fail - Utente non trovato");
+            return false;
+        }
+
+        if (userEntity.isEnabled() && passwordEncoder.matches(userDTO.getPassword(), userEntity.getPassword())) {
+            logger.info("Utente loggato correttamente");
+            return true;
+        } else {
+            logger.info("Login fail - password non matchano o utente non abilitato");
+            return false;
+        }
+    }
+
+    /**
+     * Metodo che gestisce la registrazione
+     * salva su db e invia una mail di conferma
+     *
+     * @param userDTO
+     * @throws UserAlreadyPresentException nel caso ci sia già un utente con la mail indicata
      */
     public void registerUser(UserDTO userDTO) throws UserAlreadyPresentException {
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
@@ -67,38 +91,62 @@ public class UserService implements UserDetailsService {
         }
         RoleEntity userRole = roleRepository.findByRole("user");
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
-        userRepository.save(userEntity);
-        new Thread(() -> gMailSender.sendEmail(userDTO)).start();
+        userEntity = userRepository.save(userEntity);
+        gMailService.sendRegisterEmail(userEntity);
     }
 
     /**
-     * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
+     * verifica che il codice random:
+     * - corrisponda ad uno degli utenti in corso di verifica -DONE
+     * - controlla che tale registrazione non sia scaduta -TODO
+     * <p>
+     * tutto ok -> porta utente allo stato attivo e restituisce 200 – Ok
+     * altrimenti -> restituisce 404 – Not found
      *
-     * @param email
+     * @param randomUUID
      */
-    public void enableUser(String email) {
-        UserEntity userEntity = (UserEntity) loadUserByUsername(email);
-        userEntity.setEnabled(true);
-        userRepository.save(userEntity);
+    public void enableUser(ObjectId randomUUID) {
+        Optional<UserEntity> check = userRepository.findById(randomUUID);
+        UserEntity userEntity;
+        if (check.isPresent()) {
+            userEntity = check.get();
+        } else {
+            return; //TODO uuid non riconosciuto
+        }
+        if (!userEntity.isEnabled()) {
+            userEntity.setEnabled(true);
+            userRepository.save(userEntity);
+        } else
+            return; //TODO già confermato
     }
 
+
     /**
-     * Metodo che controlla la validità delle credenziali per un utente
+     * Metodo che ci permette di aggiornare la password di un utente
+     * Verifica che il codice random:
+     * - sia uno di quelli che abbiamo generato
+     * - non sia scaduto. //TODO
      *
      * @param userDTO
-     * @return
+     * @throws UsernameNotFoundException se non trova l'user
      */
-    public Boolean areCredentialsValid(UserDTO userDTO) {
+    public void updateUserPassword(UserDTO userDTO, ObjectId randomUUID) throws UsernameNotFoundException {
+        UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
 
-        Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
-        UserEntity userEntity;
-        if (!check.isPresent())
-            return false;
-        else {
-            userEntity = check.get();
+        if (userEntity.getId().equals(randomUUID)) {
+            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userEntity = userRepository.save(userEntity);
+        } else {
+            return; //TODO 404
         }
-        //if (userEntity.getEmail().equals(userDTO.getEmail()) && )
-        return false;
     }
 
+
+
+
+
+    public void recoverAccount(String email) throws UsernameNotFoundException {
+        UserEntity userEntity = (UserEntity) loadUserByUsername(email); //se non esiste lancia un eccezione
+        gMailService.sendRecoverEmail(userEntity);
+    }
 }
