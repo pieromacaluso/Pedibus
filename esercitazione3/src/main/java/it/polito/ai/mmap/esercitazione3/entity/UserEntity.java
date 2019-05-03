@@ -37,7 +37,7 @@ public class UserEntity implements UserDetails {
 
     public UserEntity(UserDTO userDTO, ArrayList userRoles, PasswordEncoder passwordEncoder) {
         username = userDTO.getEmail();
-        password = passwordEncoder.encode(userDTO.getPass());
+        password = passwordEncoder.encode(userDTO.getPassword());
         isAccountNonExpired = true;
         isAccountNonLocked = true;
         isCredentialsNonExpired = true;

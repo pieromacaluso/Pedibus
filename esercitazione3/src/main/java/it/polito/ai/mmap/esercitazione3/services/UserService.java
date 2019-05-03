@@ -37,6 +37,7 @@ public class UserService implements UserDetailsService {
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
      * Implementazione fissata dalla classe UserDetailsService
+     *
      * @param email
      * @return
      * @throws UsernameNotFoundException
@@ -55,6 +56,7 @@ public class UserService implements UserDetailsService {
      * Metodo che gestisce la registrazione
      * Lancia un eccezione nel caso ci sia già un utente con la mail indicata,
      * se no lo salva su db e invia una mail di conferma
+     *
      * @param userDTO
      * @throws UserAlreadyPresentException
      */
@@ -71,10 +73,10 @@ public class UserService implements UserDetailsService {
 
     /**
      * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
+     *
      * @param email
      */
-    public void enableUser(String email)
-    {
+    public void enableUser(String email) {
         UserEntity userEntity = (UserEntity) loadUserByUsername(email);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
@@ -82,20 +84,31 @@ public class UserService implements UserDetailsService {
 
     /**
      * Metodo che controlla la validità delle credenziali per un utente
+     *
      * @param userDTO
      * @return
      */
-    public Boolean areCredentialsValid(UserDTO userDTO) {
-
-        Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
+    public Boolean isLoginValid(UserDTO userDTO) {
         UserEntity userEntity;
-        if (!check.isPresent())
+        try {
+            userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
+        } catch (UsernameNotFoundException e) {
+            logger.info("Login fail - Utente non trovato");
             return false;
-        else {
-            userEntity = check.get();
         }
-        //if (userEntity.getEmail().equals(userDTO.getEmail()) && )
-        return false;
-    }
 
+        //TODO capire come fare il match delle password
+        if (passwordEncoder.matches(userEntity.getPassword(), userDTO.getPassword()))
+            logger.info("password matchano");
+        else
+            logger.info("password non matchano");
+
+        if (userEntity.isEnabled() && passwordEncoder.matches(userEntity.getPassword(), userDTO.getPassword())) {
+            logger.info("Utente loggato correttamente");
+            return true;
+        } else {
+            logger.info("Login fail - password non matchano o utente non abilitato");
+            return false;
+        }
+    }
 }

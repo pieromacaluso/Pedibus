@@ -19,7 +19,8 @@ public class AuthenticationRestController {
     UserService userService;
 
     @PostMapping("/login")
-    public String login() {
+    public String login(@RequestBody UserDTO userDTO) {
+        logger.info("login  "+userService.isLoginValid(userDTO));
         return null;
     }
 
