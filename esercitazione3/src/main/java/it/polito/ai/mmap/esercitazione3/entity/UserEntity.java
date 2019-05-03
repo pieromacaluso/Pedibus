@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
 
@@ -32,9 +33,9 @@ public class UserEntity implements UserDetails {
     public UserEntity() {
     }
 
-    public UserEntity(UserDTO userDTO, ArrayList userRoles) {
+    public UserEntity(UserDTO userDTO, ArrayList userRoles, PasswordEncoder passwordEncoder) {
         username = userDTO.getEmail();
-        password = userDTO.getPass();
+        password = passwordEncoder.encode(userDTO.getPass());
         isAccountNonExpired = true;
         isAccountNonLocked = true;
         isCredentialsNonExpired = true;

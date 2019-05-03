@@ -36,7 +36,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<UserEntity> check = userRepository.findByEmail(email);
+        Optional<UserEntity> check = userRepository.findByUsername(email);
         if (!check.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -45,18 +45,18 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerUser(UserDTO userDTO) {
-        Optional<UserEntity> check = userRepository.findByEmail(userDTO.getEmail());
+        Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
         if (check.isPresent()) {
             throw new UserAlreadyPresentException("User already registered");
         }
         RoleEntity userRole = roleRepository.findByRole("user");
-        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)));
+        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
         userRepository.save(userEntity);
     }
 
     public Boolean areCredentialsValid(UserDTO userDTO) {
 
-        Optional<UserEntity> check = userRepository.findByEmail(userDTO.getEmail());
+        Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
         UserEntity userEntity;
         if (!check.isPresent())
             return false;
