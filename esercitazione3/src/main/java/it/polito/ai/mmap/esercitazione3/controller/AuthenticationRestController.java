@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 public class AuthenticationRestController {
@@ -20,6 +21,7 @@ public class AuthenticationRestController {
 
     @Autowired
     UserService userService;
+
     @Autowired
     private GMailSender gMailSender;
 
@@ -30,9 +32,11 @@ public class AuthenticationRestController {
 
 
     @PostMapping("/register")
-    public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
+    public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, Principal principal) {
+        if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().stream().forEach(err -> logger.error(err.toString()));
+            return;
+        }
         userService.registerUser(userDTO);
         gMailSender.sendEmail(userDTO);
     }
