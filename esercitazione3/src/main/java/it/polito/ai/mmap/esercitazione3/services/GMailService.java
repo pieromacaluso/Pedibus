@@ -15,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class GMailService {
 
+    private static final String baseURL = "http://localhost:8080/";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -24,17 +25,19 @@ public class GMailService {
     UserRepository userRepository;
 
     public void sendRegisterEmail(UserEntity userEntity) {
-        String msg = "http://localhost:8080/confirm/" + userEntity.getId();
-        sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + msg + "'>Confirmation Link</a>");
+        String href = baseURL + "confirm/" + userEntity.getId();
+        sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>");
         logger.info("Inviata register email a: " + userEntity.getUsername());
     }
 
     public void sendRecoverEmail(UserEntity userEntity) {
+        // TODO: settare link per rispettare sicurezza
+        String href = baseURL + "";
         sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='#'>Link</a>");
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
-    // TODO: settare link per rispettare sicurezza
+
     private void sendMail(String email, String msg) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = null;
