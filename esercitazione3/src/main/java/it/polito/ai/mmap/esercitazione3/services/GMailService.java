@@ -32,7 +32,7 @@ public class GMailService {
 
     public void sendRegisterEmail(UserEntity userEntity) {
         String href = baseURL + "confirm/" + userEntity.getId();
-        sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>");
+        new Thread(() -> sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>")).start();
         logger.info("Inviata register email a: " + userEntity.getUsername());
     }
 
@@ -40,7 +40,7 @@ public class GMailService {
         RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
         tokenRepository.save(tokenEntity);
         String href = baseURL + "recover/" + tokenEntity.getTokenValue();
-        sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>");
+        new Thread(() -> sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>")).start();
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 

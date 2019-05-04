@@ -95,9 +95,9 @@ public class UserService implements UserDetailsService {
             throw new UserAlreadyPresentException("User already registered");
         }
         RoleEntity userRole = roleRepository.findByRole("user");
-        final UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
+        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
         userRepository.save(userEntity);
-        new Thread(() -> gMailService.sendRegisterEmail(userEntity)).start();
+        gMailService.sendRegisterEmail(userEntity);
     }
 
     /**
@@ -137,7 +137,7 @@ public class UserService implements UserDetailsService {
      */
     public void updateUserPassword(UserDTO userDTO, String randomUUID) throws UsernameNotFoundException {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-        RecoverTokenEntity tokenEntity = tokenRepository.findByEmail(userDTO.getEmail());
+        RecoverTokenEntity tokenEntity = tokenRepository.findByUsername(userDTO.getEmail());
         if (tokenEntity != null && tokenEntity.getTokenValue().compareTo(randomUUID) == 0) {
             userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             userEntity = userRepository.save(userEntity);
