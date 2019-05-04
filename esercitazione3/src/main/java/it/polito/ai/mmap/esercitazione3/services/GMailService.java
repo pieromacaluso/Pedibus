@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -29,11 +30,9 @@ public class GMailService {
     @Autowired
     private RecoverTokenRepository tokenRepository;
 
-
     public void sendRegisterEmail(UserEntity userEntity) {
         String href = baseURL + "confirm/" + userEntity.getId();
-        //TODO trovare un metodo nativo di spring per gestire l'asincronicità
-        new Thread(() -> sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>")).start();
+        sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>");
         logger.info("Inviata register email a: " + userEntity.getUsername());
     }
 
@@ -41,13 +40,12 @@ public class GMailService {
         RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
         tokenRepository.save(tokenEntity);
         String href = baseURL + "recover/" + tokenEntity.getTokenValue();
-        //TODO trovare un metodo nativo di spring per gestire l'asincronicità
-        new Thread(() -> sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>")).start();
+        sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>");
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
-
-    private void sendMail(String email, String msg) {
+    @Async("threadPoolTaskExecutor") // convertito a public perché i metodi con questa annotazione devono essere ovveradible
+    public void sendMail(String email, String msg) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = null;
         try {
