@@ -18,33 +18,17 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class GMailService {
 
-    private static final String baseURL = "http://localhost:8080/";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private JavaMailSender mailSender;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RecoverTokenRepository tokenRepository;
-
-    public void sendRegisterEmail(UserEntity userEntity) {
-        String href = baseURL + "confirm/" + userEntity.getId();
-        sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>");
-        logger.info("Inviata register email a: " + userEntity.getUsername());
-    }
-
-    public void sendRecoverEmail(UserEntity userEntity) {
-        RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
-        tokenRepository.save(tokenEntity);
-        String href = baseURL + "recover/" + tokenEntity.getTokenValue();
-        sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>");
-        logger.info("Inviata recover email a: " + userEntity.getUsername());
-    }
-
-    @Async("threadPoolTaskExecutor") // convertito a public perché i metodi con questa annotazione devono essere ovveradible
+    /**
+     * https://www.baeldung.com/spring-async TODO ancora da sistemare il thread pool
+     * @param email
+     * @param msg
+     */
+    @Async("threadPoolTaskExecutor")
     public void sendMail(String email, String msg) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = null;

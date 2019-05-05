@@ -22,7 +22,7 @@ import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
-
+    private static final String baseURL = "http://localhost:8080/";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -97,7 +97,11 @@ public class UserService implements UserDetailsService {
         RoleEntity userRole = roleRepository.findByRole("user");
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
         userRepository.save(userEntity);
-        gMailService.sendRegisterEmail(userEntity);
+
+        String href = baseURL + "confirm/" + userEntity.getId();
+        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>");
+        logger.info("Inviata register email a: " + userEntity.getUsername());
+
     }
 
     /**
@@ -149,7 +153,13 @@ public class UserService implements UserDetailsService {
 
     public void recoverAccount(String email) throws UsernameNotFoundException {
         UserEntity userEntity = (UserEntity) loadUserByUsername(email); //se non esiste lancia un eccezione
-        gMailService.sendRecoverEmail(userEntity);
 
+        RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
+        tokenRepository.save(tokenEntity);
+        String href = baseURL + "recover/" + tokenEntity.getTokenValue();
+        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>");
+        logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
+
+
 }
