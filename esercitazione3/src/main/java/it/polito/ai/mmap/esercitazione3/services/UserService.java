@@ -3,6 +3,7 @@ package it.polito.ai.mmap.esercitazione3.services;
 import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
 import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
@@ -122,7 +123,7 @@ public class UserService implements UserDetailsService {
         if (check.isPresent()) {
             userEntity = check.get();
         } else {
-            return; //TODO uuid non riconosciuto
+            throw new TokenNotFoundException();
         }
         if (!userEntity.isEnabled()) {
             userEntity.setEnabled(true);
