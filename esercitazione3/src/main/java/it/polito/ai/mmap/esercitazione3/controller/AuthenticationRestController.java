@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValid;
+import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValidException;
+import it.polito.ai.mmap.esercitazione3.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.MailDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
@@ -10,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -68,8 +71,10 @@ public class AuthenticationRestController {
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().stream().forEach(err -> logger.error(err.toString()));
-            return; //TODO
+            bindingResult.getAllErrors().forEach(err -> logger.error(err.toString()));
+            throw new RegistrationNotValidException(bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect( Collectors.joining( "," ) ));
         }
         userService.registerUser(userDTO);
     }
@@ -117,17 +122,17 @@ public class AuthenticationRestController {
         try {
             ObjectId id = new ObjectId(randomUUID);
         } catch (IllegalArgumentException ignored) {
-            throw new RecoverProcessNotValid();
+            throw new RecoverProcessNotValidException();
         }
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
-            throw new RecoverProcessNotValid();
+            throw new RecoverProcessNotValidException();
         }
 
         try {
             userService.updateUserPassword(userDTO, randomUUID);
         } catch (UsernameNotFoundException e) {
-            throw new RecoverProcessNotValid();
+            throw new RecoverProcessNotValidException();
         }
 
     }
