@@ -18,6 +18,8 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class GMailService {
 
+    //todo vedere di aggiungere oggetto email per evitare che finisca negli spam
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

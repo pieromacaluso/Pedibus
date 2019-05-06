@@ -1,11 +1,15 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
+import it.polito.ai.mmap.esercitazione3.configuration.JwtTokenProvider;
+import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

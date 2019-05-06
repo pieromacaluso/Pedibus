@@ -1,14 +1,27 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
+import it.polito.ai.mmap.esercitazione3.configuration.JwtTokenProvider;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 public class AuthenticationRestController {
@@ -40,7 +53,7 @@ public class AuthenticationRestController {
         try {
             //todo check password corretta?
             String username=userDTO.getEmail();
-            String password=userDTO.getPass();
+            String password=userDTO.getPassword();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
             String jwtToken=userService.getJwtToken(username);
             Map<Object, Object> model = new HashMap<>();
