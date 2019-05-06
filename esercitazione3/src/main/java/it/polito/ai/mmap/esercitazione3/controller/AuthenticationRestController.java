@@ -1,17 +1,16 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.services.JwtTokenService;
+import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.services.JwtTokenService;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -26,19 +25,15 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 public class AuthenticationRestController {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     UserService userService;
-
     @Autowired
     AuthenticationManager authenticationManager;
-
     @Autowired
     JwtTokenService jwtTokenService;
-
     @Autowired
     PasswordEncoder passwordEncoder;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * L'utente invia un json contente email e password, le validiamo e controlliamo se l'utente è attivo e la password è corretta.
@@ -49,26 +44,22 @@ public class AuthenticationRestController {
      */
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody UserDTO userDTO) { //todo validazione userDTO
-        logger.info("login result -> " + userService.isLoginValid(userDTO));
-        try {
-            //todo check password corretta?
-            String username=userDTO.getEmail();
-            String password=userDTO.getPassword();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
-            String jwtToken=userService.getJwtToken(username);
-            Map<Object, Object> model = new HashMap<>();
-            model.put("username", username);
-            model.put("token", jwtToken);
-            return ok(model);
-        } catch (AuthenticationException e) {
-            //throw new BadCredentialsException("Invalid username/password supplied");
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }
+//        logger.info("login result -> " + userService.isLoginValid(userDTO));
+        //todo check password corretta?
+        String username = userDTO.getEmail();
+        String password = userDTO.getPassword();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
+        String jwtToken = userService.getJwtToken(username);
+        Map<Object, Object> model = new HashMap<>();
+        model.put("username", username);
+        model.put("token", jwtToken);
+        return ok(model);
     }
 
     /**
      * L'utente invia un json con le sue nuove credenziali, le validiamo con un validator, se rispettano
      * i criteri lo registriamo e inviamo una mail per l'attivazione dell'account, se no restituiamo un errore
+     *
      * @param userDTO
      * @param bindingResult
      */
@@ -83,6 +74,7 @@ public class AuthenticationRestController {
 
     /**
      * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
+     *
      * @param randomUUID
      */
     @GetMapping("/confirm/{randomUUID}")
