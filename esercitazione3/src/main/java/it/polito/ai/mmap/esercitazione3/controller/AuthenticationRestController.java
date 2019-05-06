@@ -86,8 +86,13 @@ public class AuthenticationRestController {
      * @param randomUUID
      */
     @GetMapping("/confirm/{randomUUID}")
-    public void confirm(@PathVariable("randomUUID") ObjectId randomUUID) {
-        userService.enableUser(randomUUID);
+    public void confirm(@PathVariable("randomUUID") String randomUUID) {
+        try {
+            ObjectId id = new ObjectId(randomUUID);
+            userService.enableUser(id);
+        } catch (IllegalArgumentException ex){
+            throw new TokenNotFoundException();
+        }
     }
 
     /**
