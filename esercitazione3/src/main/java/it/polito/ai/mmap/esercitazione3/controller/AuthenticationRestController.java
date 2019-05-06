@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
 import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
+import it.polito.ai.mmap.esercitazione3.objectDTO.MailDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.JwtTokenService;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
@@ -94,8 +95,12 @@ public class AuthenticationRestController {
      * Risponde sempre 200 - Ok
      */
     @PostMapping("/recover")
-    public void recover(@RequestBody String email) {
-        userService.recoverAccount(email);
+    public void recover(@RequestBody MailDTO email) {
+        try{
+            userService.recoverAccount(email.getEmail());
+        } catch (UsernameNotFoundException ignored){
+            logger.error("Tentativo recupero password con mail errata (" + email.getEmail() + ")");
+        }
     }
 
     /**
