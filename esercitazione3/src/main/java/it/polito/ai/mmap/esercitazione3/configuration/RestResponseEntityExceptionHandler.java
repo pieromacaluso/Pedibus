@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -44,5 +45,37 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 //        ex.printStackTrace();
         logger.error(e.toString());
         return handleExceptionInternal(ex, e, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    @ExceptionHandler(value = {
+            AuthenticationException.class})
+    protected ResponseEntity<Object> handleUnauthorized(RuntimeException ex, WebRequest request) {
+        ErrorDTO e = ErrorDTO.builder()
+                .exception(ex.getClass().getSimpleName())
+                .timestamp(new Timestamp(System.currentTimeMillis()))
+                .errorMessage(ex.getMessage())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI())
+                .build();
+//        ex.printStackTrace();
+        logger.error(e.toString());
+        return handleExceptionInternal(ex, e, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler(value = {
+            TokenNotFoundException.class})
+    protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
+        ErrorDTO e = ErrorDTO.builder()
+                .exception(ex.getClass().getSimpleName())
+                .timestamp(new Timestamp(System.currentTimeMillis()))
+                .errorMessage(ex.getMessage())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI())
+                .build();
+//        ex.printStackTrace();
+        logger.error(e.toString());
+        return handleExceptionInternal(ex, e, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 }
