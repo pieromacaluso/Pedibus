@@ -127,8 +127,7 @@ public class UserService implements UserDetailsService {
         if (!userEntity.isEnabled()) {
             userEntity.setEnabled(true);
             userRepository.save(userEntity);
-        } else
-            return; //TODO già confermato
+        }
     }
 
     /**
