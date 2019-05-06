@@ -1,4 +1,4 @@
-package it.polito.ai.mmap.esercitazione3.configuration;
+package it.polito.ai.mmap.esercitazione3.services;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class JwtTokenProvider {
+public class JwtTokenService {
 
-    @Value("${security.jwt.token.secret-key:secret}")       //todo aggiungere nelle application.properties
-    private String secretKey = "secret";
+    @Value("${security.jwt.token.secret-key}")
+    private String secretKey;
 
-    @Value("${security.jwt.token.expire-length:3600000}")   //todo aggiungere nelle application.properties
-    private long validityInMilliseconds = 3600000; // 1h
+    @Value("${security.jwt.token.expire-length}")
+    private long validityInMilliseconds;
 
     @Qualifier("userService")
     @Autowired
@@ -34,6 +34,12 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    /**
+     * Crea il token da associare al user. Può contenere diverse info, o tramite i setter standard o tramite le claims stile chiave-valore
+     * @param username
+     * @param roles
+     * @return
+     */
     public String createToken(String username, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", roles);
@@ -56,6 +62,11 @@ public class JwtTokenProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
+    /**
+     * Estrapola il token dall' header Authorization
+     * @param req
+     * @return
+     */
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -64,6 +75,11 @@ public class JwtTokenProvider {
         return null;
     }
 
+    /**
+     * Verifica che il token sia ancora valido
+     * @param token
+     * @return
+     */
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);

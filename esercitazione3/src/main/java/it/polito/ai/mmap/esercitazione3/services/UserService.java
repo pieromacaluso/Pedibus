@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
-import it.polito.ai.mmap.esercitazione3.configuration.JwtTokenProvider;
 import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
@@ -42,7 +41,7 @@ public class UserService implements UserDetailsService {
     private GMailService gMailService;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtTokenService jwtTokenService;
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
@@ -167,7 +166,7 @@ public class UserService implements UserDetailsService {
         List<String> roles=new ArrayList<>();
         roles.add("user");
         //roles.add("admin");
-        String token = jwtTokenProvider.createToken(username, roles);/*userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());*/
+        String token = jwtTokenService.createToken(username, roles);/*userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());*/
         //todo sostituire roles con la lista di ruoli dell utente selezionato con username tramite db
         return token;
     }

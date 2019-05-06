@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.configuration;
 
+import it.polito.ai.mmap.esercitazione3.services.JwtTokenService;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,7 +21,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     UserService userService;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtTokenService jwtTokenService;
 
 
     /**
@@ -45,7 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().anyRequest().authenticated()
                 .and().httpBasic()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().apply(new JwtConfigurer(jwtTokenProvider));
+                .and().apply(new JwtConfigurer(jwtTokenService));
 
 //        //TODO permetto tutto per comodità
 //        http

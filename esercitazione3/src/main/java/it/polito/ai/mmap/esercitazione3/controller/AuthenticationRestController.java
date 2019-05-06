@@ -1,6 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.configuration.JwtTokenProvider;
+import it.polito.ai.mmap.esercitazione3.services.JwtTokenService;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.bson.types.ObjectId;
@@ -35,7 +35,7 @@ public class AuthenticationRestController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtTokenService jwtTokenService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -54,7 +54,7 @@ public class AuthenticationRestController {
             //todo check password corretta?
             String username=userDTO.getEmail();
             String password=userDTO.getPassword();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
             String jwtToken=userService.getJwtToken(username);
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
