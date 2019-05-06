@@ -1,14 +1,11 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
-import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
-import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +37,12 @@ public class UserService implements UserDetailsService {
     @Autowired
     private GMailService gMailService;
 
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
      * Implementazione fissata dalla classe UserDetailsService
-     *
      * @param email
      * @return
      * @throws UsernameNotFoundException
@@ -129,7 +128,6 @@ public class UserService implements UserDetailsService {
             return; //TODO già confermato
     }
 
-
     /**
      * Metodo che ci permette di aggiornare la password di un utente
      * Verifica che il codice random:
@@ -161,5 +159,13 @@ public class UserService implements UserDetailsService {
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
+    public String getJwtToken(String username){
+        List<String> roles=new ArrayList<>();
+        roles.add("user");
+        //roles.add("admin");
+        String token = jwtTokenProvider.createToken(username, roles);/*userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());*/
+        //todo sostituire roles con la lista di ruoli dell utente selezionato con username tramite db
+        return token;
+    }
 
 }

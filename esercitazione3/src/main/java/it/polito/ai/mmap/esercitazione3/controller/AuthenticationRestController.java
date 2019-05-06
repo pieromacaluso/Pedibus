@@ -2,11 +2,9 @@ package it.polito.ai.mmap.esercitazione3.controller;
 
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,23 +18,51 @@ public class AuthenticationRestController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    /**
+     * L'utente invia un json contente email e password, le validiamo e controlliamo se l'utente è attivo e la password è corretta.
+     * In caso affermativo viene creato un json web token che viene ritornato all'utente, altrimenti restituisce 401-Unauthorized
+     *
+     * @param userDTO
+     * @return
+     */
     @PostMapping("/login")
-    public String login(@RequestBody UserDTO userDTO) {
+    public ResponseEntity login(@RequestBody UserDTO userDTO) { //todo validazione userDTO
         logger.info("login result -> " + userService.isLoginValid(userDTO));
-        return null;
+        try {
+            //todo check password corretta?
+            String username=userDTO.getEmail();
+            String password=userDTO.getPass();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+            String jwtToken=userService.getJwtToken(username);
+            Map<Object, Object> model = new HashMap<>();
+            model.put("username", username);
+            model.put("token", jwtToken);
+            return ok(model);
+        } catch (AuthenticationException e) {
+            //throw new BadCredentialsException("Invalid username/password supplied");
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
     }
 
     /**
-     * Riceviamo un json con le nuove credenziali, le validiamo con un validator, se rispettano
+     * L'utente invia un json con le sue nuove credenziali, le validiamo con un validator, se rispettano
      * i criteri lo registriamo e inviamo una mail per l'attivazione dell'account, se no restituiamo un errore
-     *
      * @param userDTO
      * @param bindingResult
      */
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().stream().forEach(err -> logger.error("/register -> " + err.toString()));
+            bindingResult.getAllErrors().stream().forEach(err -> logger.error(err.toString()));
             return; //TODO
         }
         userService.registerUser(userDTO);
