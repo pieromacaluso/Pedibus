@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class Esercitazione3ApplicationTests {
+public class Esercitazione2ApplicationTests {
 
     @Autowired
     JsonHandlerService jsonHandlerService;
@@ -46,7 +46,7 @@ public class Esercitazione3ApplicationTests {
 
 
     @Test
-    public void postLogin() throws Exception {
+    public void getLines() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         logger.info("Test GET /lines ...");
         List<String> expectedResult = new ArrayList<>();
