@@ -147,7 +147,7 @@ public class UserService implements UserDetailsService {
             userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             userEntity = userRepository.save(userEntity);
         } else {
-            return; //TODO 404
+            throw new UsernameNotFoundException("");
         }
     }
 

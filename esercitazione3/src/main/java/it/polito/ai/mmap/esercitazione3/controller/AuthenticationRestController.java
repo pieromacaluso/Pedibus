@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
+import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValid;
 import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.MailDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
@@ -83,7 +84,7 @@ public class AuthenticationRestController {
         try {
             ObjectId id = new ObjectId(randomUUID);
             userService.enableUser(id);
-        } catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             throw new TokenNotFoundException();
         }
     }
@@ -96,9 +97,9 @@ public class AuthenticationRestController {
      */
     @PostMapping("/recover")
     public void recover(@RequestBody MailDTO email) {
-        try{
+        try {
             userService.recoverAccount(email.getEmail());
-        } catch (UsernameNotFoundException ignored){
+        } catch (UsernameNotFoundException ignored) {
             logger.error("Tentativo recupero password con mail errata (" + email.getEmail() + ")");
         }
     }
@@ -113,15 +114,20 @@ public class AuthenticationRestController {
      */
     @PostMapping("/recover/{randomUUID}")
     public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
+        try {
+            ObjectId id = new ObjectId(randomUUID);
+        } catch (IllegalArgumentException ignored) {
+            throw new RecoverProcessNotValid();
+        }
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().stream().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
-            return; //TODO 404
+            bindingResult.getAllErrors().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
+            throw new RecoverProcessNotValid();
         }
 
         try {
             userService.updateUserPassword(userDTO, randomUUID);
         } catch (UsernameNotFoundException e) {
-            return; //TODO 404
+            throw new RecoverProcessNotValid();
         }
 
     }

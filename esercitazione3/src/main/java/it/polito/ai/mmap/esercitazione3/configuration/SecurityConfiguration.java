@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/confirm/*").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/recover").permitAll()
+                .antMatchers("/recover/*").permitAll()
                 .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()

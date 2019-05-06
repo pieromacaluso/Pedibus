@@ -64,7 +64,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(value = {
-            TokenNotFoundException.class})
+            TokenNotFoundException.class,
+            RecoverProcessNotValid.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
