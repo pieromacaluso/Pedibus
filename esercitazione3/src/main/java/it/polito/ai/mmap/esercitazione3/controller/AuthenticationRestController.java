@@ -48,9 +48,15 @@ public class AuthenticationRestController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserDTO userDTO) { //todo validazione userDTO
+    public ResponseEntity login(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
 //        logger.info("login result -> " + userService.isLoginValid(userDTO));
-        //todo check password corretta?
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(err -> logger.error(err.toString()));
+            throw new RegistrationNotValidException(bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.joining(",")));
+        }
+
         String username = userDTO.getEmail();
         String password = userDTO.getPassword();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
@@ -74,7 +80,7 @@ public class AuthenticationRestController {
             bindingResult.getAllErrors().forEach(err -> logger.error(err.toString()));
             throw new RegistrationNotValidException(bindingResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect( Collectors.joining( "," ) ));
+                    .collect(Collectors.joining(",")));
         }
         userService.registerUser(userDTO);
     }
