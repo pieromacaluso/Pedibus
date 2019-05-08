@@ -1,0 +1,29 @@
+GET http://localhost:8080/confirm/5cd29c838e260b16829c8311
+Accept: application/json
+
+###
+
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password",
+  "passMatch": "mia-password"
+}
+
+###
+
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password",
+  "passMatch": "mia-password"
+}
+
+<> 2019-05-08T110504.500.json
+
+###
+

@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 @Data
 public class UserDTO extends ResourceSupport {
     @Email
-    @Size(min = 7, max = 25)
+    @Size(min = 7, max = 35)
     private String email;
 
     @Size(min = 3, max = 64)
