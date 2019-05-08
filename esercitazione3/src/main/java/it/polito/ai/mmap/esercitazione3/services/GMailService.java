@@ -18,7 +18,6 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class GMailService {
 
-    //todo vedere di aggiungere oggetto email per evitare che finisca negli spam
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -31,12 +30,13 @@ public class GMailService {
      * @param msg
      */
     @Async("threadPoolTaskExecutor")
-    public void sendMail(String email, String msg) {
+    public void sendMail(String email, String msg, String subject) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = null;
         try {
             // true = multi part message
             helper = new MimeMessageHelper(message, true);
+            helper.setSubject(subject);
             helper.setTo(email);
             // true = text/html
             helper.setText(msg, true);

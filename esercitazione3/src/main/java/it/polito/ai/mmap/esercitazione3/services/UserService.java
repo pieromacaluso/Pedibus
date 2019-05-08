@@ -23,7 +23,10 @@ import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
+
     private static final String baseURL = "http://localhost:8080/";
+    private static final String REGISTRATION_SUBJECT = "Verifica account Pedibus";
+    private static final String RECOVER_ACCOUNT_SUBJECT = "Recover Account Pedibus";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -102,7 +105,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
 
         String href = baseURL + "confirm/" + userEntity.getId();
-        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>");
+        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>", REGISTRATION_SUBJECT);
         logger.info("Inviata register email a: " + userEntity.getUsername());
 
     }
@@ -145,7 +148,7 @@ public class UserService implements UserDetailsService {
         RecoverTokenEntity tokenEntity = tokenRepository.findByUsername(userDTO.getEmail());
         if (tokenEntity != null && tokenEntity.getTokenValue().compareTo(randomUUID) == 0) {
             userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            userEntity = userRepository.save(userEntity);
+            userRepository.save(userEntity);
         } else {
             throw new UsernameNotFoundException("");
         }
@@ -158,7 +161,7 @@ public class UserService implements UserDetailsService {
         RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
         tokenRepository.save(tokenEntity);
         String href = baseURL + "recover/" + tokenEntity.getTokenValue();
-        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>");
+        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>", RECOVER_ACCOUNT_SUBJECT);
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
