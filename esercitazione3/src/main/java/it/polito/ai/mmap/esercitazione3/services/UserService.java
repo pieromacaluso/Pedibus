@@ -174,10 +174,7 @@ public class UserService implements UserDetailsService {
             roles.addAll(userEntity.get().getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()));
         }
 
-        roles.add("user");
-        //roles.add("admin");
         String token = jwtTokenService.createToken(username, roles);/*userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());*/
-        //todo sostituire roles con la lista di ruoli dell utente selezionato con username tramite db
         return token;
     }
 
