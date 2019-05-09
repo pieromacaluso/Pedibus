@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
+import it.polito.ai.mmap.esercitazione3.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
@@ -81,7 +82,7 @@ public class HomeController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        Date dataFormatted = getDate(data);
+        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, mongoService);
     }
 
@@ -96,7 +97,7 @@ public class HomeController {
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        Date dataFormatted = getDate(data);
+        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getId(), dataFormatted);
         return mongoService.addPrenotazione(prenotazioneDTO);
     }
@@ -113,7 +114,7 @@ public class HomeController {
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        Date dataFormatted = getDate(data);
+        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getId(), dataFormatted);
         mongoService.updatePrenotazione(prenotazioneDTO, reservationId);
     }
@@ -127,7 +128,7 @@ public class HomeController {
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        Date dataFormatted = getDate(data);
+        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
         mongoService.deletePrenotazione(nomeLinea, dataFormatted, reservationId);
     }
 
@@ -141,7 +142,7 @@ public class HomeController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        Date dataFormatted = getDate(data);
+        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
         PrenotazioneEntity checkPren = mongoService.getPrenotazione(reservationId);
 
         if (mongoService.getLineByName(nomeLinea).getId().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))

@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.entity;
 
+import it.polito.ai.mmap.esercitazione3.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -10,9 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -47,12 +45,7 @@ public class UserEntity implements UserDetails {
         isCredentialsNonExpired = true;
         isEnabled = false;
         roleList = userRoles;
-
-        String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
-        String completeData = LocalDateTime.now().toString() + " GMT+00:00";
-        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
-        creationDate = Date.from(londonTime.toInstant());
+       creationDate = new MongoZonedDateTime().getNow();
     }
 
     @Override

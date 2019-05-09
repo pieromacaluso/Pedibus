@@ -1,14 +1,12 @@
 package it.polito.ai.mmap.esercitazione3.entity;
 
+import it.polito.ai.mmap.esercitazione3.configuration.MongoZonedDateTime;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.nio.charset.Charset;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 
@@ -41,11 +39,7 @@ public class RecoverTokenEntity {
         String randomValue = new String(arr, Charset.forName("UTF-8"));
         this.tokenValue = randomValue;
 
-        String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
-        String completeData = LocalDateTime.now().toString() + " GMT+00:00";
-        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
-        creationDate = Date.from(londonTime.toInstant());
+        creationDate = new MongoZonedDateTime().getNow();
 
 
     }
