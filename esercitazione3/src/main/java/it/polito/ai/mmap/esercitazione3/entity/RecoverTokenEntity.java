@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.nio.charset.Charset;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 
@@ -41,9 +41,12 @@ public class RecoverTokenEntity {
         String randomValue = new String(arr, Charset.forName("UTF-8"));
         this.tokenValue = randomValue;
 
-        //TODO non sono riuscito a fargli salvare l'ora giusta, ma è un problema relativo in quanto basterebbe un'ora a caso su cui lui poi si calcola i secondi
-        ZonedDateTime londonTime = ZonedDateTime.now(ZoneId.of("UTC+02:00"));
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        String completeData = LocalDateTime.now().toString() + " GMT+00:00";
+        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
         creationDate = Date.from(londonTime.toInstant());
+
 
     }
 

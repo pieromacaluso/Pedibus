@@ -10,6 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -30,6 +33,7 @@ public class UserEntity implements UserDetails {
     boolean isCredentialsNonExpired;
     boolean isEnabled;
     private ArrayList<RoleEntity> roleList;
+    private Date creationDate;
 
 
     public UserEntity() {
@@ -44,6 +48,11 @@ public class UserEntity implements UserDetails {
         isEnabled = false;
         roleList = userRoles;
 
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        String completeData = LocalDateTime.now().toString() + " GMT+00:00";
+        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
+        creationDate = Date.from(londonTime.toInstant());
     }
 
     @Override
