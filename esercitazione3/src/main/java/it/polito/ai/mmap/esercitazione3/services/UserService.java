@@ -4,6 +4,7 @@ import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValidException;
+import it.polito.ai.mmap.esercitazione3.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
 import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
@@ -20,6 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -105,6 +109,7 @@ public class UserService implements UserDetailsService {
         }
         RoleEntity userRole = roleRepository.findByRole("user");
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
+        logger.info(userEntity.getCreationDate().getTime() + "creationtime");
         userRepository.save(userEntity);
 
         String href = baseURL + "confirm/" + userEntity.getId();
@@ -115,10 +120,9 @@ public class UserService implements UserDetailsService {
 
     /**
      * verifica che il codice random:
-     * - corrisponda ad uno degli utenti in corso di verifica -DONE
-     * - controlla che tale registrazione non sia scaduta -TODO
+     * - corrisponda ad uno degli utenti in corso di verifica
+     * - controlla che tale registrazione non sia scaduta
      * <p>
-     * TODO
      * tutto ok -> porta utente allo stato attivo e restituisce 200 – Ok
      * altrimenti -> restituisce 404 – Not found
      *
@@ -132,10 +136,23 @@ public class UserService implements UserDetailsService {
         } else {
             throw new TokenNotFoundException();
         }
-        if (!userEntity.isEnabled()) {
-            userEntity.setEnabled(true);
-            userRepository.save(userEntity);
+
+        int minuti = 1;
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        String completeData = LocalDateTime.now().toString() + " GMT+00:00";
+        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
+        Long now = Date.from(londonTime.toInstant()).getTime();
+
+        if ((now - userEntity.getCreationDate().getTime()) < 1000 * 60 * minuti) {
+            if (!userEntity.isEnabled()) {
+                userEntity.setEnabled(true);
+                userRepository.save(userEntity);
+            }
+        } else {
+            throw new RegistrationNotValidException(); //TODO va bene come eccezione ?
         }
+
     }
 
     /**
