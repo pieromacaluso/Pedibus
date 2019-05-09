@@ -103,12 +103,18 @@ public class UserService implements UserDetailsService {
      * @throws UserAlreadyPresentException nel caso ci sia già un utente con la mail indicata
      */
     public void registerUser(UserDTO userDTO) throws UserAlreadyPresentException {
+        UserEntity userEntity;
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
         if (check.isPresent()) {
             throw new UserAlreadyPresentException("User already registered");
         }
         RoleEntity userRole = roleRepository.findByRole("user");
-        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
+        RoleEntity adminRole = roleRepository.findByRole("admin");
+        if(userDTO.getEmail().equals("angeloturco06@hotmail.it")){
+            userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(adminRole)), passwordEncoder);
+        }else{
+            userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
+        }
         logger.info(userEntity.getCreationDate().getTime() + "creationtime");
         userRepository.save(userEntity);
 

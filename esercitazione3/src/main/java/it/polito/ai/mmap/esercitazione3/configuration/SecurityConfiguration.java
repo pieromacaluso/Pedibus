@@ -34,6 +34,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/users").hasRole("admin")
+                .and()
+                .authorizeRequests()
                 .antMatchers("/register").permitAll()
                 .and()
                 .authorizeRequests()
@@ -47,9 +50,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/recover/**").permitAll()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/images/**","/css/**").permitAll()
                 .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()
