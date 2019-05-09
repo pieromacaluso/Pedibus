@@ -125,11 +125,12 @@ public class AuthenticationRestController {
      */
     @PostMapping("/recover/{randomUUID}")
     public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
-        try {
-            ObjectId id = new ObjectId(randomUUID);
-        } catch (IllegalArgumentException ignored) {
-            throw new RecoverProcessNotValidException();
-        }
+        //TODO per me (MarcoF) è da cancellare non essendo il randomUUID un ObjectId, se è per controllare che sia un random, dovrebbe bastare la riuscita/fallimento di getTokenValue().equals(randomUUID)
+        //        try {
+//            ObjectId id = new ObjectId(randomUUID);
+//        } catch (IllegalArgumentException ignored) {
+//            throw new RecoverProcessNotValidException();
+//        }
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
             throw new RecoverProcessNotValidException();

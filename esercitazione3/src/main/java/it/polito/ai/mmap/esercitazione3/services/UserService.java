@@ -3,6 +3,7 @@ package it.polito.ai.mmap.esercitazione3.services;
 import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
 import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
@@ -51,6 +52,7 @@ public class UserService implements UserDetailsService {
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
      * Implementazione fissata dalla classe UserDetailsService
+     *
      * @param email
      * @return
      * @throws UsernameNotFoundException
@@ -116,6 +118,7 @@ public class UserService implements UserDetailsService {
      * - corrisponda ad uno degli utenti in corso di verifica -DONE
      * - controlla che tale registrazione non sia scaduta -TODO
      * <p>
+     * TODO
      * tutto ok -> porta utente allo stato attivo e restituisce 200 – Ok
      * altrimenti -> restituisce 404 – Not found
      *
@@ -139,19 +142,23 @@ public class UserService implements UserDetailsService {
      * Metodo che ci permette di aggiornare la password di un utente
      * Verifica che il codice random:
      * - sia uno di quelli che abbiamo generato
-     * - non sia scaduto. //TODO
+     * - non sia scaduto.
      *
      * @param userDTO
      * @throws UsernameNotFoundException se non trova l'user
      */
     public void updateUserPassword(UserDTO userDTO, String randomUUID) throws UsernameNotFoundException {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-        RecoverTokenEntity tokenEntity = tokenRepository.findByUsername(userDTO.getEmail());
-        if (tokenEntity != null && tokenEntity.getTokenValue().compareTo(randomUUID) == 0) {
-            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            userRepository.save(userEntity);
+        Optional<RecoverTokenEntity> checkToken = tokenRepository.findByUsername(userDTO.getEmail());
+        if (checkToken.isPresent()) {
+            if (checkToken.get().getTokenValue().equals(randomUUID)) {
+                userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                userRepository.save(userEntity);
+            } else {
+                throw new RecoverProcessNotValidException();
+            }
         } else {
-            throw new UsernameNotFoundException("");
+            throw new RecoverProcessNotValidException();
         }
     }
 
@@ -160,17 +167,18 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity = (UserEntity) loadUserByUsername(email); //se non esiste lancia un eccezione
 
         RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
+        logger.info(tokenEntity.getCreationDate().toString());
         tokenRepository.save(tokenEntity);
         String href = baseURL + "recover/" + tokenEntity.getTokenValue();
         gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>", RECOVER_ACCOUNT_SUBJECT);
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
-    public String getJwtToken(String username){
+    public String getJwtToken(String username) {
 
-        List<String> roles=new ArrayList<>();
+        List<String> roles = new ArrayList<>();
         Optional<UserEntity> userEntity = userRepository.findByUsername(username);
-        if(userEntity.isPresent()) {
+        if (userEntity.isPresent()) {
             roles.addAll(userEntity.get().getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()));
         }
 
