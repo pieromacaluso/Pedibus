@@ -57,14 +57,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().apply(new JwtConfigurer(jwtTokenService));
 
-//        //TODO permetto tutto per comodità
-//        http
-//                .csrf().disable()
-//                .authorizeRequests().anyRequest().permitAll()
-//                .and().httpBasic()
-//                .and().sessionManagement().disable();
-
-
     }
 
     /**

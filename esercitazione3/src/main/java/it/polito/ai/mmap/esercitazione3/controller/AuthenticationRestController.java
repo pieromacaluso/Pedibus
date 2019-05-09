@@ -47,14 +47,9 @@ public class AuthenticationRestController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity login(@RequestBody UserDTO userDTO, BindingResult bindingResult) {
 //        logger.info("login result -> " + userService.isLoginValid(userDTO));
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(err -> logger.error(err.toString()));
-            throw new RegistrationNotValidException(bindingResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining(",")));
-        }
+        //todo non è possibile validarlo con @Valid perchè altrimenti bisognerebbe inviare anche la passMatch, valutare se bisogna fare altro o meno
 
         String username = userDTO.getEmail();
         String password = userDTO.getPassword();
