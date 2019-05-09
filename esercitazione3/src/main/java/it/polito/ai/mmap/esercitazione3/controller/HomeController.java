@@ -157,11 +157,11 @@ public class HomeController {
      * @param data stringa data
      * @return Data
      */
-    private Date getDate(String data) {
+    /*private Date getDate(String data) {
         String completeData = data + " 12:00 GMT+00:00"; //data nel formato AAAA-MM-DD
         String pattern = "yyyy-MM-dd HH:mm z";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
         ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
         return Date.from(londonTime.toInstant());
-    }
+    }*/
 }
