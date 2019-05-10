@@ -6,13 +6,12 @@ import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.Principal;
+import java.util.*;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -29,13 +28,28 @@ public class AdminRestController {
      * maggior dettagli quili ruoli e altro.
      * @return
      */
-    @GetMapping(value="/users", consumes={"application/json","application/xml"})
+    @GetMapping(value="/users", consumes={"application/json","application/xml"})    //tramite consumers è possibile indicare quale header Content-Type deve avere la richiesta
     public ResponseEntity getUsers()
     {
         List<UserEntity> allUsers=userService.getAllUsers();
         Map<Object, Object> model = new HashMap<>();
         model.put("ListaUtenti", allUsers);
         return ok(model);
+    }
+
+    //todo da finire
+    @PutMapping("/users/{userID}")
+    public ResponseEntity setUserAdmin(@RequestBody String nomeLinea, @PathVariable("userID") String userID){
+        UserEntity userEntity;
+        //Collection<? extends GrantedAuthority> roles= SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+        try {
+            userEntity= (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        }catch (Exception e){
+            //todo il getPrincipal ritorna un Object. Tale metodo per
+        }
+        return (ResponseEntity) ok();
     }
 
 }

@@ -14,9 +14,4 @@ public class AdminController {
         return "users";
     }
 
-    @PutMapping("/users/{userID}")
-    public void addLineAdmin()
-    {
-
-    }
 }

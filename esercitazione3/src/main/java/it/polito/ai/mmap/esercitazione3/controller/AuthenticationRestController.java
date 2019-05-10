@@ -43,6 +43,7 @@ public class AuthenticationRestController {
     JwtTokenService jwtTokenService;
     @Autowired
     PasswordEncoder passwordEncoder;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
