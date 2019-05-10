@@ -245,4 +245,8 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
         logger.info("SuperAdmin configurato ed abilitato.");
     }
+
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
