@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
-    private static final String baseURL = "http://localhost:8080/";
-    private static final String REGISTRATION_SUBJECT = "Verifica account Pedibus";
-    private static final String RECOVER_ACCOUNT_SUBJECT = "Recover Account Pedibus";
+    //private static final String baseURL = "http://localhost:8080/";
+    //private static final String REGISTRATION_SUBJECT = "Verifica account Pedibus";
+    //private static final String RECOVER_ACCOUNT_SUBJECT = "Recover Account Pedibus";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${superadmin.email}")
@@ -41,6 +41,14 @@ public class UserService implements UserDetailsService {
     @Value("${superadmin.password}")
     private String superAdminPass;
 
+    @Value("${mail.baseURL}")
+    private String baseURL;
+    @Value("${mail.registration_subject}")
+    private String REGISTRATION_SUBJECT;
+    @Value("${mail.recover_account_subject}")
+    private String RECOVER_ACCOUNT_SUBJECT;
+    @Value("${mail.minutes_to_enable}")
+    private int minuti;
 
     @Autowired
     UserRepository userRepository;
@@ -150,7 +158,6 @@ public class UserService implements UserDetailsService {
             throw new TokenNotFoundException();
         }
 
-        int minuti = 1;
         String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
         String completeData = LocalDateTime.now().toString() + " GMT+00:00";
