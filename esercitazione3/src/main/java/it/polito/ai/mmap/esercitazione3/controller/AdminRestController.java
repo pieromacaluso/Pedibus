@@ -1,8 +1,12 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
 
+import it.polito.ai.mmap.esercitazione3.entity.LineaEntity;
+import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.services.MongoService;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -20,6 +26,8 @@ public class AdminRestController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    MongoService mongoService;
 
 
     /**
@@ -37,19 +45,24 @@ public class AdminRestController {
         return ok(model);
     }
 
-    //todo da finire
     @PutMapping("/users/{userID}")
-    public ResponseEntity setUserAdmin(@RequestBody String nomeLinea, @PathVariable("userID") String userID){
-        UserEntity userEntity;
-        //Collection<? extends GrantedAuthority> roles= SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+    public void setUserAdmin(@RequestBody String nomeLinea, @PathVariable("userID") String userID){
+        UserEntity principal;
+        LineaDTO lineaDTO=mongoService.getLineByName(nomeLinea);        //todo vedere se gestisce le eccezioni come loadUserById
 
-        try {
-            userEntity= (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       // try {
+            principal= (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdmin()==principal.getId().toString()){
+                userService.addAdmin(userID);
+                mongoService.addAdminLine(userID,nomeLinea);
+            }else{
+                //todo eccezione
+            }
 
-        }catch (Exception e){
-            //todo il getPrincipal ritorna un Object. Tale metodo per
-        }
-        return (ResponseEntity) ok();
+        //}catch (Exception e){
+            //todo il getPrincipal ritorna un Object che potrebbe non sempre essere convertito in entity. Essendo però chiamato solo se autenticto non si dovrebbero avere problemi. Da verificare per bene
+        //}
+        return;
     }
 
 }

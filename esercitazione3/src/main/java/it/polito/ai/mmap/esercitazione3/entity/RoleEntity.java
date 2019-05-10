@@ -15,3 +15,5 @@ public class RoleEntity {
     private String id;
     private String role;
 }
+
+

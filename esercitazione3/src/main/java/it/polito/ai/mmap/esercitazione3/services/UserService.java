@@ -168,6 +168,7 @@ public class UserService implements UserDetailsService {
         if ((now - userEntity.getCreationDate().getTime()) < 1000 * 60 * minuti) {
             if (!userEntity.isEnabled()) {
                 userEntity.setEnabled(true);
+                userEntity.setUserId(userEntity.getId().toString());
                 userRepository.save(userEntity);
             }
         } else {
@@ -243,10 +244,35 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(role)), passwordEncoder);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
+
+        check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
+        userEntity=check.get();
+        userEntity.setUserId(userEntity.getId().toString());
+        userRepository.save(userEntity);
         logger.info("SuperAdmin configurato ed abilitato.");
     }
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
+    }
+
+
+    public void addAdmin(String userID) {
+        Optional<UserEntity> check = userRepository.findById(new ObjectId(userID));
+        if (!check.isPresent()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        UserEntity userEntity = check.get();
+
+        userEntity.getRoleList().add(roleRepository.findByRole("ROLE_ADMIN"));
+        userRepository.save(userEntity);
+    }
+
+    public boolean userIdIsTrue(String userID) {
+        Optional<UserEntity> check = userRepository.findByUserId(userID);
+        if (!check.isPresent()) {
+            return false;
+        }else
+            return true;
     }
 }

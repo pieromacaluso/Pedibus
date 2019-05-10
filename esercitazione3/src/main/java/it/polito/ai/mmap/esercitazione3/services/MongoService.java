@@ -15,6 +15,7 @@ import it.polito.ai.mmap.esercitazione3.repository.LineaRepository;
 import it.polito.ai.mmap.esercitazione3.repository.PrenotazioneRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -31,6 +32,8 @@ public class MongoService {
     FermataRepository fermataRepository;
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
+    @Autowired
+    UserService userService;
 
     /**
      * Salva lista Fermate sul DB
@@ -240,6 +243,23 @@ public class MongoService {
     public List<String> findAlunniFermata(Date data, Integer id, boolean verso) {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
         return prenotazioni.stream().map(PrenotazioneEntity::getNomeAlunno).collect(Collectors.toList());
+
+    }
+
+    public void addAdminLine(String userID, String nomeLinea) {
+        //todo mi sa che una linea può avere più admin quindi bisogna modificare la classe LineaDTO con una lista
+        Optional<LineaEntity> check = lineaRepository.findByNome(nomeLinea);
+        if (!check.isPresent()) {
+            throw new LineaNotFoundException("Linea not found");
+        }
+        LineaEntity lineaEntity = check.get();
+        if(userService.userIdIsTrue(userID)){
+            lineaEntity.setAdmin(userID);
+            lineaRepository.save(lineaEntity);
+        }else{
+            throw new UsernameNotFoundException("User not found");
+        }
+
 
     }
 }

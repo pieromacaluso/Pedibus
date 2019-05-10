@@ -32,8 +32,9 @@ public class UserEntity implements UserDetails {
     boolean isAccountNonLocked;
     boolean isCredentialsNonExpired;
     boolean isEnabled;
-    private ArrayList<RoleEntity> roleList;
+    private ArrayList<RoleEntity> roleList;     //todo cambiare con set per evitare di aggiungere più volte stesso ruolo
     private Date creationDate;
+    private String userId;                      //per stampare come campo json l'userId e non i vari campi di ObjectId
 
 
     public UserEntity() {
