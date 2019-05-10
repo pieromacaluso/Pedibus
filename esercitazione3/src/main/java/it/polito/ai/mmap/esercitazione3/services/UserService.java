@@ -15,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,6 +35,12 @@ public class UserService implements UserDetailsService {
     private static final String REGISTRATION_SUBJECT = "Verifica account Pedibus";
     private static final String RECOVER_ACCOUNT_SUBJECT = "Recover Account Pedibus";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Value("${superadmin.email}")
+    private String superAdminMail;
+    @Value("${superadmin.password}")
+    private String superAdminPass;
+
 
     @Autowired
     UserRepository userRepository;
@@ -209,4 +216,25 @@ public class UserService implements UserDetailsService {
         return token;
     }
 
+
+    /**
+     * Permette di creare in automatico, se non presente, l'utente con privilegio SYSTEM-ADMIN. Tale utente è già abilitato senza l'invio dell'email.
+     */
+    public void registerSuperUser() {
+        Optional<UserEntity> check = userRepository.findByUsername(superAdminMail);
+        if (check.isPresent()) {
+            return;
+        }
+
+        UserDTO userDTO=new UserDTO();
+        userDTO.setEmail(superAdminMail);
+        userDTO.setPassword(superAdminPass);
+
+        RoleEntity role = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
+
+        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(role)), passwordEncoder);
+        userEntity.setEnabled(true);
+        userRepository.save(userEntity);
+        logger.info("SuperAdmin configurato ed abilitato.");
+    }
 }

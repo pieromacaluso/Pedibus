@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 /**
- * I ruoli registrati nel nostro db al momento sono 2: ROLE_ADMIN e ROLE_USER
+ * I ruoli registrati nel nostro db al momento sono 3: ROLE_ADMIN, ROLE_USER e ROLE_SYSTEM-ADMIN
  */
 @Data
 @Document(collection = "roles")
