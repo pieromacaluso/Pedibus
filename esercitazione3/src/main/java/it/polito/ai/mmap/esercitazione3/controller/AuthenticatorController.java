@@ -22,11 +22,11 @@ public class AuthenticatorController {
         return "recover";
     }
 
-    @GetMapping("/users")
-    public void getUsers()
+    /*@GetMapping("/users")
+    public String getUsers()
     {
-
-    }
+        return "users";
+    }*/
 
     @PutMapping("/users/{userID}")
     public void addLineAdmin()
