@@ -21,16 +21,4 @@ public class AuthenticatorController {
         // TODO: settare in un campo della pagina il valore del token
         return "recover";
     }
-
-    /*@GetMapping("/users")
-    public String getUsers()
-    {
-        return "users";
-    }*/
-
-    @PutMapping("/users/{userID}")
-    public void addLineAdmin()
-    {
-
-    }
 }

@@ -158,6 +158,7 @@ public class UserService implements UserDetailsService {
             throw new TokenNotFoundException();
         }
 
+        //todo vedere se possibile fare come nei metodi dell'homecontroller
         String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
         String completeData = LocalDateTime.now().toString() + " GMT+00:00";

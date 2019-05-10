@@ -154,13 +154,7 @@ public class AuthenticationRestController {
 
     }
 
-    @GetMapping("/users")
-    public String getUsers()
-    {
-        return "users";
-    }
-
-    @GetMapping("/me")
+    /*@GetMapping("/me")
     public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails){
         Map<Object, Object> model = new HashMap<>();
         model.put("username", userDetails.getUsername());
@@ -170,6 +164,6 @@ public class AuthenticationRestController {
                 .collect(toList())
         );
         return ok(model);
-    }
+    }*/
 
 }
