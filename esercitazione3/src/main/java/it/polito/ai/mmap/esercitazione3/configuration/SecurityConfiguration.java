@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableConfigurationProperties
+@EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     UserService userService;
@@ -48,6 +49,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/recover/**").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/users").access("hasAnyRole('ADMIN')")
                 .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()

@@ -108,8 +108,8 @@ public class UserService implements UserDetailsService {
         if (check.isPresent()) {
             throw new UserAlreadyPresentException("User already registered");
         }
-        RoleEntity userRole = roleRepository.findByRole("user");
-        RoleEntity adminRole = roleRepository.findByRole("admin");
+        RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
+        RoleEntity adminRole = roleRepository.findByRole("ROLE_ADMIN");
         if(userDTO.getEmail().equals("angeloturco06@hotmail.it")){
             userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(adminRole)), passwordEncoder);
         }else{

@@ -144,10 +144,21 @@ public class AuthenticationRestController {
     }
 
     @GetMapping("/users")
-    @PreAuthorize("hasRole('admin')")
     public String getUsers()
     {
         return "users";
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails){
+        Map<Object, Object> model = new HashMap<>();
+        model.put("username", userDetails.getUsername());
+        model.put("roles", userDetails.getAuthorities()
+                .stream()
+                .map(a -> ((GrantedAuthority) a).getAuthority())
+                .collect(toList())
+        );
+        return ok(model);
     }
 
 }
