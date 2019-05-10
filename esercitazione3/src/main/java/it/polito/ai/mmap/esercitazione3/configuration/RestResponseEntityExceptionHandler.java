@@ -32,7 +32,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             PrenotazioneNotValidException.class,
             PrenotazioneNotFoundException.class,
             FermataNotFoundException.class,
-            UserAlreadyPresentException.class})
+            UserAlreadyPresentException.class,
+            RegistrationNotValidException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
@@ -64,9 +65,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(value = {
-            TokenNotFoundException.class}
-            //RecoverProcessNotValid.class} -> non trova la classe
-            )
+            TokenNotFoundException.class,
+            RecoverProcessNotValidException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
