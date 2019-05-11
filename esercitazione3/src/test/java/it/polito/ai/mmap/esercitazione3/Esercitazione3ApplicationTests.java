@@ -4,25 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.esercitazione3.model.Prenotazione;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione3.services.MongoService;
+import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +38,9 @@ public class Esercitazione3ApplicationTests {
     private MockMvc mockMvc;
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private
+    MongoZonedDateTime mongoZonedDateTime;
 
 
     @Test
@@ -302,6 +300,11 @@ public class Esercitazione3ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
         logger.info("DONE");
+    }
+
+    @Test
+    public void zoneDateTest() throws Exception {
+        logger.info(mongoZonedDateTime.getNow().toString());
     }
 
 

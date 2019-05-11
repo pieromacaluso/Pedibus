@@ -14,8 +14,6 @@ public class MongoZonedDateTime extends Date {
 
     private Date now;
 
-    //todo potrebbe avere senso farla singleton senza creare un'istanza ad ogni uso?
-
     public MongoZonedDateTime()
     {
         String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
