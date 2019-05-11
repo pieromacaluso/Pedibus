@@ -3,6 +3,8 @@ package it.polito.ai.mmap.esercitazione3.controller;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,9 +18,9 @@ public class AuthenticatorController {
     private UserService userService;
 
     @GetMapping("/recover/{randomUUID}")
-    public String recoverPage(@PathVariable("randomUUID") String randomUUID)
+    public String recoverPage(@PathVariable("randomUUID") String randomUUID, Model model)
     {
-        // TODO: settare in un campo della pagina il valore del token
+        model.addAttribute("href", "/recover/" + randomUUID);
         return "recover";
     }
 }
