@@ -1,3 +1,40 @@
+GET http://localhost:8080/recover/%EF%BF%BD_%3CP%EF%BF%BD%EF%BF%BDtW
+Accept: application/json
+
+<> 2019-05-11T051735.200.html
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: application/x-www-form-urlencoded
+
+email=golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:80/api/item
+Content-Type: application/x-www-form-urlencoded
+
+email=golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com"
+}
+
+###
+
 GET http://localhost:8080/confirm/5cd6e3dc8e260b0eedc87cab
 Accept: application/json
 

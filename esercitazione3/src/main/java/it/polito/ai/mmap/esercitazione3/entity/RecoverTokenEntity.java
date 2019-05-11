@@ -35,10 +35,18 @@ public class RecoverTokenEntity {
 
     public RecoverTokenEntity(String email) {
         this.username = email;
-        byte[] arr = new byte[10];
-        new Random().nextBytes(arr);
-        this.tokenValue = new String(arr, Charset.forName("UTF-8"));
+        this.tokenValue = getRandomString(10);
         creationDate = MongoZonedDateTime.getNow();
+    }
+
+    private String getRandomString(int strLen) {
+        StringBuilder randomString = new StringBuilder();
+        String alphanumericString = "ABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789abcdefghilmnopqrstuvzxwyj";
+        for(int i = 0; i < strLen; i++) {
+            int index = (int)(alphanumericString.length() * Math.random());
+            randomString.append(alphanumericString.charAt(index));
+        }
+        return randomString.toString();
     }
 
 }
