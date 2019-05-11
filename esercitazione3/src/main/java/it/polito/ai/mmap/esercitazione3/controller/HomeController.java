@@ -1,6 +1,6 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +28,9 @@ public class HomeController {
 
     @Autowired
     MongoService mongoService;
+
+    @Autowired
+    MongoZonedDateTime mongoZonedDateTime;
 
     /**
      * Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus.
@@ -82,7 +83,7 @@ public class HomeController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
+        Date dataFormatted = mongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, mongoService);
     }
 
@@ -97,7 +98,7 @@ public class HomeController {
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
+        Date dataFormatted = mongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getId(), dataFormatted);
         return mongoService.addPrenotazione(prenotazioneDTO);
     }
@@ -114,7 +115,7 @@ public class HomeController {
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
+        Date dataFormatted = mongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getId(), dataFormatted);
         mongoService.updatePrenotazione(prenotazioneDTO, reservationId);
     }
@@ -128,7 +129,7 @@ public class HomeController {
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
+        Date dataFormatted = mongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         mongoService.deletePrenotazione(nomeLinea, dataFormatted, reservationId);
     }
 
@@ -142,7 +143,7 @@ public class HomeController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        Date dataFormatted = new MongoZonedDateTime().getMongoZonedDateTimeFromDate(data);
+        Date dataFormatted = mongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneEntity checkPren = mongoService.getPrenotazione(reservationId);
 
         if (mongoService.getLineByName(nomeLinea).getId().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))
@@ -151,17 +152,4 @@ public class HomeController {
             throw new IllegalArgumentException("Prenotazione non esistente");
     }
 
-    /**
-     * Da Stringa a Data
-     *
-     * @param data stringa data
-     * @return Data
-     */
-    /*private Date getDate(String data) {
-        String completeData = data + " 12:00 GMT+00:00"; //data nel formato AAAA-MM-DD
-        String pattern = "yyyy-MM-dd HH:mm z";
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
-        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
-        return Date.from(londonTime.toInstant());
-    }*/
 }

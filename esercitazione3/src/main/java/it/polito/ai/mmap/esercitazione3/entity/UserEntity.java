@@ -1,10 +1,12 @@
 package it.polito.ai.mmap.esercitazione3.entity;
 
-import it.polito.ai.mmap.esercitazione3.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import lombok.Data;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,8 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Classe che implementa l'interfaccia UserDetails
@@ -24,6 +24,11 @@ import static java.util.stream.Collectors.toList;
 @Data
 @Document(collection = "users")
 public class UserEntity implements UserDetails {
+
+    @Transient
+    @Autowired
+    private MongoZonedDateTime mongoZonedDateTime;
+
     @Id
     private ObjectId id;
     private String username;
@@ -48,7 +53,7 @@ public class UserEntity implements UserDetails {
         isCredentialsNonExpired = true;
         isEnabled = false;
         roleList = userRoles;
-       creationDate = new MongoZonedDateTime().getNow();
+        creationDate = mongoZonedDateTime.getNow();
     }
 
     @Override

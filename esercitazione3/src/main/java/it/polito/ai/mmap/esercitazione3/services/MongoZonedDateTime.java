@@ -1,15 +1,18 @@
-package it.polito.ai.mmap.esercitazione3.configuration;
+package it.polito.ai.mmap.esercitazione3.services;
 
 import lombok.Data;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+@Service
 @Data
 public class MongoZonedDateTime extends Date {
-    Date now;
+
+    private Date now;
 
     //todo potrebbe avere senso farla singleton senza creare un'istanza ad ogni uso?
 

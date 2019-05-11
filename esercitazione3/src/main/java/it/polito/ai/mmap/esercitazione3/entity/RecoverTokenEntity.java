@@ -1,8 +1,10 @@
 package it.polito.ai.mmap.esercitazione3.entity;
 
-import it.polito.ai.mmap.esercitazione3.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,6 +23,10 @@ import java.util.Random;
 @Document(collection = "recoverTokens")
 public class RecoverTokenEntity {
 
+    @Transient // permette di non memorizzare questo campo sul db
+    @Autowired
+    private MongoZonedDateTime mongoZonedDateTime;
+
     @Id
     private String username;
     private String tokenValue;
@@ -36,12 +42,8 @@ public class RecoverTokenEntity {
         this.username = email;
         byte[] arr = new byte[10];
         new Random().nextBytes(arr);
-        String randomValue = new String(arr, Charset.forName("UTF-8"));
-        this.tokenValue = randomValue;
-
-        creationDate = new MongoZonedDateTime().getNow();
-
-
+        this.tokenValue = new String(arr, Charset.forName("UTF-8"));
+        creationDate = mongoZonedDateTime.getNow();
     }
 
 }

@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.esercitazione3.filter;
 
 import it.polito.ai.mmap.esercitazione3.services.JwtTokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +39,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         String token = jwtTokenService.resolveToken((HttpServletRequest) req);
 
         if (token != null && jwtTokenService.validateToken(token)) {
-            Authentication auth = token != null ? jwtTokenService.getAuthentication(token) : null;
+            Authentication auth = jwtTokenService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(req, res);

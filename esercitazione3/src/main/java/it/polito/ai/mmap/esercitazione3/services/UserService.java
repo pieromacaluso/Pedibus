@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
-    //private static final String baseURL = "http://localhost:8080/";
-    //private static final String REGISTRATION_SUBJECT = "Verifica account Pedibus";
-    //private static final String RECOVER_ACCOUNT_SUBJECT = "Recover Account Pedibus";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${superadmin.email}")
@@ -270,9 +267,6 @@ public class UserService implements UserDetailsService {
 
     public boolean userIdIsTrue(String userID) {
         Optional<UserEntity> check = userRepository.findByUserId(userID);
-        if (!check.isPresent()) {
-            return false;
-        }else
-            return true;
+        return check.isPresent();
     }
 }

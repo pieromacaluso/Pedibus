@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@Service
 public class JwtTokenService {
 
     @Value("${security.jwt.token.secret-key}")
@@ -83,10 +85,7 @@ public class JwtTokenService {
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            if (claims.getBody().getExpiration().before(new Date())) {
-                return false;
-            }
-            return true;
+            return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             //todo //throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
             return false;
