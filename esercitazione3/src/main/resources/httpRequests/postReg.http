@@ -32,3 +32,14 @@ GET http://localhost:8080/recover/%EF%BF%BD_%3CP%EF%BF%BD%EF%BF%BDtW#%EF%BF%BD
 Accept: application/json
 
 ###
+
+POST http://localhost:8080/recover/GGnGjYeg92
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password2",
+  "passMatch": "mia-password2"
+}
+
+###

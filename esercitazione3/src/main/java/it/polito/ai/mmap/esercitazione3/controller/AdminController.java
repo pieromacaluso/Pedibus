@@ -1,16 +1,22 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
+import it.polito.ai.mmap.esercitazione3.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @Controller
 public class AdminController {
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping(value="/users", consumes={"text/html"})
-    public String getUsers()
+    public String getUsers(Model model)
     {
-        //todo realizzare la pagina html
+        model.addAttribute("users", userService.getAllUsers());
         return "users";
     }
 

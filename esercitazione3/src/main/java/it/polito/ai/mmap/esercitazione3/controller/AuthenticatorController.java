@@ -20,7 +20,7 @@ public class AuthenticatorController {
     @GetMapping("/recover/{randomUUID}")
     public String recoverPage(@PathVariable("randomUUID") String randomUUID, Model model)
     {
-        model.addAttribute("href", "/recover/" + randomUUID);
+        model.addAttribute("href", "http://localhost:8080/recover/" + randomUUID);
         return "recover";
     }
 }
