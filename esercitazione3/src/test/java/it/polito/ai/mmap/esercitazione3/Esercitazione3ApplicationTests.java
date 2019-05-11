@@ -38,9 +38,6 @@ public class Esercitazione3ApplicationTests {
     private MockMvc mockMvc;
     @Autowired
     private JavaMailSender mailSender;
-    @Autowired
-    private
-    MongoZonedDateTime mongoZonedDateTime;
 
 
     @Test
@@ -301,11 +298,5 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isInternalServerError());
         logger.info("DONE");
     }
-
-    @Test
-    public void zoneDateTest() throws Exception {
-        logger.info(mongoZonedDateTime.getNow().toString());
-    }
-
 
 }

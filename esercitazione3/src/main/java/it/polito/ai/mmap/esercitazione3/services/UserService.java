@@ -123,9 +123,9 @@ public class UserService implements UserDetailsService {
         RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
         RoleEntity adminRole = roleRepository.findByRole("ROLE_ADMIN");
         if(userDTO.getEmail().equals("angeloturco06@hotmail.it")){
-            userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(adminRole)), passwordEncoder);
+            userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(adminRole)), passwordEncoder);
         }else{
-            userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(userRole)), passwordEncoder);
+            userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder);
         }
         logger.info(userEntity.getCreationDate().getTime() + "creationtime");
         userRepository.save(userEntity);
@@ -238,7 +238,7 @@ public class UserService implements UserDetailsService {
 
         RoleEntity role = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
 
-        UserEntity userEntity = new UserEntity(userDTO, new ArrayList<>(Arrays.asList(role)), passwordEncoder);
+        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
 

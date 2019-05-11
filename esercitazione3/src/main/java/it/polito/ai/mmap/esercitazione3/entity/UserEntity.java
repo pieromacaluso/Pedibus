@@ -25,10 +25,6 @@ import java.util.*;
 @Document(collection = "users")
 public class UserEntity implements UserDetails {
 
-    @Transient // permette di non memorizzare questo campo su db
-    @Autowired
-    private MongoZonedDateTime mongoZonedDateTime;
-
     @Id
     private ObjectId id;
     private String username;
@@ -45,15 +41,16 @@ public class UserEntity implements UserDetails {
     public UserEntity() {
     }
 
-    public UserEntity(UserDTO userDTO, Set<RoleEntity> userRoles, PasswordEncoder passwordEncoder) {
+    public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder) {
         username = userDTO.getEmail();
         password = passwordEncoder.encode(userDTO.getPassword());
         isAccountNonExpired = true;
         isAccountNonLocked = true;
         isCredentialsNonExpired = true;
         isEnabled = false;
-        roleList = userRoles;
-        creationDate = mongoZonedDateTime.getNow();
+        roleList = new HashSet<>();
+        roleList.addAll(userRoles);
+        creationDate = MongoZonedDateTime.getNow();
     }
 
     @Override

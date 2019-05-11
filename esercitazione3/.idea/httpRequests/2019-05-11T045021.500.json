@@ -1,0 +1,7 @@
+{
+  "timestamp": "2019-05-11T14:50:21.029+0000",
+  "status": 500,
+  "error": "Internal Server Error",
+  "message": "No property 'id' found on class it.polito.ai.mmap.esercitazione3.entity.UserEntity! Did you mean: id?",
+  "path": "/confirm/5cd6e0298e260b0cb41cd56d"
+}

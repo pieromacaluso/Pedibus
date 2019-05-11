@@ -26,8 +26,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = {
             IllegalArgumentException.class,
             IllegalStateException.class,
-            NullPointerException.class,
             DateTimeException.class,
+            NullPointerException.class,
             LineaNotFoundException.class,
             PrenotazioneNotValidException.class,
             PrenotazioneNotFoundException.class,
