@@ -129,7 +129,7 @@ public class UserService implements UserDetailsService {
         }
         logger.info(userEntity.getCreationDate().getTime() + "creationtime");
         userRepository.save(userEntity);
-
+        // TODO (Piero): secondo me non è molto sicuro dare come stringa casuale l'objectID che sarà a vita l'objectID dell'user. Non si potrebbe fare una cosa tipo quella fatta in recover?
         String href = baseURL + "confirm/" + userEntity.getId();
         gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>", REGISTRATION_SUBJECT);
         logger.info("Inviata register email a: " + userEntity.getUsername());
