@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.esercitazione3;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
@@ -17,6 +18,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -160,6 +164,41 @@ public class Esercitazione3ApplicationTests {
         if (this.userRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()) {
             this.userRepository.delete(this.userRepository.findByUsername("pieromacaluso8@gmail.com").get());
         }
+    }
+
+    @Test
+    public void getConfirmRandomUUID_correct() throws Exception {
+        logger.info("Test GET /confirm/{randomUUID} correct ...");
+        UserDTO user = new UserDTO();
+        user.setEmail("pieromacaluso8@gmail.com");
+        user.setPassword("123456789");
+        user.setPassMatch("123456789");
+        ObjectMapper mapper = new ObjectMapper();
+        String json1 = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+                .andExpect(status().isOk());
+
+        Optional<UserEntity> check = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
+        assert check.isPresent();
+        //TODO: da modificare in base a cambiamenti Confirmation RandomUUID
+        String UUID = check.get().getId().toString();
+        this.mockMvc.perform(get("/confirm/" + UUID))
+                .andExpect(status().isOk());
+
+        logger.info("PASSED");
+        this.userRepository.delete(check.get());
+
+    }
+
+    @Test
+    public void getConfirmRandomUUID_incorrect() throws Exception {
+        logger.info("Test GET /confirm/{randomUUID} incorrect ...");
+
+        this.mockMvc.perform(get("/confirm/123456789"))
+                .andExpect(status().isNotFound());
+
+        logger.info("PASSED");
     }
 
 }
