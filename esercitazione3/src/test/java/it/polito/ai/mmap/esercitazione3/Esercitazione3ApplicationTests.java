@@ -3,6 +3,7 @@ package it.polito.ai.mmap.esercitazione3;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione3.services.MongoService;
@@ -40,6 +41,8 @@ public class Esercitazione3ApplicationTests {
     private JavaMailSender mailSender;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RecoverTokenRepository recoverTokenRepository;
 
 
     @Test
@@ -199,6 +202,43 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isNotFound());
 
         logger.info("PASSED");
+    }
+
+    @Test
+    public void postRecover_always200() throws Exception {
+        logger.info("Test POST /recover");
+        String email = "pieromacaluso8@gmail.com";
+        UserDTO user = new UserDTO();
+        user.setEmail(email);
+        user.setPassword("123456789");
+        user.setPassMatch("123456789");
+        ObjectMapper mapper = new ObjectMapper();
+        String json1 = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+                .andExpect(status().isOk());
+
+        Optional<UserEntity> check = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
+        assert check.isPresent();
+        //TODO: da modificare in base a cambiamenti Confirmation RandomUUID
+        String UUID = check.get().getId().toString();
+        this.mockMvc.perform(get("/confirm/" + UUID))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
+                .andExpect(status().isOk());
+
+        email = "ciao";
+        this.mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
+                .andExpect(status().isOk());
+
+        logger.info("PASSED");
+        if (this.userRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()) {
+            this.userRepository.delete(this.userRepository.findByUsername("pieromacaluso8@gmail.com").get());
+        }
+        if (this.recoverTokenRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()){
+            this.recoverTokenRepository.delete(this.recoverTokenRepository.findByUsername("pieromacaluso8@gmail.com").get());
+        }
     }
 
 }
