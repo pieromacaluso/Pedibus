@@ -12,12 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -29,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -64,18 +60,27 @@ public class AuthenticationRestController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity login(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
 //        logger.info("login result -> " + userService.isLoginValid(userDTO));
-        //todo non è possibile validarlo con @Valid perchè altrimenti bisognerebbe inviare anche la passMatch, valutare se bisogna fare altro o meno
+        /*
+         * TODO: Rimuovi commento
+         * (Piero)
+         * Validazione email e password inserite attraverso check conteggio FieldError.
+         * Il passwordMatching viene ignorato poichè non è un FieldError.
+         */
+        if (bindingResult.getFieldErrorCount() == 0) {
+            String username = userDTO.getEmail();
+            String password = userDTO.getPassword();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
+            String jwtToken = userService.getJwtToken(username);
+            Map<Object, Object> model = new HashMap<>();
+            model.put("username", username);
+            model.put("token", jwtToken);
+            return ok(model);
+        } else {
+            throw new BadCredentialsException("Bad credentials");
+        }
 
-        String username = userDTO.getEmail();
-        String password = userDTO.getPassword();
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
-        String jwtToken = userService.getJwtToken(username);
-        Map<Object, Object> model = new HashMap<>();
-        model.put("username", username);
-        model.put("token", jwtToken);
-        return ok(model);
     }
 
     /**
