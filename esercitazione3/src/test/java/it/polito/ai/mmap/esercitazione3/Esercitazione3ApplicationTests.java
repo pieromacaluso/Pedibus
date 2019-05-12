@@ -2,6 +2,7 @@ package it.polito.ai.mmap.esercitazione3;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.esercitazione3.model.Prenotazione;
+import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione3.services.MongoService;
 import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
@@ -41,18 +42,45 @@ public class Esercitazione3ApplicationTests {
 
 
     @Test
-    public void postLogin() throws Exception {
+    public void postLogin_correct() throws Exception {
+        logger.info("Test POST /login ...");
+        UserDTO user = new UserDTO();
+        user.setEmail("applicazioni.internet.mmap@gmail.com");
+        user.setPassword("mmapmmap1!");
         ObjectMapper mapper = new ObjectMapper();
-        logger.info("Test GET /lines ...");
-        List<String> expectedResult = new ArrayList<>();
-        expectedResult.add("linea1");
-        expectedResult.add("linea2");
-        String expectedJson = mapper.writeValueAsString(expectedResult);
+        String json = mapper.writeValueAsString(user);
 
+        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/lines"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson));
+        logger.info("PASSED");
+    }
+
+    @Test
+    public void postLogin_incorrect_1() throws Exception {
+        logger.info("Test POST /login ...");
+        UserDTO user = new UserDTO();
+        user.setEmail("applicazioni.internet.mmap@gmail.com");
+        user.setPassword("mmapmmap1");
+        ObjectMapper mapper = new ObjectMapper();
+        String json1 = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json1))
+                .andExpect(status().isUnauthorized());
+
+        user.setEmail("applicazioni.internet.mmapgmail.com");
+        user.setPassword("mmapmmap1");
+        String json2 = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json2))
+                .andExpect(status().isUnauthorized());
+
+        user.setEmail("applicazioni.internet.mmap@gmail.com");
+        user.setPassword("1");
+        String json3 = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
+                .andExpect(status().isUnauthorized());
 
         logger.info("PASSED");
     }
