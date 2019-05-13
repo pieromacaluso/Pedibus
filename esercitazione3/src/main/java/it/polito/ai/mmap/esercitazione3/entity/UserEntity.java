@@ -53,6 +53,16 @@ public class UserEntity implements UserDetails {
         creationDate = MongoZonedDateTime.getNow();
     }
 
+    public UserEntity(String email, HashSet<RoleEntity> userRoles) {
+        username = email;
+        isAccountNonExpired = true;
+        isAccountNonLocked = true;
+        isCredentialsNonExpired = true;
+        isEnabled = false;
+        roleList = new HashSet<>();
+        roleList.addAll(userRoles);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();

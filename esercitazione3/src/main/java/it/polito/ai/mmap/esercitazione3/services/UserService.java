@@ -118,17 +118,30 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity;
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
         if (check.isPresent()) {
-            throw new UserAlreadyPresentException("User already registered");
-        }
-        RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
-        RoleEntity adminRole = roleRepository.findByRole("ROLE_ADMIN");
-        if(userDTO.getEmail().equals("angeloturco06@hotmail.it")){
-            userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(adminRole)), passwordEncoder);
-        }else{
+            userEntity = check.get();
+            RoleEntity roleEntity = roleRepository.findByRole("ROLE_ADMIN");
+            Optional<UserEntity> checkAdmin = userRepository.findByRoleListContainingAndUsernameAndEnabled(roleEntity, userDTO.getEmail(), false);
+            if (checkAdmin.isPresent()) {
+                //Se la mail è già stata registrata come relativa a un account admin e l'account è inattivo
+                userEntity = checkAdmin.get();
+                userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                userEntity.setCreationDate(MongoZonedDateTime.getNow());
+
+            } else if (!userEntity.isEnabled() && (MongoZonedDateTime.getNow().getTime() - userEntity.getCreationDate().getTime()) > 1000 * 60 * minuti) {
+                //Mail già associata a un account che non è stato abilitato in tempo
+                userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                userEntity.setCreationDate(MongoZonedDateTime.getNow());
+            } else {
+                throw new UserAlreadyPresentException("User already registered");
+            }
+        } else {
+            RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
             userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder);
+
         }
+
+
         userRepository.save(userEntity);
-        // TODO (Piero): secondo me non è molto sicuro dare come stringa casuale l'objectID che sarà a vita l'objectID dell'user. Non si potrebbe fare una cosa tipo quella fatta in recover?
         String href = baseURL + "confirm/" + userEntity.getId();
         gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>", REGISTRATION_SUBJECT);
         logger.info("Inviata register email a: " + userEntity.getUsername());
@@ -225,7 +238,7 @@ public class UserService implements UserDetailsService {
             return;
         }
 
-        UserDTO userDTO=new UserDTO();
+        UserDTO userDTO = new UserDTO();
         userDTO.setEmail(superAdminMail);
         userDTO.setPassword(superAdminPass);
 
@@ -236,7 +249,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
 
         check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
-        userEntity=check.get();
+        userEntity = check.get();
         userEntity.setUserId(userEntity.getId().toString());
         userRepository.save(userEntity);
         logger.info("SuperAdmin configurato ed abilitato.");
@@ -246,14 +259,20 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-
+    /**
+     * Se la mail dell'admin non corrisponde a nessun account ne creo uno vuoto con tali privilegi che poi l'utente quando si registra riempirà,
+     * se no lo creo da zero
+     * @param userID
+     */
     public void addAdmin(String userID) {
         Optional<UserEntity> check = userRepository.findById(new ObjectId(userID));
+        UserEntity userEntity;
         if (!check.isPresent()) {
-            throw new UsernameNotFoundException("User not found");
+            RoleEntity roleArr[] = {roleRepository.findByRole("ROLE_USER"), roleRepository.findByRole("ROLE_ADMIN")};
+            userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleArr)));
+        } else {
+            userEntity = check.get();
         }
-        UserEntity userEntity = check.get();
-
         userEntity.getRoleList().add(roleRepository.findByRole("ROLE_ADMIN"));
         userRepository.save(userEntity);
     }
