@@ -120,7 +120,7 @@ public class UserService implements UserDetailsService {
         if (check.isPresent()) {
             userEntity = check.get();
             RoleEntity roleEntity = roleRepository.findByRole("ROLE_ADMIN");
-            Optional<UserEntity> checkAdmin = userRepository.findByRoleListContainingAndUsernameAndEnabled(roleEntity, userDTO.getEmail(), false);
+            Optional<UserEntity> checkAdmin = userRepository.findByRoleListContainingAndUsernameAndIsEnabled(roleEntity, userDTO.getEmail(), false);
             if (checkAdmin.isPresent()) {
                 //Se la mail è già stata registrata come relativa a un account admin e l'account è inattivo
                 userEntity = checkAdmin.get();
@@ -133,6 +133,7 @@ public class UserService implements UserDetailsService {
                 userEntity.setCreationDate(MongoZonedDateTime.getNow());
             } else {
                 throw new UserAlreadyPresentException("User already registered");
+
             }
         } else {
             RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
@@ -166,7 +167,6 @@ public class UserService implements UserDetailsService {
         } else {
             throw new TokenNotFoundException();
         }
-
 
         if ((MongoZonedDateTime.getNow().getTime() - userEntity.getCreationDate().getTime()) < 1000 * 60 * minuti) {
             if (!userEntity.isEnabled()) {
@@ -262,10 +262,11 @@ public class UserService implements UserDetailsService {
     /**
      * Se la mail dell'admin non corrisponde a nessun account ne creo uno vuoto con tali privilegi che poi l'utente quando si registra riempirà,
      * se no lo creo da zero
+     *
      * @param userID
      */
     public void addAdmin(String userID) {
-        Optional<UserEntity> check = userRepository.findById(new ObjectId(userID));
+        Optional<UserEntity> check = userRepository.findByUsername(userID);
         UserEntity userEntity;
         if (!check.isPresent()) {
             RoleEntity roleArr[] = {roleRepository.findByRole("ROLE_USER"), roleRepository.findByRole("ROLE_ADMIN")};
@@ -277,8 +278,5 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
-    public boolean userIdIsTrue(String userID) {
-        Optional<UserEntity> check = userRepository.findByUserId(userID);
-        return check.isPresent();
-    }
+
 }

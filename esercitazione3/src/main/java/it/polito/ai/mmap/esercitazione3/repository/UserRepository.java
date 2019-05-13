@@ -15,5 +15,5 @@ public interface UserRepository extends MongoRepository<UserEntity, Integer> {
 
     Optional<UserEntity> findByUserId(String userId);
 
-    Optional<UserEntity> findByRoleListContainingAndUsernameAndEnabled(RoleEntity roleEntity, String email, Boolean enabled);
+    Optional<UserEntity> findByRoleListContainingAndUsernameAndIsEnabled(RoleEntity roleEntity, String email, Boolean enabled);
 }

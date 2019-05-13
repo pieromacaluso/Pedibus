@@ -253,13 +253,7 @@ public class MongoService {
             throw new LineaNotFoundException("Linea not found");
         }
         LineaEntity lineaEntity = check.get();
-        if(userService.userIdIsTrue(userID)){
-            lineaEntity.setAdmin(userID);
-            lineaRepository.save(lineaEntity);
-        }else{
-            throw new UsernameNotFoundException("User not found");
-        }
-
-
+        lineaEntity.setAdmin(userID);
+        lineaRepository.save(lineaEntity);
     }
 }
