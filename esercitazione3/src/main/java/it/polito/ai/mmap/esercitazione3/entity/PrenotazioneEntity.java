@@ -17,7 +17,7 @@ public class PrenotazioneEntity {
     private Date data;
     private boolean verso;
     private Integer idFermata;
-    private Integer idLinea;
+    private String nomeLinea;
 
     // non eliminare
     public PrenotazioneEntity() {
@@ -28,7 +28,7 @@ public class PrenotazioneEntity {
         data=prenotazioneDTO.getData();
         verso=prenotazioneDTO.getVerso();
         idFermata = prenotazioneDTO.getIdFermata();
-        idLinea = prenotazioneDTO.getIdLinea();
+        nomeLinea = prenotazioneDTO.getNomeLinea();
     }
 
     public void update(PrenotazioneDTO prenotazioneDTO) {
@@ -37,7 +37,7 @@ public class PrenotazioneEntity {
         this.data=prenotazioneDTO.getData();
         this.verso=prenotazioneDTO.getVerso();
         this.idFermata = prenotazioneDTO.getIdFermata();
-        this.idLinea = prenotazioneDTO.getIdLinea();
+        this.nomeLinea = prenotazioneDTO.getNomeLinea();
     }
 
 }

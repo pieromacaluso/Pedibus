@@ -45,7 +45,7 @@ public class JsonHandlerService {
             try {
                 LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i + ".json"), LineaDTO.class);
                 try {
-                    //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin //TODO perchè abbiamo nome e id ? qui meglio cercare per id
+                    //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin
                     ArrayList<String> adminList = mongoService.getLineByName(lineaDTO.getNome()).getAdminList();
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
@@ -58,7 +58,7 @@ public class JsonHandlerService {
                 mongoService.addFermate(lineaDTO.getAndata());
                 mongoService.addFermate(lineaDTO.getRitorno());
 
-                logger.info("Linea " + lineaDTO.getId() + " caricata e salvata.");
+                logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
             } catch (IOException e) {
                 logger.error("File lineN.json mancanti");
                 e.printStackTrace();

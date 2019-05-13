@@ -53,7 +53,7 @@ public class AdminRestController {
     @PutMapping("/users/{userID}")
     public void setUserAdmin(@RequestBody String nomeLinea, @PathVariable("userID") String userID) {
         UserEntity principal;
-        LineaDTO lineaDTO = mongoService.getLineByName(nomeLinea);        //todo vedere se gestisce le eccezioni come loadUserById
+        LineaDTO lineaDTO = mongoService.getLineByName(nomeLinea);
 
         // try {
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

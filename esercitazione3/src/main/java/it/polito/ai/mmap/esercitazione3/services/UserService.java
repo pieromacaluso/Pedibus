@@ -3,10 +3,7 @@ package it.polito.ai.mmap.esercitazione3.services;
 import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
-import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValidException;
-import it.polito.ai.mmap.esercitazione3.exception.RegistrationNotValidException;
-import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
-import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
+import it.polito.ai.mmap.esercitazione3.exception.*;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
@@ -175,7 +172,7 @@ public class UserService implements UserDetailsService {
                 userRepository.save(userEntity);
             }
         } else {
-            throw new RegistrationNotValidException(); //TODO va bene come eccezione ?
+            throw new RegistrationOOTException();
         }
 
     }

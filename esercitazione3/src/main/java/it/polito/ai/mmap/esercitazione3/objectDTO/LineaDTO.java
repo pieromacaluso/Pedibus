@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @Data
 public class LineaDTO {
-    private Integer id;
     private String nome;
     private ArrayList<String> adminList;
     ArrayList<FermataDTO> andata;
@@ -27,7 +26,6 @@ public class LineaDTO {
      * @param fermataRepository
      */
     public LineaDTO(LineaEntity lineaEntity, FermataRepository fermataRepository) {
-        this.id = lineaEntity.getId();
         this.nome = lineaEntity.getNome();
         this.adminList = lineaEntity.getAdminList();
 

@@ -105,20 +105,6 @@ public class MongoService {
         }
     }
 
-    /**
-     * Restituisce una LineaDTO a partire dal suo ID
-     *
-     * @param idLinea id Linea
-     * @return LineaDTO
-     */
-    private LineaDTO getLineById(Integer idLinea) {
-        Optional<LineaEntity> linea = lineaRepository.findById(idLinea);
-        if (linea.isPresent()) {
-            return new LineaDTO(linea.get(), fermataRepository);
-        } else {
-            throw new LineaNotFoundException("Nessuna linea trovata con ID " + idLinea);
-        }
-    }
 
     /**
      * Restituisce tutte le linee in DB
@@ -179,8 +165,8 @@ public class MongoService {
      */
     private Boolean isValidPrenotation(PrenotazioneDTO prenotazioneDTO) {
         FermataDTO fermataDTO = this.getFermataById(prenotazioneDTO.getIdFermata());
-        return (this.getLineById(prenotazioneDTO.getIdLinea()).getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
-                (this.getLineById(prenotazioneDTO.getIdLinea()).getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso());
+        return (this.getLineByName(prenotazioneDTO.getNomeLinea()).getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
+                (this.getLineByName(prenotazioneDTO.getNomeLinea()).getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso());
     }
 
     /**
@@ -223,7 +209,7 @@ public class MongoService {
      */
     public void deletePrenotazione(String nomeLinea, Date data, ObjectId reservationId) {
         PrenotazioneEntity prenotazione = this.getPrenotazione(reservationId);
-        if (prenotazione.getData().equals(data) && getLineById(prenotazione.getIdLinea()).getNome().equals(nomeLinea)) {
+        if (prenotazione.getData().equals(data) && getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea)) {
             prenotazioneRepository.delete(prenotazione);
         } else {
             throw new IllegalArgumentException("Errore in cancellazione");

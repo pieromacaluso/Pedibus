@@ -33,7 +33,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             PrenotazioneNotFoundException.class,
             FermataNotFoundException.class,
             UserAlreadyPresentException.class,
-            RegistrationNotValidException.class})
+            RegistrationNotValidException.class,
+            RegistrationOOTException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())

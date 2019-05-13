@@ -11,16 +11,16 @@ public class PrenotazioneDTO {
     String nomeAlunno;
     Date data;
     Integer idFermata;
-    Integer idLinea;
+    String nomeLinea;
     Boolean verso;
 
 
 
 
 
-    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, Integer idLinea, Date data) {
+    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, String nomeLinea, Date data) {
         this.data = data;
-        this.idLinea = idLinea;
+        this.nomeLinea = nomeLinea;
 
         verso = prenotazioneResource.getVerso();
         idFermata = prenotazioneResource.getIdFermata();
@@ -28,7 +28,7 @@ public class PrenotazioneDTO {
     }
     public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity) {
         this.data = prenotazioneEntity.getData();
-        this.idLinea = prenotazioneEntity.getIdLinea();
+        this.nomeLinea = prenotazioneEntity.getNomeLinea();
         verso = prenotazioneEntity.isVerso();
         idFermata = prenotazioneEntity.getIdFermata();
         nomeAlunno = prenotazioneEntity.getNomeAlunno();

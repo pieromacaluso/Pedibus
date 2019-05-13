@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class LineaEntity {
 
     @Id
-    private Integer id;
     private String nome;
     private ArrayList<String> adminList;
     private ArrayList<Integer> andata;
@@ -32,7 +31,6 @@ public class LineaEntity {
      * @param lineaDTO
      */
     public LineaEntity(LineaDTO lineaDTO) {
-        this.id = lineaDTO.getId();
         this.nome = lineaDTO.getNome();
         this.adminList = lineaDTO.getAdminList();
         this.andata = lineaDTO.getAndata().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toCollection(ArrayList::new));
