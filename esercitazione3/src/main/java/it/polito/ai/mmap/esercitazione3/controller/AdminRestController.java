@@ -4,6 +4,7 @@ package it.polito.ai.mmap.esercitazione3.controller;
 import it.polito.ai.mmap.esercitazione3.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.exception.PermissionDeniedException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.MongoService;
@@ -61,14 +62,16 @@ public class AdminRestController {
                 userService.addAdmin(userID);
                 mongoService.addAdminLine(userID, nomeLinea);
         } else {
-            logger.info("else");
-            //todo eccezione
+//            logger.info("else");
+            throw new PermissionDeniedException("User has no right to do this operation");
+            //TODO (Piero): Aggiunto eccezione su TODO precedente, restituisce 403 FORBIDDEN
+            // Old message: il getPrincipal ritorna un Object che potrebbe non sempre essere convertito in entity.
+            // Essendo però chiamato solo se autenticto non si dovrebbero avere problemi. Da verificare per bene
         }
 
         //}catch (Exception e){
-        //todo il getPrincipal ritorna un Object che potrebbe non sempre essere convertito in entity. Essendo però chiamato solo se autenticto non si dovrebbero avere problemi. Da verificare per bene
         //}
-        return;
+//        return;
     }
 
 }

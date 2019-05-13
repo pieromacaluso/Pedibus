@@ -66,6 +66,22 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(value = {
+            PermissionDeniedException.class})
+    protected ResponseEntity<Object> handleForbidden(RuntimeException ex, WebRequest request) {
+        ErrorDTO e = ErrorDTO.builder()
+                .exception(ex.getClass().getSimpleName())
+                .timestamp(new Timestamp(System.currentTimeMillis()))
+                .errorMessage(ex.getMessage())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI())
+                .build();
+//        ex.printStackTrace();
+        logger.error(e.toString());
+        return handleExceptionInternal(ex, e, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    @ExceptionHandler(value = {
             TokenNotFoundException.class,
             RecoverProcessNotValidException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
