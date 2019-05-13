@@ -1,7 +1,6 @@
 {
   "id": 1,
   "nome": "linea1",
-  "admin": "root",
   "andata": [
     {
       "id": 1,

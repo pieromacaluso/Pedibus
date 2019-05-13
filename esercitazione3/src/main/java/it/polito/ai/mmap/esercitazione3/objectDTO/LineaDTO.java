@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class LineaDTO {
     private Integer id;
     private String nome;
-    private String admin;
+    private ArrayList<String> adminList;
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
 
@@ -29,7 +29,7 @@ public class LineaDTO {
     public LineaDTO(LineaEntity lineaEntity, FermataRepository fermataRepository) {
         this.id = lineaEntity.getId();
         this.nome = lineaEntity.getNome();
-        this.admin = lineaEntity.getAdmin();
+        this.adminList = lineaEntity.getAdminList();
 
         this.andata = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getAndata())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
         this.ritorno = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getRitorno())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));

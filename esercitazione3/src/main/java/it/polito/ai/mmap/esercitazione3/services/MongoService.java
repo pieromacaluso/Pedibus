@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -247,13 +245,18 @@ public class MongoService {
     }
 
     public void addAdminLine(String userID, String nomeLinea) {
-        //todo mi sa che una linea può avere più admin quindi bisogna modificare la classe LineaDTO con una lista
         Optional<LineaEntity> check = lineaRepository.findByNome(nomeLinea);
         if (!check.isPresent()) {
             throw new LineaNotFoundException("Linea not found");
         }
         LineaEntity lineaEntity = check.get();
-        lineaEntity.setAdmin(userID);
+        ArrayList<String> adminList = lineaEntity.getAdminList();
+        if (adminList == null)
+            adminList = new ArrayList<>(Arrays.asList(userID));
+        else
+            adminList.add(userID);
+
+        lineaEntity.setAdminList(adminList);
         lineaRepository.save(lineaEntity);
     }
 }

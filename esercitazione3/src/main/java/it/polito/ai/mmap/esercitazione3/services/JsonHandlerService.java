@@ -1,20 +1,26 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.esercitazione3.exception.LineaNotFoundException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Service
 public class JsonHandlerService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Value("${superadmin.email}")
+    private String superAdminMail;
     @Autowired
     ObjectMapper objectMapper;
 
@@ -38,6 +44,16 @@ public class JsonHandlerService {
         for (int i = 1; i < countPiedibusLine; i++) {
             try {
                 LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i + ".json"), LineaDTO.class);
+                try {
+                    //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin //TODO perchè abbiamo nome e id ? qui meglio cercare per id
+                    ArrayList<String> adminList = mongoService.getLineByName(lineaDTO.getNome()).getAdminList();
+                    if (adminList != null)
+                        lineaDTO.setAdminList(adminList);
+                } catch (LineaNotFoundException e) {
+
+                    lineaDTO.setAdminList(new ArrayList<>());
+                }
+
                 mongoService.addLinea(lineaDTO);
                 mongoService.addFermate(lineaDTO.getAndata());
                 mongoService.addFermate(lineaDTO.getRitorno());
