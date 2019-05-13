@@ -127,7 +127,6 @@ public class UserService implements UserDetailsService {
         }else{
             userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder);
         }
-        logger.info(userEntity.getCreationDate().getTime() + "creationtime");
         userRepository.save(userEntity);
         // TODO (Piero): secondo me non è molto sicuro dare come stringa casuale l'objectID che sarà a vita l'objectID dell'user. Non si potrebbe fare una cosa tipo quella fatta in recover?
         String href = baseURL + "confirm/" + userEntity.getId();
@@ -155,14 +154,8 @@ public class UserService implements UserDetailsService {
             throw new TokenNotFoundException();
         }
 
-        //todo vedere se possibile fare come nei metodi dell'homecontroller
-        String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS z";
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
-        String completeData = LocalDateTime.now().toString() + " GMT+00:00";
-        ZonedDateTime londonTime = ZonedDateTime.parse(completeData, dateTimeFormatter);
-        Long now = Date.from(londonTime.toInstant()).getTime();
 
-        if ((now - userEntity.getCreationDate().getTime()) < 1000 * 60 * minuti) {
+        if ((MongoZonedDateTime.getNow().getTime() - userEntity.getCreationDate().getTime()) < 1000 * 60 * minuti) {
             if (!userEntity.isEnabled()) {
                 userEntity.setEnabled(true);
                 userEntity.setUserId(userEntity.getId().toString());
