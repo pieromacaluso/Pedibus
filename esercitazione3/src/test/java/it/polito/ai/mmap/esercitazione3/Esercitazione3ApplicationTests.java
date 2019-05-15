@@ -57,7 +57,7 @@ public class Esercitazione3ApplicationTests {
         logger.info("Test POST /login ...");
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(user);
 
@@ -101,8 +101,8 @@ public class Esercitazione3ApplicationTests {
         logger.info("Test POST /register ...");
         UserDTO user = new UserDTO();
         user.setEmail("appmmap@pieromacaluso.com");
-        user.setPassword("123456789");
-        user.setPassMatch("123456789");
+        user.setPassword("321@User");
+        user.setPassMatch("321@User");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
 
@@ -120,8 +120,8 @@ public class Esercitazione3ApplicationTests {
         logger.info("Test POST /register duplicate ...");
         UserDTO user = new UserDTO();
         user.setEmail("appmmap@pieromacaluso.com");
-        user.setPassword("123456789");
-        user.setPassMatch("123456789");
+        user.setPassword("321@User");
+        user.setPassMatch("321@User");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
 
@@ -143,7 +143,7 @@ public class Esercitazione3ApplicationTests {
         logger.info("Passwords does not match ...");
 
         user.setEmail("appmmap@pieromacaluso.com");
-        user.setPassword("123456789");
+        user.setPassword("321@User");
         user.setPassMatch("12345678");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
@@ -163,8 +163,8 @@ public class Esercitazione3ApplicationTests {
 
         logger.info("Email not valid ...");
         user.setEmail("appmmappieromacaluso.com");
-        user.setPassword("123456789");
-        user.setPassMatch("123456789");
+        user.setPassword("321@User");
+        user.setPassMatch("321@User");
         String json3 = mapper.writeValueAsString(user);
 
         this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json3))
@@ -181,8 +181,8 @@ public class Esercitazione3ApplicationTests {
         logger.info("Test GET /confirm/{randomUUID} correct ...");
         UserDTO user = new UserDTO();
         user.setEmail("appmmap@pieromacaluso.com");
-        user.setPassword("123456789");
-        user.setPassMatch("123456789");
+        user.setPassword("321@User");
+        user.setPassMatch("321@User");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
 
@@ -218,8 +218,8 @@ public class Esercitazione3ApplicationTests {
         String email = "appmmap@pieromacaluso.com";
         UserDTO user = new UserDTO();
         user.setEmail(email);
-        user.setPassword("123456789");
-        user.setPassMatch("123456789");
+        user.setPassword("321@User");
+        user.setPassMatch("321@User");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
 
@@ -243,13 +243,13 @@ public class Esercitazione3ApplicationTests {
         this.mockMvc.perform(get("/recover/" + UUID))
                 .andExpect(status().isOk());
         UserDTO user1 = new UserDTO();
-        user1.setPassword("987654321");
-        user1.setPassMatch("987654321");
+        user1.setPassword("12345@User");
+        user1.setPassMatch("12345@User");
         String json2 = mapper.writeValueAsString(user1);
         this.mockMvc.perform(post("/recover/" + UUID).contentType(MediaType.APPLICATION_JSON).content(json2))
                 .andExpect(status().isOk());
 
-        user.setPassword("987654321");
+        user.setPassword("12345@User");
         String json3 = mapper.writeValueAsString(user);
 
         this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
@@ -279,8 +279,8 @@ public class Esercitazione3ApplicationTests {
         String email = "appmmap@pieromacaluso.com";
         UserDTO user = new UserDTO();
         user.setEmail(email);
-        user.setPassword("123456789");
-        user.setPassMatch("123456789");
+        user.setPassword("321@User");
+        user.setPassMatch("321@User");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
 
@@ -308,7 +308,7 @@ public class Esercitazione3ApplicationTests {
         // User authorized --> 200 OK
         user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
 
         result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))

@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 
@@ -24,6 +25,7 @@ public class UserDTO extends ResourceSupport {
     @Size(min = 7, max = 64)
     private String email;
 
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", flags = Pattern.Flag.UNICODE_CASE)
     @Size(min = 3, max = 64)
     private String password;
 

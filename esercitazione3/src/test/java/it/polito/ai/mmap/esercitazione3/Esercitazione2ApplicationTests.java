@@ -56,7 +56,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -82,7 +82,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -106,7 +106,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -133,7 +133,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -167,7 +167,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -194,7 +194,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -237,7 +237,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -276,7 +276,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -317,7 +317,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -360,7 +360,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -415,7 +415,7 @@ public class Esercitazione2ApplicationTests {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("system-admin");
+        user.setPassword("12345@Sys");
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
