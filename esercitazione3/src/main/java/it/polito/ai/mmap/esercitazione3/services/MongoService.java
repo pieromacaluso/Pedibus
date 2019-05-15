@@ -230,6 +230,11 @@ public class MongoService {
 
     }
 
+    /**
+     * Aggiunge alla lista di admin di una linea l'user indicato
+     * @param userID
+     * @param nomeLinea
+     */
     public void addAdminLine(String userID, String nomeLinea) {
         Optional<LineaEntity> check = lineaRepository.findByNome(nomeLinea);
         if (!check.isPresent()) {

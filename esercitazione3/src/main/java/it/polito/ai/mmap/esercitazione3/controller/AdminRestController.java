@@ -51,6 +51,10 @@ public class AdminRestController {
         return ok(model);
     }
 
+    /**
+     * Un admin di una linea o il system-admin inserisce @param userID come admin per @param nomeLinea.
+     * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione si troverà i privilegi di admin
+     */
     @PutMapping("/users/{userID}")
     public void setUserAdmin(@RequestBody String nomeLinea, @PathVariable("userID") String userID) {
         UserEntity principal;
