@@ -1,8 +1,11 @@
 package it.polito.ai.mmap.esercitazione3;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.esercitazione3.entity.ActivationTokenEntity;
+import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.repository.ActivationTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
@@ -43,6 +46,8 @@ public class Esercitazione3ApplicationTests {
     private UserRepository userRepository;
     @Autowired
     private RecoverTokenRepository recoverTokenRepository;
+    @Autowired
+    private ActivationTokenRepository activationTokenRepository;
 
 
     @Test
@@ -182,15 +187,16 @@ public class Esercitazione3ApplicationTests {
         this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> check = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
-        assert check.isPresent();
-        //TODO: da modificare in base a cambiamenti Confirmation RandomUUID
-        String UUID = check.get().getId().toString();
+        Optional<UserEntity> checkUser = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
+        assert checkUser.isPresent();
+        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(checkUser.get().getId());
+        assert activationCheck.isPresent();
+        String UUID = activationCheck.get().getId().toString();
         this.mockMvc.perform(get("/confirm/" + UUID))
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        this.userRepository.delete(check.get());
+        this.userRepository.delete(checkUser.get());
 
     }
 
@@ -206,7 +212,7 @@ public class Esercitazione3ApplicationTests {
 
     @Test
     public void postRecover_always200() throws Exception {
-        logger.info("Test POST /recover");
+        logger.info("Test ALL /recover");
         String email = "pieromacaluso8@gmail.com";
         UserDTO user = new UserDTO();
         user.setEmail(email);
@@ -220,12 +226,32 @@ public class Esercitazione3ApplicationTests {
 
         Optional<UserEntity> check = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
         assert check.isPresent();
-        //TODO: da modificare in base a cambiamenti Confirmation RandomUUID
-        String UUID = check.get().getId().toString();
+        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(check.get().getId());
+        assert activationCheck.isPresent();
+        String UUID = activationCheck.get().getId().toString();
         this.mockMvc.perform(get("/confirm/" + UUID))
                 .andExpect(status().isOk());
 
         this.mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
+                .andExpect(status().isOk());
+
+        Optional<RecoverTokenEntity> recoverCheck = this.recoverTokenRepository.findByUserId(check.get().getId());
+        assert recoverCheck.isPresent();
+        // TODO: da modificare in base a cambiamenti Confirmation RandomUUID
+        UUID = recoverCheck.get().getId().toString();
+        this.mockMvc.perform(get("/recover/" + UUID))
+                .andExpect(status().isOk());
+        UserDTO user1 = new UserDTO();
+        user1.setPassword("987654321");
+        user1.setPassMatch("987654321");
+        String json2 = mapper.writeValueAsString(user1);
+        this.mockMvc.perform(post("/recover/" + UUID).contentType(MediaType.APPLICATION_JSON).content(json2))
+                .andExpect(status().isOk());
+
+        user.setPassword("987654321");
+        String json3 = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
                 .andExpect(status().isOk());
 
         email = "ciao";
@@ -233,11 +259,11 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        if (this.userRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()) {
-            this.userRepository.delete(this.userRepository.findByUsername("pieromacaluso8@gmail.com").get());
-        }
-        if (this.recoverTokenRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()){
-            this.recoverTokenRepository.delete(this.recoverTokenRepository.findByUsername("pieromacaluso8@gmail.com").get());
+        Optional<UserEntity> userCheck = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
+        if (userCheck.isPresent()) {
+            Optional<RecoverTokenEntity> tokenCheck = this.recoverTokenRepository.findById(userCheck.get().getId());
+            tokenCheck.ifPresent(recoverTokenEntity -> this.recoverTokenRepository.delete(recoverTokenEntity));
+            this.userRepository.delete(userCheck.get());
         }
     }
 

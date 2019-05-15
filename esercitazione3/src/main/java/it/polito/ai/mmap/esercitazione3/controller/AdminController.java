@@ -13,11 +13,12 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value="/users", consumes={"text/html"})
-    public String getUsers(Model model)
-    {
-        model.addAttribute("users", userService.getAllUsers());
-        return "users";
-    }
+        //TODO: check ANGELO
+//    @GetMapping(value="/users")
+//    public String getUsers(Model model)
+//    {
+//        model.addAttribute("users", userService.getAllUsers());
+//        return "users";
+//    }
 
 }

@@ -1,10 +1,12 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
+import it.polito.ai.mmap.esercitazione3.entity.ActivationTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.exception.*;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.repository.ActivationTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
@@ -29,12 +31,10 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Value("${superadmin.email}")
     private String superAdminMail;
     @Value("${superadmin.password}")
     private String superAdminPass;
-
     @Value("${mail.baseURL}")
     private String baseURL;
     @Value("${mail.registration_subject}")
@@ -54,8 +54,10 @@ public class UserService implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    private RecoverTokenRepository tokenRepository;
+    private RecoverTokenRepository recoverTokenRepository;
 
+    @Autowired
+    private ActivationTokenRepository activationTokenRepository;
     @Autowired
     private GMailService gMailService;
 
@@ -78,31 +80,6 @@ public class UserService implements UserDetailsService {
         }
         UserEntity userEntity = check.get();
         return userEntity;
-    }
-
-    /**
-     * Metodo che controlla la validità delle credenziali per un utente
-     * TODO remove (non essendo usato)
-     *
-     * @param userDTO
-     * @return
-     */
-    public Boolean isLoginValid(UserDTO userDTO) {
-        UserEntity userEntity;
-        try {
-            userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-        } catch (UsernameNotFoundException e) {
-            logger.info("Login fail - Utente non trovato");
-            return false;
-        }
-
-        if (userEntity.isEnabled() && passwordEncoder.matches(userDTO.getPassword(), userEntity.getPassword())) {
-            logger.info("Utente loggato correttamente");
-            return true;
-        } else {
-            logger.info("Login fail - password non matchano o utente non abilitato");
-            return false;
-        }
     }
 
     /**
@@ -129,7 +106,6 @@ public class UserService implements UserDetailsService {
                 userEntity = checkAdmin.get();
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 userEntity.setCreationDate(MongoZonedDateTime.getNow());
-
             } else if (!userEntity.isEnabled() && (MongoZonedDateTime.getNow().getTime() - userEntity.getCreationDate().getTime()) > 1000 * 60 * minuti) {
                 //Mail già associata a un account che non è stato abilitato in tempo
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
@@ -145,9 +121,13 @@ public class UserService implements UserDetailsService {
         }
 
         userRepository.save(userEntity);
-        String href = baseURL + "confirm/" + userEntity.getId();
+        ActivationTokenEntity tokenEntity = new ActivationTokenEntity(userEntity.getId());
+        logger.info(tokenEntity.getCreationDate().toString());
+        activationTokenRepository.save(tokenEntity);
+        String href = baseURL + "confirm/" + tokenEntity.getId();
         gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>", REGISTRATION_SUBJECT);
         logger.info("Inviata register email a: " + userEntity.getUsername());
+
     }
 
     /**
@@ -161,22 +141,26 @@ public class UserService implements UserDetailsService {
      * @param randomUUID
      */
     public void enableUser(ObjectId randomUUID) {
-        Optional<UserEntity> check = userRepository.findById(randomUUID);
-        UserEntity userEntity;
-        if (check.isPresent()) {
-            userEntity = check.get();
+        Optional<ActivationTokenEntity> checkToken = activationTokenRepository.findById(randomUUID);
+        ActivationTokenEntity token;
+        if (checkToken.isPresent()) {
+            token = checkToken.get();
         } else {
             throw new TokenNotFoundException();
         }
 
-        if ((MongoZonedDateTime.getNow().getTime() - userEntity.getCreationDate().getTime()) < 1000 * 60 * minuti) {
-            if (!userEntity.isEnabled()) {
-                userEntity.setEnabled(true);
-                userEntity.setUserId(userEntity.getId().toString());
-                userRepository.save(userEntity);
-            }
+        Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
+        UserEntity userEntity;
+        if (checkUser.isPresent()) {
+            userEntity = checkUser.get();
         } else {
-            throw new RegistrationOOTException();
+            throw new TokenNotFoundException();
+        }
+        if (!userEntity.isEnabled()) {
+            userEntity.setEnabled(true);
+            userEntity.setUserId(userEntity.getId().toString());
+            userRepository.save(userEntity);
+            activationTokenRepository.delete(token);
         }
 
     }
@@ -191,15 +175,20 @@ public class UserService implements UserDetailsService {
      * @throws UsernameNotFoundException se non trova l'user
      */
     public void updateUserPassword(UserDTO userDTO, String randomUUID) throws UsernameNotFoundException {
-        UserEntity userEntity = (UserEntity) loadUserByUsername(userDTO.getEmail());
-        Optional<RecoverTokenEntity> checkToken = tokenRepository.findByUsername(userDTO.getEmail());
+        ObjectId idToken = new ObjectId(randomUUID);
+        Optional<RecoverTokenEntity> checkToken = recoverTokenRepository.findById(idToken);
         if (checkToken.isPresent()) {
-            if (checkToken.get().getTokenValue().equals(randomUUID)) {
+            RecoverTokenEntity token = checkToken.get();
+            Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
+            if (checkUser.isPresent()) {
+                UserEntity userEntity = checkUser.get();
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 userRepository.save(userEntity);
+                recoverTokenRepository.delete(token);
             } else {
                 throw new RecoverProcessNotValidException();
             }
+
         } else {
             throw new RecoverProcessNotValidException();
         }
@@ -211,16 +200,16 @@ public class UserService implements UserDetailsService {
      * @param email
      * @throws UsernameNotFoundException
      */
-    public void recoverAccount(String email) throws UsernameNotFoundException {
+    public void recoverAccount(String email) throws RecoverProcessNotValidException {
         Optional<UserEntity> check = userRepository.findByUsernameAndIsEnabled(email, true);
         if (!check.isPresent())
             throw new UsernameNotFoundException("User not found");
 
         UserEntity userEntity = check.get();
-        RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
+        RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getId());
         logger.info(tokenEntity.getCreationDate().toString());
-        tokenRepository.save(tokenEntity);
-        String href = baseURL + "recover/" + tokenEntity.getTokenValue();
+        recoverTokenRepository.save(tokenEntity);
+        String href = baseURL + "recover/" + tokenEntity.getId();
         gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>", RECOVER_ACCOUNT_SUBJECT);
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
@@ -229,17 +218,15 @@ public class UserService implements UserDetailsService {
 
         List<String> roles = new ArrayList<>();
         Optional<UserEntity> userEntity = userRepository.findByUsername(username);
-        if (userEntity.isPresent()) {
-            roles.addAll(userEntity.get().getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()));
-        }
-
-        String token = jwtTokenService.createToken(username, roles);/*userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());*/
-        return token;
+        userEntity.ifPresent(entity -> roles.addAll(entity.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList())));
+        /*userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());*/
+        return jwtTokenService.createToken(username, roles);
     }
 
 
     /**
      * Permette di creare in automatico, se non presente, l'utente con privilegio SYSTEM-ADMIN. Tale utente è già abilitato senza l'invio dell'email.
+     * TODO: da cancellare
      */
     public void registerSuperUser() {
         Optional<UserEntity> check = userRepository.findByUsername(superAdminMail);
@@ -258,6 +245,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
 
         check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
+        //TODO: controllare .isPresent()
         userEntity = check.get();
         userEntity.setUserId(userEntity.getId().toString());
         userRepository.save(userEntity);
@@ -278,7 +266,7 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> check = userRepository.findByUsername(userID);
         UserEntity userEntity;
         if (!check.isPresent()) {
-            RoleEntity roleArr[] = {roleRepository.findByRole("ROLE_USER"), roleRepository.findByRole("ROLE_ADMIN")};
+            RoleEntity[] roleArr = {roleRepository.findByRole("ROLE_USER"), roleRepository.findByRole("ROLE_ADMIN")};
             userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleArr)));
         } else {
             userEntity = check.get();

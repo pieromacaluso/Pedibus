@@ -42,7 +42,7 @@ public class AdminRestController {
      *
      * @return
      */
-    @GetMapping(value = "/users", consumes = {"application/json", "application/xml"})
+    @GetMapping(value = "/users")
     //tramite consumers è possibile indicare quale header Content-Type deve avere la richiesta
     public ResponseEntity getUsers() {
         List<UserEntity> allUsers = userService.getAllUsers();

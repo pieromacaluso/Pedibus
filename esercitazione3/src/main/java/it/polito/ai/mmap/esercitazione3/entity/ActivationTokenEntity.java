@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -16,14 +17,14 @@ import java.util.Random;
 
 /**
  * Classe che serve a memorizzare temporaneamente il
- * token utilizzato per la recovery della password.
- * Questa entity va creata in fase di recovery per
- * poi essere eliminata una volta che la recovery viene effettuata.
+ * token utilizzato per la registrazione dell'utente.
+ * Questa entity va creata in fase di registrazione per
+ * poi essere eliminata una volta che la registrazione viene effettuata.
  */
 
 @Data
-@Document(collection = "recoverTokens")
-public class RecoverTokenEntity {
+@Document(collection = "activationTokens")
+public class ActivationTokenEntity {
 
     @Id
     private ObjectId id;
@@ -34,10 +35,10 @@ public class RecoverTokenEntity {
     @Indexed(name = "ttl_index", expireAfterSeconds = 60*1)
     Date creationDate;
 
-    public RecoverTokenEntity() {
+    public ActivationTokenEntity() {
     }
 
-    public RecoverTokenEntity(ObjectId userId) {
+    public ActivationTokenEntity(ObjectId userId) {
         this.id = new ObjectId();
         this.userId = userId;
         creationDate = MongoZonedDateTime.getNow();
