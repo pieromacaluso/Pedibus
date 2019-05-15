@@ -6,6 +6,7 @@ import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.exception.PermissionDeniedException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
+import it.polito.ai.mmap.esercitazione3.objectDTO.PermissionDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.MongoService;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
@@ -56,19 +57,19 @@ public class AdminRestController {
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione si troverà i privilegi di admin
      */
     @PutMapping("/users/{userID}")
-    public void setUserAdmin(@RequestBody String nomeLinea,@RequestBody boolean addOrDel, @PathVariable("userID") String userID) {
+    public void setUserAdmin(@RequestBody PermissionDTO permissionDTO, @PathVariable("userID") String userID) {
         UserEntity principal;
-        LineaDTO lineaDTO = mongoService.getLineByName(nomeLinea);
+        LineaDTO lineaDTO = mongoService.getLineByName(permissionDTO.getLinea());
 
         // try {
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername())) {
-                if(addOrDel){
+                if(permissionDTO.isAddOrDel()){
                     userService.addAdmin(userID);
-                    mongoService.addAdminLine(userID, nomeLinea);
+                    mongoService.addAdminLine(userID, permissionDTO.getLinea());
                 }else{
                     userService.delAdmin(userID);
-                    mongoService.delAdminLine(userID, nomeLinea);
+                    mongoService.delAdminLine(userID, permissionDTO.getLinea());
                 }
         } else {
 //            logger.info("else");
