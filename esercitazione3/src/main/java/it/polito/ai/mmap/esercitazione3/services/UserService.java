@@ -286,9 +286,6 @@ public class UserService implements UserDetailsService {
         }
         if(userEntity.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN")))
             userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
-        else{
-            throw new UserNotAdminException();
-        }
 
         userRepository.save(userEntity);
     }
