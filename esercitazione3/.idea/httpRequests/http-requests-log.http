@@ -1,3 +1,117 @@
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password3"
+}
+
+<> 2019-05-15T111911.200.json
+
+###
+
+POST http://localhost:8080/recover/YeOzh5dlIX
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password3",
+  "passMatch": "mia-password3"
+}
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
 GET http://localhost:8080/recover/%EF%BF%BD_%3CP%EF%BF%BD%EF%BF%BDtW
 Accept: application/json
 
