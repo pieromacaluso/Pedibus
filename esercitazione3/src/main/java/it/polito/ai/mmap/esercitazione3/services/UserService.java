@@ -277,4 +277,18 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
+    public void delAdmin(String userID) {
+        Optional<UserEntity> check = userRepository.findByUsername(userID);
+        UserEntity userEntity;
+        if (!check.isPresent()) {
+            RoleEntity[] roleArr = {roleRepository.findByRole("ROLE_USER")};
+            userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleArr)));
+        } else {
+            userEntity = check.get();
+        }
+        if(userEntity.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN")))
+            userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
+
+        userRepository.save(userEntity);
+    }
 }
