@@ -34,8 +34,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             FermataNotFoundException.class,
             UserAlreadyPresentException.class,
             RegistrationNotValidException.class,
-            RegistrationOOTException.class,
-            UserNotAdminException.class})
+            RegistrationOOTException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
