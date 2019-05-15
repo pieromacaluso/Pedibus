@@ -244,7 +244,7 @@ public class MongoService {
         ArrayList<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
             adminList = new ArrayList<>(Arrays.asList(userID));
-        else
+        else if(!adminList.contains(userID))
             adminList.add(userID);
 
         lineaEntity.setAdminList(adminList);
