@@ -32,7 +32,7 @@ function postForm() {
     if (success !== null) {
         success.remove();
     }
-    let passRgx = /^[\w\d]{4,25}$/;
+    let passRgx = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$/;
     let pass = document.getElementById('pass').value;
     let pass1 = document.getElementById('passMatch').value;
     if (passRgx.test(pass)) {
