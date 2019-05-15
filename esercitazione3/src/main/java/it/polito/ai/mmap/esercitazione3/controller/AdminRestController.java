@@ -61,7 +61,6 @@ public class AdminRestController {
         UserEntity principal;
         LineaDTO lineaDTO = mongoService.getLineByName(permissionDTO.getLinea());
 
-        // try {
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername())) {
                 if(permissionDTO.isAddOrDel()){
@@ -72,14 +71,9 @@ public class AdminRestController {
                     mongoService.delAdminLine(userID, permissionDTO.getLinea());
                 }
         } else {
-//            logger.info("else");
             throw new PermissionDeniedException("User has no right to do this operation");
-            // Aggiunto eccezione restituisce 403 FORBIDDEN
         }
 
-        //}catch (Exception e){
-        //}
-//        return;
     }
 
 }

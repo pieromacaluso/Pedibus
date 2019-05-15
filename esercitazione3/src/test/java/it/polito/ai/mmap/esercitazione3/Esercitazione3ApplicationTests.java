@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.esercitazione3.entity.ActivationTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.objectDTO.PermissionDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.ActivationTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
@@ -26,8 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -320,6 +320,95 @@ public class Esercitazione3ApplicationTests {
         this.mockMvc.perform(get("/users")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
+
+        logger.info("PASSED");
+        Optional<UserEntity> userCheck = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        if (userCheck.isPresent()) {
+            Optional<RecoverTokenEntity> tokenCheck = this.recoverTokenRepository.findById(userCheck.get().getId());
+            tokenCheck.ifPresent(recoverTokenEntity -> this.recoverTokenRepository.delete(recoverTokenEntity));
+            this.userRepository.delete(userCheck.get());
+        }
+    }
+
+    @Test
+    public void putUsers() throws Exception {
+
+        logger.info("Test PUT /users");
+        // SYS-ADMIN
+        ObjectMapper mapper = new ObjectMapper();
+        UserDTO user = new UserDTO();
+        user.setEmail("applicazioni.internet.mmap@gmail.com");
+        user.setPassword("12345@Sys");
+        String json = mapper.writeValueAsString(user);
+        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        String token = node.get("token").asText();
+
+        // USER-TEST
+        String email = "appmmap@pieromacaluso.com";
+        user = new UserDTO();
+        user.setEmail(email);
+        user.setPassword("321@User");
+        user.setPassMatch("321@User");
+        mapper = new ObjectMapper();
+        json = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
+
+        Optional<UserEntity> check = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        assert check.isPresent();
+        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(check.get().getId());
+        assert activationCheck.isPresent();
+        String UUID = activationCheck.get().getId().toString();
+        this.mockMvc.perform(get("/confirm/" + UUID))
+                .andExpect(status().isOk());
+        PermissionDTO perm = new PermissionDTO();
+        perm.setLinea("linea1");
+        perm.setAddOrDel(true);
+        json = mapper.writeValueAsString(perm);
+
+        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+                .contentType(MediaType.APPLICATION_JSON).content(json)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isUnauthorized());
+
+        perm.setAddOrDel(false);
+        json = mapper.writeValueAsString(perm);
+        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+                .contentType(MediaType.APPLICATION_JSON).content(json)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isUnauthorized());
+
+        user.setEmail("appmmap@pieromacaluso.com");
+        user.setPassword("321@User");
+        json = mapper.writeValueAsString(user);
+        result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        node = mapper.readTree(result.getResponse().getContentAsString());
+        token = node.get("token").asText();
+
+        perm.setAddOrDel(false);
+
+        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+                .contentType(MediaType.APPLICATION_JSON).content(json)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isForbidden());
+
+        perm.setAddOrDel(true);
+
+        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+                .contentType(MediaType.APPLICATION_JSON).content(json)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isForbidden());
 
         logger.info("PASSED");
         Optional<UserEntity> userCheck = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
