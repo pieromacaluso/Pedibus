@@ -31,8 +31,8 @@ public class RecoverTokenEntity {
     private ObjectId userId;
 
     //Se si cambia il valore di expire bisogna fare il drop dell'indice su atlas
-    // TODO: Cambia ora scadenza
-    @Indexed(name = "ttl_index", expireAfterSeconds = 60*1)
+    // Scadenza dopo 1h
+    @Indexed(name = "ttl_index", expireAfterSeconds = 1*3600)
     Date creationDate;
 
     public RecoverTokenEntity() {

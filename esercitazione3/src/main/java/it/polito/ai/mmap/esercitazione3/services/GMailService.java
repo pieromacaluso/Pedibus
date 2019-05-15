@@ -24,11 +24,6 @@ public class GMailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    /**
-     * https://www.baeldung.com/spring-async TODO ancora da sistemare il thread pool
-     * @param email
-     * @param msg
-     */
     @Async("threadPoolTaskExecutor")
     public void sendMail(String email, String msg, String subject) {
         MimeMessage message = mailSender.createMimeMessage();

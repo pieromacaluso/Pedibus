@@ -65,12 +65,6 @@ public class AuthenticationRestController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
 //        logger.info("login result -> " + userService.isLoginValid(userDTO));
-        /*
-         * TODO: Rimuovi commento
-         * (Piero)
-         * Validazione email e password inserite attraverso check conteggio FieldError.
-         * Il passwordMatching viene ignorato poichè non è un FieldError.
-         */
         if (bindingResult.getFieldErrorCount() == 0) {
             String username = userDTO.getEmail();
             String password = userDTO.getPassword();

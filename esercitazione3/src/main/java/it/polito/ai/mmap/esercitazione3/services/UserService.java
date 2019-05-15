@@ -247,11 +247,12 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
 
         check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
-        //TODO: controllare .isPresent()
-        userEntity = check.get();
-        userEntity.setUserId(userEntity.getId().toString());
-        userRepository.save(userEntity);
-        logger.info("SuperAdmin configurato ed abilitato.");
+        if(check.isPresent()) {
+            userEntity = check.get();
+            userEntity.setUserId(userEntity.getId().toString());
+            userRepository.save(userEntity);
+            logger.info("SuperAdmin configurato ed abilitato.");
+        }
     }
 
     public List<UserEntity> getAllUsers() {
