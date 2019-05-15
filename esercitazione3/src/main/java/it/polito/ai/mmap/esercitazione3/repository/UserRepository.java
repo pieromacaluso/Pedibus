@@ -13,7 +13,7 @@ public interface UserRepository extends MongoRepository<UserEntity, Integer> {
 
     Optional<UserEntity> findById(ObjectId id);
 
-    Optional<UserEntity> findByUserId(String userId);
+    Optional<UserEntity> findByUsernameAndIsEnabled(String email, Boolean isEnabled);
 
     Optional<UserEntity> findByRoleListContainingAndUsernameAndIsEnabled(RoleEntity roleEntity, String email, Boolean enabled);
 }

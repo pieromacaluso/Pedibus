@@ -2,17 +2,7 @@ function showAlert(message) {
     let div = document.createElement("div");
     div.setAttribute('id', 'err-mess');
     div.setAttribute('class', 'alert alert-danger');
-    div.setAttribute('role', 'alert');
-    div.innerHTML = message;
-    document.getElementById('form-reg').appendChild(div);
-    console.log(message);
-}
-
-function showSuccess(message) {
-    let div = document.createElement("div");
-    div.setAttribute('id', 'success-mess');
-    div.setAttribute('class', 'alert alert-success');
-    div.setAttribute('role', 'success');
+    div.setAttribute('role','alert');
     div.innerHTML = message;
     document.getElementById('form-reg').appendChild(div);
     console.log(message);
@@ -28,32 +18,33 @@ function postForm() {
     if (errors !== null) {
         errors.remove();
     }
+    // regex da RFC su email
+    let emailRgx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     let passRgx = /^[\w\d]{4,25}$/;
+    let email = document.getElementById('email').value;
     let pass = document.getElementById('pass').value;
-    let pass1 = document.getElementById('passMatch').value;
-    if (passRgx.test(pass)) {
-        if (pass === pass1) {
-            // invio richiesta
-            fetch(endpoint, {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({password: pass, passMatch: pass1})
-            }).then(function (response) {
-                console.log(response.status); // returns 200 or 404
-                if (response.status === 200) {
-                    showSuccess('Password changed correctly!');
-                } else {
-                    showAlert('Problem in the recovering of password. Maybe it is expired.');
-                }
-            }).then(res => console.log(res));
+    let pass1 = document.getElementById('pass1').value;
+    if (emailRgx.test(email)) {
+        if (passRgx.test(pass)) {
+            if (pass === pass1) {
+                // invio richiesta
+                fetch(endpoint, {
+                    method: 'post',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({email: email, password: pass, passMatch: pass1})
+                }).then(res => res.json())
+                    .then(res => console.log(res));
+            } else {
+                showAlert('Le password non coincidono');
+            }
         } else {
-            showAlert('Le password non coincidono');
+            showAlert('Password non valida');
         }
     } else {
-        showAlert('Password non valida');
+        showAlert('Email non valida');
     }
 }
 

@@ -82,6 +82,7 @@ public class UserService implements UserDetailsService {
 
     /**
      * Metodo che controlla la validità delle credenziali per un utente
+     * TODO remove (non essendo usato)
      *
      * @param userDTO
      * @return
@@ -107,9 +108,14 @@ public class UserService implements UserDetailsService {
     /**
      * Metodo che gestisce la registrazione
      * salva su db e invia una mail di conferma
+     * Gestisce 4 casistiche:
+     * - Se l'utente arriva con una nuova mail
+     * - Se la mail è già associata a un account
+     * - Se la mail è già associata a un account, ma che non è stato attivato entro una deadline e quindi si permette il riutilizzo
+     * - Se la mail è già associata a un account che ha privilegi di admin ed è inattivo (ad es record creato ad inzio anno dal preside)
      *
      * @param userDTO
-     * @throws UserAlreadyPresentException nel caso ci sia già un utente con la mail indicata
+     * @throws UserAlreadyPresentException
      */
     public void registerUser(UserDTO userDTO) throws UserAlreadyPresentException {
         UserEntity userEntity;
@@ -138,12 +144,10 @@ public class UserService implements UserDetailsService {
 
         }
 
-
         userRepository.save(userEntity);
         String href = baseURL + "confirm/" + userEntity.getId();
         gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>", REGISTRATION_SUBJECT);
         logger.info("Inviata register email a: " + userEntity.getUsername());
-
     }
 
     /**
@@ -201,10 +205,18 @@ public class UserService implements UserDetailsService {
         }
     }
 
-
+    /**
+     * Se la mail corrisponde a quella di un utente registrato invia una mail per iniziare il processo di recover
+     *
+     * @param email
+     * @throws UsernameNotFoundException
+     */
     public void recoverAccount(String email) throws UsernameNotFoundException {
-        UserEntity userEntity = (UserEntity) loadUserByUsername(email); //se non esiste lancia un eccezione
+        Optional<UserEntity> check = userRepository.findByUsernameAndIsEnabled(email, true);
+        if (!check.isPresent())
+            throw new UsernameNotFoundException("User not found");
 
+        UserEntity userEntity = check.get();
         RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getUsername());
         logger.info(tokenEntity.getCreationDate().toString());
         tokenRepository.save(tokenEntity);
@@ -274,6 +286,5 @@ public class UserService implements UserDetailsService {
         userEntity.getRoleList().add(roleRepository.findByRole("ROLE_ADMIN"));
         userRepository.save(userEntity);
     }
-
 
 }
