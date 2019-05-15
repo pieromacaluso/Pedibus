@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.esercitazione3;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.esercitazione3.entity.ActivationTokenEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
@@ -55,7 +57,7 @@ public class Esercitazione3ApplicationTests {
         logger.info("Test POST /login ...");
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("mmapmmap1!");
+        user.setPassword("system-admin");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(user);
 
@@ -70,7 +72,7 @@ public class Esercitazione3ApplicationTests {
         logger.info("Test POST /login ...");
         UserDTO user = new UserDTO();
         user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("mmapmmap1");
+        user.setPassword("aimaimaim");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
 
@@ -78,7 +80,7 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isUnauthorized());
 
         user.setEmail("applicazioni.internet.mmapgmail.com");
-        user.setPassword("mmapmmap1");
+        user.setPassword("aimaimaim");
         String json2 = mapper.writeValueAsString(user);
 
         this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json2))
@@ -98,7 +100,7 @@ public class Esercitazione3ApplicationTests {
     public void postRegister_correct() throws Exception {
         logger.info("Test POST /register ...");
         UserDTO user = new UserDTO();
-        user.setEmail("pieromacaluso8@gmail.com");
+        user.setEmail("appmmap@pieromacaluso.com");
         user.setPassword("123456789");
         user.setPassMatch("123456789");
         ObjectMapper mapper = new ObjectMapper();
@@ -108,8 +110,8 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        if (this.userRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()) {
-            this.userRepository.delete(this.userRepository.findByUsername("pieromacaluso8@gmail.com").get());
+        if (this.userRepository.findByUsername("appmmap@pieromacaluso.com").isPresent()) {
+            this.userRepository.delete(this.userRepository.findByUsername("appmmap@pieromacaluso.com").get());
         }
     }
 
@@ -117,7 +119,7 @@ public class Esercitazione3ApplicationTests {
     public void postRegister_duplicate() throws Exception {
         logger.info("Test POST /register duplicate ...");
         UserDTO user = new UserDTO();
-        user.setEmail("pieromacaluso8@gmail.com");
+        user.setEmail("appmmap@pieromacaluso.com");
         user.setPassword("123456789");
         user.setPassMatch("123456789");
         ObjectMapper mapper = new ObjectMapper();
@@ -129,8 +131,8 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isInternalServerError());
 
         logger.info("PASSED");
-        if (this.userRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()) {
-            this.userRepository.delete(this.userRepository.findByUsername("pieromacaluso8@gmail.com").get());
+        if (this.userRepository.findByUsername("appmmap@pieromacaluso.com").isPresent()) {
+            this.userRepository.delete(this.userRepository.findByUsername("appmmap@pieromacaluso.com").get());
         }
     }
 
@@ -140,7 +142,7 @@ public class Esercitazione3ApplicationTests {
         UserDTO user = new UserDTO();
         logger.info("Passwords does not match ...");
 
-        user.setEmail("pieromacaluso8@gmail.com");
+        user.setEmail("appmmap@pieromacaluso.com");
         user.setPassword("123456789");
         user.setPassMatch("12345678");
         ObjectMapper mapper = new ObjectMapper();
@@ -151,7 +153,7 @@ public class Esercitazione3ApplicationTests {
 
         logger.info("Password not valid ...");
 
-        user.setEmail("pieromacaluso8@gmail.com");
+        user.setEmail("appmmap@pieromacaluso.com");
         user.setPassword("1");
         user.setPassMatch("1");
         String json2 = mapper.writeValueAsString(user);
@@ -160,7 +162,7 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isInternalServerError());
 
         logger.info("Email not valid ...");
-        user.setEmail("pieromacaluso8gmail.com");
+        user.setEmail("appmmappieromacaluso.com");
         user.setPassword("123456789");
         user.setPassMatch("123456789");
         String json3 = mapper.writeValueAsString(user);
@@ -169,8 +171,8 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isInternalServerError());
 
         logger.info("PASSED");
-        if (this.userRepository.findByUsername("pieromacaluso8@gmail.com").isPresent()) {
-            this.userRepository.delete(this.userRepository.findByUsername("pieromacaluso8@gmail.com").get());
+        if (this.userRepository.findByUsername("appmmap@pieromacaluso.com").isPresent()) {
+            this.userRepository.delete(this.userRepository.findByUsername("appmmap@pieromacaluso.com").get());
         }
     }
 
@@ -178,7 +180,7 @@ public class Esercitazione3ApplicationTests {
     public void getConfirmRandomUUID_correct() throws Exception {
         logger.info("Test GET /confirm/{randomUUID} correct ...");
         UserDTO user = new UserDTO();
-        user.setEmail("pieromacaluso8@gmail.com");
+        user.setEmail("appmmap@pieromacaluso.com");
         user.setPassword("123456789");
         user.setPassMatch("123456789");
         ObjectMapper mapper = new ObjectMapper();
@@ -187,7 +189,7 @@ public class Esercitazione3ApplicationTests {
         this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> checkUser = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
+        Optional<UserEntity> checkUser = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
         assert checkUser.isPresent();
         Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(checkUser.get().getId());
         assert activationCheck.isPresent();
@@ -213,7 +215,7 @@ public class Esercitazione3ApplicationTests {
     @Test
     public void postRecover_always200() throws Exception {
         logger.info("Test ALL /recover");
-        String email = "pieromacaluso8@gmail.com";
+        String email = "appmmap@pieromacaluso.com";
         UserDTO user = new UserDTO();
         user.setEmail(email);
         user.setPassword("123456789");
@@ -224,7 +226,7 @@ public class Esercitazione3ApplicationTests {
         this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> check = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
+        Optional<UserEntity> check = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
         assert check.isPresent();
         Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(check.get().getId());
         assert activationCheck.isPresent();
@@ -259,12 +261,75 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        Optional<UserEntity> userCheck = this.userRepository.findByUsername("pieromacaluso8@gmail.com");
+        Optional<UserEntity> userCheck = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
         if (userCheck.isPresent()) {
             Optional<RecoverTokenEntity> tokenCheck = this.recoverTokenRepository.findById(userCheck.get().getId());
             tokenCheck.ifPresent(recoverTokenEntity -> this.recoverTokenRepository.delete(recoverTokenEntity));
             this.userRepository.delete(userCheck.get());
         }
     }
+
+    @Test
+    public void getUserTest() throws Exception {
+        logger.info("Test GET /users");
+        // No user --> Unauthorized
+        this.mockMvc.perform(get("/users"))
+                .andExpect(status().isUnauthorized());
+
+        // User with no rights --> Forbidden
+        String email = "appmmap@pieromacaluso.com";
+        UserDTO user = new UserDTO();
+        user.setEmail(email);
+        user.setPassword("123456789");
+        user.setPassMatch("123456789");
+        ObjectMapper mapper = new ObjectMapper();
+        String json1 = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+                .andExpect(status().isOk());
+
+        Optional<UserEntity> check = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        assert check.isPresent();
+        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(check.get().getId());
+        assert activationCheck.isPresent();
+        String UUID = activationCheck.get().getId().toString();
+        this.mockMvc.perform(get("/confirm/" + UUID))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json1))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        String token = node.get("token").asText();
+
+        // No user --> Unauthorized
+        this.mockMvc.perform(get("/users")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isForbidden());
+
+        // User authorized --> 200 OK
+        user = new UserDTO();
+        user.setEmail("applicazioni.internet.mmap@gmail.com");
+        user.setPassword("system-admin");
+        String json = mapper.writeValueAsString(user);
+
+        result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        node = mapper.readTree(result.getResponse().getContentAsString());
+        token = node.get("token").asText();
+
+        // No user --> Unauthorized
+        this.mockMvc.perform(get("/users")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        logger.info("PASSED");
+        Optional<UserEntity> userCheck = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        if (userCheck.isPresent()) {
+            Optional<RecoverTokenEntity> tokenCheck = this.recoverTokenRepository.findById(userCheck.get().getId());
+            tokenCheck.ifPresent(recoverTokenEntity -> this.recoverTokenRepository.delete(recoverTokenEntity));
+            this.userRepository.delete(userCheck.get());
+        }
+    }
+
 
 }
