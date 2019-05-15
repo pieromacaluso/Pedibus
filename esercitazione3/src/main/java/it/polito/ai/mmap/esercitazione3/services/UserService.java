@@ -101,12 +101,14 @@ public class UserService implements UserDetailsService {
             userEntity = check.get();
             RoleEntity roleEntity = roleRepository.findByRole("ROLE_ADMIN");
             Optional<UserEntity> checkAdmin = userRepository.findByRoleListContainingAndUsernameAndIsEnabled(roleEntity, userDTO.getEmail(), false);
+            Optional<ActivationTokenEntity> checkToken = activationTokenRepository.findByUserId(userEntity.getId());
+
             if (checkAdmin.isPresent()) {
                 //Se la mail è già stata registrata come relativa a un account admin e l'account è inattivo
                 userEntity = checkAdmin.get();
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 userEntity.setCreationDate(MongoZonedDateTime.getNow());
-            } else if (!userEntity.isEnabled() && (MongoZonedDateTime.getNow().getTime() - userEntity.getCreationDate().getTime()) > 1000 * 60 * minuti) {
+            } else if (!userEntity.isEnabled() && !checkToken.isPresent()) {
                 //Mail già associata a un account che non è stato abilitato in tempo
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 userEntity.setCreationDate(MongoZonedDateTime.getNow());

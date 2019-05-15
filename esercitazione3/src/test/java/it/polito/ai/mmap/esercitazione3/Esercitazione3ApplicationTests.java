@@ -239,7 +239,6 @@ public class Esercitazione3ApplicationTests {
 
         Optional<RecoverTokenEntity> recoverCheck = this.recoverTokenRepository.findByUserId(check.get().getId());
         assert recoverCheck.isPresent();
-        // TODO: da modificare in base a cambiamenti Confirmation RandomUUID
         UUID = recoverCheck.get().getId().toString();
         this.mockMvc.perform(get("/recover/" + UUID))
                 .andExpect(status().isOk());

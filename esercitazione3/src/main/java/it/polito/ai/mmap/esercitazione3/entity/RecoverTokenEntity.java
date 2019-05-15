@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.nio.charset.Charset;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -40,7 +41,8 @@ public class RecoverTokenEntity {
     public RecoverTokenEntity(ObjectId userId) {
         this.id = new ObjectId();
         this.userId = userId;
-        creationDate = MongoZonedDateTime.getNow();
+        ZonedDateTime londonTime = ZonedDateTime.now(ZoneId.of("UTC+02:00"));
+        creationDate = Date.from(londonTime.toInstant());
     }
 
 }
