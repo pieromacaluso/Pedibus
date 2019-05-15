@@ -250,4 +250,20 @@ public class MongoService {
         lineaEntity.setAdminList(adminList);
         lineaRepository.save(lineaEntity);
     }
+
+    public void delAdminLine(String userID, String nomeLinea) {
+        Optional<LineaEntity> check = lineaRepository.findByNome(nomeLinea);
+        if (!check.isPresent()) {
+            throw new LineaNotFoundException("Linea not found");
+        }
+        LineaEntity lineaEntity = check.get();
+        ArrayList<String> adminList = lineaEntity.getAdminList();
+        if (adminList == null)
+            adminList = new ArrayList<>(Arrays.asList(userID));
+        else if(adminList.contains(userID))
+            adminList.remove(userID);
+
+        lineaEntity.setAdminList(adminList);
+        lineaRepository.save(lineaEntity);
+    }
 }

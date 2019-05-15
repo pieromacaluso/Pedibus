@@ -52,25 +52,28 @@ public class AdminRestController {
     }
 
     /**
-     * Un admin di una linea o il system-admin inserisce @param userID come admin per @param nomeLinea.
+     * Un admin di una linea o il system-admin inserisce @param userID come admin per @param nomeLinea, indica tramite @addOrDel se aggiungere(true) o eliminare(false) il permesso
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione si troverà i privilegi di admin
      */
     @PutMapping("/users/{userID}")
-    public void setUserAdmin(@RequestBody String nomeLinea, @PathVariable("userID") String userID) {
+    public void setUserAdmin(@RequestBody String nomeLinea,@RequestBody boolean addOrDel, @PathVariable("userID") String userID) {
         UserEntity principal;
         LineaDTO lineaDTO = mongoService.getLineByName(nomeLinea);
 
         // try {
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername())) {
-                userService.addAdmin(userID);
-                mongoService.addAdminLine(userID, nomeLinea);
+                if(addOrDel){
+                    userService.addAdmin(userID);
+                    mongoService.addAdminLine(userID, nomeLinea);
+                }else{
+                    userService.delAdmin(userID);
+                    mongoService.delAdminLine(userID, nomeLinea);
+                }
         } else {
 //            logger.info("else");
             throw new PermissionDeniedException("User has no right to do this operation");
-            //TODO (Piero): Aggiunto eccezione su TODO precedente, restituisce 403 FORBIDDEN
-            // Old message: il getPrincipal ritorna un Object che potrebbe non sempre essere convertito in entity.
-            // Essendo però chiamato solo se autenticto non si dovrebbero avere problemi. Da verificare per bene
+            // Aggiunto eccezione restituisce 403 FORBIDDEN
         }
 
         //}catch (Exception e){
