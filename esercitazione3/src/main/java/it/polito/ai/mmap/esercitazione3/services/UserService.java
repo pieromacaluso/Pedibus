@@ -228,7 +228,6 @@ public class UserService implements UserDetailsService {
 
     /**
      * Permette di creare in automatico, se non presente, l'utente con privilegio SYSTEM-ADMIN. Tale utente è già abilitato senza l'invio dell'email.
-     * TODO: da cancellare
      */
     public void registerSuperUser() {
         Optional<UserEntity> check = userRepository.findByUsername(superAdminMail);
