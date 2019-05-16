@@ -3,7 +3,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import {MatListModule} from '@angular/material';
+import {MatDatepickerModule, MatListModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -12,7 +12,8 @@ import {MatListModule} from '@angular/material';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MatListModule
+    MatListModule,
+    MatDatepickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
