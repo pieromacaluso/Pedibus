@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import {Linea} from './linea';
+import {MongoService} from './mongo.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'esercitazione4';
+  linee: Linea[] = [];
+
+  constructor(private mongoService: MongoService) {
+    this.linee = mongoService.getLinee();
+  }
+
 }
