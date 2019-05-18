@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {MongoService} from './mongo.service';
 import {Prenotazione} from './prenotazione';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +13,11 @@ export class AppComponent {
   title = 'PRESENZE';
   linee: string[] = [];
   verso: string[] = ['andata', 'ritorno'];
-  selectedVerso: string;
+  selectedVerso: string = this.verso[0];
+  selectedLinea: string;
   reservations: Prenotazione;
   presenze: { fermata: string, alunni: string[] }[] = [];
+  date = new FormControl(new Date());
 
   constructor(private mongoService: MongoService) {
     this.linee = mongoService.getLinee();

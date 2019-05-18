@@ -11,7 +11,7 @@
       <!-- SELEZIONA LINEA -->
       <mat-form-field class="col-4">
         <mat-label>Seleziona linea</mat-label>
-        <mat-select>
+        <mat-select [(ngModel)]="selectedLinea">
           <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
           </mat-option>
         </mat-select>
@@ -26,7 +26,7 @@
       </mat-form-field>
       <!-- DATEPICKER -->
       <mat-form-field class="offset-1 col-3">
-        <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [value]="date.value">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -34,7 +34,7 @@
   </div>
 
   <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
-  <mat-list role="list">
+  <mat-list *ngIf="(selectedLinea && selectedVerso && date); else templateName" role="list">
     <mat-list-item class="p-0 m-2" *ngFor="let res of ( selectedVerso === 'andata' ? reservations.alunniPerFermataAndata : reservations.alunniPerFermataRitorno)">
       <mat-card class="col-12 p-0 m-auto"  tabindex="0" role="region">
       <mat-card-header>
@@ -46,5 +46,16 @@
     </mat-card>
     </mat-list-item>
   </mat-list>
+  <!-- SE NIENTE SELEZIONATO -->
+  <ng-template #templateName>
+    <mat-card class="col-12 p-0 m-auto"  tabindex="0" role="region">
+      <mat-card-header>
+        <mat-card-title></mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="col-12">
+        <h3 class="offset-5 col-3">Nessuna corsa selezionata</h3>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
 
 </div>
