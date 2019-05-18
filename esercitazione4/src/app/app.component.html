@@ -1,7 +1,38 @@
-<mat-list>
-  <mat-list-item *ngFor="let linea of linee " role="listitem"> {{linea}} </mat-list-item>
-</mat-list>
-<mat-list>
-  <mat-list-item *ngFor="let res of reservations.alunniPerFermataAndata "
-                 role="listitem"> {{res | json}} </mat-list-item>
-</mat-list>
+<div>
+  <h1>{{title}}</h1>
+  <!-- TOOLBAR -->
+  <mat-toolbar>
+    <!-- SELEZIONA LINEA -->
+    <mat-form-field>
+      <mat-label>Seleziona linea</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- SELEZIONA VERSO -->
+    <mat-form-field>
+      <mat-label>Seleziona verso</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let v of verso" [value]="v">{{v}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </mat-toolbar>
+  <mat-divider></mat-divider>
+  <mat-card>
+    <mat-card-title>07:35 Piazza Mellano</mat-card-title>
+    <mat-card-content>Aurora, Benedetta, Chanel</mat-card-content>
+  </mat-card>
+  <mat-divider></mat-divider>
+  <mat-card>
+    <mat-card-title>07:40 Via Primo Alpini</mat-card-title>
+    <mat-card-content>Emma, Giacomo</mat-card-content>
+  </mat-card>
+
+</div>
