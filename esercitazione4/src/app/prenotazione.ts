@@ -1,22 +1,18 @@
 export interface Prenotazione {
-  alunniPerFermataAndata: [
-    {
+  alunniPerFermataAndata: {
       fermata: {
         id: number;
         nome: string;
         orario: string;
       },
       alunni: string[];
-    } []
-    ];
-  alunniPerFermataRitorno: [
-    {
+    } [];
+  alunniPerFermataRitorno: {
       fermata: {
         id: number;
         nome: string;
         orario: string;
       },
       alunni: string[];
-    }[]
-    ];
+    }[];
 }

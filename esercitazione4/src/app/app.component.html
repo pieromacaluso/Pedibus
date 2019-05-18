@@ -25,14 +25,20 @@
     </mat-form-field>
   </mat-toolbar>
   <mat-divider></mat-divider>
-  <mat-card>
-    <mat-card-title>07:35 Piazza Mellano</mat-card-title>
-    <mat-card-content>Aurora, Benedetta, Chanel</mat-card-content>
-  </mat-card>
-  <mat-divider></mat-divider>
-  <mat-card>
-    <mat-card-title>07:40 Via Primo Alpini</mat-card-title>
-    <mat-card-content>Emma, Giacomo</mat-card-content>
-  </mat-card>
+  <mat-list>
+    <mat-list-item *ngFor="let res of reservations.alunniPerFermataAndata.values()">
+      <mat-card>
+        <mat-card-title> {{res.fermata.orario}} {{res.fermata.nome}}</mat-card-title>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let alunni of res.alunni">{{alunni}}</mat-list-item>
+          </mat-list>
 
+          <ul style="list-style-type:none">
+            <li style="display: inline-block" *ngFor="let alunni of res.alunni">{{alunni}}</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </mat-list-item>
+  </mat-list>
 </div>

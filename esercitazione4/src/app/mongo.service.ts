@@ -6,7 +6,7 @@ const LINEE = [
 ];
 
 const RESERVATIONS: Prenotazione = {
-  alunniPerFermataAndata: [
+  alunniPerFermataAndata:
     [{
       fermata: {
         id: 1,
@@ -47,8 +47,8 @@ const RESERVATIONS: Prenotazione = {
           'Simone'
         ]
       }]
-  ],
-  alunniPerFermataRitorno: [
+  ,
+  alunniPerFermataRitorno:
     [{
       fermata: {
         id: 5,
@@ -92,7 +92,6 @@ const RESERVATIONS: Prenotazione = {
           'Vercinge'
         ]
       }]
-  ]
 };
 
 
