@@ -8,8 +8,10 @@ import {Prenotazione} from './prenotazione';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'esercitazione4';
+
+  title = 'PRESENZE';
   linee: string[] = [];
+  verso: string[] = ['andata', 'ritorno'];
   reservations: Prenotazione;
 
   constructor(private mongoService: MongoService) {
