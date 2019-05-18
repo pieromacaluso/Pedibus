@@ -1,44 +1,50 @@
-<div class="container ">
-  <h1 >{{title}}</h1>
-  <!-- TOOLBAR -->
-  <mat-toolbar>
-    <!-- SELEZIONA LINEA -->
-    <mat-form-field>
-      <mat-label>Seleziona linea</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <!-- SELEZIONA VERSO -->
-    <mat-form-field>
-      <mat-label>Seleziona verso</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let v of verso" [value]="v">{{v}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput [matDatepicker]="picker" placeholder="Choose a date">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-  </mat-toolbar>
-  <mat-divider></mat-divider>
-  <mat-list>
-    <mat-list-item *ngFor="let res of reservations.alunniPerFermataAndata.values()">
-      <mat-card>
-        <mat-card-title> {{res.fermata.orario}} {{res.fermata.nome}}</mat-card-title>
-        <mat-card-content>
-          <mat-list>
-            <mat-list-item *ngFor="let alunni of res.alunni">{{alunni}}</mat-list-item>
-          </mat-list>
+<div class="container">
 
-          <ul style="list-style-type:none">
-            <li style="display: inline-block" *ngFor="let alunni of res.alunni">{{alunni}}</li>
-          </ul>
-        </mat-card-content>
-      </mat-card>
+  <!-- TITLE ROW -->
+  <div class="row">
+    <h1 class="offset-5 col-2">{{title}}</h1>
+  </div>
+
+  <!-- TOOLBAR ROW -->
+  <div class="row">
+    <mat-toolbar>
+      <!-- SELEZIONA LINEA -->
+      <mat-form-field class="col-4">
+        <mat-label>Seleziona linea</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- SELEZIONA VERSO -->
+      <mat-form-field class="offset-1 col-2">
+        <mat-label>verso</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let v of verso" [value]="v">{{v}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- DATEPICKER -->
+      <mat-form-field class="offset-1 col-3">
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </mat-toolbar>
+  </div>
+
+  <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
+  <mat-list role="list">
+    <mat-list-item class="p-0 m-2" *ngFor="let res of reservations.alunniPerFermataAndata">
+      <mat-card class="col-12 p-0 m-auto"  tabindex="0" role="region">
+      <mat-card-header>
+        <mat-card-title>{{res.fermata.orario + " " + res.fermata.nome}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="col-12">
+       <span *ngFor="let alunno of res.alunni">{{alunno}}</span>
+      </mat-card-content>
+    </mat-card>
     </mat-list-item>
   </mat-list>
+
 </div>
