@@ -12,6 +12,7 @@ export class AppComponent {
   title = 'PRESENZE';
   linee: string[] = [];
   verso: string[] = ['andata', 'ritorno'];
+  selectedVerso: string;
   reservations: Prenotazione;
   presenze: { fermata: string, alunni: string[] }[] = [];
 

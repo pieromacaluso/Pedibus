@@ -19,7 +19,7 @@
       <!-- SELEZIONA VERSO -->
       <mat-form-field class="offset-1 col-2">
         <mat-label>verso</mat-label>
-        <mat-select>
+        <mat-select [(ngModel)]="selectedVerso">
           <mat-option *ngFor="let v of verso" [value]="v">{{v}}
           </mat-option>
         </mat-select>
@@ -35,7 +35,7 @@
 
   <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
   <mat-list role="list">
-    <mat-list-item class="p-0 m-2" *ngFor="let res of reservations.alunniPerFermataAndata">
+    <mat-list-item class="p-0 m-2" *ngFor="let res of ( selectedVerso === 'andata' ? reservations.alunniPerFermataAndata : reservations.alunniPerFermataRitorno)">
       <mat-card class="col-12 p-0 m-auto"  tabindex="0" role="region">
       <mat-card-header>
         <mat-card-title>{{res.fermata.orario + " " + res.fermata.nome}}</mat-card-title>
