@@ -62,7 +62,8 @@
       },
       "alunni": [
         "Carmelo",
-        "Luca"
+        "Luca",
+        "Cristiano"
       ]
     },
     {
@@ -82,7 +83,9 @@
         "orario": "14:00"
       },
       "alunni": [
-        "Vercinge"
+        "Vercinge",
+        "Susanna",
+        "Martina"
       ]
     }
   ],

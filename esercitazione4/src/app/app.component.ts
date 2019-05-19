@@ -25,42 +25,23 @@ export class AppComponent {
   }
 
   togglePresenza(fermata: string, nomeAlunno: string) {
-    // presenze ancora vuote
-    if (this.presenze.length === 0) {
-      this.presenze.push({
-        fermata, alunni: [nomeAlunno]
-      });
-      return;
-    }
-    let trovoFermata = false;
-    for (const presenza of this.presenze) {
-      if (presenza.fermata === fermata) {
-        trovoFermata = true;
-        if (!this.presente(nomeAlunno)) {
-          presenza.alunni.push(nomeAlunno);
-        } else {
-          const index = presenza.alunni.indexOf(nomeAlunno);
-          presenza.alunni.splice(index, 1);
-        }
+    // se trovo fermata ed alunno
+    const index = this.presenze.findIndex(x => x.fermata === fermata && x.alunni.includes(nomeAlunno));
+    if (index > -1) {
+      const presenza = this.presenze[index];
+      const alunnoIndex = presenza.alunni.indexOf(nomeAlunno);
+      if (alunnoIndex > -1) {
+        presenza.alunni.splice(alunnoIndex, 1);
+      } else {
+        presenza.alunni.push(nomeAlunno);
       }
-    }
-    if (!trovoFermata) {
-      this.presenze.push({
-        fermata, alunni: [nomeAlunno]
-      });
+    } else {
+      this.presenze.push({fermata, alunni: [nomeAlunno]});
     }
   }
 
-  presente(nomeAlunno: string): boolean {
-    let trovato = false;
-    for (const presenza of this.presenze) {
-      for (const alunno of presenza.alunni) {
-        if (alunno === nomeAlunno) {
-          trovato = true;
-        }
-      }
-    }
-    return trovato;
+  presente(fermata: string, nomeAlunno: string): boolean {
+    return this.presenze.some(x => x.fermata === fermata && x.alunni.includes(nomeAlunno));
   }
 
 

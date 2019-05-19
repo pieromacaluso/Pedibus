@@ -89,7 +89,8 @@ const RESERVATIONS: Prenotazione = {
           orario: '14:00'
         },
         alunni: [
-          'Vercinge'
+          'Vercinge',
+          'Martina'
         ]
       }]
 };
@@ -106,6 +107,12 @@ export class MongoService {
   getLinee() {
     return LINEE;
   }
+
+  /**
+   * Metodo che restituisce un oggetto prenotazione dato il nome della linea
+   * e la data. Al momento l'oggetto restituito fa riferimento ad una linea
+   * ed una data precisa.
+   * */
 
   getReservation() {
     return RESERVATIONS;
