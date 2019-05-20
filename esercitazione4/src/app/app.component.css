@@ -1,4 +1,30 @@
+
+.container {
+  width: 100%;
+}
+.card-stops{
+  margin: 10px;
+}
+.form-top {
+  margin: 5px;
+  padding: 10px 0 0 0;
+  height: auto;
+}
+
+.toolbar {
+  text-align: center;
+}
+
+.icon {
+  padding: 0 14px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
 .presente {
+  background-color: #4CAF50;
   font-weight: bold;
-  color: blue;
+  color: white;
 }

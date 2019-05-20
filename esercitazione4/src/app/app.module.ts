@@ -1,6 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {AppComponent} from './app.component';
 import {
@@ -11,9 +12,10 @@ import {
   MatToolbarModule,
   MatNativeDateModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule, MatButtonModule, MatSidenavModule, MatIconModule
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
+import { LayoutModule } from '@angular/cdk/layout';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,12 @@ import {FormsModule} from '@angular/forms';
     MatNativeDateModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    LayoutModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]
