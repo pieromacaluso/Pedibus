@@ -37,7 +37,7 @@
 
   <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
   <!-- TODO (Piero): Se non c'è nulla nel For lascia entry del passato-->
-  <div class="container" *ngIf="(selectedLinea && selectedVerso && date); else templateName">
+  <div class="container" *ngIf="(selectedLinea && selectedVerso && date); else templatename">
     <mat-card class="card-stops" *ngFor="let res of ( selectedVerso === 'andata' ? reservations.alunniPerFermataAndata : reservations.alunniPerFermataRitorno)">
       <mat-card-header>
         <mat-card-title>{{res.fermata.orario + " " + res.fermata.nome}}</mat-card-title>
@@ -46,11 +46,14 @@
         <button mat-button [ngClass]="{'presente': presente(res.fermata.id, alunno)}" (click)="togglePresenza(res.fermata.id, alunno)" *ngFor="let alunno of res.alunni.sort()">{{alunno}}</button>
       </mat-card-content>
     </mat-card>
-
-    <!-- SE NIENTE SELEZIONATO -->
+    <!-- TODO (Piero): Non funziona "Nessuna corsa selezionata-->
     <ng-template #templateName>
-      <mat-card  class="card-stops">
-        <h3>Nessuna corsa selezionata</h3>
+      <mat-card class="card-stops">
+        <mat-card-header>
+          <mat-card-title>Nessuna corsa Selezionata</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+        </mat-card-content>
       </mat-card>
     </ng-template>
   </div>
