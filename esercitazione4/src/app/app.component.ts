@@ -17,11 +17,20 @@ export class AppComponent {
   selectedLinea: string;
   reservations: Prenotazione;
   presenze: { fermata: string, alunni: string[] }[] = [];
-  date = new FormControl(new Date());
+  date: Date;
 
   constructor(private mongoService: MongoService) {
     this.linee = mongoService.getLinee();
     this.reservations = mongoService.getReservation();
+    this.date = new Date();
+  }
+
+  /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una linea ed una data */
+  fillPrenotazione() {
+    if (this.date != null && this.selectedLinea) {
+      // todo: memorizzare return in prenotazione
+      this.mongoService.getPrenotazioneByLineaAndDate(this.selectedLinea, this.date);
+    }
   }
 
   togglePresenza(fermata: string, nomeAlunno: string) {

@@ -112,11 +112,13 @@ export class MongoService {
    * Metodo che restituisce un oggetto prenotazione dato il nome della linea
    * e la data. Al momento l'oggetto restituito fa riferimento ad una linea
    * ed una data precisa.
-   * */
-
+   **/
   getReservation() {
     return RESERVATIONS;
   }
 
 
+  getPrenotazioneByLineaAndDate(selectedLinea: string, date: Date) {
+    // todo: implementare il metodo modificando la costante RESERVATIONS aggiungendo anche una data
+  }
 }
