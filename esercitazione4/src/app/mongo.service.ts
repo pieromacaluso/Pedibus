@@ -6,7 +6,7 @@ const LINEE = [
 ];
 
 const RESERVATIONS: Prenotazione = {
-  alunniPerFermataAndata: [
+  alunniPerFermataAndata:
     [{
       fermata: {
         id: 1,
@@ -16,9 +16,39 @@ const RESERVATIONS: Prenotazione = {
       alunni: [
         'Martina'
       ]
-    }]
-  ],
-  alunniPerFermataRitorno: [
+    },
+      {
+        fermata: {
+          id: 2,
+          nome: 'Medici',
+          orario: '07:30'
+        },
+        alunni: [
+          'Cristiano'
+        ]
+      },
+      {
+        fermata: {
+          id: 3,
+          nome: 'Monte Grappa',
+          orario: '07:40'
+        },
+        alunni: [
+          'Beatrice'
+        ]
+      },
+      {
+        fermata: {
+          id: 4,
+          nome: 'Scuola',
+          orario: '08:00'
+        },
+        alunni: [
+          'Simone'
+        ]
+      }]
+  ,
+  alunniPerFermataRitorno:
     [{
       fermata: {
         id: 5,
@@ -30,8 +60,39 @@ const RESERVATIONS: Prenotazione = {
         'Angelo',
         'Piero'
       ]
-    }]
-  ]
+    },
+      {
+        fermata: {
+          id: 6,
+          nome: 'Monte Grappa',
+          orario: '13:30'
+        },
+        alunni: [
+          'Carmelo',
+          'Luca'
+        ]
+      },
+      {
+        fermata: {
+          id: 7,
+          nome: 'Racconigi',
+          orario: '13:45'
+        },
+        alunni: [
+          'Laura'
+        ]
+      },
+      {
+        fermata: {
+          id: 8,
+          nome: 'Bernini',
+          orario: '14:00'
+        },
+        alunni: [
+          'Vercinge',
+          'Martina'
+        ]
+      }]
 };
 
 
@@ -47,9 +108,17 @@ export class MongoService {
     return LINEE;
   }
 
+  /**
+   * Metodo che restituisce un oggetto prenotazione dato il nome della linea
+   * e la data. Al momento l'oggetto restituito fa riferimento ad una linea
+   * ed una data precisa.
+   **/
   getReservation() {
     return RESERVATIONS;
   }
 
 
+  getPrenotazioneByLineaAndDate(selectedLinea: string, date: Date) {
+    // todo: implementare il metodo modificando la costante RESERVATIONS aggiungendo anche una data
+  }
 }

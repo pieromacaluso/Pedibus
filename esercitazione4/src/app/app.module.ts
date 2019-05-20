@@ -1,9 +1,19 @@
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 
-import { AppComponent } from './app.component';
-import {MatDatepickerModule, MatListModule} from '@angular/material';
+import {AppComponent} from './app.component';
+import {
+  MatCardModule,
+  MatDatepickerModule,
+  MatListModule,
+  MatSelectModule,
+  MatToolbarModule,
+  MatNativeDateModule,
+  MatFormFieldModule,
+  MatInputModule
+} from '@angular/material';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -13,9 +23,17 @@ import {MatDatepickerModule, MatListModule} from '@angular/material';
     BrowserModule,
     BrowserAnimationsModule,
     MatListModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatToolbarModule,
+    MatSelectModule,
+    MatCardModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

@@ -1,21 +1,61 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="container">
+
+  <!-- TITLE ROW -->
+  <div class="row">
+    <h1 class="offset-5 col-2">{{title}}</h1>
+  </div>
+
+  <!-- TOOLBAR ROW -->
+  <div class="row">
+    <mat-toolbar>
+      <!-- SELEZIONA LINEA -->
+      <mat-form-field class="col-4">
+        <mat-label>Seleziona linea</mat-label>
+        <mat-select (selectionChange)="fillPrenotazione()" [(ngModel)]="selectedLinea">
+          <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- SELEZIONA VERSO -->
+      <mat-form-field class="offset-1 col-2">
+        <mat-label>verso</mat-label>
+        <mat-select  [(ngModel)]="selectedVerso">
+          <mat-option *ngFor="let v of verso" [value]="v">{{v}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- DATEPICKER -->
+      <mat-form-field class="offset-1 col-3">
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="date" (ngModelChange)="fillPrenotazione()">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </mat-toolbar>
+  </div>
+
+  <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
+  <mat-list *ngIf="(selectedLinea && selectedVerso && date); else templateName" role="list">
+    <mat-list-item class="p-0 m-2" *ngFor="let res of ( selectedVerso === 'andata' ? reservations.alunniPerFermataAndata : reservations.alunniPerFermataRitorno)">
+      <mat-card class="col-12 p-0 m-auto"  tabindex="0" role="region">
+      <mat-card-header>
+        <mat-card-title>{{res.fermata.orario + " " + res.fermata.nome}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="col-12">
+       <span [ngClass]="{'presente': presente(res.fermata.nome+res.fermata.orario, alunno)}" (click)="togglePresenza(res.fermata.nome+res.fermata.orario, alunno)" *ngFor="let alunno of res.alunni.sort()">{{alunno}}</span>
+      </mat-card-content>
+    </mat-card>
+    </mat-list-item>
+  </mat-list>
+  <!-- SE NIENTE SELEZIONATO -->
+  <ng-template #templateName>
+    <mat-card class="col-12 p-0 m-auto"  tabindex="0" role="region">
+      <mat-card-header>
+        <mat-card-title></mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="col-12">
+        <h3 class="offset-5 col-3">Nessuna corsa selezionata</h3>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+
 </div>
-
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
-
