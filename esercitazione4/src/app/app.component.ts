@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {MongoService} from './mongo.service';
-import {Prenotazione} from './prenotazione';
+import {Alunno, Linea, LineDetails, Prenotazioni} from './lineDetails';
 import {FormControl} from '@angular/forms';
 
 @Component({
@@ -10,59 +10,52 @@ import {FormControl} from '@angular/forms';
 })
 export class AppComponent {
   title = 'PRESENZE';
-  linee: string[] = [];
+  linee: Linea[] = [];
   verso: string[] = ['andata', 'ritorno'];
   selectedVerso: string = this.verso[0];
-  selectedLinea: string;
-  reservations: Prenotazione;
+  selectedLinea: number;
+  reservations: Prenotazioni[];
   presenze: { id: number, alunni: string[] }[] = [];
   date: Date;
 
   constructor(private mongoService: MongoService) {
     this.linee = mongoService.getLinee();
-    this.reservations = mongoService.getReservation();
+    // this.reservations = mongoService.getReservation();
+    this.reservations = [];
     this.date = new Date();
   }
 
-  /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una linea ed una data */
+  /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una line_id ed una data */
   fillPrenotazione() {
-    if (this.date != null && this.selectedLinea) {
+    if (this.date != null && this.selectedLinea && this.selectedVerso) {
       // todo: memorizzare return in prenotazione
-      this.mongoService.getPrenotazioneByLineaAndDate(this.selectedLinea, this.date);
+      this.reservations = this.mongoService.getPrenotazioneByLineaAndDateAndVerso(this.selectedLinea, this.date, this.selectedVerso);
     }
   }
 
-  togglePresenza(id: number, nomeAlunno: string) {
+  togglePresenza(id: number, alunno: Alunno) {
     // se trovo id ed alunno
     console.log(id);
-    const index = this.presenze.findIndex(x => x.id === id && x.alunni.includes(nomeAlunno));
-    if (index > -1) {
-      console.log('>-1');
-      const presenza = this.presenze[index];
-      const alunnoIndex = presenza.alunni.indexOf(nomeAlunno);
-      if (alunnoIndex > -1) {
-        presenza.alunni.splice(alunnoIndex, 1);
-      } else {
-        presenza.alunni.push(nomeAlunno);
+    const fermata = this.reservations.find(x => x.fermata.id === id);
+    if (fermata !== undefined) {
+      console.log(fermata.fermata.nome);
+      const al = fermata.alunni.find(a => a === alunno);
+      if (al !== undefined) {
+        console.log(al.name + ' ' + al.presenza);
+        al.presenza = !al.presenza;
       }
-    } else {
-      console.log('-1');
-      this.presenze.push({id, alunni: [nomeAlunno]});
     }
   }
 
-  presente(id: number, nomeAlunno: string): boolean {
-    return this.presenze.some(x => x.id === id && x.alunni.includes(nomeAlunno));
-  }
-
-
-  checkLength(selectedVerso: string) {
-    if (selectedVerso === 'andata') {
-      console.log(`andata ${this.reservations.alunniPerFermataAndata.length}`);
-      return this.reservations.alunniPerFermataAndata.length !== 0;
-    } else {
-      console.log(`ritorno ${this.reservations.alunniPerFermataRitorno.length}`);
-      return this.reservations.alunniPerFermataRitorno.length !== 0;
+  presente(id: number, alunno: Alunno): boolean {
+    const fermata = this.reservations.find(x => x.fermata.id === id);
+    if (fermata !== undefined) {
+      console.log(fermata.fermata.nome);
+      const al = fermata.alunni.find(a => a === alunno);
+      if (al !== undefined) {
+        return al.presenza;
+      }
     }
   }
+
 }

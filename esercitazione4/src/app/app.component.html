@@ -13,14 +13,14 @@
     <mat-form-field fxFlex="30%" fxFlex.xs="90%">
       <mat-label>Seleziona linea</mat-label>
       <mat-select (selectionChange)="fillPrenotazione()" [(ngModel)]="selectedLinea">
-        <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
+        <mat-option *ngFor="let linea of linee" [value]="linea.id">{{linea.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <!-- SELEZIONA VERSO -->
     <mat-form-field fxFlex="30%" fxFlex.xs="90%">
       <mat-label>verso</mat-label>
-      <mat-select [(ngModel)]="selectedVerso">
+      <mat-select [(ngModel)]="selectedVerso" (selectionChange)="fillPrenotazione()">
         <mat-option *ngFor="let v of verso" [value]="v">{{v}}
         </mat-option>
       </mat-select>
@@ -36,15 +36,13 @@
   </mat-toolbar>
 
   <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
-  <!-- TODO (Piero): Attualmente funziona tutto, ma bisogna modificare il json di input e modificare i controlli qui
-                      sotto di conseguenza-->
   <div class="container"
-       *ngIf="(selectedLinea && selectedVerso && date && checkLength(selectedVerso)); then thenBlock; else elseBlock"
+       *ngIf="(selectedLinea && selectedVerso && date); then thenBlock; else elseBlock"
        role="list">
   </div>
   <ng-template #thenBlock>
     <mat-card class="card-stops"
-              *ngFor="let res of ( selectedVerso === 'andata' ? reservations.alunniPerFermataAndata : reservations.alunniPerFermataRitorno)"
+              *ngFor="let res of reservations"
               role="region">
       <mat-card-header>
         <mat-card-title>{{res.fermata.orario + " " + res.fermata.nome}}</mat-card-title>
@@ -52,7 +50,7 @@
       <mat-card-content>
         <button mat-button [ngClass]="{'presente': presente(res.fermata.id, alunno)}"
                 (click)="togglePresenza(res.fermata.id, alunno)"
-                *ngFor="let alunno of res.alunni.sort()">{{alunno}}</button>
+                *ngFor="let alunno of res.alunni.sort()">{{alunno.name}}</button>
       </mat-card-content>
     </mat-card>
   </ng-template>
