@@ -9,7 +9,6 @@ import {FormControl} from '@angular/forms';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  defaultValueIfNullPipe = 'NessunaCorsa';
   title = 'PRESENZE';
   linee: string[] = [];
   verso: string[] = ['andata', 'ritorno'];
@@ -26,14 +25,14 @@ export class AppComponent {
   }
 
   /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una linea ed una data */
-  public fillPrenotazione() {
+  fillPrenotazione() {
     if (this.date != null && this.selectedLinea) {
       // todo: memorizzare return in prenotazione
       this.mongoService.getPrenotazioneByLineaAndDate(this.selectedLinea, this.date);
     }
   }
 
-  public togglePresenza(id: number, nomeAlunno: string) {
+  togglePresenza(id: number, nomeAlunno: string) {
     // se trovo id ed alunno
     console.log(id);
     const index = this.presenze.findIndex(x => x.id === id && x.alunni.includes(nomeAlunno));
@@ -52,9 +51,18 @@ export class AppComponent {
     }
   }
 
-  public presente(id: number, nomeAlunno: string): boolean {
+  presente(id: number, nomeAlunno: string): boolean {
     return this.presenze.some(x => x.id === id && x.alunni.includes(nomeAlunno));
   }
 
 
+  checkLength(selectedVerso: string) {
+    if (selectedVerso === 'andata') {
+      console.log(`andata ${this.reservations.alunniPerFermataAndata.length}`);
+      return this.reservations.alunniPerFermataAndata.length !== 0;
+    } else {
+      console.log(`ritorno ${this.reservations.alunniPerFermataRitorno.length}`);
+      return this.reservations.alunniPerFermataRitorno.length !== 0;
+    }
+  }
 }

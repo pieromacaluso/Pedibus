@@ -36,27 +36,35 @@
   </mat-toolbar>
 
   <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
-  <!-- TODO (Piero): Se non c'è nulla nel For lascia entry del passato-->
-  <div class="container" *ngIf="(selectedLinea && selectedVerso && date); else templatename">
-    <mat-card class="card-stops" *ngFor="let res of ( selectedVerso === 'andata' ? reservations.alunniPerFermataAndata : reservations.alunniPerFermataRitorno)">
+  <!-- TODO (Piero): Attualmente funziona tutto, ma bisogna modificare il json di input e modificare i controlli qui
+                      sotto di conseguenza-->
+  <div class="container"
+       *ngIf="(selectedLinea && selectedVerso && date && checkLength(selectedVerso)); then thenBlock; else elseBlock"
+       role="list">
+  </div>
+  <ng-template #thenBlock>
+    <mat-card class="card-stops"
+              *ngFor="let res of ( selectedVerso === 'andata' ? reservations.alunniPerFermataAndata : reservations.alunniPerFermataRitorno)"
+              role="region">
       <mat-card-header>
         <mat-card-title>{{res.fermata.orario + " " + res.fermata.nome}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <button mat-button [ngClass]="{'presente': presente(res.fermata.id, alunno)}" (click)="togglePresenza(res.fermata.id, alunno)" *ngFor="let alunno of res.alunni.sort()">{{alunno}}</button>
+        <button mat-button [ngClass]="{'presente': presente(res.fermata.id, alunno)}"
+                (click)="togglePresenza(res.fermata.id, alunno)"
+                *ngFor="let alunno of res.alunni.sort()">{{alunno}}</button>
       </mat-card-content>
     </mat-card>
-    <!-- TODO (Piero): Non funziona "Nessuna corsa selezionata-->
-    <ng-template #templateName>
-      <mat-card class="card-stops">
-        <mat-card-header>
-          <mat-card-title>Nessuna corsa Selezionata</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-        </mat-card-content>
-      </mat-card>
-    </ng-template>
-  </div>
+  </ng-template>
+  <ng-template #elseBlock>
+    <mat-card class="card-stops"
+              role="region">
+      <mat-card-content>
+        Nessuna corsa disponibile
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+
   <!--<mat-drawer-container class="container" autosize>-->
   <!--<mat-drawer #drawer class="sidenav">-->
   <!--<p>Menu</p>-->
