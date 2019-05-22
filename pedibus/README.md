@@ -3,7 +3,7 @@
 ![Proposta Logo Pedibus](stuff/img/pedibus.png)
 
 ## Sommario
-- [Requisiti di Progetto pdf](stuff/AI19_Pedibus.pdf)
+- Requisiti di Progetto [PDF](stuff/requirements/AI19_Pedibus.pdf) - [MD](stuff/requirements/README.md)
 - [Backend](backend): progetto Spring (IntelliJ)
 - [Frontend](frontend): progetto Angular (Webstorm)
 
