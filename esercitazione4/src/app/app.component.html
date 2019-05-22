@@ -37,7 +37,7 @@
 
   <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
   <div class="container"
-       *ngIf="(selectedLinea && selectedVerso && date); then thenBlock; else elseBlock"
+       *ngIf="(reservations && toolBarFilled); then thenBlock; else elseBlock"
        role="list">
   </div>
   <ng-template #thenBlock>
