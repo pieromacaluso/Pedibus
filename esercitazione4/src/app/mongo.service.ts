@@ -26,9 +26,9 @@ const RESERVATIONS: LineDetails[] = [{
           },
           alunni: [
             {
-                  name: 'Martina',
-                  presenza: false
-                }
+              name: 'Martina',
+              presenza: false
+            }
           ]
         },
           {
@@ -47,9 +47,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Beatrice',
-                  presenza: false
-                }
+                name: 'Beatrice',
+                presenza: false
+              }
             ]
           },
           {
@@ -60,9 +60,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Simone',
-                  presenza: false
-                }
+                name: 'Simone',
+                presenza: false
+              }
             ]
           }]
       ,
@@ -75,17 +75,17 @@ const RESERVATIONS: LineDetails[] = [{
           },
           alunni: [
             {
-                  name: 'Marco',
-                  presenza: false
-                },
+              name: 'Marco',
+              presenza: false
+            },
             {
-                  name: 'Angelo',
-                  presenza: false
-                },
+              name: 'Angelo',
+              presenza: false
+            },
             {
-                  name: 'Piero',
-                  presenza: false
-                }
+              name: 'Piero',
+              presenza: false
+            }
           ]
         },
           {
@@ -96,13 +96,13 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Carmelo',
-                  presenza: false
-                },
+                name: 'Carmelo',
+                presenza: false
+              },
               {
-                  name: 'Luca',
-                  presenza: false
-                }
+                name: 'Luca',
+                presenza: false
+              }
             ]
           },
           {
@@ -113,9 +113,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Laura',
-                  presenza: false
-                }
+                name: 'Laura',
+                presenza: false
+              }
             ]
           },
           {
@@ -126,13 +126,13 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Vercinge',
-                  presenza: false
-                },
+                name: 'Vercinge',
+                presenza: false
+              },
               {
-                  name: 'Martina',
-                  presenza: false
-                }
+                name: 'Martina',
+                presenza: false
+              }
             ]
           }]
     },
@@ -155,9 +155,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Martina',
-                  presenza: false
-                }
+                name: 'Martina',
+                presenza: false
+              }
             ]
           },
           {
@@ -168,9 +168,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Giorgia',
-                  presenza: false
-                }
+                name: 'Giorgia',
+                presenza: false
+              }
             ]
           },
           {
@@ -181,9 +181,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Simone',
-                  presenza: false
-                }
+                name: 'Simone',
+                presenza: false
+              }
             ]
           }]
       ,
@@ -196,17 +196,17 @@ const RESERVATIONS: LineDetails[] = [{
           },
           alunni: [
             {
-                  name: 'Marco',
-                  presenza: false
-                },
+              name: 'Marco',
+              presenza: false
+            },
             {
-                  name: 'Angelo',
-                  presenza: false
-                },
+              name: 'Angelo',
+              presenza: false
+            },
             {
-                  name: 'Peppino',
-                  presenza: false
-                }
+              name: 'Peppino',
+              presenza: false
+            }
           ]
         },
           {
@@ -217,13 +217,13 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Carmelo',
-                  presenza: false
-                },
+                name: 'Carmelo',
+                presenza: false
+              },
               {
-                  name: 'Luca',
-                  presenza: false
-                }
+                name: 'Luca',
+                presenza: false
+              }
             ]
           },
           {
@@ -234,9 +234,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Laura',
-                  presenza: false
-                }
+                name: 'Laura',
+                presenza: false
+              }
             ]
           },
           {
@@ -247,13 +247,13 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Vercinge',
-                  presenza: false
-                },
+                name: 'Vercinge',
+                presenza: false
+              },
               {
-                  name: 'Martina',
-                  presenza: false
-                }
+                name: 'Martina',
+                presenza: false
+              }
             ]
           }]
     }
@@ -273,9 +273,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Beppe',
-                  presenza: false
-                }
+                name: 'Beppe',
+                presenza: false
+              }
             ]
           },
             {
@@ -322,17 +322,17 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Marco',
-                  presenza: false
-                },
+                name: 'Marco',
+                presenza: false
+              },
               {
-                  name: 'Angelo',
-                  presenza: false
-                },
+                name: 'Angelo',
+                presenza: false
+              },
               {
-                  name: 'Ludovico',
-                  presenza: false
-                }
+                name: 'Ludovico',
+                presenza: false
+              }
             ]
           },
             {
@@ -394,9 +394,9 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Gianvito',
-                  presenza: false
-                }
+                name: 'Gianvito',
+                presenza: false
+              }
             ]
           },
             {
@@ -448,21 +448,21 @@ const RESERVATIONS: LineDetails[] = [{
             },
             alunni: [
               {
-                  name: 'Romario',
-                  presenza: false
-                },
+                name: 'Romario',
+                presenza: false
+              },
               {
-                  name: 'Marco',
-                  presenza: false
-                },
+                name: 'Marco',
+                presenza: false
+              },
               {
-                  name: 'Angelo',
-                  presenza: false
-                },
+                name: 'Angelo',
+                presenza: false
+              },
               {
-                  name: 'Peppino',
-                  presenza: false
-                }
+                name: 'Peppino',
+                presenza: false
+              }
             ]
           },
             {
@@ -530,31 +530,9 @@ export class MongoService {
     return LINEE;
   }
 
-  /**
-   * Metodo che restituisce un oggetto prenotazione dato il nome della line_id
-   * e la data. Al momento l'oggetto restituito fa riferimento ad una line_id
-   * ed una data precisa.
-   */
-  getReservation() {
-    return RESERVATIONS;
-  }
-
-
   getPrenotazioneByLineaAndDateAndVerso(selectedLinea: number, date: Date, selectedVerso: string) {
-    // todo: implementare il metodo modificando la costante RESERVATIONS aggiungendo anche una data
-    console.log(selectedLinea + ' ' + date + ' ' + selectedVerso);
-    for (const line of RESERVATIONS) {
-      if (line.line_id === selectedLinea) {
-        for (const dateI of line.dates) {
-          if (dateI.date.getDate() === date.getDate() && dateI.date.getFullYear() === date.getFullYear()) {
-            if (selectedVerso === 'andata') {
-              return dateI.alunniPerFermataAndata;
-            } else {
-              return dateI.alunniPerFermataRitorno;
-            }
-          }
-        }
-      }
-    }
+    const temp = RESERVATIONS.find(l => l.line_id === selectedLinea)
+      .dates.find(d => d.date.getDate() === date.getDate() && d.date.getFullYear() === date.getFullYear());
+    return selectedVerso === 'andata' ? temp.alunniPerFermataAndata : temp.alunniPerFermataRitorno;
   }
 }

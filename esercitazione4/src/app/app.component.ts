@@ -33,24 +33,12 @@ export class AppComponent {
   }
 
   togglePresenza(id: number, alunno: Alunno) {
-    // se trovo id ed alunno
-    const prenotazione = this.reservations.find(x => x.fermata.id === id);
-    if (prenotazione !== undefined) {
-      const al = prenotazione.alunni.find(a => a === alunno);
-      if (al !== undefined) {
-        al.presenza = !al.presenza;
-      }
-    }
+    const al = this.reservations.find( p => p.fermata.id === id).alunni.find(a => a === alunno);
+    al.presenza = !al.presenza;
   }
 
   presente(id: number, alunno: Alunno): boolean {
-    const fermata = this.reservations.find(x => x.fermata.id === id);
-    if (fermata !== undefined) {
-      const al = fermata.alunni.find(a => a === alunno);
-      if (al !== undefined) {
-        return al.presenza;
-      }
-    }
+    return this.reservations.find( p => p.fermata.id === id).alunni.find(a => a === alunno).presenza;
   }
 
 }
