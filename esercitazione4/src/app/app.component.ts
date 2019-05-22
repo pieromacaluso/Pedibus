@@ -11,8 +11,8 @@ import {FormControl} from '@angular/forms';
 export class AppComponent {
   title = 'PRESENZE';
   linee: Linea[] = [];
-  verso: string[] = ['andata', 'ritorno'];
-  selectedVerso: string = this.verso[0];
+  verso: string[] = ['Andata', 'Ritorno'];
+  selectedVerso: string;
   selectedLinea: number;
   toolBarFilled: boolean;
   reservations: Prenotazioni[];
@@ -26,8 +26,9 @@ export class AppComponent {
 
   /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una line_id ed una data */
   fillPrenotazione() {
-    if (this.date != null && this.selectedLinea && this.selectedVerso) {
+    if (this.date != null && this.selectedLinea) {
       this.toolBarFilled = true;
+      this.selectedVerso = this.verso[0];
       this.reservations = this.mongoService.getPrenotazioneByLineaAndDateAndVerso(this.selectedLinea, this.date, this.selectedVerso);
     }
   }
