@@ -1,6 +1,13 @@
 
 .container {
-  width: 100%;
+  width: 60%;
+  height: auto;
+  margin: auto;
+}
+.container-mobile {
+  width: 90%;
+  height: auto;
+  margin: auto;
 }
 .card-stops{
   margin: 10px;
@@ -33,3 +40,22 @@
   margin-right: 0.5%;
   /*size: initial; TODO sarebbe bello che non cambi dimensioni quando passiamo a fond bold/selezioniamo*/
 }
+
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+

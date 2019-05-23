@@ -9,6 +9,7 @@ import {FormControl} from '@angular/forms';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  opened: boolean;
   title = 'PRESENZE';
   linee: Linea[] = [];
   verso: string[] = ['Andata', 'Ritorno'];

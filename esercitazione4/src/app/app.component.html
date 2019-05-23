@@ -1,65 +1,79 @@
-<div class="container">
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer mode="over" [(opened)]="opened" class="sidenav" fixedInViewport="true"
+               [attr.role]="navigation">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item href="#">Link 1</a>
+      <a mat-list-item href="#">Link 2</a>
+      <a mat-list-item href="#">Link 3</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>Pedibus</span>
+    </mat-toolbar>
+    <mat-card ngClass="container" ngClass.lt-md="container-mobile">
 
-  <mat-toolbar color="primary" class="toolbar" role="heading">
-    <mat-toolbar-row>
-      {{title}}
-    </mat-toolbar-row>
-  </mat-toolbar>
+      <!-- TOOLBAR ROW -->
+      <mat-card-header class="form-top" fxLayout="row" fxLayout.xs="column" fxLayoutGap="0.5%"
+                       fxLayoutAlign="center" fxLayoutAlign.xs="center">
+        <!-- SELEZIONA LINEA -->
+        <mat-form-field fxFlex="30%" fxFlex.xs="90%">
+          <mat-label>Seleziona linea</mat-label>
+          <mat-select (selectionChange)="fillPrenotazione()" [(ngModel)]="selectedLinea">
+            <mat-option *ngFor="let linea of linee" [value]="linea.id">{{linea.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- SELEZIONA VERSO -->
+        <mat-form-field fxFlex="30%" fxFlex.xs="90%">
+          <mat-label>verso</mat-label>
+          <mat-select [(ngModel)]="selectedVerso" (selectionChange)="fillPrenotazione()">
+            <mat-option *ngFor="let v of verso" [value]="v">{{v}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- DATEPICKER -->
+        <mat-form-field fxFlex="30%" fxFlex.xs="90%">
+          <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="date"
+                 (ngModelChange)="fillPrenotazione()">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
 
-  <!-- TOOLBAR ROW -->
-  <mat-toolbar class="container form-top" fxLayout="row" fxLayout.xs="column" fxLayoutGap="0.5%"
-               fxLayoutAlign="center" fxLayoutAlign.xs="center">
-    <!-- SELEZIONA LINEA -->
-    <mat-form-field fxFlex="30%" fxFlex.xs="90%">
-      <mat-label>Seleziona linea</mat-label>
-      <mat-select (selectionChange)="fillPrenotazione()" [(ngModel)]="selectedLinea">
-        <mat-option *ngFor="let linea of linee" [value]="linea.id">{{linea.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <!-- SELEZIONA VERSO -->
-    <mat-form-field fxFlex="30%" fxFlex.xs="90%">
-      <mat-label>Seleziona verso</mat-label>
-      <mat-select [(ngModel)]="selectedVerso" (selectionChange)="fillPrenotazione()">
-        <mat-option *ngFor="let v of verso" [value]="v">{{v}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <!-- DATEPICKER -->
-    <mat-form-field fxFlex="30%" fxFlex.xs="90%">
-      <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="date"
-             (ngModelChange)="fillPrenotazione()">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-
-  </mat-toolbar>
-
-  <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
-  <div class="container"
-       *ngIf="(reservations && toolBarFilled); then thenBlock; else elseBlock"
-       role="list">
-  </div>
-  <ng-template #thenBlock>
-    <mat-card class="card-stops"
-              *ngFor="let res of reservations"
-              role="region">
-      <mat-card-header>
-        <mat-card-title>{{res.fermata.orario + " " + res.fermata.nome}}</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
-        <button mat-button class="alunno-presenza" [ngClass]="{'presente': presente(res.fermata.id, alunno)}"
-                (click)="togglePresenza(res.fermata.id, alunno)"
-                *ngFor="let alunno of res.alunni.sort()">{{alunno.name}}</button>
-      </mat-card-content>
+
+      <!-- LISTA FERMATE CON PRENOTAZIONI ALUNNI -->
+      <div class="container"
+           *ngIf="(reservations && toolBarFilled); then thenBlock; else elseBlock"
+           role="list">
+      </div>
+      <ng-template #thenBlock>
+        <mat-card class="card-stops"
+                  *ngFor="let res of reservations"
+                  role="region">
+          <mat-card-header>
+            <mat-card-title>{{res.fermata.orario + " - " + res.fermata.nome}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <button mat-button class="alunno-presenza" [ngClass]="{'presente': presente(res.fermata.id, alunno)}"
+                    (click)="togglePresenza(res.fermata.id, alunno)"
+                    *ngFor="let alunno of res.alunni.sort()">{{alunno.name}}</button>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+      <ng-template #elseBlock>
+        <mat-card class="card-stops"
+                  role="region">
+          <mat-card-content>
+            Nessuna corsa disponibile
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
     </mat-card>
-  </ng-template>
-  <ng-template #elseBlock>
-    <mat-card class="card-stops"
-              role="region">
-      <mat-card-content>
-        Nessuna corsa disponibile
-      </mat-card-content>
-    </mat-card>
-  </ng-template>
-</div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>
