@@ -18,6 +18,8 @@ export class AppComponent {
   toolBarFilled: boolean;
   reservations: Prenotazioni[];
   date: Date;
+  logo: any = '../assets/svg/logo.svg';
+  stop: any = '../assets/svg/cross.svg';
 
   constructor(private mongoService: MongoService) {
     this.linee = mongoService.getLinee();

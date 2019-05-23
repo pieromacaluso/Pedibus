@@ -13,12 +13,12 @@
       <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>Pedibus</span>
+      <img class="logo" [src]="logo" alt="Pedibus"/>
     </mat-toolbar>
     <mat-card ngClass="container" ngClass.lt-md="container-mobile">
 
       <!-- TOOLBAR ROW -->
-      <mat-card-header class="form-top" fxLayout="row" fxLayout.xs="column" fxLayoutGap="0.5%"
+      <mat-card-header class="form-top" fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%"
                        fxLayoutAlign="center" fxLayoutAlign.xs="center">
         <!-- SELEZIONA LINEA -->
         <mat-form-field fxFlex="30%" fxFlex.xs="90%">
@@ -52,18 +52,17 @@
            role="list">
       </div>
       <ng-template #thenBlock>
-        <mat-card class="card-stops"
-                  *ngFor="let res of reservations"
-                  role="region">
+        <div class="card-stops"
+                  *ngFor="let res of reservations">
           <mat-card-header>
-            <mat-card-title>{{res.fermata.orario + " - " + res.fermata.nome}}</mat-card-title>
+            <mat-card-title class="stop-title">{{res.fermata.orario + " - " + res.fermata.nome}}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <button mat-button class="alunno-presenza" [ngClass]="{'presente': presente(res.fermata.id, alunno)}"
                     (click)="togglePresenza(res.fermata.id, alunno)"
                     *ngFor="let alunno of res.alunni.sort()">{{alunno.name}}</button>
           </mat-card-content>
-        </mat-card>
+        </div>
       </ng-template>
       <ng-template #elseBlock>
         <mat-card class="card-stops"

@@ -13,9 +13,8 @@
   margin: 10px;
 }
 .form-top {
-  margin: 5px;
-  padding: 10px 0 0 0;
   height: auto;
+  margin: auto;
 }
 
 .toolbar {
@@ -59,3 +58,18 @@
   z-index: 1;
 }
 
+.logo {
+  /* Usato per centrarlo manualmente per decentramento Drawer button*/
+  padding-right: 40px;
+  height: 100%;
+  margin: auto;
+}
+.cross {
+  /* Usato per centrarlo manualmente per decentramento Drawer button*/
+  height: 40px;
+  width: 40px;
+}
+
+.stop-title {
+  color: #ef6c00;
+}
