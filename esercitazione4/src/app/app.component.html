@@ -30,7 +30,7 @@
         </mat-form-field>
         <!-- SELEZIONA VERSO -->
         <mat-form-field fxFlex="30%" fxFlex.xs="90%">
-          <mat-label>verso</mat-label>
+          <mat-label>Verso</mat-label>
           <mat-select [(ngModel)]="selectedVerso" (selectionChange)="fillPrenotazione()">
             <mat-option *ngFor="let v of verso" [value]="v">{{v}}
             </mat-option>

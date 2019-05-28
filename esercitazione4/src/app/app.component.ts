@@ -30,19 +30,21 @@ export class AppComponent {
   /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una line_id ed una data */
   fillPrenotazione() {
     if (this.date != null && this.selectedLinea) {
+      if (!this.selectedVerso) {
+        this.selectedVerso = this.verso[0];
+      }
       this.toolBarFilled = true;
-      this.selectedVerso = this.verso[0];
       this.reservations = this.mongoService.getPrenotazioneByLineaAndDateAndVerso(this.selectedLinea, this.date, this.selectedVerso);
     }
   }
 
   togglePresenza(id: number, alunno: Alunno) {
-    const al = this.reservations.find( p => p.fermata.id === id).alunni.find(a => a === alunno);
+    const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
     al.presenza = !al.presenza;
   }
 
   presente(id: number, alunno: Alunno): boolean {
-    return this.reservations.find( p => p.fermata.id === id).alunni.find(a => a === alunno).presenza;
+    return this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno).presenza;
   }
 
 }

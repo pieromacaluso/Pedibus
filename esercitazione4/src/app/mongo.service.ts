@@ -16,7 +16,7 @@ const RESERVATIONS: LineDetails[] = [{
   line_id: 1,
   dates: [
     {
-      date: new Date(Date.parse('21 May 2019')),
+      date: new Date(),
       alunniPerFermataAndata:
         [{
           fermata: {
@@ -26,7 +26,7 @@ const RESERVATIONS: LineDetails[] = [{
           },
           alunni: [
             {
-              name: 'Martina',
+              name: 'Giovanni',
               presenza: false
             }
           ]
@@ -137,7 +137,7 @@ const RESERVATIONS: LineDetails[] = [{
           }]
     },
     {
-      date: new Date(Date.parse('22 May 2019')),
+      date: new Date(Date.now() + 24 * 60 * 60 * 1000),
       alunniPerFermataAndata:
         [{
           fermata: {
@@ -263,7 +263,7 @@ const RESERVATIONS: LineDetails[] = [{
     line_id: 2,
     dates: [
       {
-        date: new Date(Date.parse('21 May 2019')),
+        date: new Date(),
         alunniPerFermataAndata:
           [{
             fermata: {
@@ -384,7 +384,7 @@ const RESERVATIONS: LineDetails[] = [{
             }]
       },
       {
-        date: new Date(Date.parse('22 May 2019')),
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000),
         alunniPerFermataAndata:
           [{
             fermata: {
@@ -533,6 +533,6 @@ export class MongoService {
   getPrenotazioneByLineaAndDateAndVerso(selectedLinea: number, date: Date, selectedVerso: string) {
     const temp = RESERVATIONS.find(l => l.line_id === selectedLinea)
       .dates.find(d => d.date.getDate() === date.getDate() && d.date.getFullYear() === date.getFullYear());
-    return selectedVerso === 'andata' ? temp.alunniPerFermataAndata : temp.alunniPerFermataRitorno;
+    return selectedVerso === 'Andata' ? temp.alunniPerFermataAndata : temp.alunniPerFermataRitorno;
   }
 }
