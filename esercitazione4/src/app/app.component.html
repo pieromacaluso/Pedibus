@@ -58,7 +58,7 @@
             <mat-card-title class="stop-title">{{res.fermata.orario + " - " + res.fermata.nome}}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <button mat-button class="alunno-presenza" [ngClass]="{'presente': presente(res.fermata.id, alunno)}"
+            <button mat-button class="alunno-presenza" [class.presente]="presente(res.fermata.id, alunno)"
                     (click)="togglePresenza(res.fermata.id, alunno)"
                     *ngFor="let alunno of res.alunni.sort()">{{alunno.name}}</button>
           </mat-card-content>
