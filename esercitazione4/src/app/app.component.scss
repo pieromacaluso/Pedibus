@@ -1,17 +1,21 @@
+@import '../pedibus-theme';
 
 .container {
   width: 60%;
   height: auto;
   margin: auto;
 }
+
 .container-mobile {
   width: 90%;
   height: auto;
   margin: auto;
 }
-.card-stops{
+
+.card-stops {
   margin: 10px;
 }
+
 .form-top {
   height: auto;
   margin: auto;
@@ -30,7 +34,7 @@
 }
 
 .presente {
-  background-color: #3056f0;
+  background-color: mat-color($pedibus-theme-accent, default);
   font-weight: bold;
   color: white;
 }
@@ -71,5 +75,5 @@
 }
 
 .stop-title {
-  color: #ef6c00;
+  color: mat-color($pedibus-theme-primary, default)
 }
