@@ -6,7 +6,7 @@ import {FormControl} from '@angular/forms';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   opened: boolean;
@@ -20,6 +20,9 @@ export class AppComponent {
   date: Date;
   logo: any = '../assets/svg/logo.svg';
   stop: any = '../assets/svg/cross.svg';
+  next: any = '../assets/svg/next.svg';
+  previous: any = '../assets/svg/previous.svg';
+
 
   constructor(private mongoService: MongoService) {
     this.linee = mongoService.getLinee();
@@ -47,4 +50,10 @@ export class AppComponent {
     return this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno).presenza;
   }
 
+  modifyDate(days: number) {
+    const nextDate = new Date(this.date);
+    nextDate.setDate(nextDate.getDate() + days);
+    this.date = nextDate;
+    this.fillPrenotazione();
+  }
 }
