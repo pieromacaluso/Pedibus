@@ -531,8 +531,13 @@ export class MongoService {
   }
 
   getPrenotazioneByLineaAndDateAndVerso(selectedLinea: number, date: Date, selectedVerso: string) {
-    const temp = RESERVATIONS.find(l => l.line_id === selectedLinea)
-      .dates.find(d => d.date.getDate() === date.getDate() && d.date.getFullYear() === date.getFullYear());
-    return selectedVerso === 'Andata' ? temp.alunniPerFermataAndata : temp.alunniPerFermataRitorno;
+    const temp1 = RESERVATIONS.find(l => l.line_id === selectedLinea);
+    if (temp1 !== undefined) {
+      const temp2 = temp1.dates.find(d => d.date.getDate() === date.getDate()
+        && d.date.getMonth() === date.getMonth() && d.date.getFullYear() === date.getFullYear());
+      if (temp2 !== undefined) {
+        return selectedVerso === 'Andata' ? temp2.alunniPerFermataAndata : temp2.alunniPerFermataRitorno;
+      }
+    }
   }
 }
