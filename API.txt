@@ -1,0 +1,41 @@
+AuthenticationREST
+* POST /login
+		@RequestBody @Valid UserDTO userDTO
+
+* POST /register
+		@Valid @RequestBody UserDTO userDTO
+
+* GET  /confirm/{randomUUID}
+
+* POST /recover
+		@RequestBody String email
+
+* POST /recover/{randomUUID}
+		@Valid @RequestBody UserDTO userDTO
+
+Authentication
+* GET  /recover/{randomUUID}
+		
+LinesREST
+* GET  /lines
+
+* GET  /lines/{nome_linea}
+
+ReservationsREST
+* GET  /reservations/{nome_linea}/{data}
+
+* POST /reservations/{nome_linea}/{data}
+		@RequestBody PrenotazioneResource prenotazioneResource
+
+* PUT  /reservations/{nome_linea}/{data}/{reservation_id}
+		@RequestBody PrenotazioneResource prenotazioneResource
+
+*DELETE /reservations/{nome_linea}/{data}/{reservation_id}
+
+* GET  /reservations/{nome_linea}/{data}/{reservation_id}
+
+* POST /reservation/handled/{verso}/{data}
+		@RequestBody String child
+
+* POST /reservation/arrived/{verso}/{data}
+		@RequestBody String child
