@@ -13,6 +13,8 @@ public class PrenotazioneDTO {
     Integer idFermata;
     String nomeLinea;
     Boolean verso;
+    Boolean presoInCarico;  //todo
+    Boolean arrivatoScuola; //todo
 
 
 

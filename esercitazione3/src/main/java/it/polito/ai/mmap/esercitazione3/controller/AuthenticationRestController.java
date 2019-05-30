@@ -87,6 +87,7 @@ public class AuthenticationRestController {
      * @param userDTO
      * @param bindingResult
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
