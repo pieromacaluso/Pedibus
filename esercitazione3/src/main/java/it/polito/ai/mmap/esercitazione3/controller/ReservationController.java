@@ -108,25 +108,25 @@ public class ReservationController {
 
     /**
      * Usato da admin linea per indicare che ha preso il bambino dalla fermata
-     * @param reservationId
+     * @param verso
+     * @param data
      * @param nomeUtente
      */
-    @PostMapping("/reservation/handled/{reservationId}")
-    public void SetHandled(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
+    @PostMapping("/reservation/handled/{verso}/{data}")
+    public void SetHandled(@PathVariable("verso") String verso,@PathVariable("data") String data, @RequestBody String nomeUtente){
         //todo cambiare con ricerca per data verso e childObjct
-        reservationService.setHandled(reservationId);
+        //reservationService.setHandled(verso,data,nomeUtente);
     }
-
-
 
 
     /**
      * Usato da admin linea per indicare che ha lasciato il bambino a scuola
-     * @param reservationId
+     * @param verso
+     * @param data
      * @param nomeUtente
      */
-    @PostMapping("/reservation/arrived/{reservationId}")
-    public void SetArrived(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
+    @PostMapping("/reservation/arrived/{verso}/{data}")
+    public void SetArrived(@PathVariable("verso") String verso,@PathVariable("data") String data, @RequestBody String nomeUtente){
         //todo
     }
 

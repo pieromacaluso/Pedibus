@@ -77,8 +77,8 @@ public class ReservationService {
      */
     private Boolean isDuplicate(PrenotazioneDTO prenotazioneDTO) {
         Optional<PrenotazioneEntity> check = prenotazioneRepository
-                .findByNomeAlunnoAndDataAndVerso(
-                        prenotazioneDTO.getNomeAlunno(),
+                .findByIdChildAndDataAndVerso(
+                        prenotazioneDTO.getIdChild(),
                         prenotazioneDTO.getData(),
                         prenotazioneDTO.getVerso());
         return check.isPresent();
@@ -135,8 +135,8 @@ public class ReservationService {
      */
     public List<String> findAlunniFermata(Date data, Integer id, boolean verso) {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
-        return prenotazioni.stream().map(PrenotazioneEntity::getNomeAlunno).collect(Collectors.toList());
-
+        return prenotazioni.stream().map(PrenotazioneEntity::getIdChild).map(ObjectId::toString).collect(Collectors.toList());
+        //todo sostituire il toString dell'objectId con un metodo che ritona il nome dell'alunno
     }
 
     public void setHandled(ObjectId objectId){

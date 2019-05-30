@@ -2,6 +2,7 @@ package it.polito.ai.mmap.esercitazione3.entity;
 
 import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.services.UserService;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.*;
 
 /**
@@ -36,12 +38,13 @@ public class UserEntity implements UserDetails {
     private Set<RoleEntity> roleList;
     private Set<ChildEntity> childrenList; //puoi prenotare solo per i tuoi figli
     private Date creationDate;
+    private String userId;                  //in teoria non serviva ma è usato nell'UserService
 
 
     public UserEntity() {
     }
 
-    public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder) {
+    public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder,UserService userService) {
         username = userDTO.getEmail();
         password = passwordEncoder.encode(userDTO.getPassword());
         isAccountNonExpired = true;
@@ -51,6 +54,15 @@ public class UserEntity implements UserDetails {
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
         creationDate = MongoZonedDateTime.getNow();
+
+        childrenList=new HashSet<>();
+        ChildEntity childEntity=new ChildEntity("figlio","1");          //todo realizzare correttamente
+        userService.addChild(childEntity);
+        childrenList.add(childEntity);
+
+        ChildEntity childEntity2=new ChildEntity("figlio","2");
+        userService.addChild(childEntity2);
+        childrenList.add(childEntity2);
     }
 
     public UserEntity(String email, HashSet<RoleEntity> userRoles) {
@@ -61,6 +73,7 @@ public class UserEntity implements UserDetails {
         isEnabled = false;
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
+
     }
 
     @Override

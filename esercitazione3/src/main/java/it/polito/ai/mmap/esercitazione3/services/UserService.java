@@ -1,15 +1,9 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
-import it.polito.ai.mmap.esercitazione3.entity.ActivationTokenEntity;
-import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
-import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
-import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.entity.*;
 import it.polito.ai.mmap.esercitazione3.exception.*;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
-import it.polito.ai.mmap.esercitazione3.repository.ActivationTokenRepository;
-import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
-import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
-import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
+import it.polito.ai.mmap.esercitazione3.repository.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,22 +39,21 @@ public class UserService implements UserDetailsService {
     private int minuti;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
+    UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
+    @Autowired
     private RecoverTokenRepository recoverTokenRepository;
-
     @Autowired
     private ActivationTokenRepository activationTokenRepository;
     @Autowired
-    private GMailService gMailService;
+    private ChildRepository childRepository;
 
+    @Autowired
+    private GMailService gMailService;
     @Autowired
     JwtTokenService jwtTokenService;
 
@@ -118,7 +111,7 @@ public class UserService implements UserDetailsService {
             }
         } else {
             RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
-            userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder);
+            userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder,this);
 
         }
 
@@ -241,7 +234,7 @@ public class UserService implements UserDetailsService {
 
         RoleEntity role = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
 
-        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder);
+        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder,this);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
 
@@ -290,5 +283,10 @@ public class UserService implements UserDetailsService {
             userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
 
         userRepository.save(userEntity);
+    }
+
+    public void addChild(ChildEntity childEntity){
+        childRepository.save(childEntity);
+        //todo salvare child in db
     }
 }
