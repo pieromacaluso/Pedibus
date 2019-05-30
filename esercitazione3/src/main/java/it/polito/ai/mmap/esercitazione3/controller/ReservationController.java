@@ -96,6 +96,7 @@ public class ReservationController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        //todo spostare nel service per non appesantire controller
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneEntity checkPren = reservationService.getPrenotazione(reservationId);
 
@@ -112,9 +113,10 @@ public class ReservationController {
      */
     @PostMapping("/reservation/handled/{reservationId}")
     public void SetHandled(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
-        //todo
-        reservationService.getPrenotazione(reservationId);
+        //todo cambiare con ricerca per data verso e childObjct
+        reservationService.setHandled(reservationId);
     }
+
 
 
 

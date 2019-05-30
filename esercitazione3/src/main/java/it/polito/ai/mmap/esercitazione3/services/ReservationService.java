@@ -100,6 +100,15 @@ public class ReservationService {
     }
 
     /**
+     * PrenotazioneDTO da ReservationId per controller
+     * @param reservationId
+     * @return
+     */
+    public PrenotazioneDTO getPrenotazioneDTO(ObjectId reservationId){
+        return new PrenotazioneDTO(getPrenotazione(reservationId));
+    }
+
+    /**
      * Elimina la prenotazione indicata dall'objectId controllando che i dettagli siano consistenti
      *
      * @param nomeLinea:     Nome della Linea
@@ -127,5 +136,11 @@ public class ReservationService {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
         return prenotazioni.stream().map(PrenotazioneEntity::getNomeAlunno).collect(Collectors.toList());
 
+    }
+
+    public void setHandled(ObjectId objectId){
+        PrenotazioneDTO prenotazioneDTO=getPrenotazioneDTO(objectId);
+        prenotazioneDTO.setPresoInCarico(true);
+        updatePrenotazione(prenotazioneDTO,objectId);
     }
 }
