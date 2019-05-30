@@ -2,7 +2,8 @@ package it.polito.ai.mmap.esercitazione3.resources;
 
 
 import it.polito.ai.mmap.esercitazione3.objectDTO.FermataDTO;
-import it.polito.ai.mmap.esercitazione3.services.MongoService;
+import it.polito.ai.mmap.esercitazione3.services.LineeService;
+import it.polito.ai.mmap.esercitazione3.services.ReservationService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.ResourceSupport;
@@ -22,19 +23,19 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
     List<FermataDTOAlunni> alunniPerFermataAndata;
     List<FermataDTOAlunni> alunniPerFermataRitorno;
 
-    public GetReservationsNomeLineaDataResource(String nomeLina, Date data, MongoService mongoService) {
+    public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, ReservationService reservationService) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
-        alunniPerFermataAndata = (mongoService.getLineByName(nomeLina)).getAndata().stream()
+        alunniPerFermataAndata = (lineeService.getLineByName(nomeLina)).getAndata().stream()
                 .map(FermataDTOAlunni::new)
                 .collect(Collectors.toList());
         // true per indicare l'andata
-        alunniPerFermataAndata.forEach((f) -> f.setAlunni(mongoService.findAlunniFermata(data, f.getFermata().getId(), true)));
+        alunniPerFermataAndata.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), true)));
 
-        alunniPerFermataRitorno = (mongoService.getLineByName(nomeLina)).getRitorno().stream()
+        alunniPerFermataRitorno = (lineeService.getLineByName(nomeLina)).getRitorno().stream()
                 .map(FermataDTOAlunni::new)
                 .collect(Collectors.toList());
         // false per indicare il ritorno
-        alunniPerFermataRitorno.forEach((f) -> f.setAlunni(mongoService.findAlunniFermata(data, f.getFermata().getId(), false)));
+        alunniPerFermataRitorno.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), false)));
     }
 
     @Data

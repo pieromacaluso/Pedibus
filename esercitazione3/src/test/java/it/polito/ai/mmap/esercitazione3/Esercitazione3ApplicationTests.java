@@ -11,7 +11,7 @@ import it.polito.ai.mmap.esercitazione3.repository.ActivationTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
-import it.polito.ai.mmap.esercitazione3.services.MongoService;
+import it.polito.ai.mmap.esercitazione3.services.LineeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class Esercitazione3ApplicationTests {
     @Autowired
     JsonHandlerService jsonHandlerService;
     @Autowired
-    MongoService mongoService;
+    LineeService lineeService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private MockMvc mockMvc;

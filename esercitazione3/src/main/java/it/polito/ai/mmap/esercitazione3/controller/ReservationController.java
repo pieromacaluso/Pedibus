@@ -1,75 +1,30 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
-import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione3.resources.GetReservationsNomeLineaDataResource;
 import it.polito.ai.mmap.esercitazione3.resources.PrenotazioneResource;
-import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
-import it.polito.ai.mmap.esercitazione3.services.MongoService;
+import it.polito.ai.mmap.esercitazione3.services.LineeService;
+import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
+import it.polito.ai.mmap.esercitazione3.services.ReservationService;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.util.Date;
-import java.util.List;
 
 @RestController
-public class HomeController {
+public class ReservationController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    JsonHandlerService jsonHandlerService;
-
+    LineeService lineeService;
     @Autowired
-    MongoService mongoService;
+    ReservationService reservationService;
 
-
-    /**
-     * Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus.
-     */
-    @PostConstruct
-    public void init() {
-        logger.info("Caricamento linee in corso...");
-        jsonHandlerService.readPiedibusLines();
-        logger.info("Caricamento linee completato.");
-    }
-
-    /**
-     * Mapping verso la home dell'applicazione.
-     *
-     * @return home
-     */
-    @GetMapping("/")
-    public String home() {
-        return "home";
-    }
-
-    /**
-     * Restituisce una JSON con una lista dei nomi delle lines presenti nel DB.
-     *
-     * @return Lista nomi Linee nel DB
-     */
-    @GetMapping("/lines")
-    public List<String> getLines() {
-        return mongoService.getAllLinesNames();
-    }
-
-    /**
-     * Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno.
-     *
-     * @param name nome Linea
-     * @return LineaDTO
-     */
-    @GetMapping("/lines/{nome_linea}")
-    public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
-        return mongoService.getLineByName(name);
-    }
 
     /**
      * Restituisce un oggetto JSON contenente due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
@@ -82,7 +37,7 @@ public class HomeController {
     @GetMapping("/reservations/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, mongoService);
+        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService,reservationService);
     }
 
     /**
@@ -97,8 +52,8 @@ public class HomeController {
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getNome(), dataFormatted);
-        return mongoService.addPrenotazione(prenotazioneDTO);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineByName(nomeLinea).getNome(), dataFormatted);
+        return reservationService.addPrenotazione(prenotazioneDTO);
     }
 
 
@@ -114,8 +69,8 @@ public class HomeController {
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, mongoService.getLineByName(nomeLinea).getNome(), dataFormatted);
-        mongoService.updatePrenotazione(prenotazioneDTO, reservationId);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineByName(nomeLinea).getNome(), dataFormatted);
+        reservationService.updatePrenotazione(prenotazioneDTO, reservationId);
     }
 
     /**
@@ -128,7 +83,7 @@ public class HomeController {
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        mongoService.deletePrenotazione(nomeLinea, dataFormatted, reservationId);
+        reservationService.deletePrenotazione(nomeLinea, dataFormatted, reservationId);
     }
 
     /**
@@ -142,12 +97,36 @@ public class HomeController {
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneEntity checkPren = mongoService.getPrenotazione(reservationId);
+        PrenotazioneEntity checkPren = reservationService.getPrenotazione(reservationId);
 
-        if (mongoService.getLineByName(nomeLinea).getNome().equals(checkPren.getNomeLinea()) && dataFormatted.equals(checkPren.getData()))
+        if (lineeService.getLineByName(nomeLinea).getNome().equals(checkPren.getNomeLinea()) && dataFormatted.equals(checkPren.getData()))
             return new PrenotazioneDTO(checkPren);
         else
             throw new IllegalArgumentException("Prenotazione non esistente");
     }
+
+    /**
+     * Usato da admin linea per indicare che ha preso il bambino dalla fermata
+     * @param reservationId
+     * @param nomeUtente
+     */
+    @PostMapping("/reservation/handled/{reservationId}")
+    public void SetHandled(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
+        //todo
+        reservationService.getPrenotazione(reservationId);
+    }
+
+
+
+    /**
+     * Usato da admin linea per indicare che ha lasciato il bambino a scuola
+     * @param reservationId
+     * @param nomeUtente
+     */
+    @PostMapping("/reservation/arrived/{reservationId}")
+    public void SetArrived(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
+        //todo
+    }
+
 
 }

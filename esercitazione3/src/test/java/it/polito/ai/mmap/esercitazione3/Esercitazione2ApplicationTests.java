@@ -2,33 +2,23 @@ package it.polito.ai.mmap.esercitazione3;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.esercitazione3.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione3.model.Prenotazione;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
-import it.polito.ai.mmap.esercitazione3.services.MongoService;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.JSONObject;
+import it.polito.ai.mmap.esercitazione3.services.LineeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +33,7 @@ public class Esercitazione2ApplicationTests {
     @Autowired
     JsonHandlerService jsonHandlerService;
     @Autowired
-    MongoService mongoService;
+    LineeService lineeService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private MockMvc mockMvc;

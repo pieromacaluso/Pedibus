@@ -18,6 +18,8 @@ public class PrenotazioneEntity {
     private boolean verso;
     private Integer idFermata;
     private String nomeLinea;
+    private boolean presoInCarico;  //todo
+    private boolean arrivatoScuola; //todo
 
     // non eliminare
     public PrenotazioneEntity() {

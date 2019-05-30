@@ -12,7 +12,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Service
@@ -25,7 +24,7 @@ public class JsonHandlerService {
     ObjectMapper objectMapper;
 
     @Autowired
-    MongoService mongoService;
+    LineeService lineeService;
 
 
     /**
@@ -46,7 +45,7 @@ public class JsonHandlerService {
                 LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i + ".json"), LineaDTO.class);
                 try {
                     //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin
-                    ArrayList<String> adminList = mongoService.getLineByName(lineaDTO.getNome()).getAdminList();
+                    ArrayList<String> adminList = lineeService.getLineByName(lineaDTO.getNome()).getAdminList();
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
                 } catch (LineaNotFoundException e) {
@@ -54,9 +53,9 @@ public class JsonHandlerService {
                     lineaDTO.setAdminList(new ArrayList<>());
                 }
 
-                mongoService.addLinea(lineaDTO);
-                mongoService.addFermate(lineaDTO.getAndata());
-                mongoService.addFermate(lineaDTO.getRitorno());
+                lineeService.addLinea(lineaDTO);
+                lineeService.addFermate(lineaDTO.getAndata());
+                lineeService.addFermate(lineaDTO.getRitorno());
 
                 logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
             } catch (IOException e) {
