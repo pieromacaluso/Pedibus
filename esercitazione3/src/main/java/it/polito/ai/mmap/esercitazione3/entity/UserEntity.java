@@ -34,8 +34,8 @@ public class UserEntity implements UserDetails {
     boolean isCredentialsNonExpired;
     boolean isEnabled;
     private Set<RoleEntity> roleList;
+    private Set<ChildEntity> childrenList; //puoi prenotare solo per i tuoi figli
     private Date creationDate;
-    private String userId;                      //per stampare come campo json l'userId e non i vari campi di ObjectId
 
 
     public UserEntity() {

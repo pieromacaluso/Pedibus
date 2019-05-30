@@ -33,6 +33,7 @@ public class ReservationService {
      */
     public String addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         if (isValidPrenotation(prenotazioneDTO) && !isDuplicate(prenotazioneDTO)) {
+            //TODO
             PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
             return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
         } else

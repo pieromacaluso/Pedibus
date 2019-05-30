@@ -3,12 +3,13 @@ package it.polito.ai.mmap.esercitazione3.objectDTO;
 import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione3.resources.PrenotazioneResource;
 import lombok.Data;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 
 @Data
 public class PrenotazioneDTO {
-    String nomeAlunno;
+    ObjectId idChild;
     Date data;
     Integer idFermata;
     String nomeLinea;
@@ -17,23 +18,21 @@ public class PrenotazioneDTO {
     Boolean arrivatoScuola; //todo
 
 
-
-
-
     public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, String nomeLinea, Date data) {
         this.data = data;
         this.nomeLinea = nomeLinea;
 
         verso = prenotazioneResource.getVerso();
         idFermata = prenotazioneResource.getIdFermata();
-        nomeAlunno = prenotazioneResource.getNomeAlunno();
+        idChild = prenotazioneResource.getIdChild();
     }
+
     public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity) {
         this.data = prenotazioneEntity.getData();
         this.nomeLinea = prenotazioneEntity.getNomeLinea();
         verso = prenotazioneEntity.isVerso();
         idFermata = prenotazioneEntity.getIdFermata();
-        nomeAlunno = prenotazioneEntity.getNomeAlunno();
+        idChild = prenotazioneEntity.getIdChild();
     }
 
 
