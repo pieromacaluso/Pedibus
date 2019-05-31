@@ -44,8 +44,10 @@
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
         <div fxFlex="10%" fxFlex.lt-sm="100%" class="button-data-container" fxLayout="row">
-          <input type="image" fxFlex="50%" class=" btn-toggle button-data" [src]="previous" alt="Pedibus" (click)="modifyDate(-1);"/>
-          <input type="image" fxFlex="50%" class=" btn-toggle button-data" [src]="next" alt="Pedibus" (click)="modifyDate(+1);"/>
+          <input type="image" fxFlex="50%" class=" btn-toggle button-data" [src]="previous" alt="Pedibus"
+                 (click)="modifyDate(-1);"/>
+          <input type="image" fxFlex="50%" class=" btn-toggle button-data" [src]="next" alt="Pedibus"
+                 (click)="modifyDate(+1);"/>
         </div>
 
 
@@ -58,24 +60,31 @@
       </div>
       <ng-template #thenBlock>
         <div class="card-stops"
-                  *ngFor="let res of reservations">
-          <mat-card-header>
-            <mat-card-title class="stop-title">{{res.fermata.orario + " - " + res.fermata.nome}}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <button mat-button class="alunno-presenza mat-background-accent" [class.presente]="presente(res.fermata.id, alunno)"
+             *ngFor="let res of reservations">
+          <div fxLayout="row">
+            <mat-card-header>
+              <mat-card-title class="stop-clock">{{res.fermata.orario}}</mat-card-title>
+            </mat-card-header>
+            <img class="cross" [src]="cross" alt="Bus Stop"/>
+
+            <mat-card-header>
+
+              <mat-card-title class="stop-title">{{ res.fermata.nome}}</mat-card-title>
+
+            </mat-card-header>
+          </div>
+          <mat-card-content class="prenotazioni">
+            <button mat-stroked-button class="alunno-presenza mat-background-accent"
+                    [class.presente]="presente(res.fermata.id, alunno)"
                     (click)="togglePresenza(res.fermata.id, alunno)"
                     *ngFor="let alunno of res.alunni.sort()">{{alunno.name}}</button>
           </mat-card-content>
         </div>
       </ng-template>
       <ng-template #elseBlock>
-        <mat-card class="card-stops"
-                  role="region">
-          <mat-card-content>
-            Nessuna corsa disponibile
-          </mat-card-content>
-        </mat-card>
+        <div class="no-stops">
+          Nessuna corsa disponibile con i parametri selezionati
+        </div>
       </ng-template>
     </mat-card>
 

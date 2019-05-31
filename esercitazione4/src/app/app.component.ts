@@ -22,6 +22,7 @@ export class AppComponent {
   stop: any = '../assets/svg/cross.svg';
   next: any = '../assets/svg/next.svg';
   previous: any = '../assets/svg/previous.svg';
+  cross: any = '../assets/svg/cross.svg';
 
 
   constructor(private mongoService: MongoService) {
