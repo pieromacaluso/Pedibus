@@ -77,7 +77,7 @@
             <button mat-stroked-button class="alunno-presenza mat-background-accent"
                     [class.presente]="presente(res.fermata.id, alunno)"
                     (click)="togglePresenza(res.fermata.id, alunno)"
-                    *ngFor="let alunno of res.alunni.sort()">{{alunno.name}}</button>
+                    *ngFor="let alunno of sortedAlunni(res.alunni)">{{alunno.surname + " " + alunno.name}}</button>
           </mat-card-content>
         </div>
       </ng-template>

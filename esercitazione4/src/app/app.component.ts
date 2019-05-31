@@ -57,4 +57,21 @@ export class AppComponent {
     this.date = nextDate;
     this.fillPrenotazione();
   }
+
+  sortedAlunni(alu: Alunno[]) {
+   return alu.sort((a, b) => {
+      if (a.surname < b.surname) {
+        return -1;
+      } else if (b.surname < a.surname) {
+        return +1;
+      } else {
+        if (a.name < b.name) {
+          return -1;
+        } else if (b.name < a.name) {
+          return +1;
+        }
+        return 0;
+      }
+    });
+  }
 }
