@@ -23,5 +23,6 @@ export interface Prenotazioni {
 
 export interface Alunno {
   name: string;
+  surname: string;
   presenza: boolean;
 }
