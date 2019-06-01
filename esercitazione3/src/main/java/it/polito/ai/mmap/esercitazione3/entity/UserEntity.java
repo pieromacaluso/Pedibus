@@ -52,6 +52,7 @@ public class UserEntity implements UserDetails {
         isEnabled = false;
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
+        childrenList = new HashSet<>();
         creationDate = MongoZonedDateTime.getNow();
     }
 
@@ -63,7 +64,7 @@ public class UserEntity implements UserDetails {
         isEnabled = false;
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
-
+        childrenList = new HashSet<>();
     }
 
     @Override

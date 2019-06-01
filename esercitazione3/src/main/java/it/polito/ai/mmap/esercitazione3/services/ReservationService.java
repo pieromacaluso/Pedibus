@@ -12,6 +12,8 @@ import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione3.repository.ChildRepository;
 import it.polito.ai.mmap.esercitazione3.repository.PrenotazioneRepository;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,6 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
-
     //todo sarebbe bello avere tutto ReservationX o PrenotazioneX
 
     @Autowired
@@ -78,12 +79,11 @@ public class ReservationService {
      */
     private Boolean isValidPrenotation(PrenotazioneDTO prenotazioneDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         FermataDTO fermataDTO = lineeService.getFermataById(prenotazioneDTO.getIdFermata());
         LineaDTO lineaDTO = lineeService.getLineByName(prenotazioneDTO.getNomeLinea());
 
-        return ((lineeService.getLineByName(prenotazioneDTO.getNomeLinea()).getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
-                (lineeService.getLineByName(prenotazioneDTO.getNomeLinea()).getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso())) &&
+        return ((lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
+                (lineaDTO.getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso())) &&
                 (principal.getChildrenList().contains(prenotazioneDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()));
     }
 
@@ -152,7 +152,6 @@ public class ReservationService {
      * - Dettagli siano consistenti
      * - Si sta cercando di cancellare uno dei proprio children o system-admin o amministratore della linea
      *
-     *
      * @param nomeLinea:     Nome della Linea
      * @param data:          Data
      * @param reservationId: Id Prenotazione
@@ -161,7 +160,7 @@ public class ReservationService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PrenotazioneEntity prenotazione = getReservationFromId(reservationId);
         LineaDTO lineaDTO = lineeService.getLineByName(prenotazione.getNomeLinea());
-        if (prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) ||  principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
+        if (prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
             prenotazioneRepository.delete(prenotazione);
         } else {
             throw new IllegalArgumentException("Errore in cancellazione prenotazione");

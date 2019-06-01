@@ -3,8 +3,12 @@ package it.polito.ai.mmap.esercitazione3;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.esercitazione3.entity.ChildEntity;
+import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
+import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.ChildRepository;
+import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
+import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import it.polito.ai.mmap.esercitazione3.resources.PrenotazioneResource;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione3.services.LineeService;
@@ -15,16 +19,17 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,6 +39,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class Esercitazione2ApplicationTests {
 
+    @Value("${superadmin.email}")
+    private String superAdminMail;
+    @Value("${superadmin.password}")
+    private String superAdminPass;
+
     @Autowired
     JsonHandlerService jsonHandlerService;
     @Autowired
@@ -41,11 +51,10 @@ public class Esercitazione2ApplicationTests {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private JavaMailSender mailSender;
 
     @Autowired
     ChildRepository childRepository;
+
 
     //TODO rimuovere
     @Before
@@ -66,8 +75,8 @@ public class Esercitazione2ApplicationTests {
     public void getLines() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -92,8 +101,8 @@ public class Esercitazione2ApplicationTests {
     public void getLine() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -116,8 +125,8 @@ public class Esercitazione2ApplicationTests {
     public void insertReservation_wrongVerso() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -143,8 +152,8 @@ public class Esercitazione2ApplicationTests {
     public void insertReservation_correctVerso() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -177,8 +186,8 @@ public class Esercitazione2ApplicationTests {
     public void insertReservation_wrongLine() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -204,8 +213,8 @@ public class Esercitazione2ApplicationTests {
     public void getReservation_check() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -247,8 +256,8 @@ public class Esercitazione2ApplicationTests {
     public void insertReservation_duplicate() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -286,8 +295,8 @@ public class Esercitazione2ApplicationTests {
     public void getReservation_checkReservationPositionInLine() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -327,8 +336,8 @@ public class Esercitazione2ApplicationTests {
     public void putReservation_updateWrong() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -370,8 +379,8 @@ public class Esercitazione2ApplicationTests {
     public void putReservation_updateCorrect_checkPosition() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -425,8 +434,8 @@ public class Esercitazione2ApplicationTests {
     public void deleteReservation_randomID() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
