@@ -24,7 +24,7 @@ export class AppComponent {
 
 
   constructor(private mongoService: MongoService) {
-    this.linee = mongoService.getLinee();
+    this.linee = MongoService.getLinee();
     this.reservations = [];
     this.date = new Date();
     this.selectedLinea = 1;
@@ -60,7 +60,7 @@ export class AppComponent {
   }
 
   sortedAlunni(alu: Alunno[]) {
-   return alu.sort((a, b) => {
+    return alu.sort((a, b) => {
       if (a.surname < b.surname) {
         return -1;
       } else if (b.surname < a.surname) {

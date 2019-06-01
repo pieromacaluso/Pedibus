@@ -1449,7 +1449,7 @@ export class MongoService {
   constructor() {
   }
 
-  getLinee() {
+  static getLinee() {
     return LINEE;
   }
 

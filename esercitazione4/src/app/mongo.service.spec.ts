@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { MongoService } from './mongo.service';
+import {MongoService} from './mongo.service';
 
 describe('MongoService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
