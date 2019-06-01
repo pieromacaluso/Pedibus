@@ -1,12 +1,9 @@
 package it.polito.ai.mmap.esercitazione3.controller;
 
-import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.esercitazione3.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
-import it.polito.ai.mmap.esercitazione3.repository.RoleRepository;
-import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import it.polito.ai.mmap.esercitazione3.services.JwtTokenService;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import org.bson.types.ObjectId;
