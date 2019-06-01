@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer mode="over" [(opened)]="opened" class="sidenav" fixedInViewport="true"
                [attr.role]="navigation">
-    <mat-toolbar>Menu</mat-toolbar>
+    <mat-toolbar class="head-menu">Menu</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item href="#">Link 1</a>
       <a mat-list-item href="#">Link 2</a>
@@ -18,24 +18,26 @@
     </mat-toolbar>
     <div class="dark-theme">
 
-    <button type=”button” class="mat-fab mat-accent dark-theme fab-left" (click)="modifyDate(-1);" fxHide="" fxShow.lt-sm="">
+      <button type=”button” class="mat-fab mat-accent dark-theme fab-left" (click)="modifyDate(-1);" fxHide=""
+              fxShow.lt-sm="">
           <span class="mat-button-wrapper">
             <mat-icon class="mat-icon material-icons"
                       role="img" aria-hidden="true">keyboard_arrow_left</mat-icon>
           </span>
-    </button>
-    <button type=”button” class="mat-fab mat-accent dark-theme fab-right" (click)="modifyDate(1);" fxHide="" fxShow.lt-sm="">
+      </button>
+      <button type=”button” class="mat-fab mat-accent dark-theme fab-right" (click)="modifyDate(1);" fxHide=""
+              fxShow.lt-sm="">
           <span class="mat-button-wrapper">
             <mat-icon class="mat-icon material-icons"
                       role="img" aria-hidden="true">keyboard_arrow_right</mat-icon>
           </span>
-    </button>
+      </button>
     </div>
     <mat-card ngClass="container dark-theme" ngClass.lt-md="container-mobile dark-theme">
       <!-- TOOLBAR ROW -->
-      <div  fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap.lt-sm="5%">
+      <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap.lt-sm="5%">
         <div fxFlex="10%" fxFlex.lt-sm="0%" fxLayoutAlign="space-around center" fxHide.lt-sm="">
-          <button  type=”button” class="mat-mini-fab mat-accent" (click)="modifyDate(-1);" >
+          <button type=”button” class="mat-mini-fab mat-accent" (click)="modifyDate(-1);">
           <span class="mat-button-wrapper">
             <mat-icon class="mat-icon material-icons"
                       role="img" aria-hidden="true">keyboard_arrow_left</mat-icon>
@@ -43,7 +45,8 @@
           </button>
         </div>
 
-        <mat-card-header fxFlex="70%" fxFlex.lt-sm="90%" class="form-top" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="3%"
+        <mat-card-header fxFlex="70%" fxFlex.lt-sm="90%" class="form-top" fxLayout="row" fxLayout.lt-sm="column"
+                         fxLayoutGap="3%"
                          fxLayoutAlign="center" fxLayoutAlign.xs="center">
           <!-- SELEZIONA LINEA -->
           <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
@@ -71,12 +74,12 @@
         </mat-card-header>
         <div fxFlex="10%" fxFlex.lt-sm="0%" fxLayoutAlign="space-around center" fxHide.lt-sm="">
 
-        <button type=”button” class="mat-mini-fab mat-accent " (click)="modifyDate(1);">
+          <button type=”button” class="mat-mini-fab mat-accent " (click)="modifyDate(1);">
           <span class="mat-button-wrapper">
             <mat-icon class="mat-icon material-icons"
                       role="img" aria-hidden="true">keyboard_arrow_right</mat-icon>
           </span>
-        </button>
+          </button>
         </div>
       </div>
     </mat-card>
@@ -89,7 +92,8 @@
       </div>
       <ng-template #thenBlock>
         <div class="card-stops"
-             *ngFor="let res of reservations">
+             *ngFor="let res of reservations; let first = first; let last = last"
+             [ngClass]="{ first: first, last: last }">
           <div fxLayout="row">
             <mat-card-header>
               <mat-card-title class="stop-clock">{{res.fermata.orario}}</mat-card-title>
@@ -102,12 +106,35 @@
 
             </mat-card-header>
           </div>
-          <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
-            <button mat-stroked-button class="alunno-presenza mat-background-accent"
-                    [class.presente]="presente(res.fermata.id, alunno)"
-                    (click)="togglePresenza(res.fermata.id, alunno)"
-                    *ngFor="let alunno of sortedAlunni(res.alunni)">{{alunno.surname + " " + alunno.name}}</button>
+
+          <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"
+                            *ngIf="(last && this.selectedVerso === 'Andata') || (first && this.selectedVerso === 'Ritorno');
+                             then isSpecial;
+                             else notSpecial">
           </mat-card-content>
+          <ng-template #notSpecial>
+            <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"
+                              *ngIf="(res.alunni.length > 0); then thenAlunni; else elseAlunni"></mat-card-content>
+            <ng-template #thenAlunni>
+              <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
+                <button mat-stroked-button class="alunno-presenza mat-background-accent"
+                        [class.presente]="presente(res.fermata.id, alunno)"
+                        (click)="togglePresenza(res.fermata.id, alunno)"
+                        *ngFor="let alunno of sortedAlunni(res.alunni); ">{{alunno.surname + " " + alunno.name}}</button>
+              </mat-card-content>
+            </ng-template>
+            <ng-template #elseAlunni>
+              <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
+                Nessuna prenotazione
+              </mat-card-content>
+            </ng-template>
+          </ng-template>
+          <ng-template #isSpecial>
+            <mat-card-content *ngIf="first" ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
+            </mat-card-content>
+          </ng-template>
+
+
         </div>
       </ng-template>
       <ng-template #elseBlock>

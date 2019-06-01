@@ -2,13 +2,13 @@
 ## Composizione Gruppo
 
 Il gruppo MMAP è composto da:
-- Marco Florian - s247030
-- Piero Macaluso - s252894
-- Marco Nanci - s255089
-- Angelo Turco - s255270
+- **Marco Florian** - s247030
+- **Piero Macaluso** - s252894
+- **Marco Nanci** - s255089
+- **Angelo Turco** - s255270
 
 ## Avvio Applicazione
-1. Scompattare l'archivio `mmap-lab04-v1.zip` e da terminale posizionarsi nella cartella `mmap-lab04-v1`
+1. Dopo aver scompattato l'archivio `mmap-lab04-v1.zip`, posizionarsi da terminale nella cartella `mmap-lab04-v1`
 2. Avviare il comando: `npm install`
 3. Avviare il comando: `npm start`
 4. Aprire il browser e dirigersi su `http://localhost:4200`
