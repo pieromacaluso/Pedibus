@@ -1,9 +1,8 @@
 package it.polito.ai.mmap.esercitazione3.resources;
 
-import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.bson.types.ObjectId;
 import org.springframework.hateoas.ResourceSupport;
 
 /**
@@ -17,20 +16,10 @@ import org.springframework.hateoas.ResourceSupport;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
 public class PrenotazioneResource extends ResourceSupport
 {
-    String nomeCognome;
-    ObjectId idChild;
-    Integer idFermata;
-    Boolean verso;
-
-    public PrenotazioneResource() {
-        super();
-    }
-
-    public PrenotazioneResource(PrenotazioneDTO dto) {
-        idChild = dto.getIdChild();
-        idFermata = dto.getIdFermata();
-        verso = dto.getVerso();
-    }
+    private String cfChild;
+    private Integer idFermata;
+    private Boolean verso;
 }

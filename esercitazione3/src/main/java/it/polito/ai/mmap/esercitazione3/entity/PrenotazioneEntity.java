@@ -11,13 +11,14 @@ import java.util.Date;
 @Data
 @Document(collection = "reservations")
 public class PrenotazioneEntity {
+
     @Id
     private ObjectId id;
-    private ObjectId idChild;
+    private String cfChild;
     private Date data;
-    private boolean verso;
-    private Integer idFermata;
     private String nomeLinea;
+    private Integer idFermata;
+    private boolean verso;
     private boolean presoInCarico;  //todo
     private boolean arrivatoScuola; //todo
 
@@ -26,7 +27,7 @@ public class PrenotazioneEntity {
     }
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
-        idChild=prenotazioneDTO.getIdChild();
+        cfChild =prenotazioneDTO.getCfChild();
         data=prenotazioneDTO.getData();
         verso=prenotazioneDTO.getVerso();
         idFermata = prenotazioneDTO.getIdFermata();
@@ -35,7 +36,7 @@ public class PrenotazioneEntity {
 
     public void update(PrenotazioneDTO prenotazioneDTO) {
         //non viene modificato l'id perchè si vuole solo aggiornare i campi della stessa prenotazione
-        this.idChild=prenotazioneDTO.getIdChild();
+        this.cfChild =prenotazioneDTO.getCfChild();
         this.data=prenotazioneDTO.getData();
         this.verso=prenotazioneDTO.getVerso();
         this.idFermata = prenotazioneDTO.getIdFermata();

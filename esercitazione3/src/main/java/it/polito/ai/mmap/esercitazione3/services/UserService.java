@@ -160,7 +160,6 @@ public class UserService implements UserDetailsService {
         }
         if (!userEntity.isEnabled()) {
             userEntity.setEnabled(true);
-            userEntity.setUserId(userEntity.getId().toString());
             userRepository.save(userEntity);
             activationTokenRepository.delete(token);
         }
@@ -248,7 +247,6 @@ public class UserService implements UserDetailsService {
         check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
         if(check.isPresent()) {
             userEntity = check.get();
-            userEntity.setUserId(userEntity.getId().toString());
             userRepository.save(userEntity);
             logger.info("SuperAdmin configurato ed abilitato.");
         }

@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.esercitazione3.resources;
 
 
+import it.polito.ai.mmap.esercitazione3.entity.ChildEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.FermataDTO;
 import it.polito.ai.mmap.esercitazione3.services.LineeService;
 import it.polito.ai.mmap.esercitazione3.services.ReservationService;
@@ -41,7 +42,7 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
     @Data
     public static class FermataDTOAlunni {
         FermataDTO fermata;
-        List<String> alunni = new ArrayList<>();
+        List<ChildEntity> alunni;
 
         FermataDTOAlunni(FermataDTO f) {
             fermata = f;

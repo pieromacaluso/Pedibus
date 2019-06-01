@@ -2,10 +2,14 @@ package it.polito.ai.mmap.esercitazione3;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.esercitazione3.model.Prenotazione;
+import it.polito.ai.mmap.esercitazione3.entity.ChildEntity;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
+import it.polito.ai.mmap.esercitazione3.repository.ChildRepository;
+import it.polito.ai.mmap.esercitazione3.resources.PrenotazioneResource;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione3.services.LineeService;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -40,6 +44,37 @@ public class Esercitazione2ApplicationTests {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    ChildRepository childRepository;
+
+    //TODO rimuovere
+    @Before
+    public void temporaryChildCreation() {
+        ChildEntity childEntity;
+        childEntity = new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi");
+        childRepository.save(childEntity);
+
+        childEntity = new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini");
+        childRepository.save(childEntity);
+
+        childEntity = new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi");
+        childRepository.save(childEntity);
+    }
+
+    //TODO rimuovere
+
+    @After
+    public void temporaryChildDestroy() {
+        ChildEntity childEntity;
+        childEntity = new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi");
+        childRepository.delete(childEntity);
+
+        childEntity = new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini");
+        childRepository.delete(childEntity);
+
+        childEntity = new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi");
+        childRepository.delete(childEntity);
+    }
 
     @Test
     public void getLines() throws Exception {
@@ -103,7 +138,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Piero").idFermata(1).verso(false).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(false).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento errato " + res + "...");
@@ -130,7 +165,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Piero").idFermata(1).verso(true).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento corretto " + res + "...");
@@ -164,7 +199,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Piero").idFermata(1).verso(false).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(false).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento errato " + res + "...");
@@ -191,7 +226,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento " + res + "...");
@@ -208,7 +243,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nomeAlunno").value(res.getNomeAlunno()))
+                .andExpect(jsonPath("$.cfChild").value(res.getCfChild()))
                 .andExpect(jsonPath("$.idFermata").value(res.getIdFermata()))
                 .andExpect(jsonPath("$.verso").value(res.getVerso()));
         logger.info("PASSED");
@@ -234,7 +269,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
@@ -273,7 +308,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
@@ -291,7 +326,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alunniPerFermataAndata[0].alunni[0]").value(res.getNomeAlunno()));
+                .andExpect(jsonPath("$.alunniPerFermataAndata[0].alunni[0].codiceFiscale").value(res.getCfChild()));
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
@@ -314,7 +349,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
@@ -328,7 +363,7 @@ public class Esercitazione2ApplicationTests {
 
 
         logger.info("Modifico Prenotazione in modo errato");
-        Prenotazione resWrong = Prenotazione.builder().nomeAlunno("Angelo").idFermata(5).verso(true).build();
+        PrenotazioneResource resWrong = PrenotazioneResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(true).build();
         String resWrongJson = mapper.writeValueAsString(resWrong);
 
         this.mockMvc.perform(put("/reservations/linea1/2019-01-01/" + idRes)
@@ -357,7 +392,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        Prenotazione res = Prenotazione.builder().nomeAlunno("Marco").idFermata(1).verso(true).build();
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento e controllo posizione " + res + "...");
         MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
@@ -371,12 +406,12 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alunniPerFermataAndata[0].alunni[0]").value(res.getNomeAlunno()));
+                .andExpect(jsonPath("$.alunniPerFermataAndata[0].alunni[0].codiceFiscale").value(res.getCfChild()));
         logger.info("Inserito e controllato correttamente!");
 
 
         logger.info("Modifico Prenotazione ...");
-        Prenotazione resCorrect = Prenotazione.builder().nomeAlunno("Angelo").idFermata(5).verso(false).build();
+        PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(false).build();
         String resCorrectJson = mapper.writeValueAsString(resCorrect);
 
         this.mockMvc.perform(put("/reservations/linea1/2019-01-01/" + idRes)
@@ -389,7 +424,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alunniPerFermataRitorno[0].alunni[0]").value(resCorrect.getNomeAlunno()));
+                .andExpect(jsonPath("$.alunniPerFermataRitorno[0].alunni[0].codiceFiscale").value(resCorrect.getCfChild()));
 
         logger.info("PASSED");
         logger.info("Ripristino stato precedente...");
@@ -424,8 +459,6 @@ public class Esercitazione2ApplicationTests {
                 .andExpect(status().isInternalServerError());
         logger.info("DONE");
     }
-
-
 
 
 }
