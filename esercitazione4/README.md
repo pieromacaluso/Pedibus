@@ -1,27 +1,38 @@
-# Esercitazione4
+# Esercitazione 4
+## Composizione Gruppo
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.9.
+Il gruppo MMAP è composto da:
+- Marco Florian - s247030
+- Piero Macaluso - s252894
+- Marco Nanci - s255089
+- Angelo Turco - s255270
 
-## Development server
+## Avvio Applicazione
+1. Scompattare l'archivio `mmap-lab04-v1.zip` e da terminale posizionarsi nella cartella `mmap-lab04-v1`
+2. Avviare il comando: `npm install`
+3. Avviare il comando: `npm start`
+4. Aprire il browser e dirigersi su `http://localhost:4200`
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Utilizzo dell'app
+### Header
+Nell'header è presente solo il logo principale, ma non abbiamo ancora funzionalità (non erano richiesta dall'esercitazione).
+Abbiamo comunque provato a inserire un Menù laterale (Drawer) con qualche voce di prova
+che svilupperemo più avanti.
 
-## Code scaffolding
+### Selezione linea, verso e data
+Nella parte alta della schermata principale sono presenti alcuni campi in cui è possibile
+selezionare linea, verso e data per visualizzare le fermate e le prenotazioni.
+Sono disponibili anche sue pulsanti con frecce per cambiare giorno velocemente.
+![Toolbar](img/toolbar.png)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Prenotazioni e Presenze
+Nel corpo centrale dell'app verranno mostrate le fermate con l'elenco alfabetico degli alunni
+prenotati. L'accompagnatore potrà contrassegnare gli alunni come presenti premendo sul
+pulsante del loro nome dall'elenco degli alunni prenotati per quella fermata. Il pulsante bianco indica un bambino prenotato
+di cui non è stata confermata la presenza, mentre il pulsante color verde acqua rappresenta un alunno
+con presenza alla fermata confermata.
+![Prenotazioni](img/prenotazioni.png)
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+### Esempio di utilizzo
+In questa veloce GIF mostriamo l'utilizzo dell'applicazione.
+![Esempio di Utilizzo](img/esempio.gif)
