@@ -22,6 +22,7 @@ che svilupperemo più avanti.
 ### Selezione linea, verso e data
 Nella parte alta della schermata principale è possibile selezionare linea, verso e data per visualizzare i dettagli di una linea.
 Sono disponibili anche due frecce per cambiare giorno velocemente.
+
 ![Toolbar](img/toolbar.png)
 
 ### Prenotazioni e Presenze
@@ -30,8 +31,10 @@ prenotati. L'accompagnatore potrà contrassegnare gli alunni come presenti preme
 loro nome. Il pulsante bianco indica un alunno prenotato di cui non è stata confermata la presenza,
 mentre il pulsante color verde acqua rappresenta un alunno
 con presenza alla fermata confermata.
+
 ![Prenotazioni](img/prenotazioni.png)
 
 ### Esempio di utilizzo
 In questa veloce GIF mostriamo l'utilizzo dell'applicazione.
+
 ![Esempio di Utilizzo](img/esempio.gif)

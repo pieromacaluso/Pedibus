@@ -9,7 +9,6 @@ import {FormControl} from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  opened: boolean;
   title = 'PRESENZE';
   linee: Linea[] = [];
   verso: string[] = ['Andata', 'Ritorno'];
@@ -18,7 +17,6 @@ export class AppComponent {
   toolBarFilled: boolean;
   reservations: Prenotazioni[];
   date: Date;
-  logo: any = '../assets/svg/logo.svg';
   stop: any = '../assets/svg/cross.svg';
   next: any = '../assets/svg/next.svg';
   previous: any = '../assets/svg/previous.svg';

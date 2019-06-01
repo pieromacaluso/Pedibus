@@ -16,10 +16,12 @@ import {
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
+import {HeaderComponent} from './header/header.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

@@ -49,31 +49,12 @@
   /*size: initial; TODO sarebbe bello che non cambi dimensioni quando passiamo a fond bold/selezioniamo*/
 }
 
-.sidenav-container {
-  height: 100%;
-
-}
-
-.sidenav {
-  width: 200px;
-}
-
-.sidenav .mat-toolbar {
-  background: inherit;
-}
-
 .mat-toolbar.mat-primary {
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-.logo {
-  /* Usato per centrarlo manualmente per decentramento Drawer button*/
-  padding-right: 40px;
-  height: 100%;
-  margin: auto;
-}
 .button-data {
   /* Usato per centrarlo manualmente per decentramento Drawer button*/
   height: 100%;
@@ -139,9 +120,4 @@
 
 .margin-final {
   height: 85px !important;
-}
-
-.head-menu {
-  background: mat-color($pedibus-theme-primary, default) !important;
-  color: white
 }
