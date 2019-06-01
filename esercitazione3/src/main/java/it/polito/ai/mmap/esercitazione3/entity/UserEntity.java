@@ -36,7 +36,7 @@ public class UserEntity implements UserDetails {
     boolean isCredentialsNonExpired;
     boolean isEnabled;
     private Set<RoleEntity> roleList;
-    private Set<ChildEntity> childrenList; //puoi prenotare solo per i tuoi figli TODO
+    private Set<String> childrenList; //puoi prenotare solo per i tuoi figli
     private Date creationDate;
 
 
