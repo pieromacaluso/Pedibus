@@ -21,13 +21,13 @@ che svilupperemo più avanti.
 
 ### Selezione linea, verso e data
 Nella parte alta della schermata principale è possibile selezionare linea, verso e data per visualizzare i dettagli di una linea.
-Sono disponibili anche due pulsanti con frecce per cambiare giorno velocemente.
+Sono disponibili anche due frecce per cambiare giorno velocemente.
 ![Toolbar](img/toolbar.png)
 
 ### Prenotazioni e Presenze
 Nel corpo centrale dell'app vengono mostrate le fermate con l'elenco alfabetico degli alunni
 prenotati. L'accompagnatore potrà contrassegnare gli alunni come presenti premendo sul
-loro nome. Il pulsante bianco indica un bambino prenotato di cui non è stata confermata la presenza,
+loro nome. Il pulsante bianco indica un alunno prenotato di cui non è stata confermata la presenza,
 mentre il pulsante color verde acqua rappresenta un alunno
 con presenza alla fermata confermata.
 ![Prenotazioni](img/prenotazioni.png)
