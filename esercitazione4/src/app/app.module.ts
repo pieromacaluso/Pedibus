@@ -12,7 +12,7 @@ import {
   MatToolbarModule,
   MatNativeDateModule,
   MatFormFieldModule,
-  MatInputModule, MatButtonModule, MatSidenavModule, MatIconModule
+  MatInputModule, MatButtonModule, MatSidenavModule, MatIconModule, MAT_DATE_LOCALE
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -39,7 +39,7 @@ import { LayoutModule } from '@angular/cdk/layout';
     MatIconModule,
     FlexLayoutModule
   ],
-  providers: [],
+  providers: [{provide: MAT_DATE_LOCALE, useValue: 'it-IT'}],
   bootstrap: [AppComponent]
 })
 export class AppModule {

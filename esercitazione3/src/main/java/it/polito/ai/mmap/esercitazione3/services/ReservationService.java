@@ -1,10 +1,12 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
+import it.polito.ai.mmap.esercitazione3.entity.ChildEntity;
 import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione3.exception.PrenotazioneNotFoundException;
 import it.polito.ai.mmap.esercitazione3.exception.PrenotazioneNotValidException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.FermataDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
+import it.polito.ai.mmap.esercitazione3.repository.ChildRepository;
 import it.polito.ai.mmap.esercitazione3.repository.PrenotazioneRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
@@ -23,6 +26,9 @@ public class ReservationService {
     
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
+
+    @Autowired
+    ChildRepository childRepository;
     @Autowired
     LineeService lineeService;
    
@@ -36,7 +42,6 @@ public class ReservationService {
      */
     public String addPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         if (isValidPrenotation(prenotazioneDTO) && !isDuplicate(prenotazioneDTO)) {
-            //TODO
             PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity(prenotazioneDTO);
             return prenotazioneRepository.save(prenotazioneEntity).getId().toString();
         } else
@@ -80,8 +85,8 @@ public class ReservationService {
      */
     private Boolean isDuplicate(PrenotazioneDTO prenotazioneDTO) {
         Optional<PrenotazioneEntity> check = prenotazioneRepository
-                .findByIdChildAndDataAndVerso(
-                        prenotazioneDTO.getIdChild(),
+                .findByCfChildAndDataAndVerso(
+                        prenotazioneDTO.getCfChild(),
                         prenotazioneDTO.getData(),
                         prenotazioneDTO.getVerso());
         return check.isPresent();
@@ -164,10 +169,10 @@ public class ReservationService {
      * @param verso verso
      * @return Lista di nomi alunni
      */
-    public List<String> findAlunniFermata(Date data, Integer id, boolean verso) {
+    public List<ChildEntity> findAlunniFermata(Date data, Integer id, boolean verso) {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
-        return prenotazioni.stream().map(PrenotazioneEntity::getIdChild).map(ObjectId::toString).collect(Collectors.toList());
-        //todo sostituire il toString dell'objectId con un metodo che ritona il nome dell'alunno
+        Iterable<ChildEntity> childrenIterable = childRepository.findAllById(prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList()));
+        return StreamSupport.stream(childrenIterable.spliterator(),false).collect(Collectors.toList());
     }
 
     /**
@@ -182,7 +187,6 @@ public class ReservationService {
             PrenotazioneEntity prenotazioneEntity = getReservation(verso,data,idChild);
             prenotazioneEntity.setPresoInCarico(true);
             prenotazioneRepository.save(prenotazioneEntity);
-
     }
 
     /**
