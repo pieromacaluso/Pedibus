@@ -1,13 +1,14 @@
-import {Component} from '@angular/core';
-import {MongoService} from './mongo.service';
-import {Alunno, Linea, Prenotazioni} from './lineDetails';
+import { Component, OnInit } from '@angular/core';
+import {Alunno, Linea, Prenotazioni} from '../lineDetails';
+import {MongoService} from '../mongo.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-presenze',
+  templateUrl: './presenze.component.html',
+  styleUrls: ['./presenze.component.css']
 })
-export class AppComponent {
+export class PresenzeComponent implements OnInit {
+
   opened: boolean;
   title = 'PRESENZE';
   linee: Linea[] = [];
@@ -58,7 +59,7 @@ export class AppComponent {
   }
 
   sortedAlunni(alu: Alunno[]) {
-   return alu.sort((a, b) => {
+    return alu.sort((a, b) => {
       if (a.surname < b.surname) {
         return -1;
       } else if (b.surname < a.surname) {
@@ -73,4 +74,8 @@ export class AppComponent {
       }
     });
   }
+
+  ngOnInit(): void {
+  }
+
 }
