@@ -4,12 +4,16 @@
   width: 60%;
   height: auto;
   margin: auto;
+  margin-top: 16px;
+  padding-top: 25px;
 }
 
 .container-mobile {
-  width: 90%;
+  width: 85%;
   height: auto;
   margin: auto;
+  margin-top: 16px;
+  padding-top: 25px;
 }
 
 .card-stops {
@@ -99,6 +103,12 @@
 
   margin: 0 0 0 94px;
 }
+.prenotazioni-mobile {
+  border-color: mat-color($pedibus-theme-accent, default);
+  border-style: solid;
+  border-width: 0 0 0 2px;
+  padding: 8px;
+}
 
 .no-stops {
   margin-left: 16px;
@@ -109,4 +119,23 @@
 .stop-clock {
   color: mat-color($mat-dark-theme-background, default);
   margin: 0;
+}
+
+
+.fab-left {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 999;
+
+}
+.fab-right {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 999;
+}
+
+.margin-final {
+  height: 85px !important;
 }
