@@ -29,6 +29,9 @@ export class AppComponent {
     this.linee = mongoService.getLinee();
     this.reservations = [];
     this.date = new Date();
+    this.selectedLinea = 1;
+    this.selectedVerso = 'Andata';
+    this.fillPrenotazione();
   }
 
   /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una line_id ed una data */
