@@ -282,9 +282,4 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(userEntity);
     }
-
-    public void addChild(ChildEntity childEntity){
-        childRepository.save(childEntity);
-        //todo salvare child in db
-    }
 }

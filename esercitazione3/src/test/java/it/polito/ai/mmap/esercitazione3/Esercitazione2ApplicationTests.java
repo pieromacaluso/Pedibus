@@ -61,20 +61,6 @@ public class Esercitazione2ApplicationTests {
         childRepository.save(childEntity);
     }
 
-    //TODO rimuovere
-
-    @After
-    public void temporaryChildDestroy() {
-        ChildEntity childEntity;
-        childEntity = new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi");
-        childRepository.delete(childEntity);
-
-        childEntity = new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini");
-        childRepository.delete(childEntity);
-
-        childEntity = new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi");
-        childRepository.delete(childEntity);
-    }
 
     @Test
     public void getLines() throws Exception {
