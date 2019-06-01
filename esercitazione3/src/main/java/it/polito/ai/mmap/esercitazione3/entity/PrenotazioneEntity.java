@@ -22,6 +22,7 @@ public class PrenotazioneEntity {
     private boolean presoInCarico;  //todo
     private boolean arrivatoScuola; //todo
 
+
     // non eliminare
     public PrenotazioneEntity() {
     }

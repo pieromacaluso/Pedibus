@@ -11,9 +11,13 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.HashMap;
 
 @RestController
 public class ReservationController {
@@ -98,7 +102,7 @@ public class ReservationController {
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         //todo spostare nel service per non appesantire controller
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneEntity checkPren = reservationService.getPrenotazione(reservationId);
+        PrenotazioneEntity checkPren = reservationService.getReservation(reservationId);
 
         if (lineeService.getLineByName(nomeLinea).getNome().equals(checkPren.getNomeLinea()) && dataFormatted.equals(checkPren.getData()))
             return new PrenotazioneDTO(checkPren);
@@ -108,27 +112,25 @@ public class ReservationController {
 
     /**
      * Usato da admin linea per indicare che ha preso il bambino dalla fermata
-     * @param reservationId
-     * @param nomeUtente
+     * @param verso
+     * @param data
+     * @param child
      */
-    @PostMapping("/reservation/handled/{reservationId}")
-    public void SetHandled(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
-        //todo cambiare con ricerca per data verso e childObjct
-        reservationService.setHandled(reservationId);
+    @PostMapping("/reservation/handled/{verso}/{data}")
+    public void SetHandled(@PathVariable("verso") String verso, @PathVariable("data") String data, @RequestBody String child, HttpServletResponse response) throws Exception {
+        reservationService.setHandled(verso,data,child);
     }
-
-
 
 
     /**
      * Usato da admin linea per indicare che ha lasciato il bambino a scuola
-     * @param reservationId
-     * @param nomeUtente
+     * @param verso
+     * @param data
+     * @param child
      */
-    @PostMapping("/reservation/arrived/{reservationId}")
-    public void SetArrived(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
-        //todo
+    @PostMapping("/reservation/arrived/{verso}/{data}")
+    public void SetArrived(@PathVariable("verso") String verso,@PathVariable("data") String data, @RequestBody String child) throws Exception {
+        reservationService.setArrived(verso,data,child);
     }
-
 
 }

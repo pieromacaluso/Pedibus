@@ -12,6 +12,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,8 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
+
+    //todo sarebbe bello avere tutto ReservationX o PrenotazioneX
     
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
@@ -95,7 +98,7 @@ public class ReservationService {
      * @param reservationId ReservationID
      * @return PrenotazioneEntity
      */
-    public PrenotazioneEntity getPrenotazione(ObjectId reservationId) {
+    public PrenotazioneEntity getReservation(ObjectId reservationId) {
         Optional<PrenotazioneEntity> prenotazione = prenotazioneRepository.findById(reservationId);
         if (prenotazione.isPresent()) {
             return prenotazione.get();
@@ -106,12 +109,40 @@ public class ReservationService {
     }
 
     /**
+     * Prenotazione Entity da verso,data,idAlunno
+     * @param verso
+     * @param data
+     * @param idChild
+     * @return
+     * @throws Exception
+     */
+    public PrenotazioneEntity getReservation(String verso,String data, ObjectId idChild) throws Exception{
+        Optional<PrenotazioneEntity> check;
+        Date date=MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+
+        if(verso.equals("andata")){
+            check=prenotazioneRepository.findByIdChildAndDataAndVerso(idChild,date,true);
+        }else if(verso.equals("ritorno")){
+            check=prenotazioneRepository.findByIdChildAndDataAndVerso(idChild,date,false);
+        }else{
+            throw new Exception("errore verso");    //todo verificare
+        }
+
+        if(check.isPresent()) {
+            return check.get();
+        }else{
+            throw new PrenotazioneNotFoundException();
+        }
+
+    }
+
+    /**
      * PrenotazioneDTO da ReservationId per controller
      * @param reservationId
      * @return
      */
     public PrenotazioneDTO getPrenotazioneDTO(ObjectId reservationId){
-        return new PrenotazioneDTO(getPrenotazione(reservationId));
+        return new PrenotazioneDTO(getReservation(reservationId));
     }
 
     /**
@@ -122,7 +153,7 @@ public class ReservationService {
      * @param reservationId: Id Prenotazione
      */
     public void deletePrenotazione(String nomeLinea, Date data, ObjectId reservationId) {
-        PrenotazioneEntity prenotazione = getPrenotazione(reservationId);
+        PrenotazioneEntity prenotazione = getReservation(reservationId);
         if (prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea)) {
             prenotazioneRepository.delete(prenotazione);
         } else {
@@ -142,12 +173,33 @@ public class ReservationService {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
         Iterable<ChildEntity> childrenIterable = childRepository.findAllById(prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList()));
         return StreamSupport.stream(childrenIterable.spliterator(),false).collect(Collectors.toList());
-
     }
 
-    public void setHandled(ObjectId objectId){
-        PrenotazioneDTO prenotazioneDTO=getPrenotazioneDTO(objectId);
-        prenotazioneDTO.setPresoInCarico(true);
-        updatePrenotazione(prenotazioneDTO,objectId);
+    /**
+     * Admin lina indica che ha preso l'alunno alla fermata
+     * @param verso
+     * @param data
+     * @param child
+     * @throws Exception
+     */
+    public void setHandled(String verso,String data, String child) throws Exception {
+            ObjectId idChild=new ObjectId(child);
+            PrenotazioneEntity prenotazioneEntity = getReservation(verso,data,idChild);
+            prenotazioneEntity.setPresoInCarico(true);
+            prenotazioneRepository.save(prenotazioneEntity);
+    }
+
+    /**
+     * Admin lina indica che ha lasciato l'alunno a scuola
+     * @param verso
+     * @param data
+     * @param child
+     * @throws Exception
+     */
+    public void setArrived(String verso,String data, String child) throws Exception {
+        ObjectId idChild=new ObjectId(child);
+        PrenotazioneEntity prenotazioneEntity = getReservation(verso, data, idChild);
+        prenotazioneEntity.setArrivatoScuola(true);
+        prenotazioneRepository.save(prenotazioneEntity);
     }
 }
