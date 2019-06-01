@@ -36,15 +36,14 @@ public class UserEntity implements UserDetails {
     boolean isCredentialsNonExpired;
     boolean isEnabled;
     private Set<RoleEntity> roleList;
-    private Set<ChildEntity> childrenList; //puoi prenotare solo per i tuoi figli
+    private Set<ChildEntity> childrenList; //puoi prenotare solo per i tuoi figli TODO
     private Date creationDate;
-    private String userId;                  //in teoria non serviva ma è usato nell'UserService
 
 
     public UserEntity() {
     }
 
-    public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder,UserService userService) {
+    public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder) {
         username = userDTO.getEmail();
         password = passwordEncoder.encode(userDTO.getPassword());
         isAccountNonExpired = true;
@@ -54,15 +53,6 @@ public class UserEntity implements UserDetails {
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
         creationDate = MongoZonedDateTime.getNow();
-
-        childrenList=new HashSet<>();
-        ChildEntity childEntity=new ChildEntity("figlio","1");          //todo realizzare correttamente
-        userService.addChild(childEntity);
-        childrenList.add(childEntity);
-
-        ChildEntity childEntity2=new ChildEntity("figlio","2");
-        userService.addChild(childEntity2);
-        childrenList.add(childEntity2);
     }
 
     public UserEntity(String email, HashSet<RoleEntity> userRoles) {
