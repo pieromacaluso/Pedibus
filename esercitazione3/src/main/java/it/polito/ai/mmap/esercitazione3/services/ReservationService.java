@@ -12,7 +12,6 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -98,7 +97,7 @@ public class ReservationService {
      * @param reservationId ReservationID
      * @return PrenotazioneEntity
      */
-    public PrenotazioneEntity getReservation(ObjectId reservationId) {
+    public PrenotazioneEntity getReservationFromId(ObjectId reservationId) {
         Optional<PrenotazioneEntity> prenotazione = prenotazioneRepository.findById(reservationId);
         if (prenotazione.isPresent()) {
             return prenotazione.get();
@@ -112,20 +111,18 @@ public class ReservationService {
      * Prenotazione Entity da verso,data,idAlunno
      * @param verso
      * @param data
-     * @param idChild
+     * @param cfChild
      * @return
      * @throws Exception
      */
-    public PrenotazioneEntity getReservation(String verso,String data, ObjectId idChild) throws Exception{
+    public PrenotazioneEntity getChildReservation(Boolean verso,String data, String cfChild) throws Exception{
         Optional<PrenotazioneEntity> check;
         Date date=MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
 
-        if(verso.equals("andata")){
-            check=prenotazioneRepository.findByIdChildAndDataAndVerso(idChild,date,true);
-        }else if(verso.equals("ritorno")){
-            check=prenotazioneRepository.findByIdChildAndDataAndVerso(idChild,date,false);
+        if(verso){
+            check=prenotazioneRepository.findByCfChildAndDataAndVerso(cfChild,date,true);
         }else{
-            throw new Exception("errore verso");    //todo verificare
+            check=prenotazioneRepository.findByCfChildAndDataAndVerso(cfChild,date,false);
         }
 
         if(check.isPresent()) {
@@ -142,7 +139,7 @@ public class ReservationService {
      * @return
      */
     public PrenotazioneDTO getPrenotazioneDTO(ObjectId reservationId){
-        return new PrenotazioneDTO(getReservation(reservationId));
+        return new PrenotazioneDTO(getReservationFromId(reservationId));
     }
 
     /**
@@ -153,7 +150,7 @@ public class ReservationService {
      * @param reservationId: Id Prenotazione
      */
     public void deletePrenotazione(String nomeLinea, Date data, ObjectId reservationId) {
-        PrenotazioneEntity prenotazione = getReservation(reservationId);
+        PrenotazioneEntity prenotazione = getReservationFromId(reservationId);
         if (prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea)) {
             prenotazioneRepository.delete(prenotazione);
         } else {
@@ -179,12 +176,11 @@ public class ReservationService {
      * Admin lina indica che ha preso l'alunno alla fermata
      * @param verso
      * @param data
-     * @param child
+     * @param cfChild
      * @throws Exception
      */
-    public void setHandled(String verso,String data, String child) throws Exception {
-            ObjectId idChild=new ObjectId(child);
-            PrenotazioneEntity prenotazioneEntity = getReservation(verso,data,idChild);
+    public void setHandled(Boolean verso,String data, String cfChild) throws Exception {
+            PrenotazioneEntity prenotazioneEntity = getChildReservation(verso,data,cfChild);
             prenotazioneEntity.setPresoInCarico(true);
             prenotazioneRepository.save(prenotazioneEntity);
     }
@@ -193,12 +189,11 @@ public class ReservationService {
      * Admin lina indica che ha lasciato l'alunno a scuola
      * @param verso
      * @param data
-     * @param child
+     * @param cfChild
      * @throws Exception
      */
-    public void setArrived(String verso,String data, String child) throws Exception {
-        ObjectId idChild=new ObjectId(child);
-        PrenotazioneEntity prenotazioneEntity = getReservation(verso, data, idChild);
+    public void setArrived(Boolean verso,String data, String cfChild) throws Exception {
+        PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
         prenotazioneEntity.setArrivatoScuola(true);
         prenotazioneRepository.save(prenotazioneEntity);
     }

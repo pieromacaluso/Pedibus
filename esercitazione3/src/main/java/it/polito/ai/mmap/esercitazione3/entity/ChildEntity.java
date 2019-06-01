@@ -17,12 +17,5 @@ public class ChildEntity {
 
 
     public ChildEntity(){}
-
-
-    public ChildEntity(String nome,String cognome){
-        name=nome;
-        surname=cognome;
-        //todo salvare
-         }
 }
 

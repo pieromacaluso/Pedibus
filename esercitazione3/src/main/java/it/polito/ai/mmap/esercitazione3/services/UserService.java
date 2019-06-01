@@ -111,7 +111,7 @@ public class UserService implements UserDetailsService {
             }
         } else {
             RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
-            userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder,this);
+            userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder);
 
         }
 
@@ -233,7 +233,7 @@ public class UserService implements UserDetailsService {
 
         RoleEntity role = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
 
-        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder,this);
+        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
 
