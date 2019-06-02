@@ -13,9 +13,12 @@ Il gruppo MMAP è composto da:
 3. Avviare il comando: `npm start`
 4. Aprire il browser e dirigersi su `http://localhost:4200`
 
+![Schermata](img/schermata.png)
+
+
 ## Dati di prova
 
-In questa esercitazione abbiamo inserito dei dati fittizi che andranno a popolare la data corrente e la data successiva.
+In questa esercitazione abbiamo inserito dei dati fittizi che andranno a popolare la data corrente e la data immediatamente successiva.
 
 Ad esempio se l'esercitazione viene aperta in data 05/06/2019, le prenotazioni e le linee disponibili saranno popolate nelle date 05/06/2019 e 06/06/2019.
 
@@ -26,7 +29,7 @@ Abbiamo comunque provato a inserire un Menù laterale (Drawer) con qualche voce 
 che svilupperemo più avanti.
 
 ### Selezione linea, verso e data
-Nella parte alta della schermata principale è possibile selezionare linea, verso e data per visualizzare i dettagli di una linea.
+Nella parte alta della schermata principale è possibile selezionare linea (Linea 1, Linea 2), verso (Andata, Ritorno) e data per visualizzare i dettagli di una linea.
 Sono disponibili anche due frecce per cambiare giorno velocemente.
 
 ![Toolbar](img/toolbar.png)
@@ -37,6 +40,8 @@ prenotati. L'accompagnatore potrà contrassegnare gli alunni come presenti preme
 loro nome. Il pulsante bianco indica un alunno prenotato di cui non è stata confermata la presenza,
 mentre il pulsante color verde acqua rappresenta un alunno
 con presenza alla fermata confermata.
+
+All'avvio dell'applicazione i pulsanti saranno tutti bianchi come default. 
 
 ![Prenotazioni](img/prenotazioni.png)
 
