@@ -13,6 +13,14 @@ Il gruppo MMAP è composto da:
 3. Avviare il comando: `npm start`
 4. Aprire il browser e dirigersi su `http://localhost:4200`
 
+
+## Dati di prova
+
+In questa esercitazione abbiamo inserito dei dati fittizi che andranno a popolare la data corrente e la data successiva.
+
+Ad esempio se l'esercitazione viene aperta in data 05/06/2019, le prenotazioni e le linee disponibili saranno popolate nelle date 05/06/2019 e 06/06/2019.
+
+
 ## Utilizzo dell'app
 
 ### Header
