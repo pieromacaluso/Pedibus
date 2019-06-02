@@ -13,7 +13,7 @@ Il gruppo MMAP è composto da:
 3. Avviare il comando: `npm start`
 4. Aprire il browser e dirigersi su `http://localhost:4200`
 
-![Schermata](img/schermata.png)
+![Schermata](screenshot/schermata.png)
 
 
 ## Dati di prova
@@ -32,7 +32,7 @@ che svilupperemo più avanti.
 Nella parte alta della schermata principale è possibile selezionare linea (Linea 1, Linea 2), verso (Andata, Ritorno) e data per visualizzare i dettagli di una linea.
 Sono disponibili anche due frecce per cambiare giorno velocemente.
 
-![Toolbar](img/toolbar.png)
+![Toolbar](screenshot/toolbar.png)
 
 ### Prenotazioni e Presenze
 Nel corpo centrale dell'app vengono mostrate le fermate con l'elenco alfabetico degli alunni
@@ -43,9 +43,9 @@ con presenza alla fermata confermata.
 
 All'avvio dell'applicazione i pulsanti saranno tutti bianchi come default. 
 
-![Prenotazioni](img/prenotazioni.png)
+![Prenotazioni](screenshot/prenotazioni.png)
 
 ### Esempio di utilizzo
 In questa veloce GIF mostriamo l'utilizzo dell'applicazione.
 
-![Esempio di Utilizzo](img/esempio.gif)
+![Esempio di Utilizzo](screenshot/esempio.gif)
