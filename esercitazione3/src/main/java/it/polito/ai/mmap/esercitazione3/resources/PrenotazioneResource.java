@@ -14,10 +14,9 @@ import org.springframework.hateoas.ResourceSupport;
  *
  */
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
-public class PrenotazioneResource extends ResourceSupport
+public class PrenotazioneResource
 {
     private String cfChild;
     private Integer idFermata;

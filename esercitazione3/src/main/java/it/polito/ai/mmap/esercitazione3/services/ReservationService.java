@@ -177,8 +177,8 @@ public class ReservationService {
      */
     public List<ChildEntity> findAlunniFermata(Date data, Integer id, boolean verso) {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
-        Iterable<ChildEntity> childrenIterable = childRepository.findAllById(prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList()));
-        return StreamSupport.stream(childrenIterable.spliterator(), false).collect(Collectors.toList());
+        List<String> cfList = prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList());
+        return  (List<ChildEntity>) childRepository.findAllById(cfList);
     }
 
     /**
