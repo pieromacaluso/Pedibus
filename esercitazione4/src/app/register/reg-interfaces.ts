@@ -3,3 +3,9 @@ export interface RegisterModel {
   password: string;
   passMatch: string;
 }
+
+export interface LoginModel {
+  email: string;
+  password: string;
+
+}

@@ -3,7 +3,9 @@
      (click)="activeLink = link"
      [active]="activeLink == link"
      [routerLink]="link"> {{link}} </a>
+  <a *ngIf="userLogged" mat-tab-link (click)="logOut()">Logout</a>
 </nav>
-
-
 <router-outlet></router-outlet>
+
+{{'is logged: ' + userLogged}}
+{{'expire_at: ' + (registerService.getExpiration() | date: 'medium')}}

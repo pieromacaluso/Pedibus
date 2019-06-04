@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {RegisterService} from '../register.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -7,13 +9,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
 
-  links = ['register', 'login', 'presenze'];
-  activeLink = this.links[0];
+  links;
+  activeLink;
+  userLogged: boolean;
 
-  constructor() { }
+  constructor(private registerService: RegisterService, private router: Router) {
+    this.userLogged = this.registerService.isLoggedIn();
+    this.links = this.userLogged ? ['presenze'] : ['register', 'login'];
+    this.activeLink = this.links[0];
+  }
 
   ngOnInit() {
   }
 
 
+  logOut() {
+    this.userLogged = false;
+    this.links = ['register', 'login'];
+    this.registerService.logout();
+    this.router.navigate(['/login']);
+  }
 }
