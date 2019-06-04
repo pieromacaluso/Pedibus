@@ -3,10 +3,12 @@ package it.polito.ai.mmap.esercitazione3.objectDTO;
 import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione3.resources.PrenotazioneResource;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 public class PrenotazioneDTO {
 
     private String cfChild;

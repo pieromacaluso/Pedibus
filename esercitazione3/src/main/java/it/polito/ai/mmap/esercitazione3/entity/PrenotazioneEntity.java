@@ -2,6 +2,7 @@ package it.polito.ai.mmap.esercitazione3.entity;
 
 import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 @Document(collection = "reservations")
 public class PrenotazioneEntity {
 
@@ -21,11 +23,6 @@ public class PrenotazioneEntity {
     private boolean verso;
     private boolean presoInCarico;  //todo
     private boolean arrivatoScuola; //todo
-
-
-    // non eliminare
-    public PrenotazioneEntity() {
-    }
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
         cfChild =prenotazioneDTO.getCfChild();

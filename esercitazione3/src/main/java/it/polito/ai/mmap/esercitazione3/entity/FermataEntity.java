@@ -2,11 +2,13 @@ package it.polito.ai.mmap.esercitazione3.entity;
 
 import it.polito.ai.mmap.esercitazione3.objectDTO.FermataDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Data
+@NoArgsConstructor
 @Document(collection = "stops")
 public class FermataEntity {
 
@@ -17,10 +19,6 @@ public class FermataEntity {
     private String orario;
     private String nomeLinea;
     private Boolean verso;
-
-    public FermataEntity() {
-
-    }
 
     /**
      * Conversione da DTO ad Entity

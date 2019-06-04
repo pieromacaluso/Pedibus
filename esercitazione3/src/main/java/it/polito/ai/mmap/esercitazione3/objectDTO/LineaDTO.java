@@ -4,20 +4,19 @@ import it.polito.ai.mmap.esercitazione3.entity.FermataEntity;
 import it.polito.ai.mmap.esercitazione3.entity.LineaEntity;
 import it.polito.ai.mmap.esercitazione3.repository.FermataRepository;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@NoArgsConstructor
 public class LineaDTO {
     private String nome;
     private ArrayList<String> adminList;
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
-
-    public LineaDTO() {
-    }
 
     /**
      * Crea una lineaDTO inserendo tutte le info sulle fermate

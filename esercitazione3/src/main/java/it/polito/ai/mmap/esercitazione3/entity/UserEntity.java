@@ -4,6 +4,7 @@ import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.services.UserService;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
@@ -25,6 +26,7 @@ import java.util.*;
 
 @Data
 @Document(collection = "users")
+@NoArgsConstructor
 public class UserEntity implements UserDetails {
 
     @Id
@@ -40,9 +42,6 @@ public class UserEntity implements UserDetails {
     private Date creationDate;
 
 
-    public UserEntity() {
-    }
-
     public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder) {
         username = userDTO.getEmail();
         password = passwordEncoder.encode(userDTO.getPassword());
@@ -53,6 +52,20 @@ public class UserEntity implements UserDetails {
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
         childrenList = new HashSet<>();
+        creationDate = MongoZonedDateTime.getNow();
+    }
+
+
+    public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder, Set<String> childrenList) {
+        username = userDTO.getEmail();
+        password = passwordEncoder.encode(userDTO.getPassword());
+        isAccountNonExpired = true;
+        isAccountNonLocked = true;
+        isCredentialsNonExpired = true;
+        isEnabled = false;
+        roleList = new HashSet<>();
+        roleList.addAll(userRoles);
+        this.childrenList = childrenList;
         creationDate = MongoZonedDateTime.getNow();
     }
 

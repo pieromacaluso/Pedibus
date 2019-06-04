@@ -1,8 +1,11 @@
 package it.polito.ai.mmap.esercitazione3.objectDTO;
 
+import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.validator.FieldsValueMatch;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.Email;
@@ -20,6 +23,8 @@ import javax.validation.constraints.Size;
         message = "Passwords do not match!"
 )
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO extends ResourceSupport {
     @Email
     @Size(min = 7, max = 64)
@@ -32,3 +37,5 @@ public class UserDTO extends ResourceSupport {
     @Size(min = 3, max = 64)
     private String passMatch;
 }
+
+
