@@ -4,12 +4,16 @@
   width: 60%;
   height: auto;
   margin: auto;
+  margin-top: 16px;
+  padding-top: 25px;
 }
 
 .container-mobile {
-  width: 90%;
+  width: 85%;
   height: auto;
   margin: auto;
+  margin-top: 16px;
+  padding-top: 25px;
 }
 
 .card-stops {
@@ -42,19 +46,6 @@
 .alunno-presenza {
   margin-top: 0.5%;
   margin-right: 0.5%;
-  /*size: initial; TODO sarebbe bello che non cambi dimensioni quando passiamo a fond bold/selezioniamo*/
-}
-
-.sidenav-container {
-  height: 100%;
-}
-
-.sidenav {
-  width: 200px;
-}
-
-.sidenav .mat-toolbar {
-  background: inherit;
 }
 
 .mat-toolbar.mat-primary {
@@ -63,12 +54,6 @@
   z-index: 1;
 }
 
-.logo {
-  /* Usato per centrarlo manualmente per decentramento Drawer button*/
-  padding-right: 40px;
-  height: 100%;
-  margin: auto;
-}
 .button-data {
   /* Usato per centrarlo manualmente per decentramento Drawer button*/
   height: 100%;
@@ -100,6 +85,13 @@
   margin: 0 0 0 94px;
 }
 
+.prenotazioni-mobile {
+  border-color: mat-color($pedibus-theme-accent, default);
+  border-style: solid;
+  border-width: 0 0 0 2px;
+  padding: 8px;
+}
+
 .no-stops {
   margin-left: 16px;
   padding: 5px;
@@ -109,4 +101,24 @@
 .stop-clock {
   color: mat-color($mat-dark-theme-background, default);
   margin: 0;
+}
+
+
+.fab-left {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 999;
+
+}
+
+.fab-right {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 999;
+}
+
+.margin-final {
+  height: 85px !important;
 }

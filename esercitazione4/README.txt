@@ -2,10 +2,10 @@
 ## Composizione Gruppo
 
 Il gruppo MMAP è composto da:
-- **Marco Florian** - s247030
-- **Piero Macaluso** - s252894
-- **Marco Nanci** - s255089
-- **Angelo Turco** - s255270
+- Marco Florian - s247030
+- Piero Macaluso - s252894
+- Marco Nanci - s255089
+- Angelo Turco - s255270
 
 ## Avvio Applicazione
 1. Dopo aver scompattato l'archivio `mmap-lab04-v1.zip`, posizionarsi da terminale nella cartella `mmap-lab04-v1`
@@ -14,7 +14,6 @@ Il gruppo MMAP è composto da:
 4. Aprire il browser e dirigersi su `http://localhost:4200`
 
 ![Schermata](screenshot/schermata.png)
-
 
 ## Dati di prova
 
@@ -41,7 +40,7 @@ loro nome. Il pulsante bianco indica un alunno prenotato di cui non è stata con
 mentre il pulsante color verde acqua rappresenta un alunno
 con presenza alla fermata confermata.
 
-All'avvio dell'applicazione i pulsanti saranno tutti bianchi come default. 
+All'avvio dell'applicazione i pulsanti saranno tutti bianchi come default.
 
 ![Prenotazioni](screenshot/prenotazioni.png)
 

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -34,7 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class Esercitazione3ApplicationTests {
-
+    @Value("${superadmin.email}")
+    private String superAdminMail;
+    @Value("${superadmin.password}")
+    private String superAdminPass;
+    
     @Autowired
     JsonHandlerService jsonHandlerService;
     @Autowired
@@ -56,8 +61,8 @@ public class Esercitazione3ApplicationTests {
     public void postLogin_correct() throws Exception {
         logger.info("Test POST /login ...");
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(user);
 
@@ -71,7 +76,7 @@ public class Esercitazione3ApplicationTests {
     public void postLogin_incorrect() throws Exception {
         logger.info("Test POST /login ...");
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
+        user.setEmail(superAdminMail);
         user.setPassword("aimaimaim");
         ObjectMapper mapper = new ObjectMapper();
         String json1 = mapper.writeValueAsString(user);
@@ -86,7 +91,7 @@ public class Esercitazione3ApplicationTests {
         this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json2))
                 .andExpect(status().isUnauthorized());
 
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
+        user.setEmail(superAdminMail);
         user.setPassword("1");
         String json3 = mapper.writeValueAsString(user);
 
@@ -307,8 +312,8 @@ public class Esercitazione3ApplicationTests {
 
         // User authorized --> 200 OK
         user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
 
         result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
@@ -337,8 +342,8 @@ public class Esercitazione3ApplicationTests {
         // SYS-ADMIN
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
-        user.setEmail("applicazioni.internet.mmap@gmail.com");
-        user.setPassword("12345@Sys");
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
         String json = mapper.writeValueAsString(user);
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();

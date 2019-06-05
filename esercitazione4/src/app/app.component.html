@@ -1,1 +1,20 @@
-<app-navbar></app-navbar>
+<nav mat-tab-nav-bar *ngIf="userLogged; else notLogged">
+  <a mat-tab-link *ngFor="let link of loggedLinks"
+     (click)="activeLoggedLink = link"
+     [active]="activeLoggedLink == link"
+     [routerLink]="link"> {{link}} </a>
+  <a mat-tab-link (click)="logOut()">Logout</a>
+</nav>
+
+<ng-template #notLogged>
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link *ngFor="let link of notLoggedLinks"
+       (click)="activeNotLoggedLink = link"
+       [active]="activeNotLoggedLink == link"
+       [routerLink]="link"> {{link}} </a>
+  </nav>
+</ng-template>
+
+{{'User logged: ' + auth.isLoggedIn() + ', expiration: ' + (auth.getExpiration() | date: 'medium') }}
+<router-outlet></router-outlet>
+

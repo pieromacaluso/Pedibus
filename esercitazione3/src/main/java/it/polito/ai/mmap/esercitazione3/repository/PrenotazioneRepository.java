@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PrenotazioneRepository extends MongoRepository<PrenotazioneEntity, Integer> {
-
     Optional<PrenotazioneEntity> findById(ObjectId id);
     Optional<PrenotazioneEntity> findByCfChildAndDataAndVerso(String nome, Date data, boolean verso);
     List<PrenotazioneEntity> findAllByDataAndIdFermataAndVerso(Date data, Integer id, boolean verso);
+    List<PrenotazioneEntity> deleteAllByCfChild(String cfChild);
 }

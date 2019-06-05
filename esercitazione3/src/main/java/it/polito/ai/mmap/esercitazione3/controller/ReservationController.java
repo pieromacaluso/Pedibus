@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @RestController
@@ -31,13 +32,15 @@ public class ReservationController {
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
      * @param nomeLinea nome linea
-     * @param data data in esame
+     * @param data      data in esame
      * @return GetReservationsNomeLineaDataResource
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/reservations/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
+        logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService,reservationService);
+        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService);
     }
 
     /**
@@ -45,8 +48,8 @@ public class ReservationController {
      * restituisce un identificatore univoco della prenotazione creata
      *
      * @param prenotazioneResource JSON Body Prenotazione
-     * @param nomeLinea nome linea
-     * @param data data in esame
+     * @param nomeLinea            nome linea
+     * @param data                 data in esame
      * @return identificatore univoco prenotazione
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
@@ -62,9 +65,9 @@ public class ReservationController {
      * Il reservation_id ci permette di identificare la prenotazione da modificare, il body contiene i dati aggiornati.
      *
      * @param prenotazioneResource JSON Body Prenotazione
-     * @param nomeLinea nome linea
-     * @param data data in esame
-     * @param reservationId id Prenotazione da aggiornare
+     * @param nomeLinea            nome linea
+     * @param data                 data in esame
+     * @param reservationId        id Prenotazione da aggiornare
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
@@ -76,9 +79,9 @@ public class ReservationController {
     /**
      * Elimina la prenotazione indicata
      *
-     * @param nomeLinea nome linea
-     * @param data data in esame
-     * @param reservationId  id prenotazione
+     * @param nomeLinea     nome linea
+     * @param data          data in esame
+     * @param reservationId id prenotazione
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
@@ -89,8 +92,8 @@ public class ReservationController {
     /**
      * Restituisce la prenotazione controllando che nomeLinea e Data corrispondano a quelli del reservation_id
      *
-     * @param nomeLinea nome linea
-     * @param data data in esame
+     * @param nomeLinea     nome linea
+     * @param data          data in esame
      * @param reservationId id prenotazione
      * @return PrenotazioneDTO
      */
@@ -98,7 +101,7 @@ public class ReservationController {
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         //todo spostare nel service per non appesantire controller
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneEntity checkPren = reservationService.getPrenotazione(reservationId);
+        PrenotazioneEntity checkPren = reservationService.getReservationFromId(reservationId);
 
         if (lineeService.getLineByName(nomeLinea).getNome().equals(checkPren.getNomeLinea()) && dataFormatted.equals(checkPren.getData()))
             return new PrenotazioneDTO(checkPren);
@@ -108,27 +111,27 @@ public class ReservationController {
 
     /**
      * Usato da admin linea per indicare che ha preso il bambino dalla fermata
-     * @param reservationId
-     * @param nomeUtente
+     *
+     * @param verso
+     * @param data
+     * @param child
      */
-    @PostMapping("/reservation/handled/{reservationId}")
-    public void SetHandled(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
-        //todo cambiare con ricerca per data verso e childObjct
-        reservationService.setHandled(reservationId);
+    @PostMapping("/reservation/handled/{verso}/{data}")
+    public void SetHandled(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody String child, HttpServletResponse response) throws Exception {
+        reservationService.setHandled(verso, data, child);
     }
-
-
 
 
     /**
      * Usato da admin linea per indicare che ha lasciato il bambino a scuola
-     * @param reservationId
-     * @param nomeUtente
+     *
+     * @param verso
+     * @param data
+     * @param child
      */
-    @PostMapping("/reservation/arrived/{reservationId}")
-    public void SetArrived(@PathVariable("reservationId") ObjectId reservationId, @RequestBody String nomeUtente){
-        //todo
+    @PostMapping("/reservation/arrived/{verso}/{data}")
+    public void SetArrived(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody String child) throws Exception {
+        reservationService.setArrived(verso, data, child);
     }
-
 
 }

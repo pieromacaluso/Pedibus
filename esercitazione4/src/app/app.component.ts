@@ -8,7 +8,6 @@ import {Alunno, Linea, Prenotazioni} from './lineDetails';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  opened: boolean;
   title = 'PRESENZE';
   linee: Linea[] = [];
   verso: string[] = ['Andata', 'Ritorno'];
@@ -17,7 +16,6 @@ export class AppComponent {
   toolBarFilled: boolean;
   reservations: Prenotazioni[];
   date: Date;
-  logo: any = '../assets/svg/logo.svg';
   stop: any = '../assets/svg/cross.svg';
   next: any = '../assets/svg/next.svg';
   previous: any = '../assets/svg/previous.svg';
@@ -25,9 +23,12 @@ export class AppComponent {
 
 
   constructor(private mongoService: MongoService) {
-    this.linee = mongoService.getLinee();
+    this.linee = MongoService.getLinee();
     this.reservations = [];
     this.date = new Date();
+    this.selectedLinea = 1;
+    this.selectedVerso = 'Andata';
+    this.fillPrenotazione();
   }
 
   /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una line_id ed una data */
@@ -58,7 +59,7 @@ export class AppComponent {
   }
 
   sortedAlunni(alu: Alunno[]) {
-   return alu.sort((a, b) => {
+    return alu.sort((a, b) => {
       if (a.surname < b.surname) {
         return -1;
       } else if (b.surname < a.surname) {

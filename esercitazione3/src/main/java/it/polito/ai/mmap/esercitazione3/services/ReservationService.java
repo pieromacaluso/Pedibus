@@ -2,14 +2,20 @@ package it.polito.ai.mmap.esercitazione3.services;
 
 import it.polito.ai.mmap.esercitazione3.entity.ChildEntity;
 import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
+import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
+import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
 import it.polito.ai.mmap.esercitazione3.exception.PrenotazioneNotFoundException;
 import it.polito.ai.mmap.esercitazione3.exception.PrenotazioneNotValidException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.FermataDTO;
+import it.polito.ai.mmap.esercitazione3.objectDTO.LineaDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione3.repository.ChildRepository;
 import it.polito.ai.mmap.esercitazione3.repository.PrenotazioneRepository;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,7 +26,8 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
-    
+    //todo sarebbe bello avere tutto ReservationX o PrenotazioneX
+
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
 
@@ -28,7 +35,7 @@ public class ReservationService {
     ChildRepository childRepository;
     @Autowired
     LineeService lineeService;
-   
+
 
     /**
      * Aggiunge una nuova prenotazione al db. Controlla:
@@ -63,15 +70,21 @@ public class ReservationService {
     }
 
     /**
-     * Controlla che i dettagli della prenotazione siano consistenti.
+     * Controlla che i dettagli della prenotazione siano consistenti:
+     * - La fermata è nel verso indicato
+     * - Si sta cercando di prenotare per uno dei proprio children o system-admin o amministratore della linea
      *
      * @param prenotazioneDTO: Oggetto PrenotazioneDTO
      * @return True se la prenotazione è valida, altrimenti False
      */
     private Boolean isValidPrenotation(PrenotazioneDTO prenotazioneDTO) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FermataDTO fermataDTO = lineeService.getFermataById(prenotazioneDTO.getIdFermata());
-        return (lineeService.getLineByName(prenotazioneDTO.getNomeLinea()).getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
-                (lineeService.getLineByName(prenotazioneDTO.getNomeLinea()).getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso());
+        LineaDTO lineaDTO = lineeService.getLineByName(prenotazioneDTO.getNomeLinea());
+
+        return ((lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
+                (lineaDTO.getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso())) &&
+                (principal.getChildrenList().contains(prenotazioneDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()));
     }
 
     /**
@@ -95,7 +108,7 @@ public class ReservationService {
      * @param reservationId ReservationID
      * @return PrenotazioneEntity
      */
-    public PrenotazioneEntity getPrenotazione(ObjectId reservationId) {
+    public PrenotazioneEntity getReservationFromId(ObjectId reservationId) {
         Optional<PrenotazioneEntity> prenotazione = prenotazioneRepository.findById(reservationId);
         if (prenotazione.isPresent()) {
             return prenotazione.get();
@@ -106,27 +119,51 @@ public class ReservationService {
     }
 
     /**
-     * PrenotazioneDTO da ReservationId per controller
-     * @param reservationId
+     * Prenotazione Entity da verso,data,idAlunno
+     *
+     * @param verso
+     * @param data
+     * @param cfChild
      * @return
+     * @throws Exception
      */
-    public PrenotazioneDTO getPrenotazioneDTO(ObjectId reservationId){
-        return new PrenotazioneDTO(getPrenotazione(reservationId));
+    public PrenotazioneEntity getChildReservation(Boolean verso, String data, String cfChild) throws Exception {
+        Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+        Optional<PrenotazioneEntity> check = prenotazioneRepository.findByCfChildAndDataAndVerso(cfChild, date, verso);
+        if (check.isPresent()) {
+            return check.get();
+        } else {
+            throw new PrenotazioneNotFoundException();
+        }
     }
 
     /**
-     * Elimina la prenotazione indicata dall'objectId controllando che i dettagli siano consistenti
+     * PrenotazioneDTO da ReservationId per controller
+     *
+     * @param reservationId
+     * @return
+     */
+    public PrenotazioneDTO getPrenotazioneDTO(ObjectId reservationId) {
+        return new PrenotazioneDTO(getReservationFromId(reservationId));
+    }
+
+    /**
+     * Elimina la prenotazione indicata dall'objectId controllando:
+     * - Dettagli siano consistenti
+     * - Si sta cercando di cancellare uno dei proprio children o system-admin o amministratore della linea
      *
      * @param nomeLinea:     Nome della Linea
      * @param data:          Data
      * @param reservationId: Id Prenotazione
      */
     public void deletePrenotazione(String nomeLinea, Date data, ObjectId reservationId) {
-        PrenotazioneEntity prenotazione = getPrenotazione(reservationId);
-        if (prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea)) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PrenotazioneEntity prenotazione = getReservationFromId(reservationId);
+        LineaDTO lineaDTO = lineeService.getLineByName(prenotazione.getNomeLinea());
+        if (prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
             prenotazioneRepository.delete(prenotazione);
         } else {
-            throw new IllegalArgumentException("Errore in cancellazione");
+            throw new IllegalArgumentException("Errore in cancellazione prenotazione");
         }
     }
 
@@ -140,14 +177,35 @@ public class ReservationService {
      */
     public List<ChildEntity> findAlunniFermata(Date data, Integer id, boolean verso) {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
-        Iterable<ChildEntity> childrenIterable = childRepository.findAllById(prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList()));
-        return StreamSupport.stream(childrenIterable.spliterator(),false).collect(Collectors.toList());
-
+        List<String> cfList = prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList());
+        return  (List<ChildEntity>) childRepository.findAllById(cfList);
     }
 
-    public void setHandled(ObjectId objectId){
-        PrenotazioneDTO prenotazioneDTO=getPrenotazioneDTO(objectId);
-        prenotazioneDTO.setPresoInCarico(true);
-        updatePrenotazione(prenotazioneDTO,objectId);
+    /**
+     * Admin lina indica che ha preso l'alunno alla fermata
+     *
+     * @param verso
+     * @param data
+     * @param cfChild
+     * @throws Exception
+     */
+    public void setHandled(Boolean verso, String data, String cfChild) throws Exception {
+        PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
+        prenotazioneEntity.setPresoInCarico(true);
+        prenotazioneRepository.save(prenotazioneEntity);
+    }
+
+    /**
+     * Admin lina indica che ha lasciato l'alunno a scuola
+     *
+     * @param verso
+     * @param data
+     * @param cfChild
+     * @throws Exception
+     */
+    public void setArrived(Boolean verso, String data, String cfChild) throws Exception {
+        PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
+        prenotazioneEntity.setArrivatoScuola(true);
+        prenotazioneRepository.save(prenotazioneEntity);
     }
 }

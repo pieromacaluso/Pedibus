@@ -2,6 +2,7 @@ package it.polito.ai.mmap.esercitazione3.entity;
 
 import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
@@ -24,6 +25,7 @@ import java.util.Random;
  */
 
 @Data
+@NoArgsConstructor
 @Document(collection = "activationTokens")
 public class ActivationTokenEntity {
 
@@ -35,9 +37,6 @@ public class ActivationTokenEntity {
     // Scadenza dopo 24h
     @Indexed(name = "ttl_index", expireAfterSeconds = 1*3600*24)
     Date creationDate;
-
-    public ActivationTokenEntity() {
-    }
 
     public ActivationTokenEntity(ObjectId userId) {
         this.id = new ObjectId();
