@@ -48,6 +48,9 @@ public class AuthenticationRestController {
      */
     @PostConstruct
     public void init() {
+        logger.info("Caricamento ruoli in corso...");
+        userService.createRoles();
+        logger.info("Caricamento ruoli completato.");
         userService.registerSuperUser();
         logger.info("SuperAdmin creato o esistente.");
     }

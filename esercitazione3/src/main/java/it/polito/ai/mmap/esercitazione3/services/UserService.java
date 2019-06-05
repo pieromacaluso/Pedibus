@@ -282,4 +282,12 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(userEntity);
     }
+
+    public void createRoles() {
+        List<RoleEntity> roleList = new ArrayList<>();
+        roleList.add(RoleEntity.builder().role("ROLE_USER").build());
+        roleList.add(RoleEntity.builder().role("ROLE_ADMIN").build());
+        roleList.add(RoleEntity.builder().role("ROLE_SYSTEM-ADMIN").build());
+        roleRepository.saveAll(roleList);
+    }
 }
