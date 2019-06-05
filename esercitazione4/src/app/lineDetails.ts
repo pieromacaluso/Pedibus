@@ -1,28 +1,22 @@
-export interface LineDetails {
-  line_id: number;
-  dates: {
-    date: Date;
-    alunniPerFermataAndata: Prenotazioni [];
-    alunniPerFermataRitorno: Prenotazioni [];
-  } [];
+export interface LineReservation {
+  alunniPerFermataAndata: AlunniPerFermata[];
+  alunniPerFermataRitorno: AlunniPerFermata[];
 }
 
-export interface Linea {
-  id: number;
-  name: string;
-}
-
-export interface Prenotazioni {
-  fermata: {
-    id: number;
-    nome: string;
-    orario: string;
-  };
+export interface AlunniPerFermata {
+  fermata: Fermata;
   alunni: Alunno[];
 }
 
 export interface Alunno {
+  codiceFiscale: string;
   name: string;
   surname: string;
   presenza: boolean;
+}
+
+export interface Fermata {
+  id: number;
+  nome: string;
+  orario: string;
 }

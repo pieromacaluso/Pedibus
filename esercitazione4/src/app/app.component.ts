@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
 import {MongoService} from './mongo.service';
-import {Alunno, Linea, LineDetails, Prenotazioni} from './lineDetails';
+import {AlunniPerFermata, Alunno, LineReservation} from './lineDetails';
 import {FormControl} from '@angular/forms';
+import {Line} from 'tslint/lib/verify/lines';
 
 @Component({
   selector: 'app-root',
@@ -10,24 +11,28 @@ import {FormControl} from '@angular/forms';
 })
 export class AppComponent {
   title = 'PRESENZE';
-  linee: Linea[] = [];
   verso: string[] = ['Andata', 'Ritorno'];
   selectedVerso: string;
-  selectedLinea: number;
+  selectedLinea: string;
   toolBarFilled: boolean;
-  reservations: Prenotazioni[];
+  reservations: AlunniPerFermata[];
   date: Date;
   stop: any = '../assets/svg/cross.svg';
   next: any = '../assets/svg/next.svg';
   previous: any = '../assets/svg/previous.svg';
   cross: any = '../assets/svg/cross.svg';
+  linee: string[];
 
 
   constructor(private mongoService: MongoService) {
-    this.linee = MongoService.getLinee();
     this.reservations = [];
     this.date = new Date();
-    this.selectedLinea = 1;
+    this.mongoService.getLinee().subscribe(value => {
+      this.linee = value as string[];
+      this.selectedLinea = this.linee[0];
+    }, error1 => {
+      console.log(error1);
+    });
     this.selectedVerso = 'Andata';
     this.fillPrenotazione();
   }
@@ -39,7 +44,14 @@ export class AppComponent {
         this.selectedVerso = this.verso[0];
       }
       this.toolBarFilled = true;
-      this.reservations = this.mongoService.getPrenotazioneByLineaAndDateAndVerso(this.selectedLinea, this.date, this.selectedVerso);
+      this.mongoService.getPrenotazioneByLineaAndDateAndVerso(this.selectedLinea, this.date).subscribe(value => {
+        let lineReservation: LineReservation;
+        lineReservation = value as LineReservation;
+        // tslint:disable-next-line:max-line-length
+        this.reservations = this.selectedVerso === 'Andata' ? lineReservation.alunniPerFermataAndata : lineReservation.alunniPerFermataRitorno;
+      }, error1 => {
+        console.log(error1);
+      });
     }
   }
 

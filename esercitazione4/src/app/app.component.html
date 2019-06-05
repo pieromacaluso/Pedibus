@@ -35,7 +35,7 @@
         <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
           <mat-label>Seleziona linea</mat-label>
           <mat-select (selectionChange)="fillPrenotazione()" [(ngModel)]="selectedLinea">
-            <mat-option *ngFor="let linea of linee" [value]="linea.id">{{linea.name}}
+            <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
             </mat-option>
           </mat-select>
         </mat-form-field>

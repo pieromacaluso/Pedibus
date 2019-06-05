@@ -17,6 +17,7 @@ import {
 import {FormsModule} from '@angular/forms';
 import {LayoutModule} from '@angular/cdk/layout';
 import {HeaderComponent} from './header/header.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import {HeaderComponent} from './header/header.component';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     MatListModule,
     MatDatepickerModule,
