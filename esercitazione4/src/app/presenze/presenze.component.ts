@@ -26,7 +26,7 @@ export class PresenzeComponent implements OnInit {
 
 
   constructor(private mongoService: MongoService) {
-    this.linee = mongoService.getLinee();
+    this.linee = MongoService.getLinee();
     this.reservations = [];
     this.date = new Date();
   }
