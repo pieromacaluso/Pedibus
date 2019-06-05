@@ -7,6 +7,8 @@ import it.polito.ai.mmap.esercitazione3.services.LineeService;
 import it.polito.ai.mmap.esercitazione3.services.ReservationService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.ResourceSupport;
 
 import java.util.ArrayList;
@@ -17,9 +19,9 @@ import java.util.stream.Collectors;
 /**
  * Classe che mappa da java a json l'oggetto chiesto da GET /reservations/{nome_linea}/{data}
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class GetReservationsNomeLineaDataResource extends ResourceSupport {
+public class GetReservationsNomeLineaDataResource {
+
 
     List<FermataDTOAlunni> alunniPerFermataAndata;
     List<FermataDTOAlunni> alunniPerFermataRitorno;
@@ -31,6 +33,7 @@ public class GetReservationsNomeLineaDataResource extends ResourceSupport {
                 .collect(Collectors.toList());
         // true per indicare l'andata
         alunniPerFermataAndata.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), true)));
+
 
         alunniPerFermataRitorno = (lineeService.getLineByName(nomeLina)).getRitorno().stream()
                 .map(FermataDTOAlunni::new)

@@ -13,9 +13,8 @@ import java.util.stream.Collectors;
  * Classe che mappa da java a json l'oggetto chiesto da GET /lines
  *
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class LinesResource extends ResourceSupport {
+public class LinesResource {
 
 
     ArrayList<String> listLineeName = new ArrayList<>();

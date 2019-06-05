@@ -3,8 +3,10 @@ package it.polito.ai.mmap.esercitazione3;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.esercitazione3.entity.ChildEntity;
+import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
 import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.ChildRepository;
 import it.polito.ai.mmap.esercitazione3.repository.PrenotazioneRepository;
@@ -13,6 +15,8 @@ import it.polito.ai.mmap.esercitazione3.repository.UserRepository;
 import it.polito.ai.mmap.esercitazione3.resources.PrenotazioneResource;
 import it.polito.ai.mmap.esercitazione3.services.JsonHandlerService;
 import it.polito.ai.mmap.esercitazione3.services.LineeService;
+import it.polito.ai.mmap.esercitazione3.services.MongoZonedDateTime;
+import it.polito.ai.mmap.esercitazione3.services.ReservationService;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -33,7 +37,25 @@ import java.util.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
+
+/*
+
+        //Per creare velocemente 3 prenotazioni per 2019-01-01, linea1, fermata 1, andata
+        childMap.values().forEach(childEntity -> {
+            PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity();
+            prenotazioneEntity.setCfChild(childEntity.getCodiceFiscale());
+            prenotazioneEntity.setData(new Date());
+            prenotazioneEntity.setIdFermata(1);
+            prenotazioneEntity.setNomeLinea("linea1");
+            prenotazioneEntity.setVerso(true);
+            prenotazioneRepository.save(prenotazioneEntity);
+        });
+        System.exit(0);
+*/
+
 @RunWith(SpringRunner.class)
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class Esercitazione2ApplicationTests {
@@ -73,6 +95,8 @@ public class Esercitazione2ApplicationTests {
     RoleEntity roleUser;
     RoleEntity roleAdmin;
 
+    List<PrenotazioneEntity> prenotazioniList = new LinkedList<>();
+
     @PostConstruct
     public void postInit() {
         roleUser = roleRepository.findByRole("ROLE_USER");
@@ -93,13 +117,15 @@ public class Esercitazione2ApplicationTests {
 
     @Before
     public void setUpMethod() {
-        childMap.values().forEach(childEntity -> childRepository.save(childEntity));
+        childRepository.saveAll(childMap.values());
+
         userEntityMap.values().forEach(userEntity -> {
             userEntity.setEnabled(true);
             if (userEntity.getRoleList().contains(roleAdmin))
                 lineeService.addAdminLine(userEntity.getUsername(), "linea1");
             userRepository.save(userEntity);
         });
+
     }
 
     @After
@@ -520,7 +546,7 @@ public class Esercitazione2ApplicationTests {
 
 
         logger.info("Test delete prenotazione per un proprio figlio");
-        this.mockMvc.perform(delete("/reservations/linea1/2019-02-02/"+idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/2019-02-02/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -528,13 +554,12 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void reservation_checkPermissionNonGenitore() throws Exception
-    {
+    public void reservation_checkPermissionNonGenitore() throws Exception {
         //creazione prenotazione valida
         String idRes = inserimentoPrenotazioneGenitore();
 
         logger.info("Test inserimento prenotazione per un figlio altrui");
-       ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userDTOMap.get("testNonGenitore"));
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
@@ -556,7 +581,7 @@ public class Esercitazione2ApplicationTests {
                 .andExpect(status().isInternalServerError());
 
         logger.info("Test delete prenotazione per un figlio altrui");
-        this.mockMvc.perform(delete("/reservations/linea1/2019-02-02/"+idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/2019-02-02/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
@@ -564,8 +589,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
-    public void reservation_checkPermissionNonno() throws Exception
-    {
+    public void reservation_checkPermissionNonno() throws Exception {
         logger.info("Test inserimento prenotazione Nonno");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userDTOMap.get("testNonno"));
@@ -590,12 +614,11 @@ public class Esercitazione2ApplicationTests {
                 .andExpect(status().isOk());
 
         logger.info("Test delete prenotazione per nonno");
-        this.mockMvc.perform(delete("/reservations/linea1/2019-04-02/"+idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/2019-04-02/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
-
 
 
     private String inserimentoPrenotazioneGenitore() throws Exception {

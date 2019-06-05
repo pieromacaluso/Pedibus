@@ -35,8 +35,10 @@ public class ReservationController {
      * @param data      data in esame
      * @return GetReservationsNomeLineaDataResource
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/reservations/{nome_linea}/{data}")
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
+        logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService);
     }
