@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {SignInModel, SignUpModel} from '../models';
 import {AuthService} from '../auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -12,7 +13,7 @@ export class SignInComponent implements OnInit {
   model: SignInModel;
   serverErrors: string;
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private router: Router) {
     this.model = {email: '', password: ''};
   }
 
@@ -29,6 +30,7 @@ export class SignInComponent implements OnInit {
       }
       if (formValid) {
         this.auth.signIn(this.model).subscribe(response => {
+          this.router.navigate(['presenze']);
           console.log(response);
         }, (error) => {
           console.error(error);
