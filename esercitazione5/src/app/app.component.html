@@ -1,0 +1,9 @@
+<nav mat-tab-nav-bar>
+  <a mat-tab-link *ngFor="let link of links"
+     (click)="activeLink = link"
+     [active]="activeLink == link"
+     [routerLink]="link"> {{link}} </a>
+  <a *ngIf="userLogged" mat-tab-link (click)="logOut()">Logout</a>
+</nav>
+{{'User logged: ' + auth.isLoggedIn() + ', expiration: ' + (auth.getExpiration() | date: 'medium') }}
+<router-outlet></router-outlet>

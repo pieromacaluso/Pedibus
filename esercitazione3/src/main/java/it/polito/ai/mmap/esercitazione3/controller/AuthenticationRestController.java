@@ -62,6 +62,7 @@ public class AuthenticationRestController {
      * @param userDTO
      * @return
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
 //        logger.info("login result -> " + userService.isLoginValid(userDTO));

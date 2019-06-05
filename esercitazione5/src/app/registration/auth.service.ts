@@ -1,32 +1,33 @@
 import {Injectable} from '@angular/core';
-import {environment} from '../environments/environment';
-import {LoginModel, RegisterModel} from './register/reg-interfaces';
 import {HttpClient} from '@angular/common/http';
-import * as moment from 'moment';
+import {environment} from '../../environments/environment';
+import {SignInModel, SignUpModel} from './models';
 import {shareReplay, tap} from 'rxjs/operators';
+import * as moment from "moment";
 
 @Injectable({
   providedIn: 'root'
 })
-export class RegisterService {
+export class AuthService {
 
   baseURL = environment.baseURL;
 
   constructor(private httpClient: HttpClient) {
   }
 
-  register(model: RegisterModel) {
+  signUp(model: SignUpModel) {
     return this.httpClient.post(this.baseURL + 'register', model);
   }
 
-  login(model: LoginModel) {
+  signIn(model: SignInModel) {
     // We are calling shareReplay to prevent the receiver of this Observable from
     // accidentally triggering multiple POST requests due to multiple subscriptions.
     return this.httpClient.post(this.baseURL + 'login', model).pipe(tap(res => this.setSession(res)), shareReplay());
   }
 
   private setSession(authResult) {
-    const expiresAt = moment().add(authResult.expiresIn, 'second');
+    console.log('epiration time from token (in milliseconds): ' + authResult.expiresIn);
+    const expiresAt = moment().add(authResult.expiresIn,'second');
 
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
@@ -44,7 +45,7 @@ export class RegisterService {
   getExpiration() {
     const expiration = localStorage.getItem('expires_at');
     const expiresAt = JSON.parse(expiration);
-    return moment(expiresAt + 3600000);
+    return moment(expiresAt);
   }
 
 }
