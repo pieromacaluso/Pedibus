@@ -3,7 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {SignInModel, SignUpModel} from './models';
 import {shareReplay, tap} from 'rxjs/operators';
-import * as moment from "moment";
+import * as moment from 'moment';
+import * as jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +27,8 @@ export class AuthService {
   }
 
   private setSession(authResult) {
-    console.log('epiration time from token (in milliseconds): ' + authResult.expiresIn);
-    const expiresAt = moment().add(authResult.expiresIn,'second');
+    console.log('exp: ' + moment());
+    const expiresAt = moment().add((jwt_decode(authResult.token).exp / 1000), 'seconds') ;
 
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
