@@ -101,9 +101,9 @@ public class Esercitazione2ApplicationTests {
     public void postInit() {
         roleUser = roleRepository.findByRole("ROLE_USER");
         roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
-        childMap.put("Rossi", new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi"));
-        childMap.put("Pertini", new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
-        childMap.put("Collodi", new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
+        childMap.put("Rossi", new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi", false));
+        childMap.put("Pertini", new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini", false));
+        childMap.put("Collodi", new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi", false));
 
         userDTOMap.put("testGenitore", new UserDTO("testGenitore@test.it", "321@%$User", "321@%$User"));
         userDTOMap.put("testNonGenitore", new UserDTO("testNonGenitore@test.it", "321@%$User", "321@%$User"));
@@ -130,16 +130,16 @@ public class Esercitazione2ApplicationTests {
 
     @After
     public void tearDownMethod() {
-        childMap.values().forEach(childEntity ->
-        {
-            prenotazioneRepository.deleteAllByCfChild(childEntity.getCodiceFiscale());
-            childRepository.delete(childEntity);
-        });
-        userEntityMap.values().forEach(userEntity -> {
-            if (userEntity.getRoleList().contains(roleAdmin))
-                lineeService.delAdminLine(userEntity.getUsername(), "linea1");
-            userRepository.delete(userEntity);
-        });
+//        childMap.values().forEach(childEntity ->
+//        {
+//            prenotazioneRepository.deleteAllByCfChild(childEntity.getCodiceFiscale());
+//            childRepository.delete(childEntity);
+//        });
+//        userEntityMap.values().forEach(userEntity -> {
+//            if (userEntity.getRoleList().contains(roleAdmin))
+//                lineeService.delAdminLine(userEntity.getUsername(), "linea1");
+//            userRepository.delete(userEntity);
+//        });
     }
 
     @Test
@@ -551,6 +551,7 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
+
     }
 
     @Test
@@ -586,6 +587,7 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
 
+
     }
 
     @Test
@@ -618,6 +620,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
+
     }
 
 

@@ -48,6 +48,7 @@ public class LineeController {
      *
      * @return Lista nomi Linee nel DB
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/lines")
     public List<String> getLines() {
         return lineeService.getAllLinesNames();

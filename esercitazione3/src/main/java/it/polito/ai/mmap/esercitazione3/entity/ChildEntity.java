@@ -16,5 +16,6 @@ public class ChildEntity {
     private String codiceFiscale; //Se si cambia questo campo bisogna cambiare "$.alunniPerFermataAndata[0].alunni[0].codiceFiscale" in test2
     private String name;
     private String surname;
+    private Boolean presenza;
 }
 
