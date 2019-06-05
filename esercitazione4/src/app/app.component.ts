@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {MongoService} from './mongo.service';
-import {Alunno, Linea, Prenotazioni} from './lineDetails';
+import {Alunno, Linea, LineDetails, Prenotazioni} from './lineDetails';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-root',
