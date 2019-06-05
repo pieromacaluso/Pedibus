@@ -21,6 +21,14 @@ export class AppComponent {
     this.activeNotLoggedLink = this.notLoggedLinks[0];
   }
 
+  isLoggedIn() {
+    return this.auth.isLoggedIn();
+  }
+
+  getExpiration() {
+    return this.auth.getExpiration();
+  }
+
   logOut() {
     this.userLogged = false;
     this.auth.logout();

@@ -15,5 +15,5 @@
   </nav>
 </ng-template>
 
-{{'User logged: ' + auth.isLoggedIn() + ', expiration: ' + (auth.getExpiration() | date: 'medium') }}
+{{'User logged: ' + isLoggedIn() + ', expiration: ' + (getExpiration() | date: 'medium') }}
 <router-outlet></router-outlet>
