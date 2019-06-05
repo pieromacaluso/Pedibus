@@ -1,13 +1,15 @@
-import {Component} from '@angular/core';
-import {MongoService} from './mongo.service';
-import {Alunno, Linea, Prenotazioni} from './lineDetails';
+import { Component, OnInit } from '@angular/core';
+import {Alunno, Linea, Prenotazioni} from '../lineDetails';
+import {MongoService} from '../mongo.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-presenze',
+  templateUrl: './presenze.component.html',
+  styleUrls: ['./presenze.component.css']
 })
-export class AppComponent {
+export class PresenzeComponent implements OnInit {
+
+  opened: boolean;
   title = 'PRESENZE';
   linee: Linea[] = [];
   verso: string[] = ['Andata', 'Ritorno'];
@@ -16,6 +18,7 @@ export class AppComponent {
   toolBarFilled: boolean;
   reservations: Prenotazioni[];
   date: Date;
+  logo: any = '../assets/svg/logo.svg';
   stop: any = '../assets/svg/cross.svg';
   next: any = '../assets/svg/next.svg';
   previous: any = '../assets/svg/previous.svg';
@@ -23,12 +26,9 @@ export class AppComponent {
 
 
   constructor(private mongoService: MongoService) {
-    this.linee = MongoService.getLinee();
+    this.linee = mongoService.getLinee();
     this.reservations = [];
     this.date = new Date();
-    this.selectedLinea = 1;
-    this.selectedVerso = 'Andata';
-    this.fillPrenotazione();
   }
 
   /** Vogliamo riempire il campo prenotazione solo quando un utente selezione una line_id ed una data */
@@ -74,4 +74,8 @@ export class AppComponent {
       }
     });
   }
+
+  ngOnInit(): void {
+  }
+
 }
