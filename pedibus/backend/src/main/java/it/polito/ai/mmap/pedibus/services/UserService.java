@@ -290,7 +290,7 @@ public class UserService implements UserDetailsService {
         roles.add("ROLE_ADMIN");
         roles.add("ROLE_SYSTEM-ADMIN");
         for (String role : roles) {
-            RoleEntity roleEntity = roleRepository.findByRole(role);
+            RoleEntity roleEntity = roleRepository.findRoleEntityByRole(role);
             if (roleEntity == null)
                 roleRepository.save(RoleEntity.builder().role(role).build());
         }

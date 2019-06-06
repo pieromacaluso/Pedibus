@@ -21,8 +21,8 @@ public class PrenotazioneEntity {
     private String nomeLinea;
     private Integer idFermata;
     private boolean verso;
-    private boolean presoInCarico;  //todo
-    private boolean arrivatoScuola; //todo
+    private boolean presoInCarico;
+    private boolean arrivatoScuola;
 
     public PrenotazioneEntity(PrenotazioneDTO prenotazioneDTO) {
         cfChild =prenotazioneDTO.getCfChild();
