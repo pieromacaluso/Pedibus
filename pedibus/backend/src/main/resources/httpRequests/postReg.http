@@ -1,0 +1,55 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password3"
+}
+
+###
+
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password",
+  "passMatch": "mia-password"
+}
+
+###
+
+GET http://localhost:8080/confirm/5cd6e3dc8e260b0eedc87cab
+Accept: application/json
+
+###
+
+POST http://localhost:8080/recover
+Content-Type: text/plain
+
+golla.programmazione@gmail.com
+
+###
+
+GET http://localhost:8080/recover/%EF%BF%BD_%3CP%EF%BF%BD%EF%BF%BDtW#%EF%BF%BD
+Accept: application/json
+
+###
+
+POST http://localhost:8080/recover/YeOzh5dlIX
+Content-Type: application/json
+
+{
+  "email": "golla.programmazione@gmail.com",
+  "password": "mia-password3",
+  "passMatch": "mia-password3"
+}
+
+###

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta content="Esercitazione 3 - Applicazioni Internet" name="description">
+    <meta content="MMAP" name="author">
+    <script type="text/javascript" th:src="@{/js/postForm.js}"></script>
+    <title>Recover Password</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.1/examples/checkout/">
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+
+</head>
+
+<body class="text-center h-100">
+
+<div class="container h-100">
+    <div class="row h-100 justify-content-center text-center align-items-center p-sm-0 p-3">
+        <form class="form-register" action="javascript:void(0);" onsubmit="postForm()">
+            <div class="form-group">
+                <img height="100px" th:src="@{/images/logo.svg}" alt="Logo" class="svg">
+            </div>
+            <div class="form-group">
+                <h1 class="h3 mb-3 font-weight-normal">Recover password</h1>
+            </div>
+            <div id="form-reg" class="row h-100 justify-content-center text-center align-items-center p-sm-0 p-3"></div>
+            <div class="form-group">
+                <div class="mb-3">
+                    <label for="pass" class="sr-only">New Password</label>
+                    <input type="password" name="pass" class="form-control" value="" id="pass"
+                           placeholder="New Password">
+                </div>
+
+                <div class="mb-3">
+                    <label for="passMatch" class="sr-only">Repeat new password</label>
+                    <input type="password" name="passMatch" class="form-control" value="" id="passMatch"
+                           placeholder="Repeat new password">
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-lg btn-block">Change Password</button>
+            </div>
+
+
+            <p class="mt-5 mb-3 text-muted">Applicazioni Internet - a.a. 2018/2019</p>
+
+
+        </form>
+        <noscript>
+            <div class="alert alert-danger" role="alert">
+                JAVASCRIPT NECESSARIO PER LA SOTTOMISSIONE DEL FORM!
+            </div>
+        </noscript>
+
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
