@@ -21,11 +21,9 @@ public class UserController {
         userService.registerChild(childDTO);
     }
 
-    @PutMapping("/children/updateChildStop/{childId}/{idFer}")
-    public void updateChildStop(@PathVariable String cf,@PathVariable String idFerm){
+    @PutMapping("/children/updateChildStop/{childId}/{idFerm}")
+    public void updateChildStop(@PathVariable String childId,@PathVariable String idFerm){
         Integer idFermata=Integer.parseInt(idFerm);
-        userService.updateChildStop(idFermata,cf);
+        userService.updateChildStop(idFermata,childId);
     }
-
-
 }
