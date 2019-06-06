@@ -1,7 +1,7 @@
-package it.polito.ai.mmap.esercitazione3;
+package it.polito.ai.mmap.pedibus;
 
 
-import it.polito.ai.mmap.esercitazione3.entity.PrenotazioneEntity;
+import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -17,7 +17,7 @@ import java.util.Date;
 
 @SpringBootApplication
 @EnableAsync
-public class Esercitazione3Application {
+public class PedibusApplication {
 
     @Bean("threadPoolTaskExecutor")
     public TaskExecutor getAsyncExecutor() {
@@ -30,7 +30,7 @@ public class Esercitazione3Application {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Esercitazione3Application.class, args);
+        SpringApplication.run(PedibusApplication.class, args);
     }
 
 }

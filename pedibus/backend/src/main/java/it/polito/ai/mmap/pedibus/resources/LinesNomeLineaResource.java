@@ -1,0 +1,24 @@
+package it.polito.ai.mmap.pedibus.resources;
+
+import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.hateoas.ResourceSupport;
+
+import java.util.ArrayList;
+
+/**
+ * Classe che mappa da java a json l'oggetto chiesto da GET /lines/{nome_linea}
+ */
+
+@Data
+public class LinesNomeLineaResource {
+    ArrayList<FermataDTO> andata;
+    ArrayList<FermataDTO> ritorno;
+
+    public LinesNomeLineaResource(LineaDTO lineaDTO) {
+        this.andata = lineaDTO.getAndata();
+        this.ritorno = lineaDTO.getRitorno();
+    }
+}
