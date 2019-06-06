@@ -1,12 +1,8 @@
 package it.polito.ai.mmap.pedibus.services;
 
-import it.polito.ai.mmap.pedibus.entity.ActivationTokenEntity;
-import it.polito.ai.mmap.pedibus.entity.RecoverTokenEntity;
-import it.polito.ai.mmap.pedibus.entity.RoleEntity;
-import it.polito.ai.mmap.pedibus.entity.UserEntity;
-import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
-import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.UserAlreadyPresentException;
+import it.polito.ai.mmap.pedibus.entity.*;
+import it.polito.ai.mmap.pedibus.exception.*;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import org.bson.types.ObjectId;
@@ -14,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -55,6 +52,8 @@ public class UserService implements UserDetailsService {
     private ChildRepository childRepository;
     @Autowired
     private GMailService gMailService;
+    @Autowired
+    private FermataRepository fermataRepository;
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
@@ -294,5 +293,39 @@ public class UserService implements UserDetailsService {
             if (roleEntity == null)
                 roleRepository.save(RoleEntity.builder().role(role).build());
         }
+    }
+
+    public void registerChild(ChildDTO childDTO){
+        Optional<ChildEntity> c=childRepository.findById(childDTO.getCodiceFiscale());
+        if(c.isPresent())
+            throw new ChildAlreadyPresentException("Child with same Fiscal Code present");
+        Optional<FermataEntity> checkFerm=fermataRepository.findById(childDTO.getIdFermataDefault());
+        if(!checkFerm.isPresent()){
+            throw new FermataNotFoundException();
+        }
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ChildEntity childEntity=new ChildEntity(childDTO);
+        principal.addChild(childDTO.getCodiceFiscale());
+        childRepository.save(childEntity);
+        userRepository.save(principal);
+        logger.info("New Child " + childDTO.getCodiceFiscale()+" by user "+principal.getUsername());
+    }
+
+    public void updateChildStop(Integer idFermata,String cf){
+        Optional<ChildEntity> c=childRepository.findById(cf);
+        if(c.isPresent()){
+            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(principal.getChildrenList().contains(cf)){
+                if(fermataRepository.findById(idFermata).isPresent()){
+                    ChildEntity childEntity=c.get();
+                    childEntity.setIdFermataDefault(idFermata);
+                    childRepository.save(childEntity);
+                }else
+                    throw new FermataNotFoundException();
+
+            }else
+                throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
+        }else
+            throw new ChildNotFoundException("child not found");
     }
 }

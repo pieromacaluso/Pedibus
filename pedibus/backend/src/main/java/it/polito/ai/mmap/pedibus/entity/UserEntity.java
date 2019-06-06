@@ -89,5 +89,9 @@ public class UserEntity implements UserDetails {
         return grantedAuthorities;
     }
 
+    public void addChild(String cf){
+        childrenList.add(cf);
+    }
+
 
 }
