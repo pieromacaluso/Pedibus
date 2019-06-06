@@ -1,7 +1,12 @@
 package it.polito.ai.mmap.esercitazione3.services;
 
-import it.polito.ai.mmap.esercitazione3.entity.*;
-import it.polito.ai.mmap.esercitazione3.exception.*;
+import it.polito.ai.mmap.esercitazione3.entity.ActivationTokenEntity;
+import it.polito.ai.mmap.esercitazione3.entity.RecoverTokenEntity;
+import it.polito.ai.mmap.esercitazione3.entity.RoleEntity;
+import it.polito.ai.mmap.esercitazione3.entity.UserEntity;
+import it.polito.ai.mmap.esercitazione3.exception.RecoverProcessNotValidException;
+import it.polito.ai.mmap.esercitazione3.exception.TokenNotFoundException;
+import it.polito.ai.mmap.esercitazione3.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.esercitazione3.objectDTO.UserDTO;
 import it.polito.ai.mmap.esercitazione3.repository.*;
 import org.bson.types.ObjectId;
@@ -15,15 +20,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
+    @Autowired
+    JwtTokenService jwtTokenService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Value("${superadmin.email}")
     private String superAdminMail;
@@ -37,25 +47,14 @@ public class UserService implements UserDetailsService {
     private String RECOVER_ACCOUNT_SUBJECT;
     @Value("${mail.minutes_to_enable}")
     private int minuti;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
     @Autowired
     private RecoverTokenRepository recoverTokenRepository;
     @Autowired
     private ActivationTokenRepository activationTokenRepository;
     @Autowired
     private ChildRepository childRepository;
-
     @Autowired
     private GMailService gMailService;
-    @Autowired
-    JwtTokenService jwtTokenService;
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
@@ -238,7 +237,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
 
         check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
-        if(check.isPresent()) {
+        if (check.isPresent()) {
             userEntity = check.get();
             userRepository.save(userEntity);
             logger.info("SuperAdmin configurato ed abilitato.");
@@ -277,17 +276,23 @@ public class UserService implements UserDetailsService {
         } else {
             userEntity = check.get();
         }
-        if(userEntity.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN")))
+        if (userEntity.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN")))
             userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
 
         userRepository.save(userEntity);
     }
 
     public void createRoles() {
-        List<RoleEntity> roleList = new ArrayList<>();
-        roleList.add(RoleEntity.builder().role("ROLE_USER").build());
-        roleList.add(RoleEntity.builder().role("ROLE_ADMIN").build());
-        roleList.add(RoleEntity.builder().role("ROLE_SYSTEM-ADMIN").build());
-        roleRepository.saveAll(roleList);
+        ArrayList<String> roles = new ArrayList<>();
+        // Per aggiungere un ruolo di default basta aggiungere una add qui sotto.
+        // roles.add("ROLE_XYZ");
+        roles.add("ROLE_USER");
+        roles.add("ROLE_ADMIN");
+        roles.add("ROLE_SYSTEM-ADMIN");
+        for (String role : roles) {
+            RoleEntity roleEntity = roleRepository.findByRole(role);
+            if (roleEntity == null)
+                roleRepository.save(RoleEntity.builder().role(role).build());
+        }
     }
 }
