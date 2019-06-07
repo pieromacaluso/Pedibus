@@ -21,6 +21,11 @@ public class UserController {
         userService.registerChild(childDTO);
     }
 
+    @DeleteMapping("children/delChild")
+    public void delChild(@RequestBody String idChild){
+        userService.delChild(idChild);
+    }
+
     /**
      * Permette ad un genitore di cambiare la fermata di default di uno dei figli
      * @param childId

@@ -295,6 +295,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /**
+     * Metodo che permette ad un genitore di registrare un suo figlio
+     * @param childDTO
+     */
     public void registerChild(ChildDTO childDTO){
         Optional<ChildEntity> c=childRepository.findById(childDTO.getCodiceFiscale());
         if(c.isPresent())
@@ -304,18 +308,23 @@ public class UserService implements UserDetailsService {
             throw new FermataNotFoundException();
         }
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ChildEntity childEntity=new ChildEntity(childDTO);
+        ChildEntity childEntity=new ChildEntity(childDTO,principal.getId());
         principal.addChild(childDTO.getCodiceFiscale());
         childRepository.save(childEntity);
         userRepository.save(principal);
         logger.info("New Child " + childDTO.getCodiceFiscale()+" by user "+principal.getUsername());
     }
 
+    /**
+     * Metodo che permette di cambiare la fermata di default di un bambino o dal suo genitore o da un System-Admin
+     * @param idFermata
+     * @param cf
+     */
     public void updateChildStop(Integer idFermata,String cf){
         Optional<ChildEntity> c=childRepository.findById(cf);
         if(c.isPresent()){
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if(principal.getChildrenList().contains(cf)){
+            if(principal.getChildrenList().contains(cf) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))){
                 if(fermataRepository.findById(idFermata).isPresent()){
                     ChildEntity childEntity=c.get();
                     childEntity.setIdFermataDefault(idFermata);
@@ -325,6 +334,37 @@ public class UserService implements UserDetailsService {
 
             }else
                 throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
+        }else
+            throw new ChildNotFoundException("child not found");
+    }
+
+    /**
+     * Metodo che permette di eliminare un bambino. Eseguibile o dal genitore o da un System-Admin
+     * @param idChild
+     */
+    public void delChild(String idChild){
+        Optional<ChildEntity> c=childRepository.findById(idChild);
+        if(c.isPresent()){
+            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            ChildEntity childEntity=c.get();
+
+            /*Rimozione dall'utente genitore*/
+            if(principal.getChildrenList().contains(idChild)){
+                principal.getChildrenList().remove(childEntity);
+                userRepository.save(principal);
+
+            }else if(principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+                Optional<UserEntity> p=userRepository.findById(childEntity.getIdParent());
+                if(p.isPresent()){
+                    UserEntity parent=p.get();
+                    parent.getChildrenList().remove(childEntity);
+                    userRepository.save(parent);
+                }
+            }else
+                throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
+            /*Eliminazione entity*/
+            childRepository.delete(childEntity);
+
         }else
             throw new ChildNotFoundException("child not found");
     }
