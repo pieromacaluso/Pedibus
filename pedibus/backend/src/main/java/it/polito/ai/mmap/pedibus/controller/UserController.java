@@ -21,6 +21,11 @@ public class UserController {
         userService.registerChild(childDTO);
     }
 
+    /**
+     * Permette ad un genitore di cambiare la fermata di default di uno dei figli
+     * @param childId
+     * @param idFerm
+     */
     @PutMapping("/children/updateChildStop/{childId}/{idFerm}")
     public void updateChildStop(@PathVariable String childId,@PathVariable String idFerm){
         Integer idFermata=Integer.parseInt(idFerm);

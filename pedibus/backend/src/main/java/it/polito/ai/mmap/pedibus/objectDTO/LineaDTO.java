@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class LineaDTO {
     private String nome;
+    private String adminMast;
     private ArrayList<String> adminList;
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
@@ -26,6 +27,7 @@ public class LineaDTO {
      */
     public LineaDTO(LineaEntity lineaEntity, FermataRepository fermataRepository) {
         this.nome = lineaEntity.getNome();
+        this.adminMast=lineaEntity.getAdminMast();
         this.adminList = lineaEntity.getAdminList();
 
         this.andata = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getAndata())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
