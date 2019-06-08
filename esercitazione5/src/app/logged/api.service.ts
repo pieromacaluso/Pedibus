@@ -19,8 +19,8 @@ export class ApiService {
   }
 
   getPrenotazioneByLineaAndDateAndVerso(selectedLinea: string, date: Date) {
-    console.log('invio richiesta getPrenotazioneByLineaAndDateAndVerso ' + date.toLocaleDateString());
-    return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/' + selectedLinea + '/2019-01-01');
+      console.log('invio richiesta getPrenotazioneByLineaAndDateAndVerso ' + date.toLocaleDateString());
+      return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/' + selectedLinea + '/2019-01-01');
   }
 
 }

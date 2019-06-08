@@ -7,7 +7,7 @@ import {PrenotazioneRequest} from '../line-details';
 })
 export class SyncService {
 
-  private prenotazioneRequest = new BehaviorSubject<PrenotazioneRequest>({linea: '', verso: '', data: new Date()});
+  private prenotazioneRequest = new BehaviorSubject<PrenotazioneRequest>({linea: '', verso: 'Andata', data: new Date()});
   prenotazioneObs$ = this.prenotazioneRequest.asObservable();
 
   constructor() {

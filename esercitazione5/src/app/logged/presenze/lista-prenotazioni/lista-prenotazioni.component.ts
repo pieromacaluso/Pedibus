@@ -18,8 +18,8 @@ export class ListaPrenotazioniComponent implements OnInit {
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
       console.log(prenotazione);
       this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione.linea, prenotazione.data).subscribe((rese) => {
-        this.selectedVerso = prenotazione.verso;
-        this.reservations = this.selectedVerso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
+          this.selectedVerso = prenotazione.verso;
+          this.reservations = this.selectedVerso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
       }, (error) => console.error(error));
     }, (error) => console.error(error));
   }
