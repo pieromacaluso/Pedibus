@@ -1,0 +1,12 @@
+
+
+
+
+friends: [
+{
+'repeat(3)': {
+id: '{{index()}}',
+name: '{{firstName()}} {{surname()}}'
+}
+}
+],

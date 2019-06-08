@@ -34,23 +34,6 @@ import java.util.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-
-/*
-
-        //Per creare velocemente 3 prenotazioni per 2019-01-01, linea1, fermata 1, andata
-        childMap.values().forEach(childEntity -> {
-            PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity();
-            prenotazioneEntity.setCfChild(childEntity.getCodiceFiscale());
-            prenotazioneEntity.setData(new Date());
-            prenotazioneEntity.setIdFermata(1);
-            prenotazioneEntity.setNomeLinea("linea1");
-            prenotazioneEntity.setVerso(true);
-            prenotazioneRepository.save(prenotazioneEntity);
-        });
-        System.exit(0);
-*/
-
 @RunWith(SpringRunner.class)
 
 @SpringBootTest
@@ -95,7 +78,6 @@ public class Esercitazione2ApplicationTests {
     RoleEntity roleUser;
     RoleEntity roleAdmin;
 
-    List<PrenotazioneEntity> prenotazioniList = new LinkedList<>();
 
     @PostConstruct
     public void postInit() {
@@ -117,30 +99,27 @@ public class Esercitazione2ApplicationTests {
 
     @Before
     public void setUpMethod() {
-        //todo controllare se esiste già per non scrivere tante copie
         childRepository.saveAll(childMap.values());
-        //todo controllare se esiste già per non scrivere tante copie
         userEntityMap.values().forEach(userEntity -> {
             userEntity.setEnabled(true);
             if (userEntity.getRoleList().contains(roleAdmin))
                 lineeService.addAdminLine(userEntity.getUsername(), "linea1");
             userRepository.save(userEntity);
         });
-        //todo penso siano anche da cancellare alla fine dei test per non sporcare il db
     }
 
     @After
     public void tearDownMethod() {
-//        childMap.values().forEach(childEntity ->
-//        {
-//            prenotazioneRepository.deleteAllByCfChild(childEntity.getCodiceFiscale());
-//            childRepository.delete(childEntity);
-//        });
-//        userEntityMap.values().forEach(userEntity -> {
-//            if (userEntity.getRoleList().contains(roleAdmin))
-//                lineeService.delAdminLine(userEntity.getUsername(), "linea1");
-//            userRepository.delete(userEntity);
-//        });
+        childMap.values().forEach(childEntity ->
+        {
+            prenotazioneRepository.deleteAllByCfChild(childEntity.getCodiceFiscale());
+            childRepository.delete(childEntity);
+        });
+        userEntityMap.values().forEach(userEntity -> {
+            if (userEntity.getRoleList().contains(roleAdmin))
+                lineeService.delAdminLine(userEntity.getUsername(), "linea1");
+            userRepository.delete(userEntity);
+        });
     }
 
     @Test

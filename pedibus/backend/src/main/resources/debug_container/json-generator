@@ -1,0 +1,32 @@
+https://next.json-generator.com/
+
+userDTO
+
+[
+  {
+    'repeat(1)': {
+      email: '{{firstName()}}'+'.'+'{{surname()}}'+'@test.it',
+      password() {
+        return `${this.email}`;
+      },
+      passMatch() {
+        return `${this.email}`;
+      },
+    }
+  }
+]
+
+
+childEntity
+[
+  {
+    'repeat(1)': {
+      codiceFiscale: 'cf-{{objectId()}}',
+      name: '{{firstName()}}',
+      surname: '{{surname()}}',
+      presenza: 'false',
+      idFermataDefault: '{{integer(1, 10)}}',
+      idParent: '{{objectId()}}'
+    }
+  }
+]
