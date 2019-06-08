@@ -13,7 +13,7 @@ import {SignInComponent} from './registration/sign-in/sign-in.component';
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent},
   {path: 'sign-in', component: SignInComponent},
-  {path: 'presenze', component: PresenzeComponent, data: {requiresLogin: true}},
+{path: 'presenze', component: PresenzeComponent, data: {requiresLogin: true}},
   {path: '', redirectTo: 'sign-up', pathMatch: 'full'},
   {path: '404', component: PageNotFoundComponent},
   {path: '**', redirectTo: '/404'}

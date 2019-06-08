@@ -27,10 +27,11 @@ export class AuthService {
   }
 
   private setSession(authResult) {
-    console.log('exp: ' + moment());
-    const expiresAt = moment().add((jwt_decode(authResult.token).exp / 1000), 'seconds') ;
+    console.log('exp: ' + jwt_decode(authResult.token).exp);
+    const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
+    console.log('expires at: ' + expiresAt);
 
-    localStorage.setItem('id_token', authResult.idToken);
+    localStorage.setItem('id_token', authResult.token);
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
   }
 

@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
 
@@ -19,14 +19,6 @@ export class AppComponent {
     this.userLogged = this.auth.isLoggedIn();
     this.activeLoggedLink = this.loggedLinks[0];
     this.activeNotLoggedLink = this.notLoggedLinks[0];
-  }
-
-  isLoggedIn() {
-    return this.auth.isLoggedIn();
-  }
-
-  getExpiration() {
-    return this.auth.getExpiration();
   }
 
   logOut() {
