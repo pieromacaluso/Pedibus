@@ -14,11 +14,13 @@ export class ApiService {
   }
 
   getLinee() {
+    console.log('invio richiesta getLinee');
     return this.httpClient.get<string[]>(this.baseURL + 'lines');
   }
 
   getPrenotazioneByLineaAndDateAndVerso(selectedLinea: string, date: Date) {
-      return this.httpClient.get<LineReservation>(this.baseURL + 'reservations' + '/2019-01-01');
+    console.log('invio richiesta getPrenotazioneByLineaAndDateAndVerso ' + date.toLocaleDateString());
+    return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/' + selectedLinea + '/2019-01-01');
   }
 
 }
