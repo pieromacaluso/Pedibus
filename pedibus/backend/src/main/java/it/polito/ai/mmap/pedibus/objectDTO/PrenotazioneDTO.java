@@ -16,9 +16,8 @@ public class PrenotazioneDTO {
     private String nomeLinea;
     private Integer idFermata;
     private Boolean verso;
-    private Boolean presoInCarico;  //todo
-    private Boolean arrivatoScuola; //todo
-
+    private Boolean presoInCarico;
+    private Boolean arrivatoScuola;
 
     public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, String nomeLinea, Date data) {
         this.data = data;

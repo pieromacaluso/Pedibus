@@ -26,8 +26,6 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
-    //todo sarebbe bello avere tutto ReservationX o PrenotazioneX
-
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
 

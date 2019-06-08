@@ -24,7 +24,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/**
+ * - una post a http://localhost:8080/debug/make genera:
+ *
+ *      - 100 Child
+ *      - 50 user con 2 figli e pw = mail
+ *      - 1 prenotazione/figlio per oggi, domani e dopo domani (o andata o ritorno)
+ * - ci mette anche 2min a fare sta roba, ma controlla di non creare dupplicati ecc
+ *
+ */
 @RestController
 public class DebugController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
