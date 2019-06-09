@@ -247,6 +247,25 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    public List<String> getAllChildrenId(){
+        return childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
+    }
+
+    public List<ChildDTO> getAllChildrenById(List<String> childrenId){
+        List<ChildEntity> childrenEntities=new ArrayList<>();
+
+        for(String cf:childrenId){
+            Optional<ChildEntity> c=childRepository.findByCodiceFiscale(cf);
+            if(c.isPresent()){
+                ChildEntity childEntity=c.get();
+                childrenEntities.add(childEntity);
+            }else
+                throw new ChildNotFoundException("Child not found");
+        }
+
+        return childrenEntities.stream().map(c->new ChildDTO(c)).collect(Collectors.toList());
+    }
+
     /**
      * Se la mail dell'admin non corrisponde a nessun account ne creo uno vuoto con tali privilegi che poi l'utente quando si registra riempirà,
      * se no lo creo da zero
