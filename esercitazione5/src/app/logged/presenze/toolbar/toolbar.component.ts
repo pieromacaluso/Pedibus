@@ -22,7 +22,6 @@ export class ToolbarComponent implements OnInit {
 
   emitRequest() {
     if (this.richiesta.linea !== '' && this.richiesta.verso !== '') {
-      console.log('emit');
       this.syncService.updatePrenotazione(this.richiesta);
     }
   }
