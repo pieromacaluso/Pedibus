@@ -8,7 +8,7 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatNativeDateModule,
+  MatNativeDateModule, MatProgressBarModule,
   MatSelectModule
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
@@ -29,7 +29,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatProgressBarModule
   ]
 })
 export class LoggedModule { }
