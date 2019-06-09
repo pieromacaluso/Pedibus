@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {LineReservation} from './line-details';
+import {LineReservation, NotReservation} from './line-details';
 import {DatePipe} from '@angular/common';
 
 @Injectable({
@@ -27,4 +27,17 @@ export class ApiService {
     }
   }
 
+  getNonPrenotati(date: Date, verso: string) {
+    let idVerso;
+    if (verso === 'Andata') {
+      idVerso = 0;
+    } else {
+      idVerso = 1;
+    }
+    console.log('invio richiesta getNonPrenotati ' + date.toLocaleDateString());
+    if (verso && date) {
+      return this.httpClient.get<NotReservation>(
+        this.baseURL + 'notreservations/' + this.datePipe.transform(date, 'yyyy-MM-dd') + '/' + idVerso);
+    }
+  }
 }

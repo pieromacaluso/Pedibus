@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, SimpleChange} from '@angular/core';
-import {AlunniPerFermata, Alunno, PrenotazioneRequest} from '../../line-details';
+import {AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
 
@@ -14,6 +14,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   cross: any = '../assets/svg/cross.svg';
   selectedVerso: string;
   countLoading: any = 0;
+  private notReserved: AlunnoNotReserved[];
 
   constructor(private syncService: SyncService, private apiService: ApiService) {
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
@@ -25,8 +26,15 @@ export class ListaPrenotazioniComponent implements OnInit {
           this.reservations = this.selectedVerso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
           this.countLoading--;
         }, (error) => console.error(error));
+        this.countLoading++;
+        this.apiService.getNonPrenotati(prenotazione.data, prenotazione.verso).subscribe((rese) => {
+          this.notReserved = rese.childrenNotReserved;
+          console.log(rese.childrenNotReserved[1]);
+          this.countLoading--;
+        }, (error) => console.error(error));
       }
     }, (error) => console.error(error));
+
   }
 
   showLoading() {

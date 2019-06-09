@@ -3,6 +3,18 @@ export interface LineReservation {
   alunniPerFermataRitorno: AlunniPerFermata[];
 }
 
+export interface AlunnoNotReserved {
+  codiceFiscale: string;
+  name: string;
+  surname: string;
+  idFermataDefault: number;
+  idParent: string;
+}
+
+export interface NotReservation {
+  childrenNotReserved: AlunnoNotReserved[];
+}
+
 export interface AlunniPerFermata {
   fermata: Fermata;
   alunni: Alunno[];
