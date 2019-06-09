@@ -8,8 +8,12 @@ import {
 } from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {retry, catchError} from 'rxjs/operators';
+import {MatSnackBar} from '@angular/material';
+import {Injectable} from '@angular/core';
 
+@Injectable()
 export class HttpExceptionsInterceptor implements HttpInterceptor {
+  constructor(private snackBar: MatSnackBar) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request)
@@ -24,7 +28,11 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
             // server-side error
             errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
           }
-          window.alert(errorMessage);
+          console.log(error);
+          this.snackBar.open(
+            'Ops! Ci sono problemi di connessione al server, controlla la tua connessione o riprova più tardi.', '', {
+            duration: 10000,
+          });
           return throwError(errorMessage);
         })
       );
