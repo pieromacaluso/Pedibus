@@ -12,6 +12,7 @@ export class AppComponent {
   opened: boolean;
   logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
+  loggedLinksIcon = ['../../assets/svg/logo.svg'];
   loggedLinks = ['presenze'];
   notLoggedLinks = ['sign-in', 'sign-up'];
   activeLoggedLink;
