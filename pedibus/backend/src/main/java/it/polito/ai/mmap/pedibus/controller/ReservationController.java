@@ -47,6 +47,12 @@ public class ReservationController {
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService);
     }
 
+    /**
+     * Restituisce la lista dei bambini non prenotati per la data(AAAA-MM-GG) e il verso passati.
+     * @param data
+     * @param verso
+     * @return
+     */
     @GetMapping("/notreservations/{data}/{verso}")
     public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data,@PathVariable("verso")boolean verso) {
         logger.info("GET /NotReservations/" + data + " è stato contattato");

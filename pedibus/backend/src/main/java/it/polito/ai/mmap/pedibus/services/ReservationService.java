@@ -207,7 +207,9 @@ public class ReservationService {
         prenotazioneRepository.save(prenotazioneEntity);
     }
 
-    //ritorna tutti i bambini prenotati per una determinata giornata in una detrminata linea
+    /**
+     * ritorna tutti i bambini prenotati per una determinata giornata in una detrminata linea
+     */
     public List<String> getAllChildrenForReservationDataVerso(Date data,boolean verso){
         List<PrenotazioneEntity> prenotazioniTotaliLineaDataVerso=prenotazioneRepository.findByDataAndVerso(data,verso);
         return  prenotazioniTotaliLineaDataVerso.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList());
