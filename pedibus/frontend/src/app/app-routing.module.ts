@@ -12,7 +12,7 @@ import {SignInComponent} from './registration/sign-in/sign-in.component';
 import {AuthGuard} from './auth.guard';
 
 const appRoutes: Routes = [
-  {path: 'sign-up', component: SignUpComponent},
+  {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
   {path: 'sign-in', component: SignInComponent},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
   {path: '', redirectTo: 'presenze', pathMatch: 'full'},
