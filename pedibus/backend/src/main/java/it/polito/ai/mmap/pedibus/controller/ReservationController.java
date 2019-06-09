@@ -2,11 +2,13 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
+import it.polito.ai.mmap.pedibus.resources.GetChildrenNotReservedLineaDataResource;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsNomeLineaDataResource;
 import it.polito.ai.mmap.pedibus.resources.PrenotazioneResource;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
+import it.polito.ai.mmap.pedibus.services.UserService;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,8 @@ public class ReservationController {
     LineeService lineeService;
     @Autowired
     ReservationService reservationService;
+    @Autowired
+    UserService userService;
 
 
     /**
@@ -41,6 +45,19 @@ public class ReservationController {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService);
+    }
+
+    /**
+     * Restituisce la lista dei bambini non prenotati per la data(AAAA-MM-GG) e il verso passati.
+     * @param data
+     * @param verso
+     * @return
+     */
+    @GetMapping("/notreservations/{data}/{verso}")
+    public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data,@PathVariable("verso")boolean verso) {
+        logger.info("GET /NotReservations/" + data + " è stato contattato");
+        Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+        return new GetChildrenNotReservedLineaDataResource(dataFormatted, verso, reservationService,userService);
     }
 
     /**

@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.objectDTO;
 
+import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -12,4 +13,14 @@ public class ChildDTO {
     private String surname;
     private Integer idFermataDefault;   //in fase di registrazione ad ogni bambino bisogna indicare la sua fermata di default dalla quale partire/arrivare
     private ObjectId idParent;
+
+    public ChildDTO(ChildEntity childEntity){
+        codiceFiscale=childEntity.getCodiceFiscale();
+        name=childEntity.getName();
+        surname=childEntity.getSurname();
+        idFermataDefault=childEntity.getIdFermataDefault();
+        idParent=childEntity.getIdParent();
+    }
 }
+
+
