@@ -14,6 +14,7 @@ import {
 import {FormsModule} from '@angular/forms';
 import { ToolbarComponent } from './presenze/toolbar/toolbar.component';
 import { ListaPrenotazioniComponent } from './presenze/lista-prenotazioni/lista-prenotazioni.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [PresenzeComponent, ToolbarComponent, ListaPrenotazioniComponent],
@@ -27,7 +28,8 @@ import { ListaPrenotazioniComponent } from './presenze/lista-prenotazioni/lista-
     FormsModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule
+    MatButtonModule,
+    FlexLayoutModule
   ]
 })
 export class LoggedModule { }

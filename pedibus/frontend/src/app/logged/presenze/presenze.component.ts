@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 @Component({
   selector: 'app-presenze',
   templateUrl: './presenze.component.html',
-  styleUrls: ['./presenze.component.css']
+  styleUrls: ['./presenze.component.scss']
 })
 export class PresenzeComponent implements OnInit {
 
