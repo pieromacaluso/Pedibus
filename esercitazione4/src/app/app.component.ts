@@ -47,6 +47,7 @@ export class AppComponent {
       this.mongoService.getPrenotazioneByLineaAndDateAndVerso(this.selectedLinea, this.date).subscribe(value => {
         let lineReservation: LineReservation;
         lineReservation = value as LineReservation;
+        console.log(lineReservation);
         // tslint:disable-next-line:max-line-length
         this.reservations = this.selectedVerso === 'Andata' ? lineReservation.alunniPerFermataAndata : lineReservation.alunniPerFermataRitorno;
       }, error1 => {

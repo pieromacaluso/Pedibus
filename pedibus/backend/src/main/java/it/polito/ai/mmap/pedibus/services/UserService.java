@@ -263,7 +263,7 @@ public class UserService implements UserDetailsService {
                 throw new ChildNotFoundException("Child not found");
         }
 
-        return childrenEntities.stream().map(c->new ChildDTO(c)).collect(Collectors.toList());
+        return childrenEntities.stream().map(ChildDTO::new).collect(Collectors.toList());
     }
 
     /**

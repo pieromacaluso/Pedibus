@@ -1,12 +1,21 @@
 package it.polito.ai.mmap.pedibus.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.io.IOException;
 
 @Data
 @AllArgsConstructor
@@ -19,29 +28,43 @@ public class ChildEntity {
     private String name;
     private String surname;
     private Boolean presenza;
+
+    @JsonIgnore
     private Integer idFermataDefault;   //in fase di registrazione ad ogni bambino bisogna indicare la sua fermata di default dalla quale partire/arrivare
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId idParent;
 
-    public ChildEntity(ChildDTO childDTO){
-        codiceFiscale=childDTO.getCodiceFiscale();
-        name=childDTO.getName();
-        surname=childDTO.getSurname();
-        idFermataDefault=childDTO.getIdFermataDefault();
-        idParent=childDTO.getIdParent();
-    }
-    public ChildEntity(ChildDTO childDTO,ObjectId idPar){
-        codiceFiscale=childDTO.getCodiceFiscale();
-        name=childDTO.getName();
-        surname=childDTO.getSurname();
-        idFermataDefault=childDTO.getIdFermataDefault();
-        idParent=idPar;
+    public ChildEntity(ChildDTO childDTO) {
+        codiceFiscale = childDTO.getCodiceFiscale();
+        name = childDTO.getName();
+        surname = childDTO.getSurname();
+        idFermataDefault = childDTO.getIdFermataDefault();
+        idParent = childDTO.getIdParent();
     }
 
-    public ChildEntity(String cf,String name,String sur,Boolean presenza){
-        codiceFiscale=cf;
-        this.name=name;
-        surname=sur;
-        this.presenza=presenza;
+    public ChildEntity(ChildDTO childDTO, ObjectId idPar) {
+        codiceFiscale = childDTO.getCodiceFiscale();
+        name = childDTO.getName();
+        surname = childDTO.getSurname();
+        idFermataDefault = childDTO.getIdFermataDefault();
+        idParent = idPar;
+    }
+
+    public ChildEntity(String cf, String name, String sur, Boolean presenza) {
+        codiceFiscale = cf;
+        this.name = name;
+        surname = sur;
+        this.presenza = presenza;
+    }
+
+
+    private static class ObjectIdSerializer extends JsonSerializer<ObjectId> {
+        @Override
+        public void serialize(ObjectId objectId, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            jsonGenerator.writeString(objectId.toString());
+        }
+
+
     }
 
 }
