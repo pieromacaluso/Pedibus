@@ -148,8 +148,8 @@ mat-sidenav {
 
 .logo {
   /* Usato per centrarlo manualmente per decentramento Drawer button*/
-  padding-right: 40px;
-  height: 100%;
+  padding: 10px;
+  height: 50px;
   margin: auto;
 }
 
@@ -176,7 +176,7 @@ div {
 }
 
 .mat-sidenav-container{
-  background-color: mat-color($pedibus-theme-primary, default);;
+  background-color: mat-color($pedibus-theme-primary, default);
   min-height: 64px !important;
 }
 
@@ -201,10 +201,11 @@ button{
 
 .mat-sidenav-content{
   font-size: 100%;
-  text-align: center;
+  //text-align: center;
 }
 
 .debug {
   padding: 10px;
   color: #fafafa;
+  text-align: center;
 }

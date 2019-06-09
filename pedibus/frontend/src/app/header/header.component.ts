@@ -12,9 +12,13 @@ export class HeaderComponent implements OnInit {
   opened: boolean;
   logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
-  loggedLinksIcon = ['../../assets/svg/logo.svg'];
+  loggedIcon = ['people'];
   loggedLinks = ['presenze'];
+  loggedTitle = ['Presenze'];
+
+  notLoggedIcon = ['vpn_key', 'person_add'];
   notLoggedLinks = ['sign-in', 'sign-up'];
+  notLoggedTitle = ['Sign In', 'Sign Up'];
   activeLoggedLink;
   activeNotLoggedLink;
 
