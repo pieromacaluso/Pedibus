@@ -10,7 +10,7 @@
     <br>
     <mat-form-field  ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
       <input type="password" id="password" name="password" matInput required placeholder="Password"
-             pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$" [(ngModel)]="model.password"
+             pattern="^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$" [(ngModel)]="model.password"
              #password="ngModel">
       <mat-error *ngIf="password.invalid && password.touched">Password non valida</mat-error>
     </mat-form-field>
