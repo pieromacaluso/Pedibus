@@ -13,20 +13,24 @@ export class ListaPrenotazioniComponent implements OnInit {
   reservations: AlunniPerFermata[];
   cross: any = '../assets/svg/cross.svg';
   selectedVerso: string;
-  showLoading: any = false;
+  countLoading: any = 0;
 
   constructor(private syncService: SyncService, private apiService: ApiService) {
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
       if (prenotazione.linea && prenotazione.verso && prenotazione.data) {
         console.log('inizio');
-        this.showLoading = true;
+        this.countLoading++;
         this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione.linea, prenotazione.data).subscribe((rese) => {
           this.selectedVerso = prenotazione.verso;
           this.reservations = this.selectedVerso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
-          this.showLoading = false;
+          this.countLoading--;
         }, (error) => console.error(error));
       }
     }, (error) => console.error(error));
+  }
+
+  showLoading() {
+    return this.countLoading > 0;
   }
 
   ngOnInit() {
