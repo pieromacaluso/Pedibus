@@ -21,6 +21,10 @@ export class AppComponent {
     this.activeNotLoggedLink = this.notLoggedLinks[0];
   }
 
+  isLoggedIn() {
+    return this.auth.isLoggedIn();
+  }
+
   logOut() {
     this.userLogged = false;
     this.auth.logout();

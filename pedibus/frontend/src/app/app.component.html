@@ -1,4 +1,4 @@
-<nav mat-tab-nav-bar *ngIf="userLogged; else notLogged">
+<nav mat-tab-nav-bar *ngIf="isLoggedIn(); else notLogged">
   <a mat-tab-link *ngFor="let link of loggedLinks"
      (click)="activeLoggedLink = link"
      [active]="activeLoggedLink == link"
