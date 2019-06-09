@@ -13,6 +13,8 @@ export interface Alunno {
   name: string;
   surname: string;
   presenza: boolean;
+  idFermataDefault: number;
+  idParent: string;
 }
 
 export interface Fermata {
