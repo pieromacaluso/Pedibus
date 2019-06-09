@@ -1,9 +1,10 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
   <div class="mat-headline">Sign Up</div>
-  <form (ngSubmit)="submit($event)">
+  <form (ngSubmit)="submit($event)" >
     <mat-form-field  ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
+      <!-- TODO: controllare se va bene (input) o è meglio (blur) -->
       <input type="email" matInput id="email" name="email" placeholder="Email" required email [(ngModel)]="model.email"
-             #email="ngModel">
+             #email="ngModel" (input)="checkDuplicate()">
       <mat-error *ngIf="email.invalid && email.touched">Email non valida</mat-error>
     </mat-form-field>
     <br>
@@ -20,8 +21,9 @@
       <mat-error *ngIf="passMatch.invalid && passMatch.touched">Le due password non coincidono</mat-error>
     </mat-form-field>
     <br>
-    <button type="reset" mat-button>Reset</button>
-    <button type="submit" mat-raised-button color="primary">Register</button>
     <mat-error *ngIf="serverErrors">{{serverErrors}}</mat-error>
+    <mat-error  *ngIf="isPresent">Email già presente nel database</mat-error>
+    <button type="reset" mat-button>Reset</button>
+    <button type="submit" [disabled]="isPresent || passMatch.invalid || password.invalid || email.invalid" mat-raised-button color="primary">Register</button>
   </form>
 </mat-card>

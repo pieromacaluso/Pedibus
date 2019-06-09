@@ -16,7 +16,6 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     FormsModule,
     MatInputModule,
     MatCardModule,
-    FlexLayoutModule
-  ]
+    FlexLayoutModule]
 })
 export class RegistrationModule { }

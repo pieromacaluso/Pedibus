@@ -23,8 +23,13 @@ mat-form-field {
 
 .form-field {
   width: 40%;
+  padding:10px;
 }
 
 .form-field-mobile {
   width: 100%;
+  padding:10px;
+}
+mat-error {
+  padding:10px;
 }

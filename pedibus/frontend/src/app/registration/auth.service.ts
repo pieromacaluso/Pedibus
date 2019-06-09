@@ -20,6 +20,10 @@ export class AuthService {
     return this.httpClient.post(this.baseURL + 'register', model);
   }
 
+  checkDuplicate(email: string) {
+    return this.httpClient.get<boolean>(this.baseURL + 'register/checkMail/' + email);
+  }
+
   signIn(model: SignInModel) {
     // We are calling shareReplay to prevent the receiver of this Observable from
     // accidentally triggering multiple POST requests due to multiple subscriptions.
