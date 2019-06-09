@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {LineReservation} from './line-details';
+import {DatePipe} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class ApiService {
 
   baseURL = environment.baseURL;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
   }
 
   getLinee() {
@@ -21,7 +22,8 @@ export class ApiService {
   getPrenotazioneByLineaAndDateAndVerso(selectedLinea: string, date: Date) {
     console.log('invio richiesta getPrenotazioneByLineaAndDateAndVerso ' + date.toLocaleDateString());
     if (selectedLinea && date) {
-      return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/' + selectedLinea + '/2019-01-01');
+      return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/' + selectedLinea + '/' +
+        this.datePipe.transform(date, 'yyyy-MM-dd'));
     }
   }
 
