@@ -45,7 +45,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/js/**").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/register").permitAll()
+                .antMatchers("/register/**").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
@@ -58,6 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()//todo delete
                 .antMatchers("/reservations/**").permitAll()
+                .and()
+                .authorizeRequests()//todo delete
+                .antMatchers("/notreservations/**").permitAll()
                 .and()
                 .authorizeRequests()//todo delete
                 .antMatchers("/lines/**").permitAll()

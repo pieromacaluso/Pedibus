@@ -100,6 +100,12 @@ public class AuthenticationRestController {
         userService.registerUser(userDTO);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/register/checkMail/{email}")
+    public boolean checkUserMailDuplicate(@PathVariable String email){
+        return userService.checkMailIsPresent(email);
+    }
+
     /**
      * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
      *

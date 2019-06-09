@@ -73,6 +73,11 @@ public class UserService implements UserDetailsService {
         return userEntity;
     }
 
+    public boolean checkMailIsPresent(String email) throws UsernameNotFoundException {
+        Optional<UserEntity> check = userRepository.findByUsername(email);
+        return check.isPresent();
+    }
+
     /**
      * Metodo che gestisce la registrazione
      * salva su db e invia una mail di conferma
