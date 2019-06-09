@@ -9,6 +9,8 @@ import {Router} from '@angular/router';
 })
 export class AppComponent {
 
+  opened: boolean;
+  logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
   loggedLinks = ['presenze'];
   notLoggedLinks = ['sign-in', 'sign-up'];
@@ -31,4 +33,12 @@ export class AppComponent {
     this.router.navigate(['sign-in']);
   }
 
+  getAuthData() {
+    if (this.auth.getExpiration() == null) {
+      return 'User logged: ' + this.auth.isLoggedIn() + ', expiration: not defined';
+    } else {
+
+      return 'User logged: ' + this.auth.isLoggedIn() + ', expiration: ' + this.auth.getExpiration().toLocaleString();
+    }
+  }
 }
