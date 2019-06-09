@@ -9,6 +9,8 @@ import {AppRoutingModule} from './app-routing.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { HeaderComponent } from './header/header.component';
 import {DatePipe} from '@angular/common';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HttpExceptionsInterceptor} from './http-exceptions-interceptor';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,12 @@ import {DatePipe} from '@angular/common';
     FlexLayoutModule,
     MatButtonModule,
   ],
-  providers: [DatePipe],
+  providers: [DatePipe,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpExceptionsInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
