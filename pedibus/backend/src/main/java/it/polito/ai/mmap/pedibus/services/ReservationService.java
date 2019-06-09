@@ -188,6 +188,7 @@ public class ReservationService {
      * @throws Exception
      */
     public void setHandled(Boolean verso, String data, String cfChild) throws Exception {
+        //todo check che sia un accompagnatore
         PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
         prenotazioneEntity.setPresoInCarico(true);
         prenotazioneRepository.save(prenotazioneEntity);
@@ -202,6 +203,7 @@ public class ReservationService {
      * @throws Exception
      */
     public void setArrived(Boolean verso, String data, String cfChild) throws Exception {
+        //todo check che sia un accompagnatore
         PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
         prenotazioneEntity.setArrivatoScuola(true);
         prenotazioneRepository.save(prenotazioneEntity);

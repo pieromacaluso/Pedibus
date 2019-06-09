@@ -56,7 +56,7 @@ public class ReservationController {
      * @return GetReservationsNomeLineaDataResource
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{verso}")
-    public GetReservationsNomeLineaDataResource getReservationsTowards(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data,@PathVariable("verso") boolean verso) {
+    public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data,@PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService,verso);
