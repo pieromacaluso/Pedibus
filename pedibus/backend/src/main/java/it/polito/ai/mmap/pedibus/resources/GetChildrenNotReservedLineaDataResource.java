@@ -19,12 +19,12 @@ public class GetChildrenNotReservedLineaDataResource {
 
     List<ChildDTO> childrenNotReserved;
 
-    public GetChildrenNotReservedLineaDataResource(String nomeLina, Date data, boolean verso, ReservationService reservationService, UserService userService){
+    public GetChildrenNotReservedLineaDataResource(Date data, boolean verso, ReservationService reservationService, UserService userService){
         List<String> tmp;
 
-        List<String> bambiniDataLinea=reservationService.getAllChildrenForReservationDataLinea(nomeLina,data,verso);
+        List<String> bambiniDataVerso=reservationService.getAllChildrenForReservationDataVerso(data,verso);
         List<String> bambini=userService.getAllChildrenId();                                                    //tutti i bambini iscritti
-        tmp=bambini.stream().filter(bambino->!bambiniDataLinea.contains(bambino)).collect(Collectors.toList());     //tutti i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
+        tmp=bambini.stream().filter(bambino->!bambiniDataVerso.contains(bambino)).collect(Collectors.toList());     //tutti i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
 
         childrenNotReserved=userService.getAllChildrenById(tmp);
     }

@@ -13,5 +13,5 @@ public interface PrenotazioneRepository extends MongoRepository<PrenotazioneEnti
     Optional<PrenotazioneEntity> findByCfChildAndDataAndVerso(String cfChild, Date data, boolean verso);
     List<PrenotazioneEntity> findAllByDataAndIdFermataAndVerso(Date data, Integer id, boolean verso);
     List<PrenotazioneEntity> deleteAllByCfChild(String cfChild);
-    List<PrenotazioneEntity> findByNomeLineaAndDataAndVerso(String nome,Date data,boolean verso);
+    List<PrenotazioneEntity> findByDataAndVerso(Date data,boolean verso);
 }

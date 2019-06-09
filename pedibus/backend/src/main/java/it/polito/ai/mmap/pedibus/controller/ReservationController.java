@@ -47,11 +47,11 @@ public class ReservationController {
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService);
     }
 
-    @GetMapping("/notreservations/{nome_linea}/{data}/{verso}")
-    public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data,@PathVariable("verso")boolean verso) {
-        logger.info("GET /NotReservations/" + nomeLinea + "/" + data + " è stato contattato");
+    @GetMapping("/notreservations/{data}/{verso}")
+    public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data,@PathVariable("verso")boolean verso) {
+        logger.info("GET /NotReservations/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return new GetChildrenNotReservedLineaDataResource(nomeLinea, dataFormatted, verso, reservationService,userService);
+        return new GetChildrenNotReservedLineaDataResource(dataFormatted, verso, reservationService,userService);
     }
 
     /**
