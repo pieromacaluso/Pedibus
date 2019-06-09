@@ -1,0 +1,49 @@
+<mat-sidenav-container fxFlexFill class="sidenav-container">
+
+  <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
+    <mat-toolbar class="head-menu">Menu</mat-toolbar>
+    <mat-nav-list *ngIf="isLoggedIn(); else notLoggedMobile">
+      <a mat-list-item *ngFor="let link of loggedLinks"
+         (click)="activeLoggedLink = link;sidenav.close();"
+         routerLinkActive="mat-accent"
+         [routerLink]="link"> <mat-icon aria-hidden="false" aria-label="Example home icon">home</mat-icon> {{link}} </a>
+      <a mat-list-item (click)="logOut();sidenav.close();">Logout</a>
+    </mat-nav-list>
+    <ng-template #notLoggedMobile>
+      <mat-nav-list>
+        <a mat-list-item *ngFor="let link of notLoggedLinks"
+           (click)="activeNotLoggedLink = link;sidenav.close();"
+           routerLinkActive="mat-accent"
+           [routerLink]="link"> {{link}} </a>
+      </mat-nav-list>
+    </ng-template>
+  </mat-sidenav>
+  <mat-sidenav-content fxFlexFill>
+    <mat-toolbar class="fixed-header" color="primary">
+      <div fxShow="true" fxHide.gt-sm="true">
+        <button mat-icon-button (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+      <img class="logo" [src]="logo" alt="Pedibus"/>
+      <span class="example-spacer"></span>
+      <div fxShow="true" fxHide.lt-md="true" *ngIf="isLoggedIn(); else notLogged">
+        <a mat-button *ngFor="let link of loggedLinks"
+           (click)="activeLoggedLink = link"
+           routerLinkActive="mat-accent"
+           [routerLink]="link"> {{link}} </a>
+        <a mat-button (click)="logOut()">Logout</a>
+      </div>
+      <ng-template #notLogged>
+        <div fxShow="true" fxHide.lt-md="true">
+          <a mat-button *ngFor="let link of notLoggedLinks"
+             (click)="activeNotLoggedLink = link"
+             routerLinkActive="mat-accent"
+             [routerLink]="link"> {{link}} </a>
+        </div>
+      </ng-template>
+
+    </mat-toolbar>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>
