@@ -1,0 +1,50 @@
+<!-- TOOLBAR -->
+<mat-card ngClass="container dark-theme" ngClass.lt-md="container-mobile dark-theme">
+  <!-- TOOLBAR ROW -->
+  <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap.lt-sm="5%">
+    <!-- DATE CHANGE BUTTON -->
+    <div fxFlex="10%" fxFlex.lt-sm="0%" fxLayoutAlign="space-around center" fxHide.lt-sm="">
+      <button type=”button” class="mat-mini-fab mat-accent" (click)="modifyDate(-1);">
+          <span class="mat-button-wrapper">
+            <mat-icon class="mat-icon material-icons"
+                      role="img" aria-hidden="true">keyboard_arrow_left</mat-icon>
+          </span>
+      </button>
+    </div>
+    <mat-card-header fxFlex="70%" fxFlex.lt-sm="90%" class="form-top" fxLayout="row" fxLayout.lt-sm="column"
+                     fxLayoutGap="3%"
+                     fxLayoutAlign="center" fxLayoutAlign.xs="center">
+      <!-- SELEZIONA LINEA -->
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+        <mat-label>Seleziona linea</mat-label>
+        <mat-select (selectionChange)="emitRequest()" [(ngModel)]="richiesta.linea">
+          <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- SELEZIONA VERSO -->
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+        <mat-label>Verso</mat-label>
+        <mat-select (selectionChange)="emitRequest()" [(ngModel)]="richiesta.verso">
+          <mat-option *ngFor="let v of ['Andata', 'Ritorno']" [value]="v">{{v}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <!-- DATEPICKER -->
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+        <input matInput (dateChange)="emitRequest()"  [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="richiesta.data">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker  #picker></mat-datepicker>
+      </mat-form-field>
+    </mat-card-header>
+    <div fxFlex="10%" fxFlex.lt-sm="0%" fxLayoutAlign="space-around center" fxHide.lt-sm="">
+
+      <button type=”button” class="mat-mini-fab mat-accent " (click)="modifyDate(1);">
+          <span class="mat-button-wrapper">
+            <mat-icon class="mat-icon material-icons"
+                      role="img" aria-hidden="true">keyboard_arrow_right</mat-icon>
+          </span>
+      </button>
+    </div>
+  </div>
+</mat-card>

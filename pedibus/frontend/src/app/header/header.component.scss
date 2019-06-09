@@ -1,0 +1,12 @@
+@import '../app.component.scss';
+
+.fixed-header {
+  height: 80px;
+}
+mat-icon {
+  padding-right: 5px;
+}
+
+.mat-nav-list a.active {
+  color: mat-color($pedibus-theme-accent, darker);
+}

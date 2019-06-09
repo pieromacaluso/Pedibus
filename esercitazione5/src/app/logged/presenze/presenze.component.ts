@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ApiService} from '../api.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-presenze',
@@ -7,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PresenzeComponent implements OnInit {
 
-  constructor() { }
+  // refactored
+  linee$: Observable<string[]>;
+
+  constructor(private mongoService: ApiService) {
+    this.linee$ = this.mongoService.getLinee();
+  }
 
   ngOnInit() {
   }
-
 }
