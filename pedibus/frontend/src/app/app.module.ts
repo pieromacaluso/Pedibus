@@ -8,6 +8,7 @@ import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {AppRoutingModule} from './app-routing.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { HeaderComponent } from './header/header.component';
+import {DatePipe} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { HeaderComponent } from './header/header.component';
     FlexLayoutModule,
     MatButtonModule,
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {
