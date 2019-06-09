@@ -41,13 +41,22 @@ export class AuthService {
   }
 
   public isLoggedIn() {
-    return moment().isBefore(this.getExpiration());
+    if (this.getExpiration() == null) {
+      return false;
+    } else {
+      return moment().isBefore(this.getExpiration());
+    }
   }
 
   getExpiration() {
     const expiration = localStorage.getItem('expires_at');
-    const expiresAt = JSON.parse(expiration);
-    return moment(expiresAt);
+    if (expiration != null) {
+      const expiresAt = JSON.parse(expiration);
+      return moment(expiresAt);
+    } else {
+      return null;
+    }
+
   }
 
 }

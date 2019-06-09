@@ -1,14 +1,4 @@
-@import '../pedibus-theme';
-
-mat-toolbar {
-  z-index: 50 !important;
-}
-mat-sidenav {
-  background-color: rgba(228, 228, 228, 0.35);
-  color: rgba(0, 0, 0, 0.87);
-  min-width:200px;
-}
-
+@import "../../app.component";
 
 .container {
   width: 60%;
@@ -113,13 +103,6 @@ mat-sidenav {
   margin: 0;
 }
 
-.example-icon {
-  padding: 0 14px;
-}
-
-.example-spacer {
-  flex: 1 1 auto;
-}
 
 .fab-left {
   position: fixed;
@@ -138,73 +121,4 @@ mat-sidenav {
 
 .margin-final {
   height: 85px !important;
-}
-
-.head-menu {
-  background: mat-color($pedibus-theme-primary, default) !important;
-  color: white
-}
-
-
-.logo {
-  /* Usato per centrarlo manualmente per decentramento Drawer button*/
-  padding-right: 40px;
-  height: 100%;
-  margin: auto;
-}
-
-.sidenav-container {
-  height: 100%;
-
-}
-
-.sidenav {
-  width: 300px;
-}
-
-.sidenav .mat-toolbar {
-  background: inherit;
-}
-
-
-.mat-toolbar{
-  height: 64px;
-}
-
-div {
-  overflow: inherit;
-}
-
-.mat-sidenav-container{
-  background-color: mat-color($pedibus-theme-primary, default);;
-  min-height: 64px !important;
-}
-
-a{
-  text-decoration: none;
-  font-size: 110%;
-  white-space: normal;
-}
-
-button{
-  font-size: 110%;
-  min-width: min-content;
-}
-
-.example-icon {
-  padding: 0 14px;
-}
-
-.example-spacer {
-  flex: 1 1 auto;
-}
-
-.mat-sidenav-content{
-  font-size: 100%;
-  text-align: center;
-}
-
-.debug {
-  padding: 10px;
-  color: #fafafa;
 }

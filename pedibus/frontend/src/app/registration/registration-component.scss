@@ -1,0 +1,30 @@
+@import "../app.component";
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.example-container > * {
+  width: 100%;
+}
+
+.example-container form {
+  margin-bottom: 20px;
+}
+
+.example-container form > * {
+  margin: 5px 0;
+}
+
+mat-form-field {
+  width: 300px;
+}
+
+.form-field {
+  width: 40%;
+}
+
+.form-field-mobile {
+  width: 100%;
+}
