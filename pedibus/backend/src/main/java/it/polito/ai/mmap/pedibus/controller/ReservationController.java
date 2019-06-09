@@ -48,6 +48,21 @@ public class ReservationController {
     }
 
     /**
+     * Restituisce un oggetto JSON contenente una liste, riportanti, per ogni fermata di andata o ritorno, l’elenco delle
+     * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
+     *
+     * @param nomeLinea nome linea
+     * @param data      data in esame
+     * @return GetReservationsNomeLineaDataResource
+     */
+    @GetMapping("/reservations/{nome_linea}/{data}/{verso}")
+    public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data,@PathVariable("verso") boolean verso) {
+        logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
+        Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService,verso);
+    }
+
+    /**
      * Restituisce la lista dei bambini non prenotati per la data(AAAA-MM-GG) e il verso passati.
      * @param data
      * @param verso
