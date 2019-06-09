@@ -194,7 +194,7 @@ public class ReservationService {
     }
 
     /**
-     * Admin lina indica che ha lasciato l'alunno a scuola
+     * Admin lina indica che ha lasciato l'alunno a scuola/fermata ritorno
      *
      * @param verso
      * @param data

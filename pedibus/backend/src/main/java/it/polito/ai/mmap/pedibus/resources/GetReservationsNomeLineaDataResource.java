@@ -42,6 +42,23 @@ public class GetReservationsNomeLineaDataResource {
         alunniPerFermataRitorno.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), false)));
     }
 
+    public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, ReservationService reservationService,boolean verso) {
+        // Ordinati temporalmente, quindi seguendo l'andamento del percorso
+        if(verso){
+            alunniPerFermataAndata = (lineeService.getLineByName(nomeLina)).getAndata().stream()
+                    .map(FermataDTOAlunni::new)
+                    .collect(Collectors.toList());
+            // true per indicare l'andata
+            alunniPerFermataAndata.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), true)));
+        }else{
+            alunniPerFermataRitorno = (lineeService.getLineByName(nomeLina)).getRitorno().stream()
+                    .map(FermataDTOAlunni::new)
+                    .collect(Collectors.toList());
+            // false per indicare il ritorno
+            alunniPerFermataRitorno.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), false)));
+        }
+    }
+
     @Data
     public static class FermataDTOAlunni {
         FermataDTO fermata;
