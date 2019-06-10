@@ -15,11 +15,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,11 +24,11 @@ import java.util.stream.Collectors;
 /**
  * - una post a http://localhost:8080/debug/make genera:
  *
- *      - 100 Child
- *      - 50 user con 2 figli e pw = mail
- *      - 1 prenotazione/figlio per oggi, domani e dopo domani (o andata o ritorno)
+ * - 100 Child
+ * - 50 genitori con 2 figli        username = primi 50 contenuti nel file userDTO.json e pw = 1!qwerty1!
+ * - 50 nonni                       username = secondi 50 contenuti nel file userDTO.json e pw = 1!qwerty1!
+ * - 1 prenotazione/figlio per oggi, domani e dopo domani (o andata o ritorno)
  * - ci mette anche 2min a fare sta roba, ma controlla di non creare dupplicati ecc
- *
  */
 @RestController
 public class DebugController {
@@ -64,6 +61,8 @@ public class DebugController {
     public void makeChildUserPrenotazioni() throws IOException {
         logger.info("POST /debug/make è stato contattato");
 
+        int count = 0;
+
         List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/childEntity.json"), new TypeReference<List<ChildEntity>>() {
         });
 
@@ -80,8 +79,8 @@ public class DebugController {
             if (!checkDuplicate.isPresent()) {
                 parent.setEnabled(true);
                 parent = userRepository.save(parent); //per avere l'objectId
-
-            }else
+                count++;
+            } else
                 parent = checkDuplicate.get();
 
             userList.set(i, parent);
@@ -91,9 +90,29 @@ public class DebugController {
             i++;
         }
         childRepository.saveAll(childList);
-        logger.info("Child e User caricati");
+        logger.info(count + " genitori caricati");
+
+
+        count = 0;
+        RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
+        List<UserEntity> listNonni = new LinkedList<>();
+        while (i < userList.size()) {
+            UserEntity nonno = userList.get(i);
+            Optional<UserEntity> checkDuplicate = userRepository.findByUsername(nonno.getUsername());
+            if (!checkDuplicate.isPresent()) {
+                nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
+                listNonni.add(nonno);
+                count++;
+            }
+            i++;
+        }
+
+        userRepository.saveAll(listNonni);
+        logger.info(count + " nonni caricati");
 
         i = 0;
+        count = 0;
+        List<PrenotazioneEntity> prenotazioniList = new LinkedList<>();
         for (int day = 0; day < 3; day++) {
             childEntityIterable = childList.iterator();
             while (childEntityIterable.hasNext()) {
@@ -105,13 +124,15 @@ public class DebugController {
                 prenotazioneEntity.setIdFermata(randFermata);
                 prenotazioneEntity.setNomeLinea("linea1");
                 prenotazioneEntity.setVerso(randFermata < 5); //1-4 = true = andata
-                if (!prenotazioneRepository.findByCfChildAndDataAndVerso(prenotazioneEntity.getCfChild(), prenotazioneEntity.getData(), randFermata < 5).isPresent())
-                    prenotazioneRepository.save(prenotazioneEntity);
+                if (!prenotazioneRepository.findByCfChildAndData(prenotazioneEntity.getCfChild(), prenotazioneEntity.getData()).isPresent()) {
+                    prenotazioniList.add(prenotazioneEntity);
+                    count++;
+                }
                 i++;
             }
         }
-
-        logger.info("Prenotazioni per oggi, domani e dopodomani caricate");
+        prenotazioneRepository.saveAll(prenotazioniList);
+        logger.info(count + " prenotazioni per oggi, domani e dopodomani caricate");
     }
 
 
