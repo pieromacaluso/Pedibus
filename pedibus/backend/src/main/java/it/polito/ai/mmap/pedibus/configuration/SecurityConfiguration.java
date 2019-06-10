@@ -87,6 +87,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
         builder.userDetailsService(userService).passwordEncoder(passwordEncoder());
+
+        //TODO da cancellare ?
         builder.inMemoryAuthentication()
                 .withUser("userAd")
                 .password(passwordEncoder().encode("pass"))
