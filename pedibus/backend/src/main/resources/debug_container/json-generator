@@ -1,17 +1,14 @@
 https://next.json-generator.com/
+https://convertcase.net/ to lower case
 
 userDTO
 
 [
   {
-    'repeat(1)': {
+    'repeat(100)': {
       email: '{{firstName()}}'+'.'+'{{surname()}}'+'@test.it',
-      password() {
-        return `${this.email}`;
-      },
-      passMatch() {
-        return `${this.email}`;
-      },
+      password: "1!qwerty1!",
+      passMatch: "1!qwerty1!",
     }
   }
 ]
@@ -20,12 +17,11 @@ userDTO
 childEntity
 [
   {
-    'repeat(1)': {
+    'repeat(100)': {
       codiceFiscale: 'cf-{{objectId()}}',
       name: '{{firstName()}}',
       surname: '{{surname()}}',
-      presenza: 'false',
-      idFermataDefault: '{{integer(1, 10)}}',
+      idFermataDefault: '{{integer(1, 8)}}',
       idParent: '{{objectId()}}'
     }
   }

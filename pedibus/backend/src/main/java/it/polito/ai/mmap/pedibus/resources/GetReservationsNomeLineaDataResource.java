@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus.resources;
 
 
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
@@ -62,7 +63,7 @@ public class GetReservationsNomeLineaDataResource {
     @Data
     public static class FermataDTOAlunni {
         FermataDTO fermata;
-        List<ChildEntity> alunni;
+        List<ChildDTO> alunni;
 
         FermataDTOAlunni(FermataDTO f) {
             fermata = f;

@@ -6,6 +6,7 @@ import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotValidException;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
@@ -173,10 +174,10 @@ public class ReservationService {
      * @param verso verso
      * @return Lista di nomi alunni
      */
-    public List<ChildEntity> findAlunniFermata(Date data, Integer id, boolean verso) {
+    public List<ChildDTO> findAlunniFermata(Date data, Integer id, boolean verso) {
         List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
         List<String> cfList = prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList());
-        return  (List<ChildEntity>) childRepository.findAllById(cfList);
+        return  ((List<ChildEntity>) childRepository.findAllById(cfList)).stream().map(ChildDTO::new).collect(Collectors.toList());
     }
 
     /**

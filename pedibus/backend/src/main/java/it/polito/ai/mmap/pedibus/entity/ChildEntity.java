@@ -27,11 +27,7 @@ public class ChildEntity {
     private String codiceFiscale; //Se si cambia questo campo bisogna cambiare "$.alunniPerFermataAndata[0].alunni[0].codiceFiscale" in test2
     private String name;
     private String surname;
-    private Boolean presenza;
-
-    @JsonIgnore
     private Integer idFermataDefault;   //in fase di registrazione ad ogni bambino bisogna indicare la sua fermata di default dalla quale partire/arrivare
-    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId idParent;
 
     public ChildEntity(ChildDTO childDTO) {
@@ -50,21 +46,10 @@ public class ChildEntity {
         idParent = idPar;
     }
 
-    public ChildEntity(String cf, String name, String sur, Boolean presenza) {
+    public ChildEntity(String cf, String name, String sur) {
         codiceFiscale = cf;
         this.name = name;
         surname = sur;
-        this.presenza = presenza;
-    }
-
-
-    private static class ObjectIdSerializer extends JsonSerializer<ObjectId> {
-        @Override
-        public void serialize(ObjectId objectId, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeString(objectId.toString());
-        }
-
-
     }
 
 }
