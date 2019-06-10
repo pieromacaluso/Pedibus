@@ -28,11 +28,14 @@ export class ApiService {
   }
 
   /**
-   * Segnala la presenza di un alunno
+   * Segnala la presoInCarico di un alunno
    */
   postPresenza(alunno: Alunno, presenza: PrenotazioneRequest, choice: boolean) {
+    const idVerso = this.versoToInt(presenza.verso);
+    console.log(this.baseURL + 'reservation/handled/' + idVerso + '/' + this.datePipe
+      .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
     return this.httpClient
-      .post(this.baseURL + 'reservation/handled/' + presenza.verso + '/' + this.datePipe
+      .post(this.baseURL + 'reservation/handled/' + idVerso + '/' + this.datePipe
         .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
   }
 

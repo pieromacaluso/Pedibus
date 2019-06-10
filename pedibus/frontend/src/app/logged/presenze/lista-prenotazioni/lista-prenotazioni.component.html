@@ -26,7 +26,7 @@
       </div>
 
       <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"
-                        *ngIf="(last && this.selectedVerso === 'Andata') || (first && this.selectedVerso === 'Ritorno');
+                        *ngIf="(last && this.prenotazione.verso === 'Andata') || (first && this.prenotazione.verso === 'Ritorno');
                              then isSpecial;
                              else notSpecial">
       </mat-card-content>
@@ -36,7 +36,7 @@
         <ng-template #thenAlunni>
           <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
             <button mat-stroked-button class="alunno-presenza mat-background-accent"
-                    [class.presente]="presente(res.fermata.id, alunno)"
+                    [class.presente]="alunno.presoInCarico"
                     (click)="togglePresenza(res.fermata.id, alunno)"
                     *ngFor="let alunno of sortedAlunni(res.alunni); ">{{alunno.surname + " " + alunno.name}}</button>
           </mat-card-content>
@@ -60,8 +60,8 @@
                       *ngIf="(notReserved); then thenAlunniNot; else elseAlunniNot"></mat-card-content>
     <ng-template #thenAlunniNot>
       <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
-        <button mat-stroked-button class="alunno-presenza mat-background-accent"
-                *ngFor="let alunno of notReserved; ">{{alunno.surname + " " + alunno.name}}</button>
+        <button (click)="openDialog(alunno)" mat-stroked-button class="alunno-presenza mat-background-accent"
+                *ngFor="let alunno of notReserved; "> <mat-icon aria-hidden="false" aria-label="Example home icon">add</mat-icon>{{alunno.surname + " " + alunno.name}}</button>
       </mat-card-content>
     </ng-template>
     <ng-template #elseAlunniNot>

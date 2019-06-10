@@ -24,7 +24,8 @@ export interface Alunno {
   codiceFiscale: string;
   name: string;
   surname: string;
-  presenza: boolean;
+  presoInCarico: boolean;
+  arrivatoScuola: boolean;
 }
 
 export interface Fermata {
