@@ -32,10 +32,10 @@ export class ApiService {
    */
   postPresenza(alunno: Alunno, presenza: PrenotazioneRequest, choice: boolean) {
     const idVerso = this.versoToInt(presenza.verso);
-    console.log(this.baseURL + 'reservation/handled/' + idVerso + '/' + this.datePipe
+    console.log(this.baseURL + 'reservations/handled/' + idVerso + '/' + this.datePipe
       .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
     return this.httpClient
-      .post(this.baseURL + 'reservation/handled/' + idVerso + '/' + this.datePipe
+      .post(this.baseURL + 'reservations/handled/' + idVerso + '/' + this.datePipe
         .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
   }
 
