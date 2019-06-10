@@ -71,7 +71,7 @@ public class AuthenticationRestController {
         if (bindingResult.getFieldErrorCount() == 0) {
             String username = userDTO.getEmail();
             String password = userDTO.getPassword();
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
             Map<Object, Object> model = new HashMap<>();
             model.put("token", userService.getJwtToken(username));
             return ok(model);

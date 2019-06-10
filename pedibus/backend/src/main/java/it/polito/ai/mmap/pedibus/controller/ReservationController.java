@@ -150,6 +150,7 @@ public class ReservationController {
      * @param data
      * @param cfChild true per indicare che è stato preso, false per annullare
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/reservation/handled/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
         reservationService.manageHandled(verso, data, cfChild, isSet);
@@ -165,6 +166,7 @@ public class ReservationController {
      * @param isSet true per indicare che è arrivato, false per annullare
      *
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/reservation/arrived/{verso}/{data}/{isSet}")
     public void manageArrived(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         reservationService.manageArrived(verso, data, cfChild, isSet);
