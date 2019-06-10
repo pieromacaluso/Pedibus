@@ -57,7 +57,7 @@ public class AdminRestController {
         LineaDTO lineaDTO = lineeService.getLineByName(permissionDTO.getLinea());
 
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername())) {
+        if (lineaDTO.getAdminList().contains(principal.getUsername())) {
                 if(permissionDTO.isAddOrDel()){
                     userService.addAdmin(userID);
                     lineeService.addAdminLine(userID, permissionDTO.getLinea());

@@ -1,9 +1,11 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
+import it.polito.ai.mmap.pedibus.resources.LoginTokenResource;
 import it.polito.ai.mmap.pedibus.services.JwtTokenService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.bson.types.ObjectId;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -69,11 +72,10 @@ public class AuthenticationRestController {
         if (bindingResult.getFieldErrorCount() == 0) {
             String username = userDTO.getEmail();
             String password = userDTO.getPassword();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
-            String jwtToken = userService.getJwtToken(username);
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
             Map<Object, Object> model = new HashMap<>();
-            model.put("username", username);
-            model.put("token", jwtToken);
+            LoginTokenResource loginTokenResource = new LoginTokenResource(username,userService.getJwtToken(username),((UserEntity)authentication.getPrincipal()).getRoleList());
+            model.put("token", loginTokenResource);
             return ok(model);
         } else {
             throw new BadCredentialsException("Bad credentials");
