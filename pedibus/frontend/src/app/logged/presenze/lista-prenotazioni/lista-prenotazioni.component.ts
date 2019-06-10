@@ -2,6 +2,7 @@ import {Component, Input, OnInit, SimpleChange} from '@angular/core';
 import {AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
+import {AuthService} from '../../../registration/auth.service';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -12,14 +13,16 @@ export class ListaPrenotazioniComponent implements OnInit {
 
   reservations: AlunniPerFermata[];
   cross: any = '../assets/svg/cross.svg';
+  prenotazione: PrenotazioneRequest;
   selectedVerso: string;
   countLoading: any = 0;
   private notReserved: AlunnoNotReserved[];
 
-  constructor(private syncService: SyncService, private apiService: ApiService) {
+  constructor(private syncService: SyncService, private apiService: ApiService, private authService: AuthService) {
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
       if (prenotazione.linea && prenotazione.verso && prenotazione.data) {
         console.log('inizio');
+        this.prenotazione = prenotazione;
         this.countLoading++;
         this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione.linea, prenotazione.data).subscribe((rese) => {
           this.selectedVerso = prenotazione.verso;
@@ -45,8 +48,11 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   togglePresenza(id: number, alunno: Alunno) {
-    const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
-    al.presenza = !al.presenza;
+    if (this.authService.isAdmin()) {
+      const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
+      al.presenza = !al.presenza;
+      this.apiService.postPresenza(al, this.prenotazione, al.presenza);
+    }
   }
 
   presente(id: number, alunno: Alunno): boolean {

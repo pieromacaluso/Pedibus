@@ -32,17 +32,28 @@ export class AuthService {
 
   private setSession(authResult) {
     // TODO: aggiunto .jwtToken, da verificare che ci sia ancora in backend a fine es5
-    console.log('exp: ' + jwt_decode(authResult.token.jwtToken).exp);
-    const expiresAt = moment((jwt_decode(authResult.token.jwtToken).exp) * 1000);
+    console.log(JSON.stringify(jwt_decode(authResult.token)));
+    const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
     console.log('expires at: ' + expiresAt);
 
-    localStorage.setItem('id_token', authResult.token.jwtToken);
+    localStorage.setItem('id_token', authResult.token);
+    localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
   }
 
   logout() {
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+  }
+
+  isAdmin() {
+    if (this.isLoggedIn()) {
+      // todo: per ora roles e' una stringa, da converite in array
+      const roles = [];
+      roles.push(localStorage.getItem('roles'));
+      return roles.find(role => role.localeCompare('ROLE_SYSTEM-ADMIN') === 0);
+    }
+    return false;
   }
 
   public isLoggedIn() {

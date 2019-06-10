@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {LineReservation, NotReservation} from './line-details';
+import {Alunno, LineReservation, NotReservation, PrenotazioneRequest} from './line-details';
 import {DatePipe} from '@angular/common';
 
 @Injectable({
@@ -25,6 +25,15 @@ export class ApiService {
       return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/' + selectedLinea + '/' +
         this.datePipe.transform(date, 'yyyy-MM-dd'));
     }
+  }
+
+  /**
+   * Segnala la presenza di un alunno
+   */
+  postPresenza(alunno: Alunno, presenza: PrenotazioneRequest, choice: boolean) {
+    return this.httpClient
+      .post(this.baseURL + 'reservation/handled/' + presenza.verso + '/' + this.datePipe
+        .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
   }
 
   getNonPrenotati(date: Date, verso: string) {
