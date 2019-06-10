@@ -150,7 +150,7 @@ public class ReservationController {
      * @param data
      * @param cfChild true per indicare che è stato preso, false per annullare
      */
-    @PostMapping("/reservation/handled/{verso}/{data}/{isSet}")
+    @PostMapping("/reservations/handled/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
         reservationService.manageHandled(verso, data, cfChild, isSet);
     }
@@ -166,7 +166,7 @@ public class ReservationController {
      *
      */
 
-    @PostMapping("/reservation/arrived/{verso}/{data}/{isSet}")
+    @PostMapping("/reservations/arrived/{verso}/{data}/{isSet}")
     public void manageArrived(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         reservationService.manageArrived(verso, data, cfChild, isSet);
     }
