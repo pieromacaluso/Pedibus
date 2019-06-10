@@ -6,24 +6,16 @@ import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotValidException;
-import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.*;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
@@ -174,10 +166,23 @@ public class ReservationService {
      * @param verso verso
      * @return Lista di nomi alunni
      */
-    public List<ChildDTO> findAlunniFermata(Date data, Integer id, boolean verso) {
-        List<PrenotazioneEntity> prenotazioni = prenotazioneRepository.findAllByDataAndIdFermataAndVerso(data, id, verso);
-        List<String> cfList = prenotazioni.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList());
-        return  ((List<ChildEntity>) childRepository.findAllById(cfList)).stream().map(ChildDTO::new).collect(Collectors.toList());
+    public List<PrenotazioneChildDTO> findAlunniFermata(Date data, Integer id, boolean verso) {
+        // TODO: (Piero) Questo metodo secondo me è migliorabile, se avete idee, mastruzzate qui!
+        HashMap<String, PrenotazioneEntity> prenotazioni =(HashMap<String, PrenotazioneEntity>)prenotazioneRepository
+                .findAllByDataAndIdFermataAndVerso(data, id, verso).stream()
+                .collect(
+                Collectors.toMap(PrenotazioneEntity::getCfChild, p -> p));
+        Set<String> cfList = prenotazioni.keySet();
+        HashMap<String, ChildDTO> childDTOS =(HashMap<String, ChildDTO>)
+                ((List<ChildEntity>) childRepository.findAllById(cfList)).stream().map(ChildDTO::new) .collect(
+                Collectors.toMap(ChildDTO::getCodiceFiscale, c -> c));
+        List<PrenotazioneChildDTO> result = new ArrayList<>();
+        for (String cf :cfList){
+            PrenotazioneEntity p = prenotazioni.get(cf);
+            ChildDTO c = childDTOS.get(cf);
+            result.add(new PrenotazioneChildDTO(p, c));
+        }
+        return result;
     }
 
     /**
@@ -211,8 +216,8 @@ public class ReservationService {
     /**
      * ritorna tutti i bambini prenotati per una determinata giornata in una detrminata linea
      */
-    public List<String> getAllChildrenForReservationDataVerso(Date data,boolean verso){
-        List<PrenotazioneEntity> prenotazioniTotaliLineaDataVerso=prenotazioneRepository.findByDataAndVerso(data,verso);
-        return  prenotazioniTotaliLineaDataVerso.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList());
+    public List<String> getAllChildrenForReservationDataVerso(Date data, boolean verso) {
+        List<PrenotazioneEntity> prenotazioniTotaliLineaDataVerso = prenotazioneRepository.findByDataAndVerso(data, verso);
+        return prenotazioniTotaliLineaDataVerso.stream().map(PrenotazioneEntity::getCfChild).collect(Collectors.toList());
     }
 }

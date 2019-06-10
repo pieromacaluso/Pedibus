@@ -25,6 +25,9 @@ public class PrenotazioneDTO {
         verso = prenotazioneResource.getVerso();
         idFermata = prenotazioneResource.getIdFermata();
         cfChild = prenotazioneResource.getCfChild();
+        // TODO: check
+        presoInCarico = false;
+        arrivatoScuola = false;
     }
 
     public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity) {
@@ -33,6 +36,8 @@ public class PrenotazioneDTO {
         verso = prenotazioneEntity.isVerso();
         idFermata = prenotazioneEntity.getIdFermata();
         cfChild = prenotazioneEntity.getCfChild();
+        this.presoInCarico = prenotazioneEntity.isPresoInCarico();
+        this.arrivatoScuola = prenotazioneEntity.isArrivatoScuola();
     }
 
 
