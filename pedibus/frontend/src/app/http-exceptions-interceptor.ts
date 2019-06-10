@@ -26,11 +26,11 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
             errorMessage = `Error: ${error.error.message}`;
           } else {
             // server-side error
-            errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+            errorMessage = `Error Code: ${error.error.errorMessage}`;
           }
           console.log(error);
           this.snackBar.open(
-            'Ops! Ci sono problemi di connessione al server, controlla la tua connessione o riprova più tardi.', '', {
+            errorMessage, '', {
             duration: 10000,
           });
           return throwError(errorMessage);

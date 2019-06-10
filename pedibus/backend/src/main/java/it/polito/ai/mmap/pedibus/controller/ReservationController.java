@@ -57,6 +57,7 @@ public class ReservationController {
      * @param data      data in esame
      * @return GetReservationsNomeLineaDataResource
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/reservations/{nome_linea}/{data}/{verso}")
     public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data,@PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
@@ -70,6 +71,7 @@ public class ReservationController {
      * @param verso
      * @return
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/notreservations/{data}/{verso}")
     public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data,@PathVariable("verso")boolean verso) {
         logger.info("GET /NotReservations/" + data + " è stato contattato");
