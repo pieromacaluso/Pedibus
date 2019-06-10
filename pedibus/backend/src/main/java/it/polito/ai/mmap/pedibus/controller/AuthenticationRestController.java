@@ -5,7 +5,6 @@ import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
-import it.polito.ai.mmap.pedibus.resources.LoginTokenResource;
 import it.polito.ai.mmap.pedibus.services.JwtTokenService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.bson.types.ObjectId;
@@ -74,8 +73,7 @@ public class AuthenticationRestController {
             String password = userDTO.getPassword();
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
             Map<Object, Object> model = new HashMap<>();
-            LoginTokenResource loginTokenResource = new LoginTokenResource(username,userService.getJwtToken(username),((UserEntity)authentication.getPrincipal()).getRoleList());
-            model.put("token", loginTokenResource);
+            model.put("token", userService.getJwtToken(username));
             return ok(model);
         } else {
             throw new BadCredentialsException("Bad credentials");
