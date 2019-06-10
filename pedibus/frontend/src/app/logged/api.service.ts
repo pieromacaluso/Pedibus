@@ -37,16 +37,19 @@ export class ApiService {
   }
 
   getNonPrenotati(date: Date, verso: string) {
-    let idVerso;
-    if (verso === 'Andata') {
-      idVerso = 0;
-    } else {
-      idVerso = 1;
-    }
+    const idVerso = this.versoToInt(verso);
     console.log('invio richiesta getNonPrenotati ' + date.toLocaleDateString());
     if (verso && date) {
       return this.httpClient.get<NotReservation>(
         this.baseURL + 'notreservations/' + this.datePipe.transform(date, 'yyyy-MM-dd') + '/' + idVerso);
+    }
+  }
+
+  versoToInt(verso: string) {
+    if (verso === 'Andata') {
+      return 1;
+    } else {
+      return 0;
     }
   }
 }

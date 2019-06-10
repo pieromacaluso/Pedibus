@@ -18,9 +18,9 @@ export class ListaPrenotazioniComponent implements OnInit {
   reservations: AlunniPerFermata[];
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
-  selectedVerso: string;
   countLoading: any = 0;
   private notReserved: AlunnoNotReserved[];
+  componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
 
   constructor(private syncService: SyncService, private apiService: ApiService, private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) {
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
@@ -29,8 +29,7 @@ export class ListaPrenotazioniComponent implements OnInit {
         this.prenotazione = prenotazione;
         this.countLoading++;
         this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione.linea, prenotazione.data).subscribe((rese) => {
-          this.selectedVerso = prenotazione.verso;
-          this.reservations = this.selectedVerso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
+          this.reservations = this.prenotazione.verso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
           this.countLoading--;
         }, (error) => console.error(error));
         this.countLoading++;
@@ -76,15 +75,20 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   togglePresenza(id: number, alunno: Alunno) {
+    console.log('outside');
     if (this.authService.isAdmin()) {
+      console.log('inside');
       const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
-      al.presenza = !al.presenza;
-      this.apiService.postPresenza(al, this.prenotazione, al.presenza);
+      console.log(al);
+      al.presoInCarico = !al.presoInCarico;
+      this.apiService.postPresenza(al, this.prenotazione, al.presoInCarico).subscribe((rese) => {
+        console.log(rese);
+      }, (error) => console.error(error));
     }
   }
 
   presente(id: number, alunno: Alunno): boolean {
-    return this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno).presenza;
+    return this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno).presoInCarico;
   }
 
   sortedAlunni(alu: Alunno[]) {
