@@ -56,7 +56,6 @@ public class DebugController {
     PasswordEncoder passwordEncoder;
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/debug/make")
     public void makeChildUserPrenotazioni() throws IOException {
         logger.info("POST /debug/make è stato contattato");

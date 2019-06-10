@@ -64,7 +64,6 @@ public class AuthenticationRestController {
      * @param userDTO
      * @return
      */
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
 //        logger.info("login result -> " + userService.isLoginValid(userDTO));
@@ -88,7 +87,6 @@ public class AuthenticationRestController {
      * @param userDTO
      * @param bindingResult
      */
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -100,7 +98,6 @@ public class AuthenticationRestController {
         userService.registerUser(userDTO);
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/register/checkMail/{email}")
     public boolean checkUserMailDuplicate(@PathVariable String email){
         return userService.checkMailIsPresent(email);
