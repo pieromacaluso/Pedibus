@@ -57,7 +57,7 @@
       <mat-card-title>Bambini non prenotati</mat-card-title>
     </mat-card-header>
     <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"
-                      *ngIf="(notReserved.length > 0); then thenAlunniNot; else elseAlunniNot"></mat-card-content>
+                      *ngIf="(notReserved); then thenAlunniNot; else elseAlunniNot"></mat-card-content>
     <ng-template #thenAlunniNot>
       <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
         <button mat-stroked-button class="alunno-presenza mat-background-accent"

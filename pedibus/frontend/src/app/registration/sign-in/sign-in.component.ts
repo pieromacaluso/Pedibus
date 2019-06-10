@@ -30,11 +30,11 @@ export class SignInComponent implements OnInit {
       }
       if (formValid) {
         this.auth.signIn(this.model).subscribe(response => {
-          this.router.navigate(['presenze']);
           console.log('called');
-          console.log(response);
+          console.log('response: ' + response);
+          this.router.navigate(['presenze']);
         }, (error) => {
-          this.serverErrors = error.error.errorMessage;
+          this.serverErrors = error.errorMessage;
         });
       }
     }

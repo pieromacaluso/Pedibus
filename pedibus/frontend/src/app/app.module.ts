@@ -19,6 +19,7 @@ import { HeaderComponent } from './header/header.component';
 import {DatePipe} from '@angular/common';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpExceptionsInterceptor} from './http-exceptions-interceptor';
+import {AuthInterceptor} from './auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,13 @@ import {HttpExceptionsInterceptor} from './http-exceptions-interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: HttpExceptionsInterceptor,
       multi: true
-    }],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

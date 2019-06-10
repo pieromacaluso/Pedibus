@@ -7,12 +7,12 @@
   </mat-form-field>
   <br>
   <mat-form-field ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
-    <input type="password" id="password" name="password" matInput placeholder="Password" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$" [(ngModel)]="model.password" #password="ngModel">
+    <input type="password" id="password" name="password" matInput placeholder="Password" required pattern="^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$" [(ngModel)]="model.password" #password="ngModel">
     <mat-error *ngIf="password.invalid && password.touched">Password non valida</mat-error>
   </mat-form-field>
   <br>
   <button type="reset" mat-button>Reset</button>
   <button type="submit" mat-raised-button  color="primary">Login</button>
-  <mat-error *ngIf="serverErrors">{{serverErrors}}</mat-error>
+  <mat-error *ngIf="serverErrors" [innerHTML]="serverErrors">{{serverErrors}}</mat-error>
 </form>
 </mat-card>
