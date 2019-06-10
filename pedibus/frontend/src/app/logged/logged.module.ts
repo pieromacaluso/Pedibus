@@ -4,20 +4,20 @@ import { PresenzeComponent } from './presenze/presenze.component';
 import {
   MatButtonModule,
   MatCardModule,
-  MatDatepickerModule,
+  MatDatepickerModule, MatDialogModule,
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
   MatNativeDateModule, MatProgressBarModule,
   MatSelectModule
 } from '@angular/material';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ToolbarComponent } from './presenze/toolbar/toolbar.component';
 import { ListaPrenotazioniComponent } from './presenze/lista-prenotazioni/lista-prenotazioni.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
-  declarations: [PresenzeComponent, ToolbarComponent, ListaPrenotazioniComponent],
+  declarations: [PresenzeComponent, ToolbarComponent, ListaPrenotazioniComponent, AdminBookDialogComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -30,7 +30,10 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatNativeDateModule,
     MatButtonModule,
     FlexLayoutModule,
-    MatProgressBarModule
-  ]
+    MatProgressBarModule,
+    MatDialogModule,
+    ReactiveFormsModule
+  ],
+  entryComponents: [AdminBookDialogComponent]
 })
 export class LoggedModule { }

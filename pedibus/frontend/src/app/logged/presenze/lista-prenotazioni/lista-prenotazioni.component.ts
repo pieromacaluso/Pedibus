@@ -1,8 +1,12 @@
-import {Component, Input, OnInit, SimpleChange} from '@angular/core';
+import {Component, Inject, Injectable, Input, OnInit, SimpleChange} from '@angular/core';
 import {AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig} from '@angular/material/dialog';
+import {AdminBookDialogComponent, DialogData} from './admin-book-dialog/admin-book-dialog.component';
+import {filter} from 'rxjs/operators';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -18,7 +22,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   countLoading: any = 0;
   private notReserved: AlunnoNotReserved[];
 
-  constructor(private syncService: SyncService, private apiService: ApiService, private authService: AuthService) {
+  constructor(private syncService: SyncService, private apiService: ApiService, private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) {
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
       if (prenotazione.linea && prenotazione.verso && prenotazione.data) {
         console.log('inizio');
@@ -38,6 +42,30 @@ export class ListaPrenotazioniComponent implements OnInit {
       }
     }, (error) => console.error(error));
 
+  }
+
+  openDialog(alu: AlunnoNotReserved) {
+    this.componentMatDialogRef = this.dialog.open(AdminBookDialogComponent, {
+      hasBackdrop: false,
+      data: {
+        alunno: alu,
+        res: this.reservations,
+        data: this.prenotazione.data,
+        verso: this.prenotazione.verso,
+        linea: this.prenotazione.linea
+      }
+    });
+    this.componentMatDialogRef
+      .afterClosed()
+      .pipe(filter(idFermataRes => idFermataRes))
+      .subscribe(idFermataRes => {
+        // TODO: implementazione aggiunta Prenotazione da parte di admin
+        this.snackBar.open('Da implementare POST:\n' +
+          this.prenotazione.data.toLocaleDateString() + ' ' + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso, '', {
+          duration: 10000,
+        });
+        console.log(this.prenotazione.data.toLocaleDateString() + ' ' + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso);
+      });
   }
 
   showLoading() {

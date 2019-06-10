@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Inserimento Prenotazione</h1>
+<form  (ngSubmit)="submit($event)">
+<div mat-dialog-content>
+  <p class="mat-body">Stai aggiungendo una prenotazione con questi dati:</p>
+  <p class="mat-body"><b>Alunno:</b> {{data.alunno.surname}} {{data.alunno.name}}</p>
+  <p class="mat-body"><b>Data:</b> {{data.data.toLocaleDateString()}}</p>
+  <p class="mat-body"><b>Linea:</b> {{data.verso}}.</p>
+  <p class="mat-body"><b>Verso:</b> {{data.verso}}.</p>
+    <mat-form-field>
+      <mat-label>Fermata:</mat-label>
+      <mat-select [formControl]="formControl" [(ngModel)]="data.fermataId" required>
+        <mat-option *ngFor="let fermata of data.res" [value]="fermata.fermata.id" >{{fermata.fermata.nome}}
+          ({{fermata.fermata.orario}})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="formControl.hasError('required')">Please choose an animal</mat-error>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Annulla</button>
+  <button  type="submit" mat-button cdkFocusInitial>Prenota!</button>
+</div>
+</form>
