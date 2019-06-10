@@ -77,9 +77,11 @@ public class DebugController {
             UserEntity parent = userList.get(i);
             parent.setChildrenList(new HashSet<>(Arrays.asList(child1.getCodiceFiscale(), child2.getCodiceFiscale())));
             Optional<UserEntity> checkDuplicate = userRepository.findByUsername(parent.getUsername());
-            if (!checkDuplicate.isPresent())
+            if (!checkDuplicate.isPresent()) {
+                parent.setEnabled(true);
                 parent = userRepository.save(parent); //per avere l'objectId
-            else
+
+            }else
                 parent = checkDuplicate.get();
 
             userList.set(i, parent);
