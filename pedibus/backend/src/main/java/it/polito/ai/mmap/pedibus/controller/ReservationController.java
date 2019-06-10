@@ -13,11 +13,9 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.util.Date;
 
 @RestController
@@ -150,11 +148,11 @@ public class ReservationController {
      *
      * @param verso
      * @param data
-     * @param child
+     * @param cfChild true per indicare che è stato preso, false per annullare
      */
-    @PostMapping("/reservation/handled/{verso}/{data}")
-    public void SetHandled(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody String child, HttpServletResponse response) throws Exception {
-        reservationService.setHandled(verso, data, child);
+    @PostMapping("/reservation/handled/{verso}/{data}/{isSet}")
+    public void manageHandled(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
+        reservationService.manageHandled(verso, data, cfChild, isSet);
     }
 
 
@@ -163,11 +161,13 @@ public class ReservationController {
      *
      * @param verso
      * @param data
-     * @param child
+     * @param cfChild
+     * @param isSet true per indicare che è arrivato, false per annullare
+     *
      */
-    @PostMapping("/reservation/arrived/{verso}/{data}")
-    public void SetArrived(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody String child) throws Exception {
-        reservationService.setArrived(verso, data, child);
+    @PostMapping("/reservation/arrived/{verso}/{data}/{isSet}")
+    public void manageArrived(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
+        reservationService.manageArrived(verso, data, cfChild, isSet);
     }
 
 }
