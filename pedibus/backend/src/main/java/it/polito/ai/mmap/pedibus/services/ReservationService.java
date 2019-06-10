@@ -188,9 +188,9 @@ public class ReservationService {
      * @param cfChild
      * @throws Exception
      */
-    public void setHandled(Boolean verso, String data, String cfChild) throws Exception {
+    public void manageHandled(Boolean verso, String data, String cfChild, Boolean isSet) throws Exception {
         PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
-        prenotazioneEntity.setPresoInCarico(true);
+        prenotazioneEntity.setPresoInCarico(isSet);
         prenotazioneRepository.save(prenotazioneEntity);
     }
 
@@ -202,9 +202,9 @@ public class ReservationService {
      * @param cfChild
      * @throws Exception
      */
-    public void setArrived(Boolean verso, String data, String cfChild) throws Exception {
+    public void manageArrived(Boolean verso, String data, String cfChild, Boolean isSet) throws Exception {
         PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
-        prenotazioneEntity.setArrivatoScuola(true);
+        prenotazioneEntity.setArrivatoScuola(isSet);
         prenotazioneRepository.save(prenotazioneEntity);
     }
 
