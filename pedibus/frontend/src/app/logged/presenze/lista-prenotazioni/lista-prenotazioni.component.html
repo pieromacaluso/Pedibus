@@ -38,7 +38,8 @@
             <button mat-stroked-button class="alunno-presenza mat-background-accent"
                     [class.presente]="alunno.presoInCarico"
                     (click)="togglePresenza(res.fermata.id, alunno)"
-                    *ngFor="let alunno of sortedAlunni(res.alunni); ">{{alunno.surname + " " + alunno.name}}</button>
+                    *ngFor="let alunno of sortedAlunni(res.alunni); "><mat-progress-bar class="progress-bar-button" *ngIf="showLoadingButton(alunno)" mode="indeterminate"></mat-progress-bar>
+              {{alunno.surname + " " + alunno.name}}</button>
           </mat-card-content>
         </ng-template>
         <ng-template #elseAlunni>

@@ -35,6 +35,8 @@ import {AdminBookDialogComponent} from './presenze/lista-prenotazioni/admin-book
     MatDialogModule,
     ReactiveFormsModule
   ],
+  exports: [
+  ],
   entryComponents: [AdminBookDialogComponent]
 })
 export class LoggedModule { }

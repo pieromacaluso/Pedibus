@@ -20,6 +20,9 @@ import {DatePipe} from '@angular/common';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpExceptionsInterceptor} from './http-exceptions-interceptor';
 import {AuthInterceptor} from './auth-interceptor';
+import {InjectableRxStompConfig, RxStompService, rxStompServiceFactory} from '@stomp/ng2-stompjs';
+import {myRxStompConfig} from './my-rx-stomp.config';
+import {LoggedModule} from './logged/logged.module';
 
 @NgModule({
   declarations: [
@@ -38,7 +41,8 @@ import {AuthInterceptor} from './auth-interceptor';
     MatListModule,
     FlexLayoutModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    LoggedModule
   ],
   providers: [DatePipe,
     {
@@ -50,6 +54,15 @@ import {AuthInterceptor} from './auth-interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
+    },
+    {
+      provide: InjectableRxStompConfig,
+      useValue: myRxStompConfig
+    },
+    {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
+      deps: [InjectableRxStompConfig]
     }
   ],
   bootstrap: [AppComponent]

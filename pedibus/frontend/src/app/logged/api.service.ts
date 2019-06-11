@@ -3,6 +3,7 @@ import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Alunno, LineReservation, NotReservation, PrenotazioneRequest} from './line-details';
 import {DatePipe} from '@angular/common';
+import {privateEncrypt} from 'crypto';
 
 @Injectable({
   providedIn: 'root'
@@ -32,10 +33,10 @@ export class ApiService {
    */
   postPresenza(alunno: Alunno, presenza: PrenotazioneRequest, choice: boolean) {
     const idVerso = this.versoToInt(presenza.verso);
-    console.log(this.baseURL + 'reservations/handled/' + idVerso + '/' + this.datePipe
+    console.log(this.baseURL + 'reservations/handled/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
       .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
     return this.httpClient
-      .post(this.baseURL + 'reservations/handled/' + idVerso + '/' + this.datePipe
+      .post(this.baseURL + 'reservations/handled/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
         .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
   }
 

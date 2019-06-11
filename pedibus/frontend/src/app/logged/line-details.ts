@@ -26,6 +26,7 @@ export interface Alunno {
   surname: string;
   presoInCarico: boolean;
   arrivatoScuola: boolean;
+  update: boolean;
 }
 
 export interface Fermata {

@@ -7,6 +7,11 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig} from '@angula
 import {AdminBookDialogComponent, DialogData} from './admin-book-dialog/admin-book-dialog.component';
 import {filter} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material';
+import {RxStompService} from '@stomp/ng2-stompjs';
+import {Message} from '@stomp/stompjs';
+import {Subscription} from 'rxjs';
+import {DatePipe} from '@angular/common';
+import {$} from 'protractor';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -16,16 +21,33 @@ import {MatSnackBar} from '@angular/material';
 export class ListaPrenotazioniComponent implements OnInit {
 
   reservations: AlunniPerFermata[];
+
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
   countLoading: any = 0;
   private notReserved: AlunnoNotReserved[];
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
+  private topicSubscription: Subscription;
 
-  constructor(private syncService: SyncService, private apiService: ApiService, private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) {
+
+  constructor(private syncService: SyncService, private apiService: ApiService,
+              private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
+              private rxStompService: RxStompService, private datePipe: DatePipe) {
+    // this.connect();
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
       if (prenotazione.linea && prenotazione.verso && prenotazione.data) {
-        console.log('inizio');
+        // Disiscrizione dalla Broker precedente se esiste
+        if (this.topicSubscription) {
+          this.topicSubscription.unsubscribe();
+        }
+        // Iscrizione alla nuova Broker
+        this.topicSubscription = this.rxStompService.watch('/handled' + this.pathSub(prenotazione))
+          .subscribe((message: Message) => {
+            const res = JSON.parse(message.body);
+            console.log(res);
+            const al = this.reservations.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
+            al.presoInCarico = res.isSet;
+          });
         this.prenotazione = prenotazione;
         this.countLoading++;
         this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione.linea, prenotazione.data).subscribe((rese) => {
@@ -41,6 +63,11 @@ export class ListaPrenotazioniComponent implements OnInit {
       }
     }, (error) => console.error(error));
 
+  }
+
+  private pathSub(prenotazione: PrenotazioneRequest) {
+    return '/' + this.datePipe.transform(
+      prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 
   openDialog(alu: AlunnoNotReserved) {
@@ -60,15 +87,23 @@ export class ListaPrenotazioniComponent implements OnInit {
       .subscribe(idFermataRes => {
         // TODO: implementazione aggiunta Prenotazione da parte di admin
         this.snackBar.open('Da implementare POST:\n' +
-          this.prenotazione.data.toLocaleDateString() + ' ' + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso, '', {
+          this.prenotazione.data.toLocaleDateString() + ' '
+          + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso, '', {
           duration: 10000,
         });
-        console.log(this.prenotazione.data.toLocaleDateString() + ' ' + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso);
+        console.log(this.prenotazione.data.toLocaleDateString()
+          + ' ' + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso);
       });
   }
 
   showLoading() {
     return this.countLoading > 0;
+  }
+  showLoadingButton(alu: Alunno) {
+    if (alu.update) {
+      return alu.update;
+    }
+    return false;
   }
 
   ngOnInit() {
@@ -80,9 +115,9 @@ export class ListaPrenotazioniComponent implements OnInit {
       console.log('inside');
       const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
       console.log(al);
-      al.presoInCarico = !al.presoInCarico;
-      this.apiService.postPresenza(al, this.prenotazione, al.presoInCarico).subscribe((rese) => {
-        console.log(rese);
+      al.update = true;
+      this.apiService.postPresenza(al, this.prenotazione, !al.presoInCarico).subscribe((rese) => {
+        al.update = false;
       }, (error) => console.error(error));
     }
   }
