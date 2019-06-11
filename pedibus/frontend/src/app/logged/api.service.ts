@@ -20,11 +20,12 @@ export class ApiService {
     return this.httpClient.get<string[]>(this.baseURL + 'lines');
   }
 
-  getPrenotazioneByLineaAndDateAndVerso(selectedLinea: string, date: Date) {
-    console.log('invio richiesta getPrenotazioneByLineaAndDateAndVerso ' + date.toLocaleDateString());
-    if (selectedLinea && date) {
-      return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/' + selectedLinea + '/' +
-        this.datePipe.transform(date, 'yyyy-MM-dd'));
+  getPrenotazioneByLineaAndDateAndVerso(p: PrenotazioneRequest) {
+    const idVerso = this.versoToInt(p.verso);
+    console.log('invio richiesta getPrenotazioneByLineaAndDateAndVerso ' + p.data.toLocaleDateString());
+    if (p.linea && p.data) {
+      return this.httpClient.get<LineReservation>(this.baseURL + 'reservations/verso/' + p.linea + '/' +
+        this.datePipe.transform(p.data, 'yyyy-MM-dd') + '/' + idVerso);
     }
   }
 

@@ -50,14 +50,9 @@ export class ListaPrenotazioniComponent implements OnInit {
           });
         this.prenotazione = prenotazione;
         this.countLoading++;
-        this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione.linea, prenotazione.data).subscribe((rese) => {
+        this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione).subscribe((rese) => {
           this.reservations = this.prenotazione.verso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
-          this.countLoading--;
-        }, (error) => console.error(error));
-        this.countLoading++;
-        this.apiService.getNonPrenotati(prenotazione.data, prenotazione.verso).subscribe((rese) => {
           this.notReserved = rese.childrenNotReserved;
-          console.log(rese.childrenNotReserved[1]);
           this.countLoading--;
         }, (error) => console.error(error));
       }
