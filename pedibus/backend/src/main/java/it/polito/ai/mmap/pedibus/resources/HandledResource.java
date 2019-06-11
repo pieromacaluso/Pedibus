@@ -8,4 +8,5 @@ import lombok.Data;
 public class HandledResource {
     private String cfChild;
     private Boolean isSet;
+    private Integer idFermata;
 }

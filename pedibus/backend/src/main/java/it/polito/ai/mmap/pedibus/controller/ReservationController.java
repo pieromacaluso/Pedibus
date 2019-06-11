@@ -159,8 +159,9 @@ public class ReservationController {
      */
     @PostMapping("/reservations/handled/{nomeLinea}/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("nomeLinea") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
-        reservationService.manageHandled(verso, data, cfChild, isSet);
-        simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + nomeLinea + "/" + verso, new HandledResource(cfChild, isSet));
+        Integer idFermata = reservationService.manageHandled(verso, data, cfChild, isSet);
+        logger.info("/handled/" + data + "/" + nomeLinea + "/" + verso);
+        simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + nomeLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, idFermata));
 
     }
 

@@ -193,10 +193,11 @@ public class ReservationService {
      * @param cfChild
      * @throws Exception
      */
-    public void manageHandled(Boolean verso, String data, String cfChild, Boolean isSet) throws Exception {
+    public Integer manageHandled(Boolean verso, String data, String cfChild, Boolean isSet) throws Exception {
         PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
         prenotazioneEntity.setPresoInCarico(isSet);
         prenotazioneRepository.save(prenotazioneEntity);
+        return prenotazioneEntity.getIdFermata();
     }
 
     /**
