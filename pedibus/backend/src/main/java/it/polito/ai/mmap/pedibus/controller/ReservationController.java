@@ -4,6 +4,7 @@ import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.pedibus.resources.GetChildrenNotReservedLineaDataResource;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsNomeLineaDataResource;
+import it.polito.ai.mmap.pedibus.resources.HandledResource;
 import it.polito.ai.mmap.pedibus.resources.PrenotazioneResource;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
@@ -13,6 +14,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,9 @@ public class ReservationController {
     ReservationService reservationService;
     @Autowired
     UserService userService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 
     /**
@@ -57,24 +62,25 @@ public class ReservationController {
      */
 
     @GetMapping("/reservations/{nome_linea}/{data}/{verso}")
-    public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data,@PathVariable("verso") boolean verso) {
+    public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService,verso);
+        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, verso);
     }
 
     /**
      * Restituisce la lista dei bambini non prenotati per la data(AAAA-MM-GG) e il verso passati.
+     *
      * @param data
      * @param verso
      * @return
      */
 
     @GetMapping("/notreservations/{data}/{verso}")
-    public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data,@PathVariable("verso")boolean verso) {
+    public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /NotReservations/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return new GetChildrenNotReservedLineaDataResource(dataFormatted, verso, reservationService,userService);
+        return new GetChildrenNotReservedLineaDataResource(dataFormatted, verso, reservationService, userService);
     }
 
     /**
@@ -146,13 +152,16 @@ public class ReservationController {
     /**
      * Usato da admin linea per indicare che ha preso il bambino dalla fermata
      *
+     * @param nomeLinea
      * @param verso
      * @param data
      * @param cfChild true per indicare che è stato preso, false per annullare
      */
-    @PostMapping("/reservations/handled/{verso}/{data}/{isSet}")
-    public void manageHandled(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
+    @PostMapping("/reservations/handled/{nomeLinea}/{verso}/{data}/{isSet}")
+    public void manageHandled(@PathVariable("nomeLinea") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
         reservationService.manageHandled(verso, data, cfChild, isSet);
+        simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + nomeLinea + "/" + verso, new HandledResource(cfChild, isSet));
+
     }
 
 
@@ -162,8 +171,7 @@ public class ReservationController {
      * @param verso
      * @param data
      * @param cfChild
-     * @param isSet true per indicare che è arrivato, false per annullare
-     *
+     * @param isSet   true per indicare che è arrivato, false per annullare
      */
 
     @PostMapping("/reservations/arrived/{verso}/{data}/{isSet}")
