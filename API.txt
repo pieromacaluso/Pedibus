@@ -21,6 +21,14 @@ User
 		@RequestBody ChildDTO
 		
 * PUT  /children/updateChildStop/{childId}/{idFerm}
+
+AdminRest
+* GET /users
+
+* PUT /users/{userID}
+		@RequestBody PermissionDTO
+
+* GET /admin/children
 		
 LinesREST
 * GET  /lines
