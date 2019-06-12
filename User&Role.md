@@ -12,6 +12,10 @@
 
 Se ci viene più comodo possiamo usare drive https://docs.google.com/document/d/179EY5c0OUg_GRBTm9K-zO88aBWxs957rbkmt13e51RU/edit?usp=sharing
 
+Ad oggi (pre consegna es5):  
+- Un genitore ha solo il ruolo USER  
+- Tutti i nonni hanno ruolo ADMIN per una linea
+- Quando aggiungiamo attraverso endpoint il ruolo ADMIN ha un account lo sommiamo a quello di USER
 
 ## User breakdown
 La password in ogni caso è -> 1!qwerty1!
