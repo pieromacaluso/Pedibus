@@ -92,7 +92,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   showLoading() {
-    return this.countLoading > 0;
+    return this.countLoading > 0 || !this.rxStompService.connected();
   }
   showLoadingButton(alu: Alunno) {
     return alu.update;

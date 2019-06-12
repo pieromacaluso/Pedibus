@@ -1,13 +1,14 @@
 import { InjectableRxStompConfig } from '@stomp/ng2-stompjs';
+import {environment} from '../environments/environment';
 
 export const myRxStompConfig: InjectableRxStompConfig = {
   // Which server?
-  brokerURL: 'ws://localhost:8080/messages',
+  brokerURL: environment.brokerURL + 'messages',
 
   // Headers
   // Typical keys: login, passcode, host
   connectHeaders: {
-    Authentication: ' Bearer ' + localStorage.getItem('id_token')
+    // Authentication: ' Bearer ' + localStorage.getItem('id_token')
   },
 
   // How often to heartbeat?
@@ -19,11 +20,11 @@ export const myRxStompConfig: InjectableRxStompConfig = {
   // Set to 0 to disable
   // Typical value 500 (500 milli seconds)
   reconnectDelay: 200,
-
-  // Will log diagnostics on console
-  // It can be quite verbose, not recommended in production
-  // Skip this key to stop logging to console
-  debug: (msg: string): void => {
-    console.log(new Date(), msg);
-  }
+  //
+  // // Will log diagnostics on console
+  // // It can be quite verbose, not recommended in production
+  // // Skip this key to stop logging to console
+  // debug: (msg: string): void => {
+  //   console.log(new Date(), msg);
+  // }
 };
