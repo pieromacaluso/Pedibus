@@ -9,6 +9,7 @@ import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.*;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
+import it.polito.ai.mmap.pedibus.resources.PrenotazioneChildResource;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -166,21 +167,21 @@ public class ReservationService {
      * @param verso verso
      * @return Lista di nomi alunni
      */
-    public List<PrenotazioneChildDTO> findAlunniFermata(Date data, Integer id, boolean verso) {
+    public List<PrenotazioneChildResource> findAlunniFermata(Date data, Integer id, boolean verso) {
         // TODO: (Piero) Questo metodo secondo me è migliorabile, se avete idee, mastruzzate qui!
         HashMap<String, PrenotazioneEntity> prenotazioni =(HashMap<String, PrenotazioneEntity>)prenotazioneRepository
                 .findAllByDataAndIdFermataAndVerso(data, id, verso).stream()
                 .collect(
                 Collectors.toMap(PrenotazioneEntity::getCfChild, p -> p));
         Set<String> cfList = prenotazioni.keySet();
-        HashMap<String, ChildDTO> childDTOS =(HashMap<String, ChildDTO>)
-                ((List<ChildEntity>) childRepository.findAllById(cfList)).stream().map(ChildDTO::new) .collect(
-                Collectors.toMap(ChildDTO::getCodiceFiscale, c -> c));
-        List<PrenotazioneChildDTO> result = new ArrayList<>();
+        HashMap<String, ChildEntity> children =(HashMap<String, ChildEntity>)
+                ((List<ChildEntity>) childRepository.findAllById(cfList)).stream().collect(
+                Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
+        List<PrenotazioneChildResource> result = new ArrayList<>();
         for (String cf :cfList){
             PrenotazioneEntity p = prenotazioni.get(cf);
-            ChildDTO c = childDTOS.get(cf);
-            result.add(new PrenotazioneChildDTO(p, c));
+            ChildEntity c = children.get(cf);
+            result.add(new PrenotazioneChildResource(p, c));
         }
         return result;
     }

@@ -3,7 +3,6 @@ package it.polito.ai.mmap.pedibus.resources;
 
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneChildDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
 import it.polito.ai.mmap.pedibus.services.UserService;
@@ -71,7 +70,7 @@ public class GetReservationsNomeLineaDataResource {
     @Data
     public static class FermataDTOAlunni {
         FermataDTO fermata;
-        List<PrenotazioneChildDTO> alunni;
+        List<PrenotazioneChildResource> alunni;
 
         FermataDTOAlunni(FermataDTO f) {
             fermata = f;
