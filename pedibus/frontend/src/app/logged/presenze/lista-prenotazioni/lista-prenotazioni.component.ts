@@ -95,10 +95,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     return this.countLoading > 0;
   }
   showLoadingButton(alu: Alunno) {
-    if (alu.update) {
-      return alu.update;
-    }
-    return false;
+    return alu.update;
   }
 
   ngOnInit() {
