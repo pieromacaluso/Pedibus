@@ -100,6 +100,7 @@ public class DebugController {
             Optional<UserEntity> checkDuplicate = userRepository.findByUsername(nonno.getUsername());
             if (!checkDuplicate.isPresent()) {
                 nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
+                nonno.setEnabled(true);
                 listNonni.add(nonno);
                 count++;
             }
