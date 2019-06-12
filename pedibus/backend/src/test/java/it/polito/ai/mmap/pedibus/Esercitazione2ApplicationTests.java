@@ -304,6 +304,182 @@ public class Esercitazione2ApplicationTests {
     }
 
     @Test
+    public void getReservationsTowardTrue_check() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        UserDTO user = new UserDTO();
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
+        String json = mapper.writeValueAsString(user);
+        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        String token = node.get("token").asText();
+
+        PrenotazioneResource resTrue = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        PrenotazioneResource resFalse = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(8).verso(false).build();
+        String resTrueJson = mapper.writeValueAsString(resTrue);
+        String resFalseJson = mapper.writeValueAsString(resFalse);
+
+        logger.info("Inserimento " + resTrue + " with toward true and "+ resFalse+" with toward false");
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
+                .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+        String idResTrue = result1.getResponse().getContentAsString();
+        MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
+                .contentType(MediaType.APPLICATION_JSON).content(resFalseJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+        String idResFalse = result1False.getResponse().getContentAsString();
+        logger.info("Inserito correttamente!");
+
+        logger.info("Controllo reservation with toward true ...");
+        this.mockMvc.perform(get("/reservations/verso/linea1/2019-01-01/true")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.alunniPerFermataAndata").isNotEmpty())
+                .andExpect(jsonPath("$.alunniPerFermataRitorno").isEmpty());
+        logger.info("PASSED");
+
+        logger.info("Ripristino stato precedente...");
+        this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/" + idResTrue)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/" + idResFalse)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        logger.info("DONE");
+
+    }
+    @Test
+    public void getReservationsTowardFalse_check() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        UserDTO user = new UserDTO();
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
+        String json = mapper.writeValueAsString(user);
+        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        String token = node.get("token").asText();
+
+        PrenotazioneResource resTrue = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        PrenotazioneResource resFalse = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(8).verso(false).build();
+        String resTrueJson = mapper.writeValueAsString(resTrue);
+        String resFalseJson = mapper.writeValueAsString(resFalse);
+
+        logger.info("Inserimento " + resTrue + " with toward true and "+ resFalse+" with toward false");
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
+                .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+        String idResTrue = result1.getResponse().getContentAsString();
+        MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
+                .contentType(MediaType.APPLICATION_JSON).content(resFalseJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+        String idResFalse = result1False.getResponse().getContentAsString();
+        logger.info("Inserito correttamente!");
+
+        logger.info("Controllo reservation with toward true ...");
+        this.mockMvc.perform(get("/reservations/verso/linea1/2019-01-01/false")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.alunniPerFermataAndata").isEmpty())
+                .andExpect(jsonPath("$.alunniPerFermataRitorno").isNotEmpty());
+        logger.info("PASSED");
+
+        logger.info("Ripristino stato precedente...");
+        this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/" + idResTrue)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/" + idResFalse)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        logger.info("DONE");
+
+    }
+
+    /*@Test
+    public void getNotReservations_check() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        UserDTO user = new UserDTO();
+        user.setEmail(superAdminMail);
+        user.setPassword(superAdminPass);
+
+        String json = mapper.writeValueAsString(user);
+
+        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        String token = node.get("token").asText();
+
+        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        String resTrueJson = mapper.writeValueAsString(res);
+
+
+        logger.info("Inserimento prenotazione " + res + " andata ...");
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
+                .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+        String idRes = result1.getResponse().getContentAsString();
+        logger.info("Inserito correttamente!");
+
+        logger.info("Lettura di tutti i bambini iscritti...");
+        MvcResult result1Child = this.mockMvc.perform(get("/admin/children/")
+                .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+        String idResChildren = result1Child.getResponse().getContentAsString();
+        List<ChildEntity> allChildren=mapper.readValue(idResChildren,new TypeReference<List<ChildEntity>>() {});
+
+        logger.info("Lettura eseguita!");
+
+        logger.info("Controllo bambini non prenotati ritorno...");
+        this.mockMvc.perform(get("/notreservations/2019-01-01/false")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.childrenNotReserved").value(allChildren));
+        logger.info("Corretto");
+
+        logger.info("Controllo bambini non prenotati andata");
+        allChildren.remove(new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
+        this.mockMvc.perform(get("/notreservations/2019-01-01/true")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.childrenNotReserved").value(allChildren));
+        logger.info("Corretto");
+
+
+        logger.info("PASSED");
+
+        logger.info("Ripristino stato precedente...");
+        this.mockMvc.perform(delete("/reservations/linea1/2019-01-01/" + idRes)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        logger.info("DONE");
+
+    }*/
+
+    @Test
     public void insertReservation_duplicate() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
