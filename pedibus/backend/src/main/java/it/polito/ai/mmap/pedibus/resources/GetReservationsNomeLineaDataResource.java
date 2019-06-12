@@ -71,7 +71,6 @@ public class GetReservationsNomeLineaDataResource {
     @Data
     public static class FermataDTOAlunni {
         FermataDTO fermata;
-        //Restituisci ChildResource quando saremoa sync TODO
         List<PrenotazioneChildDTO> alunni;
 
         FermataDTOAlunni(FermataDTO f) {

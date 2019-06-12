@@ -96,7 +96,10 @@ public class ReservationController {
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineByName(nomeLinea).getNome(), dataFormatted);
-        return reservationService.addPrenotazione(prenotazioneDTO);
+        String idPrenotazione = reservationService.addPrenotazione(prenotazioneDTO);
+
+        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + nomeLinea + "/" + ((prenotazioneResource.getVerso()) ? 1 : 0), prenotazioneResource);
+        return idPrenotazione;
     }
 
 
@@ -155,7 +158,7 @@ public class ReservationController {
      * @param nomeLinea
      * @param verso
      * @param data
-     * @param cfChild true per indicare che è stato preso, false per annullare
+     * @param cfChild   true per indicare che è stato preso, false per annullare
      */
     @PostMapping("/reservations/handled/{nomeLinea}/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("nomeLinea") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {

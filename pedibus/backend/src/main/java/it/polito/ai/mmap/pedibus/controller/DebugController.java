@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * - una post a http://localhost:8080/debug/make genera:
- *
+ * <p>
  * - 100 Child
  * - 50 genitori con 2 figli        username = primi 50 contenuti nel file userDTO.json e pw = 1!qwerty1!
  * - 50 nonni                       username = secondi 50 contenuti nel file userDTO.json e pw = 1!qwerty1!
@@ -94,11 +94,13 @@ public class DebugController {
 
         count = 0;
         RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
+        RoleEntity roleUser = roleRepository.findByRole("ROLE_USER");
         List<UserEntity> listNonni = new LinkedList<>();
         while (i < userList.size()) {
             UserEntity nonno = userList.get(i);
             Optional<UserEntity> checkDuplicate = userRepository.findByUsername(nonno.getUsername());
             if (!checkDuplicate.isPresent()) {
+//                nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin, roleUser)));
                 nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
                 nonno.setEnabled(true);
                 listNonni.add(nonno);

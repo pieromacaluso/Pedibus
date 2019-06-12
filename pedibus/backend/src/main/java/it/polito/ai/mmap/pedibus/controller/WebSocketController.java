@@ -17,6 +17,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.security.Principal;
 import java.util.Map;
 
+//TODO lo usiamo ?
 @Controller
 public class WebSocketController {
 
