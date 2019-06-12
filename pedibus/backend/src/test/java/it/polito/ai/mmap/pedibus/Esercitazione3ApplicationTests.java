@@ -12,6 +12,8 @@ import it.polito.ai.mmap.pedibus.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.services.JsonHandlerService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
+import org.bson.types.ObjectId;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -39,7 +41,7 @@ public class Esercitazione3ApplicationTests {
     private String superAdminMail;
     @Value("${superadmin.password}")
     private String superAdminPass;
-    
+
     @Autowired
     JsonHandlerService jsonHandlerService;
     @Autowired
@@ -47,8 +49,7 @@ public class Esercitazione3ApplicationTests {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private JavaMailSender mailSender;
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -56,6 +57,15 @@ public class Esercitazione3ApplicationTests {
     @Autowired
     private ActivationTokenRepository activationTokenRepository;
 
+
+    @After
+    public void tearDownMethod() {
+        //se fallivano dei test rimaneva sul db
+        Optional<UserEntity> check = userRepository.findByUsername("appmmap@pieromacaluso.com");
+        if (check.isPresent())
+            userRepository.delete(check.get());
+
+    }
 
     @Test
     public void postLogin_correct() throws Exception {

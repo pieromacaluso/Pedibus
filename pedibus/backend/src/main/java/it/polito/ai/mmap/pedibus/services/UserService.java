@@ -252,19 +252,19 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public List<String> getAllChildrenId(){
+    public List<String> getAllChildrenId() {
         return childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
     }
 
-    public List<ChildDTO> getAllChildrenById(List<String> childrenId){
-        List<ChildEntity> childrenEntities=new ArrayList<>();
+    public List<ChildDTO> getAllChildrenById(List<String> childrenId) {
+        List<ChildEntity> childrenEntities = new ArrayList<>();
 
-        for(String cf:childrenId){
-            Optional<ChildEntity> c=childRepository.findByCodiceFiscale(cf);
-            if(c.isPresent()){
-                ChildEntity childEntity=c.get();
+        for (String cf : childrenId) {
+            Optional<ChildEntity> c = childRepository.findByCodiceFiscale(cf);
+            if (c.isPresent()) {
+                ChildEntity childEntity = c.get();
                 childrenEntities.add(childEntity);
-            }else
+            } else
                 throw new ChildNotFoundException("Child not found");
         }
 
@@ -281,8 +281,8 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> check = userRepository.findByUsername(userID);
         UserEntity userEntity;
         if (!check.isPresent()) {
-            RoleEntity[] roleArr = {roleRepository.findByRole("ROLE_USER"), roleRepository.findByRole("ROLE_ADMIN")};
-            userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleArr)));
+//            RoleEntity[] roleArr = {roleRepository.findByRole("ROLE_USER"), roleRepository.findByRole("ROLE_ADMIN")};
+            userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleRepository.findByRole("ROLE_ADMIN"))));
         } else {
             userEntity = check.get();
         }
@@ -293,16 +293,13 @@ public class UserService implements UserDetailsService {
     public void delAdmin(String userID) {
         Optional<UserEntity> check = userRepository.findByUsername(userID);
         UserEntity userEntity;
-        if (!check.isPresent()) {
-            RoleEntity[] roleArr = {roleRepository.findByRole("ROLE_USER")};
-            userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleArr)));
-        } else {
+        if (check.isPresent()) {
             userEntity = check.get();
-        }
-        if (userEntity.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN")))
-            userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
+            if (userEntity.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN")))
+                userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
 
-        userRepository.save(userEntity);
+            userRepository.save(userEntity);
+        }
     }
 
     public void createRoles() {
@@ -321,75 +318,78 @@ public class UserService implements UserDetailsService {
 
     /**
      * Metodo che permette ad un genitore di registrare un suo figlio
+     *
      * @param childDTO
      */
-    public void registerChild(ChildDTO childDTO){
-        Optional<ChildEntity> c=childRepository.findById(childDTO.getCodiceFiscale());
-        if(c.isPresent())
+    public void registerChild(ChildDTO childDTO) {
+        Optional<ChildEntity> c = childRepository.findById(childDTO.getCodiceFiscale());
+        if (c.isPresent())
             throw new ChildAlreadyPresentException("Child with same Fiscal Code present");
-        Optional<FermataEntity> checkFerm=fermataRepository.findById(childDTO.getIdFermataDefault());
-        if(!checkFerm.isPresent()){
+        Optional<FermataEntity> checkFerm = fermataRepository.findById(childDTO.getIdFermataDefault());
+        if (!checkFerm.isPresent()) {
             throw new FermataNotFoundException();
         }
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ChildEntity childEntity=new ChildEntity(childDTO,principal.getId());
+        ChildEntity childEntity = new ChildEntity(childDTO, principal.getId());
         principal.addChild(childDTO.getCodiceFiscale());
         childRepository.save(childEntity);
         userRepository.save(principal);
-        logger.info("New Child " + childDTO.getCodiceFiscale()+" by user "+principal.getUsername());
+        logger.info("New Child " + childDTO.getCodiceFiscale() + " by user " + principal.getUsername());
     }
 
     /**
      * Metodo che permette di cambiare la fermata di default di un bambino o dal suo genitore o da un System-Admin
+     *
      * @param idFermata
      * @param cf
      */
-    public void updateChildStop(Integer idFermata,String cf){
-        Optional<ChildEntity> c=childRepository.findById(cf);
-        if(c.isPresent()){
+    public void updateChildStop(Integer idFermata, String cf) {
+        Optional<ChildEntity> c = childRepository.findById(cf);
+        if (c.isPresent()) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if(principal.getChildrenList().contains(cf) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))){
-                if(fermataRepository.findById(idFermata).isPresent()){
-                    ChildEntity childEntity=c.get();
+            if (principal.getChildrenList().contains(cf) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+                if (fermataRepository.findById(idFermata).isPresent()) {
+                    ChildEntity childEntity = c.get();
                     childEntity.setIdFermataDefault(idFermata);
                     childRepository.save(childEntity);
-                }else
+                } else
                     throw new FermataNotFoundException();
 
-            }else
+            } else
                 throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
-        }else
+        } else
             throw new ChildNotFoundException("child not found");
     }
 
     /**
      * Metodo che permette di eliminare un bambino. Eseguibile o dal genitore o da un System-Admin
+     *
      * @param idChild
      */
-    public void delChild(String idChild){
-        Optional<ChildEntity> c=childRepository.findById(idChild);
-        if(c.isPresent()){
+    public void delChild(String idChild) {
+        Optional<ChildEntity> c = childRepository.findById(idChild);
+        if (c.isPresent()) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            ChildEntity childEntity=c.get();
+            ChildEntity childEntity = c.get();
 
             /*Rimozione dall'utente genitore*/
-            if(principal.getChildrenList().contains(idChild)){
+            if (principal.getChildrenList().contains(idChild)) {
                 principal.getChildrenList().remove(childEntity);
                 userRepository.save(principal);
 
-            }else if(principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
-                Optional<UserEntity> p=userRepository.findById(childEntity.getIdParent());
-                if(p.isPresent()){
-                    UserEntity parent=p.get();
+            } else if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+                Optional<UserEntity> p = userRepository.findById(childEntity.getIdParent());
+                if (p.isPresent()) {
+                    UserEntity parent = p.get();
                     parent.getChildrenList().remove(childEntity);
                     userRepository.save(parent);
                 }
-            }else
+            } else
                 throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
             /*Eliminazione entity*/
             childRepository.delete(childEntity);
 
-        }else
+        } else
             throw new ChildNotFoundException("child not found");
     }
 }

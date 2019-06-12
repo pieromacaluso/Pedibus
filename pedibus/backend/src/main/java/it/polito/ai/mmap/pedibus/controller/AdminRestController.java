@@ -6,6 +6,7 @@ import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.PermissionDTO;
+import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ public class AdminRestController {
     UserService userService;
     @Autowired
     LineeService lineeService;
+    @Autowired
+    RoleRepository roleRepository;
 
 
     /**
@@ -57,7 +60,7 @@ public class AdminRestController {
         LineaDTO lineaDTO = lineeService.getLineByName(permissionDTO.getLinea());
 
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (lineaDTO.getAdminList().contains(principal.getUsername())) {
+        if (lineaDTO.getAdminList().contains(principal.getUsername()) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
                 if(permissionDTO.isAddOrDel()){
                     userService.addAdmin(userID);
                     lineeService.addAdminLine(userID, permissionDTO.getLinea());
