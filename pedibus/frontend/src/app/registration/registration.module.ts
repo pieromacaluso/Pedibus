@@ -4,7 +4,7 @@ import {FormsModule} from '@angular/forms';
 
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { SignInComponent } from './sign-in/sign-in.component';
-import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import {MatButtonModule, MatCardModule, MatCheckboxModule, MatFormFieldModule, MatInputModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
@@ -16,6 +16,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     FormsModule,
     MatInputModule,
     MatCardModule,
-    FlexLayoutModule]
+    FlexLayoutModule,
+    MatCheckboxModule
+  ]
 })
 export class RegistrationModule { }

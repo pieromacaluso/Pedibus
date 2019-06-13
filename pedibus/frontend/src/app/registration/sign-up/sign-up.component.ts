@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {SignUpModel} from '../models';
 import {AuthService} from '../auth.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-sign-up',
@@ -14,8 +15,8 @@ export class SignUpComponent implements OnInit {
   serverErrors: string;
   isPresent: boolean;
 
-  constructor(private auth: AuthService) {
-    this.model = {email: '', password: '', passMatch: ''};
+  constructor(private auth: AuthService, private snackBar: MatSnackBar) {
+    this.model = {email: '', password: '', passMatch: '', terms: false};
   }
 
   ngOnInit() {
@@ -33,12 +34,12 @@ export class SignUpComponent implements OnInit {
           formValid = false;
         }
       }
-      if (this.isPresent) {
+      if (this.isPresent || !this.model.terms) {
         formValid = false;
       }
       if (formValid) {
         this.auth.signUp(this.model).subscribe((value => {
-          console.log(value);
+          this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
         }), error1 => {
           this.serverErrors = (error1 as HttpErrorResponse).error.errorMessage;
         });

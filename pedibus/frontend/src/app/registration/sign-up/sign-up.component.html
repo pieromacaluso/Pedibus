@@ -13,7 +13,7 @@
              pattern="^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$" [(ngModel)]="model.password"
              #password="ngModel">
       <mat-error *ngIf="password.invalid && password.touched">Password non valida</mat-error>
-    </mat-form-field>
+    </mat-form-field >
     <br>
     <mat-form-field  ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
       <input type="password" id="passMatch" name="passMatch" matInput required [pattern]="model.password" placeholder="Ripeti Password"
@@ -21,9 +21,13 @@
       <mat-error *ngIf="passMatch.invalid && passMatch.touched">Le due password non coincidono</mat-error>
     </mat-form-field>
     <br>
+    <!-- TERMS -->
+      <mat-checkbox id="check" name="check"  required [(ngModel)]="model.terms" #check="ngModel" >agree with our terms and conditions</mat-checkbox>
+      <mat-error *ngIf="!model.terms" >agree our terms</mat-error>
+    <br>
     <mat-error *ngIf="serverErrors">{{serverErrors}}</mat-error>
     <mat-error  *ngIf="isPresent">Email già presente nel database</mat-error>
     <button type="reset" mat-button>Reset</button>
-    <button type="submit" [disabled]="isPresent || passMatch.invalid || password.invalid || email.invalid" mat-raised-button color="primary">Register</button>
+    <button type="submit" [disabled]="isPresent || passMatch.invalid || password.invalid || email.invalid || !model.terms" mat-raised-button color="primary">Register</button>
   </form>
 </mat-card>
