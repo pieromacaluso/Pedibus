@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Alunno, LineReservation, NotReservation, PrenotazioneRequest} from './line-details';
+import {Alunno, LineReservation, NotReservation, NuovaPrenotazione, PrenotazioneRequest} from './line-details';
 import {DatePipe} from '@angular/common';
+import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -46,5 +47,22 @@ export class ApiService {
 
   versoToInt(verso: string) {
     return verso === 'Andata' ? 1 : 0;
+  }
+
+  postPrenotazioneDialog(data: DialogData) {
+    const idVerso = this.versoToInt(data.verso);
+    console.log('POSTTT:' + data.fermataId + ' ' + idVerso);
+    const nuovaPrenotazione: NuovaPrenotazione = {
+      cfChild: data.alunno.codiceFiscale,
+      idFermata: data.fermataId,
+      verso: idVerso
+    };
+
+    // TODO: implementazione POST nuova prenotazione da fare
+    console.log('POSTTT:' + nuovaPrenotazione.cfChild + ' ' + nuovaPrenotazione.idFermata + ' ' + nuovaPrenotazione.verso);
+
+    return this.httpClient
+      .post(this.baseURL + 'reservations/' + data.linea + '/' + this.datePipe
+        .transform(data.data, 'yyyy-MM-dd'), nuovaPrenotazione);
   }
 }

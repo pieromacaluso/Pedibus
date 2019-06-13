@@ -95,9 +95,9 @@ public class ReservationController {
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+        logger.info("Nuova Prenotazione" + prenotazioneResource.toString());
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineByName(nomeLinea).getNome(), dataFormatted);
         String idPrenotazione = reservationService.addPrenotazione(prenotazioneDTO);
-
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + nomeLinea + "/" + ((prenotazioneResource.getVerso()) ? 1 : 0), prenotazioneResource);
         return idPrenotazione;
     }

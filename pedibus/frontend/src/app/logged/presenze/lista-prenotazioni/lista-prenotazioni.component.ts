@@ -27,8 +27,9 @@ export class ListaPrenotazioniComponent implements OnInit {
   countLoading: any = 0;
   private notReserved: AlunnoNotReserved[];
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
-  private topicSubscription: Subscription;
-
+  private handledSub: Subscription;
+  private openedDialog: any = 0;
+  private resSub: Subscription;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -36,17 +37,41 @@ export class ListaPrenotazioniComponent implements OnInit {
     // this.connect();
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
       if (prenotazione.linea && prenotazione.verso && prenotazione.data) {
-        // Disiscrizione dalla Broker precedente se esiste
-        if (this.topicSubscription) {
-          this.topicSubscription.unsubscribe();
+
+        // Disiscrizione dalla Broker handledSub precedente se esiste
+        if (this.handledSub) {
+          this.handledSub.unsubscribe();
         }
         // Iscrizione alla nuova Broker
-        this.topicSubscription = this.rxStompService.watch('/handled' + this.pathSub(prenotazione))
+        this.handledSub = this.rxStompService.watch('/handled' + this.pathSub(prenotazione))
           .subscribe((message: Message) => {
             const res = JSON.parse(message.body);
             console.log(res);
             const al = this.reservations.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
             al.presoInCarico = res.isSet;
+          });
+
+        // Disiscrizione dalla Broker reservationSub precedente se esiste
+        if (this.resSub) {
+          this.resSub.unsubscribe();
+        }
+        // Iscrizione alla nuova Broker
+        this.resSub = this.rxStompService.watch('/reservation' + this.pathSub(prenotazione))
+          .subscribe((message: Message) => {
+            const res = JSON.parse(message.body);
+            console.log(res);
+            const oldAlunno = this.notReserved.find(a => a.codiceFiscale === res.cfChild);
+            const newAlunno: Alunno = {
+              codiceFiscale: oldAlunno.codiceFiscale,
+              name: oldAlunno.name,
+              surname: oldAlunno.surname,
+              presoInCarico: false,
+              arrivatoScuola: false,
+              update: false
+            };
+            const al = this.reservations.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
+            this.deleteNotReserved(oldAlunno);
+            this.togglePresenza(res.idFermata, newAlunno);
           });
         this.prenotazione = prenotazione;
         this.countLoading++;
@@ -66,8 +91,10 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   openDialog(alu: AlunnoNotReserved) {
+    this.dialog.closeAll();
+
     this.componentMatDialogRef = this.dialog.open(AdminBookDialogComponent, {
-      hasBackdrop: false,
+      hasBackdrop: true,
       data: {
         alunno: alu,
         res: this.reservations,
@@ -76,29 +103,14 @@ export class ListaPrenotazioniComponent implements OnInit {
         linea: this.prenotazione.linea
       }
     });
-    this.componentMatDialogRef
-      .afterClosed()
-      .pipe(filter(idFermataRes => idFermataRes))
-      .subscribe(idFermataRes => {
-        // TODO: implementazione aggiunta Prenotazione da parte di admin
-        this.snackBar.open('Da implementare POST:\n' +
-          this.prenotazione.data.toLocaleDateString() + ' '
-          + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso, '', {
-          duration: 10000,
-        });
-        console.log(this.prenotazione.data.toLocaleDateString()
-          + ' ' + this.prenotazione.linea + ' ' + alu.codiceFiscale + ' ' + idFermataRes + ' ' + this.prenotazione.verso);
-      });
   }
 
   showLoading() {
     return this.countLoading > 0 || !this.rxStompService.connected();
   }
-  showLoadingButton(alu: Alunno) {
-    return alu.update;
-  }
 
-  ngOnInit() {
+  showLoadingButton(alu: any) {
+    return alu.update;
   }
 
   togglePresenza(id: number, alunno: Alunno) {
@@ -122,6 +134,22 @@ export class ListaPrenotazioniComponent implements OnInit {
     return alu.sort((a, b) => {
       return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
     });
+  }
+
+  sortedNotReserved(alu: AlunnoNotReserved[]) {
+    return alu.sort((a, b) => {
+      return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+  deleteNotReserved(al: AlunnoNotReserved) {
+    const index: number = this.notReserved.indexOf(al);
+    if (index !== -1) {
+      this.notReserved.splice(index, 1);
+    }
   }
 
 }
