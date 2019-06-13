@@ -16,6 +16,11 @@ export class AuthService {
   constructor(private httpClient: HttpClient) {
   }
 
+  /* METODO CHE RINNOVA LE CREDENZIALI */
+  postNewPassword(token: string, model) {
+      return this.httpClient.post(this.baseURL + 'recover/' + token, model);
+  }
+
   postRecover(email: string) {
     return this.httpClient.post(this.baseURL + 'recover', email);
   }

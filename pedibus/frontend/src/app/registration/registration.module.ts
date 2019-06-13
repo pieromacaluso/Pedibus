@@ -8,9 +8,10 @@ import {MatButtonModule, MatCardModule, MatCheckboxModule, MatFormFieldModule, M
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import {RouterModule} from '@angular/router';
+import { RecoverComponent } from './recover/recover.component';
 
 @NgModule({
-  declarations: [SignUpComponent, SignInComponent, ForgotPasswordComponent],
+  declarations: [SignUpComponent, SignInComponent, ForgotPasswordComponent, RecoverComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
