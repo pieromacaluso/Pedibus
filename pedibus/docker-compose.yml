@@ -1,0 +1,52 @@
+version: '3'
+services:
+  frontend:
+    container_name: frontend
+    restart: always
+    build: ./frontend
+    ports:
+      - 4200:80
+      - 443:443
+    depends_on:
+      - app
+    networks:
+      pedibus-network:
+        aliases:
+          - frontend
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    #volumes:
+     # - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
+    networks:
+      pedibus-network:
+        aliases:
+          - mongo
+
+  app:
+    container_name: app
+    restart: always
+    build: ./backend
+#    volumes:
+#      - ./:/app
+#      - ~/.m2:/root/.m2
+    expose:
+      - "8080"
+    ports:
+      - 8080:8080
+      
+    depends_on:
+      - mongodb
+    networks:
+      pedibus-network:
+        aliases:
+          - app
+networks:
+  pedibus-network:
