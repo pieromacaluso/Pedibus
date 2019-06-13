@@ -10,6 +10,7 @@ export interface AlunnoNotReserved {
   surname: string;
   idFermataDefault: number;
   idParent: string;
+  update: boolean;
 }
 
 export interface NotReservation {
@@ -40,4 +41,10 @@ export interface PrenotazioneRequest {
   linea: string;
   verso: string;
   data: Date;
+}
+
+export interface NuovaPrenotazione {
+  cfChild: string;
+  idFermata: number;
+  verso: number;
 }
