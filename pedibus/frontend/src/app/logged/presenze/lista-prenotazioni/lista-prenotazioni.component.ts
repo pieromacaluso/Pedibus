@@ -59,7 +59,6 @@ export class ListaPrenotazioniComponent implements OnInit {
         this.resSub = this.rxStompService.watch('/reservation' + this.pathSub(prenotazione))
           .subscribe((message: Message) => {
             const res = JSON.parse(message.body);
-            console.log(res);
             const oldAlunno = this.notReserved.find(a => a.codiceFiscale === res.cfChild);
             const newAlunno: Alunno = {
               codiceFiscale: oldAlunno.codiceFiscale,
@@ -114,11 +113,8 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   togglePresenza(id: number, alunno: Alunno) {
-    console.log('outside');
     if (this.authService.isAdmin()) {
-      console.log('inside');
       const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
-      console.log(al);
       al.update = true;
       this.apiService.postPresenza(al, this.prenotazione, !al.presoInCarico).subscribe((rese) => {
         console.log('presenza subscribe emitted something');

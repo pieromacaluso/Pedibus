@@ -52,8 +52,6 @@ export class AuthService {
       // todo: per ora roles e' una stringa, da converite in array
       // (Piero) dovrei aver fixato sta cosa
       const roles = JSON.parse(localStorage.getItem('roles'));
-      console.log(roles);
-      console.log(roles[0]);
       return roles.find(role => role === 'ROLE_SYSTEM-ADMIN');
     }
     return false;

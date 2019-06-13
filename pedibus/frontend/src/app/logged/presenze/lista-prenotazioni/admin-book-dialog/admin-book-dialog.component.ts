@@ -41,12 +41,7 @@ export class AdminBookDialogComponent {
     if (this.formControl.valid) {
       this.data.fermataId = this.formControl.value;
       this.data.alunno.update = true;
-      this.apiService.postPrenotazioneDialog(this.data).subscribe((rese) => {
-        this.data.alunno.update = false;
-        this.dialogRef.close();
-      }, (error) => console.log(error));
-      // this.nuovaPrenotazione(this.data);
-      // this.dialogRef.close();
+      this.nuovaPrenotazione(this.data);
     }
   }
 
@@ -55,6 +50,7 @@ export class AdminBookDialogComponent {
     this.apiService.postPrenotazioneDialog(data).subscribe((rese) => {
       console.log('subscribe in nuovaPrenotazione emmited something');
       data.alunno.update = false;
+      this.dialogRef.close();
     }, (error) => console.error(error));
   }
 }

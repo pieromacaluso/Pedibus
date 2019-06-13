@@ -4,6 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {Alunno, LineReservation, NotReservation, NuovaPrenotazione, PrenotazioneRequest} from './line-details';
 import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
+import {map, publishReplay, share, shareReplay} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -48,10 +49,12 @@ export class ApiService {
   versoToInt(verso: string) {
     return verso === 'Andata' ? 1 : 0;
   }
+  dateToString(date: Date){
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   postPrenotazioneDialog(data: DialogData) {
     const idVerso = this.versoToInt(data.verso);
-    console.log('POSTTT:' + data.fermataId + ' ' + idVerso);
     const nuovaPrenotazione: NuovaPrenotazione = {
       cfChild: data.alunno.codiceFiscale,
       idFermata: data.fermataId,
