@@ -1,9 +1,10 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {AlunniPerFermata, AlunnoNotReserved, NuovaPrenotazione} from '../../../line-details';
+import {AlunniPerFermata, Alunno, AlunnoNotReserved, NuovaPrenotazione} from '../../../line-details';
 import {SignInModel} from '../../../../registration/models';
 import {FormControl, Validators} from '@angular/forms';
 import {ApiService} from '../../../api.service';
+import {first} from 'rxjs/operators';
 
 
 export interface DialogData {
@@ -40,11 +41,15 @@ export class AdminBookDialogComponent {
     if (this.formControl.valid) {
       this.data.fermataId = this.formControl.value;
       this.data.alunno.update = true;
-      this.apiService.postPrenotazioneDialog(this.data).subscribe((rese) => {
-        console.log('res:' + rese.toString());
-        this.data.alunno.update = false;
-      }, (error) => console.error(error));
+      this.nuovaPrenotazione(this.data)
       this.dialogRef.close();
     }
+  }
+
+  nuovaPrenotazione(data: DialogData) {
+    this.apiService.postPrenotazioneDialog(data).subscribe((rese) => {
+      console.log('res:' + rese.toString());
+      data.alunno.update = false;
+    }, (error) => console.error(error));
   }
 }
