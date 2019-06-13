@@ -10,11 +10,13 @@ import {PresenzeComponent} from './logged/presenze/presenze.component';
 import {SignUpComponent} from './registration/sign-up/sign-up.component';
 import {SignInComponent} from './registration/sign-in/sign-in.component';
 import {AuthGuard} from './auth.guard';
+import {ForgotPasswordComponent} from './registration/forgot-password/forgot-password.component';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard]},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
+  {path: 'passDimenticata', component: ForgotPasswordComponent},
   {path: '', redirectTo: 'presenze', pathMatch: 'full'},
   {path: '404', component: PageNotFoundComponent},
   {path: '**', redirectTo: '/404'}

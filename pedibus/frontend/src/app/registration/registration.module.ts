@@ -6,9 +6,11 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import {MatButtonModule, MatCardModule, MatCheckboxModule, MatFormFieldModule, MatInputModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
-  declarations: [SignUpComponent, SignInComponent],
+  declarations: [SignUpComponent, SignInComponent, ForgotPasswordComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -17,7 +19,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatInputModule,
     MatCardModule,
     FlexLayoutModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    RouterModule
   ]
 })
 export class RegistrationModule { }

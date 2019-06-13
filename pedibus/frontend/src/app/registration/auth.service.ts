@@ -16,6 +16,10 @@ export class AuthService {
   constructor(private httpClient: HttpClient) {
   }
 
+  postRecover(email: string) {
+    return this.httpClient.post(this.baseURL + 'recover', email);
+  }
+
   signUp(model: SignUpModel) {
     return this.httpClient.post(this.baseURL + 'register', model);
   }

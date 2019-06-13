@@ -11,6 +11,7 @@
     <mat-error *ngIf="password.invalid && password.touched">Password non valida</mat-error>
   </mat-form-field>
   <br>
+    <a [routerLink]="forgotLink" >Password dimenticata?</a><br>
   <button type="reset" mat-button>Reset</button>
   <button type="submit" mat-raised-button  color="primary">Login</button>
   <mat-error *ngIf="serverErrors" [innerHTML]="serverErrors">{{serverErrors}}</mat-error>

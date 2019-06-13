@@ -38,7 +38,6 @@ export class AppComponent {
     if (this.auth.getExpiration() == null) {
       return 'User logged: ' + this.auth.isLoggedIn() + ', expiration: not defined';
     } else {
-
       return 'User logged: ' + this.auth.isLoggedIn() + ', expiration: ' + this.auth.getExpiration().toLocaleString();
     }
   }
