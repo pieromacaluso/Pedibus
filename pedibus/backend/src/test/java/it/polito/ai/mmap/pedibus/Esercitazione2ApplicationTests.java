@@ -1,12 +1,11 @@
 package it.polito.ai.mmap.pedibus;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
-import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
-import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
@@ -303,6 +302,14 @@ public class Esercitazione2ApplicationTests {
 
     }
 
+    /**
+     * Test che controlla il funzionamento dell'engPoint GET /reservations/verso/{nome_linea}/{data}/{verso} con verso andata(true).
+     * Tale endPoint deve ritornare tutte le prenotazioni per una determinata combinazione di linea,data e verso.
+     * La fase di test inizia senza nessuna prenotazione.
+     * Vengono effettuate due prenotazioni una con verso andata e una con verso ritorno.
+     * Il test controlla che alla chiamata dell'endPoint con verso andata si ottenga solo la prenotazione di andata e non anche quella di ritorno.
+     * @throws Exception
+     */
     @Test
     public void getReservationsTowardTrue_check() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -356,6 +363,15 @@ public class Esercitazione2ApplicationTests {
         logger.info("DONE");
 
     }
+
+    /**
+     * Test che controlla il funzionamento dell'engPoint GET /reservations/verso/{nome_linea}/{data}/{verso} con verso ritorno(false).
+     * Tale endPoint deve ritornare tutte le prenotazioni per una determinata combinazione di linea,data e verso.
+     * La fase di test inizia senza nessuna prenotazione.
+     * Vengono effettuate due prenotazioni una con verso andata e una con verso ritorno.
+     * Il test controlla che alla chiamata dell'endPoint con verso ritorno si ottenga solo la prenotazione di ritorno e non anche quella di andata.
+     * @throws Exception
+     */
     @Test
     public void getReservationsTowardFalse_check() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -410,8 +426,18 @@ public class Esercitazione2ApplicationTests {
 
     }
 
-    /*@Test
+    /**
+     * Test che controlla il funzionamento dell'endoPoint GET /notreservations/{data}/{verso}.
+     * Tale endPoint deve ritornare solo i bambini che non hanno una prenotazione per tale data e verso.
+     * La fase di test inizia senza nessuna prenotazione, si leggono quindi tutti i bambini.
+     * Viene effettuata solo una prenotazione per una data e verso andata.
+     * In tale caso, l' endPoint testato con verso ritorno dovrebbe ritornare tutti i bambini del db visto che non sono presenti prenotazioni con verso ritorno.
+     * Se però si usa l'endpoint con verso andata, si deve ottenere la lista dei bambini precedentemente letta a meno del bambino che ha effettuato la prenotazione con verso andata.
+     * @throws Exception
+     */
+    @Test
     public void getNotReservations_check() throws Exception {
+
         ObjectMapper mapper = new ObjectMapper();
 
         UserDTO user = new UserDTO();
@@ -445,7 +471,8 @@ public class Esercitazione2ApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String idResChildren = result1Child.getResponse().getContentAsString();
-        List<ChildEntity> allChildren=mapper.readValue(idResChildren,new TypeReference<List<ChildEntity>>() {});
+        Map<String,List<Map<String,Object>>> allChildren= mapper.readValue(idResChildren,new TypeReference<Map<String,List<Map<String,Object>>>>() {});
+        List<Map<String,Object>> listAllChildren=allChildren.get("ListaChildren");
 
         logger.info("Lettura eseguita!");
 
@@ -454,16 +481,26 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.childrenNotReserved").value(allChildren));
+                .andExpect(jsonPath("$.childrenNotReserved").value(listAllChildren));
         logger.info("Corretto");
 
-        logger.info("Controllo bambini non prenotati andata");
-        allChildren.remove(new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
+        logger.info("Controllo bambini non prenotati andata...");
+
+        //rimozione da allChildren del bambino che ha effettuato sopra la prenotazione
+        Iterator<Map<String,Object>> i=listAllChildren.iterator();
+        while(i.hasNext()){
+            Map<String,Object> child=i.next();
+            if(child.containsKey("codiceFiscale")){
+                if(child.get("codiceFiscale").toString().compareTo("SNDPTN80C15H501C")==0)
+                    i.remove();
+            }
+        }
+
         this.mockMvc.perform(get("/notreservations/2019-01-01/true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.childrenNotReserved").value(allChildren));
+                .andExpect(jsonPath("$.childrenNotReserved").value(listAllChildren));
         logger.info("Corretto");
 
 
@@ -477,7 +514,7 @@ public class Esercitazione2ApplicationTests {
 
         logger.info("DONE");
 
-    }*/
+    }
 
     @Test
     public void insertReservation_duplicate() throws Exception {

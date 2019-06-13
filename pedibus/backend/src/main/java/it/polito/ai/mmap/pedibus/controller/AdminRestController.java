@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 
+import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
@@ -72,6 +73,18 @@ public class AdminRestController {
             throw new PermissionDeniedException("User has no right to do this operation");
         }
 
+    }
+
+    /**
+     * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti i bambini
+     * @return
+     */
+    @GetMapping("/admin/children/")
+    public ResponseEntity getChildre(){
+        List<ChildEntity> allChildren=userService.getAllChildren();
+        Map<Object, Object> model = new HashMap<>();
+        model.put("ListaChildren", allChildren);
+        return ok(model);
     }
 
 }

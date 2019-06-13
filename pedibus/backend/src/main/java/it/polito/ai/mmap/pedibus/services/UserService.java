@@ -252,6 +252,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    public List<ChildEntity> getAllChildren() {
+        return childRepository.findAll();
+    }
+
     public List<String> getAllChildrenId() {
         return childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
     }
