@@ -121,6 +121,7 @@ export class ListaPrenotazioniComponent implements OnInit {
       console.log(al);
       al.update = true;
       this.apiService.postPresenza(al, this.prenotazione, !al.presoInCarico).subscribe((rese) => {
+        console.log('presenza subscribe emitted something');
         al.update = false;
       }, (error) => console.error(error));
     }

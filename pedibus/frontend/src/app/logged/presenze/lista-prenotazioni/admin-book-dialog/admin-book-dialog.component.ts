@@ -37,18 +37,23 @@ export class AdminBookDialogComponent {
 
 
   submit() {
-    console.log('submit');
+    console.log('submit function called');
     if (this.formControl.valid) {
       this.data.fermataId = this.formControl.value;
       this.data.alunno.update = true;
-      this.nuovaPrenotazione(this.data)
-      this.dialogRef.close();
+      this.apiService.postPrenotazioneDialog(this.data).subscribe((rese) => {
+        this.data.alunno.update = false;
+        this.dialogRef.close();
+      }, (error) => console.log(error));
+      // this.nuovaPrenotazione(this.data);
+      // this.dialogRef.close();
     }
   }
 
   nuovaPrenotazione(data: DialogData) {
+    console.log('nuovaPrenotazione function called');
     this.apiService.postPrenotazioneDialog(data).subscribe((rese) => {
-      console.log('res:' + rese.toString());
+      console.log('subscribe in nuovaPrenotazione emmited something');
       data.alunno.update = false;
     }, (error) => console.error(error));
   }
