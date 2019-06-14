@@ -18,6 +18,11 @@ Ad oggi (pre consegna es5):
 - Quando aggiungiamo attraverso endpoint il ruolo ADMIN ha un account lo sommiamo a quello di USER
 
 ## User breakdown
+System admin:   
+applicazioni.internet.mmap@gmail.com  
+12345@Sys  
+
+Altri utenti:    
 La password in ogni caso è -> 1!qwerty1!
 
 Abbiamo 50 genitori con ROLE_USER, ad es:  
