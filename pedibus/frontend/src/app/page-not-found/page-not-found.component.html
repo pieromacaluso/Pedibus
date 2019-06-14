@@ -1,3 +1,10 @@
-<p>
-  page-not-found works!
-</p>
+<mat-card ngClass="container" ngClass.lt-md="container-mobile">
+  <div class="notfound">
+    <div class="notfound-404">
+      <img class="fourofour" [src]="error404logo" alt="Error 404">
+      <h1>Errore 404</h1>
+    </div>
+    <div class="oops">Oops! La pagina richiesta non è stata trovata</div>
+    <button mat-raised-button color="accent" (click)="home()" >Torna subito alla home!</button>
+  </div>
+</mat-card>
