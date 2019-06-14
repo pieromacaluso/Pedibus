@@ -220,7 +220,8 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
@@ -280,7 +281,8 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo reservation " + idRes + " ...");
@@ -333,13 +335,15 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idResTrue = result1.getResponse().getContentAsString();
+        String idResTrue = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
                 .contentType(MediaType.APPLICATION_JSON).content(resFalseJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idResFalse = result1False.getResponse().getContentAsString();
+        String idResFalse = mapper.readValue(result1False.getResponse().getContentAsString(), String.class);
+
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo reservation with toward true ...");
@@ -395,13 +399,15 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idResTrue = result1.getResponse().getContentAsString();
+        String idResTrue = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/2019-01-01/")
                 .contentType(MediaType.APPLICATION_JSON).content(resFalseJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idResFalse = result1False.getResponse().getContentAsString();
+        String idResFalse = mapper.readValue(result1False.getResponse().getContentAsString(), String.class);
+
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo reservation with toward true ...");
@@ -461,7 +467,8 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         logger.info("Inserito correttamente!");
 
         logger.info("Lettura di tutti i bambini iscritti...");
@@ -470,7 +477,8 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idResChildren = result1Child.getResponse().getContentAsString();
+            String idResChildren = result1Child.getResponse().getContentAsString();
+
         Map<String,List<Map<String,Object>>> allChildren= mapper.readValue(idResChildren,new TypeReference<Map<String,List<Map<String,Object>>>>() {});
         List<Map<String,Object>> listAllChildren=allChildren.get("ListaChildren");
 
@@ -537,7 +545,8 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
 
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         logger.info("Inserito correttamente!");
 
         logger.info("POST /reservations/linea1/2019-01-01/ duplicato ...");
@@ -576,7 +585,8 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
 
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo posizione nomeAlunno nelle linee di " + idRes);
@@ -617,7 +627,8 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
 
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
         logger.info("Inserito correttamente!");
 
 
@@ -659,7 +670,8 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
 
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
 
         this.mockMvc.perform(get("/reservations/linea1/2019-01-01/")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -798,7 +810,8 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
-        String idRes = result1.getResponse().getContentAsString();
+        String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
 
         logger.info("Test modifica prenotazione per nonno");
         PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
@@ -830,6 +843,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
-        return result1.getResponse().getContentAsString();
+        return mapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
     }
 }
