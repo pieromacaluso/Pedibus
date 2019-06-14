@@ -55,6 +55,15 @@ public class DebugController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @PostMapping("/debug/delete")
+    public void deletAll()
+    {
+        userRepository.deleteAll();
+        childRepository.deleteAll();
+        prenotazioneRepository.deleteAll();
+        logger.info("Child, user e prenotazioni sono state cancellate");
+
+    }
 
     @PostMapping("/debug/make")
     public void makeChildUserPrenotazioni() throws IOException {
