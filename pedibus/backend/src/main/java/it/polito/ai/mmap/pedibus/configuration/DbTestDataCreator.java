@@ -12,7 +12,6 @@ import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,6 +63,7 @@ public class DbTestDataCreator {
             logger.info("Creazione Basi di dati di test non effettuata con DEV Profile");
         }
     }
+
     /**
      * crea:
      * - 100 Child
@@ -126,17 +126,19 @@ public class DbTestDataCreator {
         i = 0;
         count = 0;
         List<PrenotazioneEntity> prenotazioniList = new LinkedList<>();
+        PrenotazioneEntity prenotazioneEntity;
         for (int day = 0; day < 3; day++) {
             childEntityIterable = childList.iterator();
             while (childEntityIterable.hasNext()) {
                 ChildEntity childEntity = childEntityIterable.next();
                 int randFermata = (Math.abs(new Random().nextInt()) % 8) + 1; //la linea 1 ha 8 fermate
-                PrenotazioneEntity prenotazioneEntity = new PrenotazioneEntity();
+                prenotazioneEntity = new PrenotazioneEntity();
                 prenotazioneEntity.setCfChild(childEntity.getCodiceFiscale());
                 prenotazioneEntity.setData(MongoZonedDateTime.parseData("yyyy-MM-dd HH:mm z", LocalDate.now().plus(day, ChronoUnit.DAYS).toString() + " 12:00 GMT+00:00"));
                 prenotazioneEntity.setIdFermata(randFermata);
                 prenotazioneEntity.setNomeLinea("linea1");
                 prenotazioneEntity.setVerso(randFermata < 5); //1-4 = true = andata
+
                 if (!prenotazioneRepository.findByCfChildAndData(prenotazioneEntity.getCfChild(), prenotazioneEntity.getData()).isPresent()) {
                     prenotazioniList.add(prenotazioneEntity);
                     count++;
@@ -144,8 +146,11 @@ public class DbTestDataCreator {
                 i++;
             }
         }
+
         prenotazioneRepository.saveAll(prenotazioniList);
         logger.info(count + " prenotazioni per oggi, domani e dopodomani caricate");
+
+
     }
 
 
@@ -154,6 +159,7 @@ public class DbTestDataCreator {
 
         List<UserDTO> userList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/userDTO.json"), new TypeReference<List<UserDTO>>() {
         });
+
         return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Arrays.asList(roleUser)), passwordEncoder)).collect(Collectors.toList());
     }
 }
