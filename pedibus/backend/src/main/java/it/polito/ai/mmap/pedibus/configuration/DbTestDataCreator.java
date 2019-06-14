@@ -12,10 +12,13 @@ import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -26,6 +29,8 @@ import java.util.stream.Collectors;
 public class DbTestDataCreator {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private Environment environment;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -48,6 +53,17 @@ public class DbTestDataCreator {
     @Autowired
     FermataRepository fermataRepository;
 
+
+    @PostConstruct
+    protected void init() throws IOException {
+        if (environment.getActiveProfiles()[0].equals("prod")) {
+            logger.info("Creazione Basi di dati di test in corso...");
+            makeChildUserPrenotazioni();
+            logger.info("Creazione Basi di dati di test completata.");
+        } else {
+            logger.info("Creazione Basi di dati di test non effettuata con DEV Profile");
+        }
+    }
     /**
      * crea:
      * - 100 Child
