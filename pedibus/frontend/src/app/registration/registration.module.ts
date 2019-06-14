@@ -4,14 +4,23 @@ import {FormsModule} from '@angular/forms';
 
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { SignInComponent } from './sign-in/sign-in.component';
-import {MatButtonModule, MatCardModule, MatCheckboxModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatProgressSpinnerModule
+} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import {RouterModule} from '@angular/router';
 import { RecoverComponent } from './recover/recover.component';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 @NgModule({
-  declarations: [SignUpComponent, SignInComponent, ForgotPasswordComponent, RecoverComponent],
+  declarations: [SignUpComponent, SignInComponent, ForgotPasswordComponent, RecoverComponent, ConfirmComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -21,7 +30,9 @@ import { RecoverComponent } from './recover/recover.component';
     MatCardModule,
     FlexLayoutModule,
     MatCheckboxModule,
-    RouterModule
+    RouterModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ]
 })
 export class RegistrationModule { }

@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {
-  MatButtonModule,
+  MatButtonModule, MatCardModule,
   MatIconModule,
   MatListModule,
   MatSidenavModule,
@@ -42,7 +42,8 @@ import {LoggedModule} from './logged/logged.module';
     FlexLayoutModule,
     MatButtonModule,
     MatSnackBarModule,
-    LoggedModule
+    LoggedModule,
+    MatCardModule
   ],
   providers: [DatePipe,
     {

@@ -3,9 +3,9 @@ import {environment} from '../environments/environment';
 
 const prepareBrokerURL = (path: string): string => {
   // Create a relative http(s) URL relative to current page
-  const url = new URL(path, window.location.href);
-  // Convert protocol http -> ws and https -> wss
-  url.protocol = url.protocol.replace('http', 'ws');
+  const hostname = window.location.host;
+  const href = 'ws://' + hostname;
+  const url = new URL(path, href);
   console.log('WOW:' + url);
   return url.href;
 };

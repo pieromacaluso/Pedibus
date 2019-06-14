@@ -12,6 +12,7 @@ import {SignInComponent} from './registration/sign-in/sign-in.component';
 import {AuthGuard} from './auth.guard';
 import {ForgotPasswordComponent} from './registration/forgot-password/forgot-password.component';
 import {RecoverComponent} from './registration/recover/recover.component';
+import {ConfirmComponent} from './registration/confirm/confirm.component';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
@@ -19,6 +20,7 @@ const appRoutes: Routes = [
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
   {path: 'passDimenticata', component: ForgotPasswordComponent},
   {path: 'recover/:token', component: RecoverComponent},
+  {path: 'confirm/:token', component: ConfirmComponent},
   {path: '', redirectTo: 'presenze', pathMatch: 'full'},
   {path: '404', component: PageNotFoundComponent},
   {path: '**', redirectTo: '/404'}

@@ -21,6 +21,10 @@ export class AuthService {
       return this.httpClient.post(this.baseURL + 'recover/' + token, model);
   }
 
+  getConfirm(token: string) {
+    return this.httpClient.get(this.baseURL + 'confirm/' + token);
+  }
+
   postRecover(email: string) {
     return this.httpClient.post(this.baseURL + 'recover', email);
   }
