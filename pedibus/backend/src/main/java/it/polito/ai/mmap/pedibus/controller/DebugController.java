@@ -28,7 +28,14 @@ public class DebugController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    ChildRepository childRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    PrenotazioneRepository prenotazioneRepository;
 
     @Autowired
     DbTestDataCreator dbTestDataCreator;
@@ -36,10 +43,10 @@ public class DebugController {
     @PostMapping("/debug/delete")
     public void deletAll()
     {
-//        userRepository.deleteAll();
-//        childRepository.deleteAll();
-//        prenotazioneRepository.deleteAll();
-//        logger.info("Child, user e prenotazioni sono state cancellate");
+        userRepository.deleteAll();
+        childRepository.deleteAll();
+        prenotazioneRepository.deleteAll();
+        logger.info("Child, user e prenotazioni sono state cancellate");
 
     }
 
