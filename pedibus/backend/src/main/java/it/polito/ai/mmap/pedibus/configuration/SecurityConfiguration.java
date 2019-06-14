@@ -26,6 +26,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     JwtTokenService jwtTokenService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
 
     /**
      * Si specifica come si accede alle risorse
@@ -100,7 +103,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
-        builder.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        builder.userDetailsService(userService).passwordEncoder(passwordEncoder);
     }
 
     @Bean
@@ -109,9 +112,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
 }
