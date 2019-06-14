@@ -5,7 +5,7 @@
 ## Build Backend
 
 1. Posizionarsi da terminale all'interno del progetto del backend.
-2. Avviare il comando ` mvn clean install -Pprod -Dmaven.test.skip=true`
+2. Avviare il comando ` ./mvnw clean install -Pprod -Dmaven.test.skip=true`
 
 ## Build Frontend
 
@@ -18,4 +18,6 @@
 2. Se è stato già avviato in precedenza, assicurarsi che il docker sia `down` con il comando: `docker-compose down --volumes`
 3. Avviare il comando `docker-compose up --build`
 
-Collegarsi a [http://localhost/](http://localhost/) per accedere al frontend. Per dialogare direttamente con il backend fare richieste a [http://localhost:8080](http://localhost:8080) 
+Collegarsi a [http://localhost:4200/](http://localhost:4200/) per accedere al frontend. Per dialogare direttamente con il backend fare richieste a [http://localhost:8080](http://localhost:8080) 
+
+**ATTENZIONE:** Se si sta utilizzando Windows Home con Docker Toolkit sostituire `localhost` con l'indirizzo della VM che si sta utilizzando.

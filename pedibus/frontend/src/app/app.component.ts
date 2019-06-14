@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {AuthService} from './registration/auth.service';
 import {Router} from '@angular/router';
+import {environment} from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ export class AppComponent {
     this.userLogged = this.auth.isLoggedIn();
     this.activeLoggedLink = this.loggedLinks[0];
     this.activeNotLoggedLink = this.notLoggedLinks[0];
+    console.log('Main URL: ' + window.location.origin);
   }
 
   isLoggedIn() {
