@@ -1,11 +1,115 @@
-# Pedibus - Progetto Applicazioni Internet 18/19
+# Esercitazione 5
 
-![Proposta Logo Pedibus](stuff/img/pedibus.png)
+## Composizione Gruppo
 
-## Sommario
-- Requisiti di Progetto [PDF](stuff/requirements/AI19_Pedibus.pdf) - [MD](stuff/requirements/README.md)
-- [Backend](backend): progetto Spring (IntelliJ)
-- [Frontend](frontend): progetto Angular (Webstorm)
+Il gruppo MMAP è composto da:
+- **Marco Florian** - s247030
+- **Piero Macaluso** - s252894
+- **Marco Nanci** - s255089
+- **Angelo Turco** - s255270
 
-## Accorgimenti
-Nel branch `master` di questa cartella cerchiamo di inserire solo codice **funzionante**, **testato** e soprattutto **commentato** adeguatamente.
+## Avvio Applicazione con Docker
+Dopo aver scompattato l'archivio `mmap-lab05-v1.zip`, posizionarsi da terminale nella cartella `mmap-lab05-v1` e seguire le seguenti istruzioni.
+### Build Backend
+
+1. Posizionarsi da terminale all'interno della cartella `backend`.
+2. Avviare il comando `./mvnw clean install -Pprod -Dmaven.test.skip=true` o `mvn clean install -Pprod -Dmaven.test.skip=true`
+
+### Build Frontend
+
+1. Posizionarsi da terminale all'interno della cartella `frontend`.
+2. Avviare il comando `npm install`
+3. Avviare il comando `ng build --prod`
+
+## Docker Compose-Up
+1. Posizionarsi da terminale all'interno della cartella `mmap-lab05-v1` (dove si trova il `docker-compose.yml`)
+2. Avviare il comando `docker-compose up`
+3. Aprire il browser e dirigersi su `http://localhost:4200`
+
+`http://localhost:4200` è valido solo su Mac, Linux e Windows non Home. Se si possiede Windows Home il link potrebbe cambiare (e.g. `http://192.168.99.100:4200`).
+
+## Dati di prova
+
+In questa esercitazione abbiamo inserito dei dati fittizi che andranno a popolare la data corrente (che corrisponde all'avvio di Spring), 
+quella precedente e quella successiva.
+
+Ad esempio se l'esercitazione viene avviata in data 17/06/2019, le prenotazioni e le linee disponibili saranno popolate nelle date 16-17-18/06/2019.
+
+## Utilizzo dell'app
+
+### Header
+Nell'header è presente il logo principale e il menù principale. Questo menù viene collassato in un Drawer Menu su dispositivi mobili con schermo ridotto.
+Se non si è loggati si può accedere soltanto alle pagine di **Sign-Up** e  **Sign-In**, mentre se l'accesso è stato effettuato avremo **Presenze** e **Log-Out**
+fra le scelte.
+
+### Sign-In (`http://localhost:4200/sign-in`)
+In questa schermata è possibile accedere inserendo le proprie credenziali. Se la richiesta di Login è positiva si viene reindirizzati verso la pagina delle presenze.
+
+#### Richiesta Cambio Password (`http://localhost:4200/recover`)
+In questa schermata è possibile chiedere il cambio delle proprie credenziali.
+
+#### Cambio Password (`http://localhost:4200/recover/{idToken}`)
+Una volta ricevuta la mail di cambio password, in questa schermata è possibile procedere con il cambio delle credenziali.
+
+### Sign-Up (`http://localhost:4200/sign-up`)
+In questa schermata è possibile registrarsi inserendo mail e password (due volte). L'inserimento della mail scatena richieste al server per verificare se questa
+non sia già presente nel database. Una volta ricevuta la conferma che la richiesta di registrazione è andata a buon fine la pagina mostra una conferma e un'esortazione
+a controllare la propria casella di posta elettronica.
+
+#### Conferma Password (`http://localhost:4200/confirm/{idToken}`)
+Una volta ricevuta la mail di conferma, questa schermata serve a confermare la propria iscrizione.
+
+
+### Interfaccia Presenze (`http://localhost:4200/presenze`)
+
+Nella parte alta della schermata principale è possibile selezionare linea (Linea 1, Linea 2), verso (Andata, Ritorno) e data per visualizzare i dettagli di una linea.
+Sono disponibili anche due frecce per cambiare giorno velocemente.
+
+### Prenotazioni e Presenze
+Nel corpo centrale dell'app vengono mostrate le fermate con l'elenco alfabetico degli alunni prenotati e, in fondo, quello degli alunni non prenotati. 
+Gli alunni prenotati potranno essere contrassegnati come presenti premendo sul loro nome. Il pulsante bianco indica un alunno prenotato di cui non è stata confermata la presenza, mentre il pulsante color verde acqua rappresenta un alunno con presenza alla fermata confermata.
+All'avvio dell'applicazione i pulsanti saranno tutti bianchi come default. 
+
+Per quanto riguarda gli alunni non Prenotati, l'accompagnatore potrà cliccare sul bottone di riferimento. Verrà visualizzata una finestra di dialogo attraverso cui
+l'accompagnatore potrà verificare la nuova prenotazione, inserire la fermata e confermare. Una volta concluso l'alunno verrà contrassegnato come presente alla fermata
+indicata e rimosso dalla lista dei non prenotati.
+
+Il meccanismo di aggiornamento è stato implementato con l'utilizzo di Broker per poter inviare le modifiche in tempo reale a tutti gli utenti che visualizzano in quel
+momento la pagina presenze.
+
+#### I ruoli
+
+All'interno della nostra applicazioni abbiamo 3 ruoli principali:
+
+- **ROLE_USER**: utente base, solitamente il profilo del genitore. 
+- **ROLE_ADMIN**: utente amministratore di Linea, possono modificare le linee.
+- **ROLE_SYS-ADMIN**: utente amministratore di sistema, può fare tutto.
+
+ROLE_USER può solo visualizzare la finestra delle presenze, vedere i mutamenti, ma non può modificare. ROLE_ADMIN e ROLE_SYS-ADMIN possono modificare.
+
+Ecco alcuni utenti utili per mostrare le funzionalità:
+
+##### ROLE_SYS-ADMIN
+**email**: applicazioni.internet.mmap@gmail.com
+
+**password**: `12345@Sys`
+
+##### ROLE_ADMIN e ROLE_USER
+La password in ogni caso è sempre  `1!qwerty1!`
+
+Abbiamo 50 genitori con ROLE_USER, ad es:  
+(primi 50 file userDTO.json)
+- miles.reilly@test.it
+- enid.crawford@test.it
+- morales.holloway@test.it
+
+50 nonni con ROLE_ADMIN, ad es:   
+(secondi 50 file userDTO.json)   
+- burks.schwartz@test.it
+- julianne.perry@test.it
+- edwina.cantu@test.it
+
+### Esempio di utilizzo
+In questa veloce GIF mostriamo l'utilizzo dell'applicazione.
+
+![Esempio di Utilizzo](screenshot/esempio.gif)
