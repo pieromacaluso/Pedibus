@@ -51,7 +51,7 @@ public class ReservationController {
     public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        boolean canModify = reservationService.canModify(nomeLinea);
+        boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, canModify);
     }
 
@@ -68,7 +68,7 @@ public class ReservationController {
     public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + "/" + verso + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        boolean canModify = reservationService.canModify(nomeLinea);
+        boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
     }
 

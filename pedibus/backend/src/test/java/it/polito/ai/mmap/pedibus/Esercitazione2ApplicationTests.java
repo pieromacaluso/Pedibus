@@ -168,7 +168,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value(linea));
+                .andExpect(jsonPath("$.id").value(linea));
 
         logger.info("PASSED");
     }

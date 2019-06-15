@@ -235,10 +235,10 @@ public class ReservationService {
         return -1;
     }
 
-    public boolean canModify(String nomeLinea) {
+    public boolean canModify(String nomeLinea, Date date) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean canModify = false;
-        if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
+        if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")) && MongoZonedDateTime.isToday(date))
             return true;
         else
             return lineeService.getLineById(nomeLinea).getAdminList().contains(principal.getUsername());

@@ -30,6 +30,8 @@ public class PrenotazioneEntity {
         verso=prenotazioneDTO.getVerso();
         idFermata = prenotazioneDTO.getIdFermata();
         idLinea = prenotazioneDTO.getIdLinea();
+        this.presoInCarico = prenotazioneDTO.getPresoInCarico();
+        this.arrivatoScuola = prenotazioneDTO.getArrivatoScuola();
     }
 
     public void update(PrenotazioneDTO prenotazioneDTO) {
@@ -39,6 +41,8 @@ public class PrenotazioneEntity {
         this.verso=prenotazioneDTO.getVerso();
         this.idFermata = prenotazioneDTO.getIdFermata();
         this.idLinea = prenotazioneDTO.getIdLinea();
+        this.presoInCarico = prenotazioneDTO.getPresoInCarico();
+        this.arrivatoScuola = prenotazioneDTO.getArrivatoScuola();
     }
 
 }
