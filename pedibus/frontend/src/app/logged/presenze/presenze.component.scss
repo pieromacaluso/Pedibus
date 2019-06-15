@@ -38,7 +38,7 @@
 }
 
 .presente {
-  background-color: mat-color($pedibus-theme-accent, default);
+  background-color: mat-color($pedibus-theme-accent, darker);
   font-weight: bold;
   color: white;
 }
@@ -77,7 +77,7 @@
 }
 
 .prenotazioni {
-  border-color: mat-color($pedibus-theme-accent, default);
+  border-color: mat-color($pedibus-theme-primary, default);
   border-style: solid;
   border-width: 0 0 0 2px;
   padding: 8px;
@@ -86,7 +86,7 @@
 }
 
 .prenotazioni-mobile {
-  border-color: mat-color($pedibus-theme-accent, default);
+  border-color: mat-color($pedibus-theme-primary, default);
   border-style: solid;
   border-width: 0 0 0 2px;
   padding: 8px;

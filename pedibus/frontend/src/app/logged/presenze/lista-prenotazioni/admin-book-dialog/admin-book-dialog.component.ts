@@ -51,6 +51,9 @@ export class AdminBookDialogComponent {
       console.log('subscribe in nuovaPrenotazione emmited something');
       data.alunno.update = false;
       this.dialogRef.close();
-    }, (error) => console.error(error));
+    }, (error) => {
+      console.error(error);
+      data.alunno.update = false;
+    });
   }
 }

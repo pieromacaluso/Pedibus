@@ -30,6 +30,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   private handledSub: Subscription;
   private openedDialog: any = 0;
   private resSub: Subscription;
+  private modEnabled: boolean;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -77,6 +78,7 @@ export class ListaPrenotazioniComponent implements OnInit {
         this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione).subscribe((rese) => {
           this.reservations = this.prenotazione.verso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
           this.notReserved = rese.childrenNotReserved;
+          this.modEnabled = rese.canModify;
           this.countLoading--;
         }, (error) => console.error(error));
       }
@@ -94,7 +96,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   openDialog(alu: AlunnoNotReserved) {
-    if (this.authService.isAdmin()) {
+    if (this.canModify()) {
 
       this.dialog.closeAll();
 
@@ -110,7 +112,9 @@ export class ListaPrenotazioniComponent implements OnInit {
       });
     }
   }
-
+  canModify() {
+    return this.authService.isAdmin() && this.isModifiable() && this.modEnabled;
+  }
   showLoading() {
     return this.countLoading > 0 || !this.rxStompService.connected();
   }
@@ -120,13 +124,16 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   togglePresenza(id: number, alunno: Alunno) {
-    if (this.authService.isAdmin()) {
+    if (this.canModify()) {
       const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
       al.update = true;
       this.apiService.postPresenza(al, this.prenotazione, !al.presoInCarico).subscribe((rese) => {
         console.log('presenza subscribe emitted something');
         al.update = false;
-      }, (error) => console.error(error));
+      }, (error) => {
+        console.error(error);
+        al.update = false;
+      });
     }
   }
 
@@ -156,4 +163,17 @@ export class ListaPrenotazioniComponent implements OnInit {
     }
   }
 
+  private isModifiable() {
+    const today = new Date();
+    const preno = this.prenotazione.data;
+    preno.setHours(0);
+    preno.setMinutes(0);
+    preno.setSeconds(0);
+    preno.setMilliseconds(0);
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+    return preno.getTime() >= today.getTime();
+  }
 }

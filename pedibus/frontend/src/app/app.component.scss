@@ -48,7 +48,7 @@ mat-sidenav {
 }
 
 .presente {
-  background-color: mat-color($pedibus-theme-accent, default);
+  background-color: mat-color($pedibus-theme-accent, darker);
   font-weight: bold;
   color: white;
 }
@@ -176,7 +176,6 @@ div {
 }
 
 .mat-sidenav-container{
-  background-color: mat-color($pedibus-theme-primary, default);
   min-height: 64px !important;
 }
 

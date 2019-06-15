@@ -2,6 +2,7 @@ export interface LineReservation {
   alunniPerFermataAndata: AlunniPerFermata[];
   alunniPerFermataRitorno: AlunniPerFermata[];
   childrenNotReserved: AlunnoNotReserved[];
+  canModify: boolean;
 }
 
 export interface AlunnoNotReserved {

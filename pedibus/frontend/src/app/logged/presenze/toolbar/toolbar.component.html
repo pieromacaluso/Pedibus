@@ -17,7 +17,7 @@
   </button>
 </div>
 <!-- TOOLBAR -->
-<mat-card ngClass="container dark-theme" ngClass.lt-md="container-mobile dark-theme">
+<mat-card ngClass="container toolbar dark-theme" ngClass.lt-md="container-mobile toolbar dark-theme">
   <!-- TOOLBAR ROW -->
   <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap.lt-sm="5%">
     <!-- DATE CHANGE BUTTON -->
@@ -33,7 +33,7 @@
                      fxLayoutGap="3%"
                      fxLayoutAlign="center" fxLayoutAlign.xs="center">
       <!-- SELEZIONA LINEA -->
-      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
         <mat-label>Seleziona linea</mat-label>
         <mat-select (selectionChange)="emitRequest()" [(ngModel)]="richiesta.linea">
           <mat-option *ngFor="let linea of linee" [value]="linea">{{linea}}
@@ -41,7 +41,7 @@
         </mat-select>
       </mat-form-field>
       <!-- SELEZIONA VERSO -->
-      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
         <mat-label>Verso</mat-label>
         <mat-select (selectionChange)="emitRequest()" [(ngModel)]="richiesta.verso">
           <mat-option *ngFor="let v of ['Andata', 'Ritorno']" [value]="v">{{v}}
@@ -49,7 +49,7 @@
         </mat-select>
       </mat-form-field>
       <!-- DATEPICKER -->
-      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
         <input matInput (dateChange)="emitRequest()"  [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="richiesta.data">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker  #picker></mat-datepicker>

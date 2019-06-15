@@ -36,8 +36,8 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$pedibus-theme-primary: mat-palette($mat-light-blue, 900, 300, 700);
-$pedibus-theme-accent:  mat-palette($mat-teal, A700, A400);
+$pedibus-theme-primary: mat-palette-piero($mat-deep-orange);
+$pedibus-theme-accent:  mat-palette-piero($mat-light-green);
 
 // The warn palette is optional (defaults to red).
 $pedibus-theme-warn:    mat-palette($mat-red);
@@ -51,14 +51,14 @@ $pedibus-theme: mat-light-theme($pedibus-theme-primary, $pedibus-theme-accent, $
 @include angular-material-theme($pedibus-theme);
 
 .dark-theme {
-  $pedibus-theme-primary: mat-palette($mat-light-blue, 900, 300, 700);
-  $pedibus-theme-accent: mat-palette-piero($mat-teal, A700, A400);
+  $pedibus-theme-primary: mat-palette-piero($mat-deep-orange);
+  $pedibus-theme-accent: mat-palette-piero($mat-light-green);
 
   // The warn palette is optional (defaults to red).
   $pedibus-theme-warn:    mat-palette($mat-red);
 
   // Create the theme object (a Sass map containing all of the palettes).
-  $pedibus-theme-dark: mat-dark-theme($pedibus-theme-accent, $pedibus-theme-accent, $pedibus-theme-warn);
+  $pedibus-theme-dark: mat-dark-theme($pedibus-theme-primary, $pedibus-theme-accent, $pedibus-theme-warn);
   @include angular-material-theme($pedibus-theme-dark);
   background: mat-color($pedibus-theme-primary, darker);
   color: mat-color($mat-grey, 100);

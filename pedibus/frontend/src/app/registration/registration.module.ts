@@ -11,7 +11,8 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatChipsModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';

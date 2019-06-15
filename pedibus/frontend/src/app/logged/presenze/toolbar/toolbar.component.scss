@@ -1,1 +1,5 @@
 @import "../presenze.component.scss";
+
+.toolbar {
+  background: mat-color($pedibus-theme-primary, default) !important;
+}
