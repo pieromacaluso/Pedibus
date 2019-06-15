@@ -13,15 +13,15 @@ public class PrenotazioneDTO {
 
     private String cfChild;
     private Date data;
-    private String nomeLinea;
+    private String idLinea;
     private Integer idFermata;
     private Boolean verso;
     private Boolean presoInCarico;
     private Boolean arrivatoScuola;
 
-    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, String nomeLinea, Date data) {
+    public PrenotazioneDTO(PrenotazioneResource prenotazioneResource, String idLinea, Date data) {
         this.data = data;
-        this.nomeLinea = nomeLinea;
+        this.idLinea = idLinea;
         verso = prenotazioneResource.getVerso();
         idFermata = prenotazioneResource.getIdFermata();
         cfChild = prenotazioneResource.getCfChild();
@@ -32,7 +32,7 @@ public class PrenotazioneDTO {
 
     public PrenotazioneDTO(PrenotazioneEntity prenotazioneEntity) {
         this.data = prenotazioneEntity.getData();
-        this.nomeLinea = prenotazioneEntity.getNomeLinea();
+        this.idLinea = prenotazioneEntity.getIdLinea();
         verso = prenotazioneEntity.isVerso();
         idFermata = prenotazioneEntity.getIdFermata();
         cfChild = prenotazioneEntity.getCfChild();

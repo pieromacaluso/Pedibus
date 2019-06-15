@@ -101,7 +101,7 @@ public class ReservationController {
         ObjectMapper mapper = new ObjectMapper();
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         logger.info("Nuova Prenotazione" + prenotazioneResource.toString());
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineByName(nomeLinea).getNome(), dataFormatted);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
         String idPrenotazione = reservationService.addPrenotazione(prenotazioneDTO);
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + nomeLinea + "/" + ((prenotazioneResource.getVerso()) ? 1 : 0), prenotazioneResource);
         return mapper.writeValueAsString(idPrenotazione);
@@ -120,7 +120,7 @@ public class ReservationController {
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineByName(nomeLinea).getNome(), dataFormatted);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getNome(), dataFormatted);
         reservationService.updatePrenotazione(prenotazioneDTO, reservationId);
     }
 
@@ -151,7 +151,7 @@ public class ReservationController {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneEntity checkPren = reservationService.getReservationFromId(reservationId);
 
-        if (lineeService.getLineByName(nomeLinea).getNome().equals(checkPren.getNomeLinea()) && dataFormatted.equals(checkPren.getData()))
+        if (lineeService.getLineById(nomeLinea).getNome().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))
             return new PrenotazioneDTO(checkPren);
         else
             throw new IllegalArgumentException("Prenotazione non esistente");

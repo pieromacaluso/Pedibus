@@ -45,7 +45,7 @@ public class JsonHandlerService {
                 LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i + ".json"), LineaDTO.class);
                 try {
                     //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin
-                    ArrayList<String> adminList = lineeService.getLineByName(lineaDTO.getNome()).getAdminList();
+                    ArrayList<String> adminList = lineeService.getLineById(lineaDTO.getNome()).getAdminList();
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
                 } catch (LineaNotFoundException e) {

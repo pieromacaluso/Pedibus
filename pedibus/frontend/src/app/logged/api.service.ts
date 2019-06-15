@@ -19,6 +19,9 @@ export class ApiService {
   getLinee() {
     return this.httpClient.get<string[]>(this.baseURL + 'lines');
   }
+  getLineeNomi() {
+    return this.httpClient.get<string[]>(this.baseURL + 'lines/name');
+  }
 
   getPrenotazioneByLineaAndDateAndVerso(p: PrenotazioneRequest) {
     const idVerso = this.versoToInt(p.verso);

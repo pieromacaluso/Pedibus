@@ -99,7 +99,7 @@ public class DbTestDataCreator {
                     nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
                     nonno.setEnabled(true);
                     listNonni.add(nonno);
-                    Optional<LineaEntity> check = lineaRepository.findByNome("linea" + i);
+                    Optional<LineaEntity> check = lineaRepository.findById("linea" + i);
 
                     if (check.isPresent()) {
                         LineaEntity lineaEntity = check.get();
@@ -129,7 +129,7 @@ public class DbTestDataCreator {
                 prenotazioneEntity.setCfChild(childEntity.getCodiceFiscale());
                 prenotazioneEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
                 prenotazioneEntity.setIdFermata(randFermata + (100 * (randLinea - 1)));
-                prenotazioneEntity.setNomeLinea("linea" + randLinea);
+                prenotazioneEntity.setIdLinea("linea" + randLinea);
                 prenotazioneEntity.setVerso(randFermata < 5); //1-4 = 101-104 = true = andata
 
                 if (!prenotazioneRepository.findByCfChildAndData(prenotazioneEntity.getCfChild(), prenotazioneEntity.getData()).isPresent()) {

@@ -10,11 +10,14 @@ import {SyncService} from '../sync.service';
 export class ToolbarComponent implements OnInit {
 
   @Input() linee;
+  @Input() lineeNomi;
   richiesta: PrenotazioneRequest;
 
 
   constructor(private syncService: SyncService) {
-    this.richiesta = {linea: '', verso: '', data: new Date()};
+    this.richiesta = {linea: 'linea1', verso: 'Andata', data: new Date()};
+    this.richiesta.linea.split('linea')
+    this.emitRequest();
   }
 
   ngOnInit() {

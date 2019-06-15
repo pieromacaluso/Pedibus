@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface LineaRepository extends MongoRepository<LineaEntity, Integer> {
      Optional<LineaEntity> findByNome(String name);
-     Optional<LineaEntity> findById(Integer id);
+     Optional<LineaEntity> findById(String id);
 }

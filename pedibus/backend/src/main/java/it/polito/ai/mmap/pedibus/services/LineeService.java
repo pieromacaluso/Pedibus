@@ -93,15 +93,15 @@ public class LineeService {
     /**
      * Restituisce una LineaDTO a partire dal suo nome
      *
-     * @param lineName nome linea
+     * @param idLine nome linea
      * @return LineaDTO
      */
-    public LineaDTO getLineByName(String lineName) {
-        Optional<LineaEntity> linea = lineaRepository.findByNome(lineName);
+    public LineaDTO getLineById(String idLine) {
+        Optional<LineaEntity> linea = lineaRepository.findById(idLine);
         if (linea.isPresent()) {
             return new LineaDTO(linea.get(), fermataRepository);
         } else {
-            throw new LineaNotFoundException("Nessuna linea trovata con nome " + lineName);
+            throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLine);
         }
     }
 
@@ -120,6 +120,15 @@ public class LineeService {
      *
      * @return Lista di nomi linee
      */
+    public List<String> getAllLinesIds() {
+        return lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * Restituisce tutti i nomi delle linee presenti in DB
+     *
+     * @return Lista di nomi linee
+     */
     public List<String> getAllLinesNames() {
         return lineaRepository.findAll().stream().map(LineaEntity::getNome).collect(Collectors.toList());
     }
@@ -130,10 +139,10 @@ public class LineeService {
     /**
      * Aggiunge alla lista di admin di una linea l'user indicato
      * @param userID
-     * @param nomeLinea
+     * @param idLinea
      */
-    public void addAdminLine(String userID, String nomeLinea) {
-        Optional<LineaEntity> check = lineaRepository.findByNome(nomeLinea);
+    public void addAdminLine(String userID, String idLinea) {
+        Optional<LineaEntity> check = lineaRepository.findById(idLinea);
         if (!check.isPresent()) {
             throw new LineaNotFoundException("Linea not found");
         }
@@ -148,8 +157,8 @@ public class LineeService {
         lineaRepository.save(lineaEntity);
     }
 
-    public void delAdminLine(String userID, String nomeLinea) {
-        Optional<LineaEntity> check = lineaRepository.findByNome(nomeLinea);
+    public void delAdminLine(String userID, String idLinea) {
+        Optional<LineaEntity> check = lineaRepository.findById(idLinea);
         if (!check.isPresent()) {
             throw new LineaNotFoundException("Linea not found");
         }

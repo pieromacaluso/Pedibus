@@ -2,7 +2,6 @@ package it.polito.ai.mmap.pedibus.controller;
 
 
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
-import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
@@ -18,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -58,7 +56,7 @@ public class AdminRestController {
     @PutMapping("/users/{userID}")
     public void setUserAdmin(@RequestBody PermissionDTO permissionDTO, @PathVariable("userID") String userID) {
         UserEntity principal;
-        LineaDTO lineaDTO = lineeService.getLineByName(permissionDTO.getLinea());
+        LineaDTO lineaDTO = lineeService.getLineById(permissionDTO.getLinea());
 
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (lineaDTO.getAdminList().contains(principal.getUsername()) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {

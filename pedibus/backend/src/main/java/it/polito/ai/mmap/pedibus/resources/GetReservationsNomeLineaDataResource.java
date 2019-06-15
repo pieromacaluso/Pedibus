@@ -1,10 +1,8 @@
 package it.polito.ai.mmap.pedibus.resources;
 
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
-import it.polito.ai.mmap.pedibus.services.JwtTokenService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
 import it.polito.ai.mmap.pedibus.services.UserService;
@@ -30,14 +28,14 @@ public class GetReservationsNomeLineaDataResource {
 
     public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, ReservationService reservationService, boolean canModify) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
-        alunniPerFermataAndata = (lineeService.getLineByName(nomeLina)).getAndata().stream()
+        alunniPerFermataAndata = (lineeService.getLineById(nomeLina)).getAndata().stream()
                 .map(FermataDTOAlunni::new)
                 .collect(Collectors.toList());
         // true per indicare l'andata
         alunniPerFermataAndata.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), true)));
 
 
-        alunniPerFermataRitorno = (lineeService.getLineByName(nomeLina)).getRitorno().stream()
+        alunniPerFermataRitorno = (lineeService.getLineById(nomeLina)).getRitorno().stream()
                 .map(FermataDTOAlunni::new)
                 .collect(Collectors.toList());
         // false per indicare il ritorno
@@ -50,13 +48,13 @@ public class GetReservationsNomeLineaDataResource {
     public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, UserService userService, ReservationService reservationService, boolean verso, boolean canModify) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
         if (verso) {
-            alunniPerFermataAndata = (lineeService.getLineByName(nomeLina)).getAndata().stream()
+            alunniPerFermataAndata = (lineeService.getLineById(nomeLina)).getAndata().stream()
                     .map(FermataDTOAlunni::new)
                     .collect(Collectors.toList());
             // true per indicare l'andata
             alunniPerFermataAndata.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), true)));
         } else {
-            alunniPerFermataRitorno = (lineeService.getLineByName(nomeLina)).getRitorno().stream()
+            alunniPerFermataRitorno = (lineeService.getLineById(nomeLina)).getRitorno().stream()
                     .map(FermataDTOAlunni::new)
                     .collect(Collectors.toList());
             // false per indicare il ritorno

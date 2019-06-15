@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -66,6 +65,15 @@ public class LineeController {
      */
     @GetMapping("/lines")
     public List<String> getLines() {
+        return lineeService.getAllLinesIds();
+    }
+    /**
+     * Restituisce una JSON con una lista dei nomi delle lines presenti nel DB.
+     *
+     * @return Lista nomi Linee nel DB
+     */
+    @GetMapping("/lines/name")
+    public List<String> getLinesNames() {
         return lineeService.getAllLinesNames();
     }
 
@@ -77,7 +85,7 @@ public class LineeController {
      */
     @GetMapping("/lines/{nome_linea}")
     public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
-        return lineeService.getLineByName(name);
+        return lineeService.getLineById(name);
     }
 
 

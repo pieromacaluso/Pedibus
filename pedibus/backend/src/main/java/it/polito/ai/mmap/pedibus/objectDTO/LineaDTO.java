@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class LineaDTO {
+    private String id;
     private String nome;
     private String adminMast;
     private ArrayList<String> adminList;
@@ -26,6 +27,7 @@ public class LineaDTO {
      * @param fermataRepository
      */
     public LineaDTO(LineaEntity lineaEntity, FermataRepository fermataRepository) {
+        this.id = lineaEntity.getId();
         this.nome = lineaEntity.getNome();
         this.adminMast=lineaEntity.getAdminMast();
         this.adminList = lineaEntity.getAdminList();

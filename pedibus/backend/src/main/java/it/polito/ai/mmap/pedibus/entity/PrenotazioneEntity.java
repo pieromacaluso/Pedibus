@@ -18,7 +18,7 @@ public class PrenotazioneEntity {
     private ObjectId id;
     private String cfChild;
     private Date data;
-    private String nomeLinea;
+    private String idLinea;
     private Integer idFermata;
     private boolean verso;
     private boolean presoInCarico;
@@ -29,7 +29,7 @@ public class PrenotazioneEntity {
         data=prenotazioneDTO.getData();
         verso=prenotazioneDTO.getVerso();
         idFermata = prenotazioneDTO.getIdFermata();
-        nomeLinea = prenotazioneDTO.getNomeLinea();
+        idLinea = prenotazioneDTO.getIdLinea();
     }
 
     public void update(PrenotazioneDTO prenotazioneDTO) {
@@ -38,7 +38,7 @@ public class PrenotazioneEntity {
         this.data=prenotazioneDTO.getData();
         this.verso=prenotazioneDTO.getVerso();
         this.idFermata = prenotazioneDTO.getIdFermata();
-        this.nomeLinea = prenotazioneDTO.getNomeLinea();
+        this.idLinea = prenotazioneDTO.getIdLinea();
     }
 
 }

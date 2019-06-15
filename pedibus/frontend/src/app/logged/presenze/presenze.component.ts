@@ -11,9 +11,12 @@ export class PresenzeComponent implements OnInit {
 
   // refactored
   linee$: Observable<string[]>;
+  lineeNomi$: Observable<string[]>;
 
   constructor(private mongoService: ApiService) {
     this.linee$ = this.mongoService.getLinee();
+    this.lineeNomi$ = this.mongoService.getLineeNomi();
+
   }
 
   ngOnInit() {

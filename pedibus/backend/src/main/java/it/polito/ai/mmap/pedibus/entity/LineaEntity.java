@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class LineaEntity {
 
     @Id
+    private String id;
     private String nome;
     private String adminMast;
     private ArrayList<String> adminList;
@@ -30,6 +31,7 @@ public class LineaEntity {
      * @param lineaDTO
      */
     public LineaEntity(LineaDTO lineaDTO) {
+        this.id = lineaDTO.getId();
         this.nome = lineaDTO.getNome();
         this.adminMast=lineaDTO.getAdminMast();
         this.adminList = lineaDTO.getAdminList();
