@@ -23,8 +23,8 @@
     </mat-form-field>
     <br>
     <!-- TERMS -->
-      <mat-checkbox id="check" name="check"  required [(ngModel)]="model.terms" #check="ngModel">agree with our terms and conditions</mat-checkbox>
-      <mat-error *ngIf="!model.terms; else termsAccepted" >Ricordati di accettare i termini e le condizioni di utilizzo</mat-error>
+      <mat-checkbox id="check" name="check"  required [(ngModel)]="model.terms" #check="ngModel">I accept terms and conditions</mat-checkbox>
+      <mat-error *ngIf="!model.terms; else termsAccepted" >Remember to accept terms and conditions</mat-error>
     <ng-template #termsAccepted>
       <mat-error></mat-error>
     </ng-template>

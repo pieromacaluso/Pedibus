@@ -120,7 +120,6 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(userEntity);
         ActivationTokenEntity tokenEntity = new ActivationTokenEntity(userEntity.getId());
-        logger.info(tokenEntity.getCreationDate().toString());
         activationTokenRepository.save(tokenEntity);
         String href = baseURL + "confirm/" + tokenEntity.getId();
         gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>", REGISTRATION_SUBJECT);
