@@ -30,10 +30,10 @@ Dopo aver scompattato l'archivio `mmap-lab05-v1.zip`, posizionarsi da terminale 
 
 ## Dati di prova
 
-In questa esercitazione abbiamo inserito dei dati fittizi che andranno a popolare la data corrente (che corrisponde all'avvio di Spring), 
-quella precedente e quella successiva.
+In questa esercitazione ad ogni avvio vengono inseriti dei dati fittizi che andranno a popolare la data corrente (che corrisponde all'avvio di Spring), 
+e i due giorni successivi.
 
-Ad esempio se l'esercitazione viene avviata in data 17/06/2019, le prenotazioni e le linee disponibili saranno popolate nelle date 16-17-18/06/2019.
+Ad esempio se l'esercitazione viene avviata in data 17/06/2019, le prenotazioni e le linee disponibili saranno popolate nelle date 17-18-19/06/2019.
 
 ## Utilizzo dell'app
 
@@ -81,11 +81,9 @@ momento la pagina presenze.
 
 All'interno della nostra applicazioni abbiamo 3 ruoli principali:
 
-- **ROLE_USER**: utente base, solitamente il profilo del genitore. 
-- **ROLE_ADMIN**: utente amministratore di Linea, possono modificare le linee.
+- **ROLE_USER**: utente base, può solo visualizzare la finestra delle presenze e vederne i mutamenti.
+- **ROLE_ADMIN**: utente amministratore di Linea, possono modificare le linee di cui hanno questo ruolo.
 - **ROLE_SYS-ADMIN**: utente amministratore di sistema, può fare tutto.
-
-ROLE_USER può solo visualizzare la finestra delle presenze, vedere i mutamenti, ma non può modificare. ROLE_ADMIN e ROLE_SYS-ADMIN possono modificare.
 
 Ecco alcuni utenti utili per mostrare le funzionalità:
 
@@ -97,17 +95,23 @@ Ecco alcuni utenti utili per mostrare le funzionalità:
 ##### ROLE_ADMIN e ROLE_USER
 La password in ogni caso è sempre  `1!qwerty1!`
 
-Abbiamo 50 genitori con ROLE_USER, ad es:  
-(primi 50 file userDTO.json)
+50 genitori con ROLE_USER, ad es:  
+(genitori.json)
 - miles.reilly@test.it
 - enid.crawford@test.it
 - morales.holloway@test.it
+  
+25 nonni con ROLE_ADMIN, linea1:  
+(nonni_linea1.json)  
+- reed.snyder@test.it
+- alexandra.winters@test.it
+- briana.butler@test.it
 
-50 nonni con ROLE_ADMIN, ad es:   
-(secondi 50 file userDTO.json)   
-- burks.schwartz@test.it
-- julianne.perry@test.it
-- edwina.cantu@test.it
+25 nonni con ROLE_ADMIN, linea2:  
+(nonni_linea2.json)  
+- mai.berg@test.it
+- cooley.bradshaw@test.it
+- juliet.salazar@test.it
 
 ### Esempio di utilizzo
 In questa veloce GIF mostriamo l'utilizzo dell'applicazione.
