@@ -170,10 +170,17 @@ public class ReservationService {
     }
 
     private boolean checkTime(Date data, FermataDTO fermataDTO) {
-        //se la prenotazione è per oggi allora controlla che sia prima dell'arrivo alla fermata
-        if (data.before(MongoZonedDateTime.getStartOfTomorrow()))
-            return data.before(fermataDTO.getDateOrario());
-        else
+        //se la prenotazione è per oggi allora controlla che sia prima dell'arrivo alla fermata o che il ruolo sia ADMIN o SYSTEM_ADMIN
+        if (data.before(MongoZonedDateTime.getStartOfTomorrow())) {
+            RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
+            RoleEntity roleSystemAdmin = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
+            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal.getRoleList().contains(roleAdmin) || principal.getRoleList().contains(roleSystemAdmin)) {
+                return data.after(MongoZonedDateTime.getStartOfToday());
+            } else {
+                return data.before(fermataDTO.getDateOrario());
+            }
+        } else
             return true;
     }
 
