@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class DbTestDataCreator {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -39,25 +41,29 @@ public class DbTestDataCreator {
     PrenotazioneRepository prenotazioneRepository;
     @Autowired
     FermataRepository fermataRepository;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private Environment environment;
 
     /**
      * crea:
      * - 100 Child
-     * - 50 genitori con 2 figli        username = primi 50 contenuti nel file userDTO.json e pw = 1!qwerty1!
-     * - 50 nonni                       username = secondi 50 contenuti nel file userDTO.json e pw = 1!qwerty1!
+     * - 50 genitori con 2 figli        contenuti nel file genitori.json e pw = 1!qwerty1!
+     * - 25 nonni admin della linea1    contenuti nel file nonni_linea1.json e pw = 1!qwerty1!
+     * - 25 nonni admin della linea2    contenuti nel file nonni_linea2.json e pw = 1!qwerty1!
      * - 1 prenotazione/figlio per oggi, domani e dopo domani (o andata o ritorno)
      */
     public void makeChildUserPrenotazioni() throws IOException {
         prenotazioneRepository.deleteAll();
         int count = 0;
+        RoleEntity roleUser = roleRepository.findByRole("ROLE_USER");
+        RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
+
 
         List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/childEntity.json"), new TypeReference<List<ChildEntity>>() {
         });
 
-        List<UserEntity> userList = userEntityListConverter();
+        List<UserEntity> userList = userEntityListConverter("genitori.json", roleUser);
         Iterator<ChildEntity> childEntityIterable = childList.iterator();
 
         int i = 0;
@@ -85,39 +91,25 @@ public class DbTestDataCreator {
 
 
         count = 0;
-        RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
-        List<UserEntity> listNonni = new LinkedList<>();
-        while (i < userList.size()) {
-            UserEntity nonno = userList.get(i);
-            Optional<UserEntity> checkDuplicate = userRepository.findByUsername(nonno.getUsername());
-            if (!checkDuplicate.isPresent()) {
-                nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
-                nonno.setEnabled(true);
-                listNonni.add(nonno);
-                Optional<LineaEntity> check;
-                switch (i % 3) {
-                    case 0:
-                        check = lineaRepository.findByNome("linea1");
-                        break;
-                    case 1:
-                        check = lineaRepository.findByNome("linea2");
-                        break;
-                    default:
-                        // Fake linea3 per inserire dei nonni non amministratori di linea
-                        check = lineaRepository.findByNome("linea3");
-                        break;
-                }
+        LinkedList<UserEntity> listNonni = new LinkedList<>();
+        for (i = 1; i <= 2; i++) {
+            for (UserEntity nonno : userEntityListConverter("nonni_linea" + i + ".json", roleAdmin)) {
+                Optional<UserEntity> checkDuplicate = userRepository.findByUsername(nonno.getUsername());
+                if (!checkDuplicate.isPresent()) {
+                    nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
+                    nonno.setEnabled(true);
+                    listNonni.add(nonno);
+                    Optional<LineaEntity> check = lineaRepository.findByNome("linea" + i);
 
-                if (check.isPresent()) {
-                    LineaEntity lineaEntity = check.get();
-                    lineaEntity.getAdminList().add(nonno.getUsername());
-                    lineaRepository.save(lineaEntity);
+                    if (check.isPresent()) {
+                        LineaEntity lineaEntity = check.get();
+                        lineaEntity.getAdminList().add(nonno.getUsername());
+                        lineaRepository.save(lineaEntity);
+                    }
+                    count++;
                 }
-                count++;
             }
-            i++;
         }
-
         userRepository.saveAll(listNonni);
         logger.info(count + " nonni caricati");
 
@@ -152,12 +144,11 @@ public class DbTestDataCreator {
     }
 
 
-    private List<UserEntity> userEntityListConverter() throws IOException {
-        RoleEntity roleUser = roleRepository.findByRole("ROLE_USER");
+    private List<UserEntity> userEntityListConverter(String fileName, RoleEntity roleEntity) throws IOException {
 
-        List<UserDTO> userList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/userDTO.json"), new TypeReference<List<UserDTO>>() {
+        List<UserDTO> userList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/" + fileName), new TypeReference<List<UserDTO>>() {
         });
 
-        return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Arrays.asList(roleUser)), passwordEncoder)).collect(Collectors.toList());
+        return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Arrays.asList(roleEntity)), passwordEncoder)).collect(Collectors.toList());
     }
 }

@@ -76,8 +76,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .authorizeRequests()//todo delete
 //                .antMatchers("/lines/**").permitAll()
                 .and()
-                .authorizeRequests()//todo delete
-                .antMatchers("/debug/**").access("hasAnyRole('SYSTEM-ADMIN')")
+                .authorizeRequests()//todo delete, l'endpoint non è presente in produzione
+                .antMatchers("/debug/**").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/users/**").access("hasAnyRole('ADMIN','SYSTEM-ADMIN')")
