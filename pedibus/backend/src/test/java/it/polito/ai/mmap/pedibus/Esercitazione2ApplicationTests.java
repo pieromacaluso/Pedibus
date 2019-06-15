@@ -812,23 +812,24 @@ public class Esercitazione2ApplicationTests {
         PrenotazioneResource res = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento prenotazione: " + res);
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(2, ChronoUnit.DAYS) + "/")
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
         String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
 
+        //Ora come ora un nonno con ruolo admin può prenotare solo per il giorno stesso
 
         logger.info("Test modifica prenotazione per nonno");
         PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resCorrectJson = mapper.writeValueAsString(resCorrect);
-        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(3, ChronoUnit.DAYS) + "/" + idRes)
+        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
         logger.info("Test delete prenotazione per nonno");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(3, ChronoUnit.DAYS) + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());

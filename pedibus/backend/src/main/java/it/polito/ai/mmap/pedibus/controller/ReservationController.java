@@ -120,7 +120,7 @@ public class ReservationController {
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getNome(), dataFormatted);
+        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
         reservationService.updatePrenotazione(prenotazioneDTO, reservationId);
     }
 
@@ -151,7 +151,7 @@ public class ReservationController {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneEntity checkPren = reservationService.getReservationFromId(reservationId);
 
-        if (lineeService.getLineById(nomeLinea).getNome().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))
+        if (lineeService.getLineById(nomeLinea).getId().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))
             return new PrenotazioneDTO(checkPren);
         else
             throw new IllegalArgumentException("Prenotazione non esistente");

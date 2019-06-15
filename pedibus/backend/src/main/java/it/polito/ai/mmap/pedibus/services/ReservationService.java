@@ -82,9 +82,9 @@ public class ReservationService {
         FermataDTO fermataDTO = lineeService.getFermataById(prenotazioneDTO.getIdFermata());
         LineaDTO lineaDTO = lineeService.getLineById(prenotazioneDTO.getIdLinea());
 
+
         return (checkTime(prenotazioneDTO.getData(), fermataDTO) &&
-                (lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
-                (lineaDTO.getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso())) &&
+                ((lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) || (lineaDTO.getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso()))) &&
                 (principal.getChildrenList().contains(prenotazioneDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()));
     }
 
@@ -162,7 +162,7 @@ public class ReservationService {
         PrenotazioneEntity prenotazione = getReservationFromId(reservationId);
         LineaDTO lineaDTO = lineeService.getLineById(prenotazione.getIdLinea());
         FermataDTO fermataDTO = lineeService.getFermataById(prenotazione.getIdFermata());
-        if (checkTime(prenotazione.getData(), fermataDTO) && prenotazione.getData().equals(data) && lineeService.getLineById(prenotazione.getIdLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
+        if (checkTime(prenotazione.getData(), fermataDTO) && prenotazione.getData().equals(data) && lineeService.getLineById(prenotazione.getIdLinea()).getId().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
             prenotazioneRepository.delete(prenotazione);
         } else {
             throw new IllegalArgumentException("Errore in cancellazione prenotazione");
