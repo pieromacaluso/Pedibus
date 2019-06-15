@@ -19,7 +19,7 @@ export class AuthService {
 
   /* METODO CHE RINNOVA LE CREDENZIALI */
   postNewPassword(token: string, model) {
-      return this.httpClient.post(this.baseURL + 'recover/' + token, model);
+    return this.httpClient.post(this.baseURL + 'recover/' + token, model);
   }
 
   getConfirm(token: string) {
@@ -66,10 +66,8 @@ export class AuthService {
 
   isAdmin() {
     if (this.isLoggedIn()) {
-      // todo: per ora roles e' una stringa, da converite in array
-      // (Piero) dovrei aver fixato sta cosa
       const roles = JSON.parse(localStorage.getItem('roles'));
-      return roles.find(role => role === 'ROLE_SYSTEM-ADMIN');
+      return roles.find(role => role === 'ROLE_SYSTEM-ADMIN') || roles.find(role => role === 'ROLE_ADMIN');
     }
     return false;
   }

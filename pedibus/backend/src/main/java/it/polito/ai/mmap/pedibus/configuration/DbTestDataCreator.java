@@ -2,10 +2,7 @@ package it.polito.ai.mmap.pedibus.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.entity.ChildEntity;
-import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
-import it.polito.ai.mmap.pedibus.entity.RoleEntity;
-import it.polito.ai.mmap.pedibus.entity.UserEntity;
+import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
@@ -26,43 +23,25 @@ import java.util.stream.Collectors;
 
 @Service
 public class DbTestDataCreator {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private Environment environment;
-
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     ObjectMapper objectMapper;
-
     @Autowired
     ChildRepository childRepository;
-
+    @Autowired
+    LineaRepository lineaRepository;
     @Autowired
     RoleRepository roleRepository;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
-
     @Autowired
     FermataRepository fermataRepository;
-
-
-    @PostConstruct
-    protected void init() throws IOException {
-        if (environment.getActiveProfiles()[0].equals("prod")) {
-            logger.info("Creazione Basi di dati di test in corso...");
-            makeChildUserPrenotazioni();
-            logger.info("Creazione Basi di dati di test completata.");
-        } else {
-            logger.info("Creazione Basi di dati di test non effettuata con DEV Profile");
-        }
-    }
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private Environment environment;
 
     /**
      * crea:
@@ -72,7 +51,7 @@ public class DbTestDataCreator {
      * - 1 prenotazione/figlio per oggi, domani e dopo domani (o andata o ritorno)
      */
     public void makeChildUserPrenotazioni() throws IOException {
-
+        prenotazioneRepository.deleteAll();
         int count = 0;
 
         List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/childEntity.json"), new TypeReference<List<ChildEntity>>() {
@@ -115,6 +94,25 @@ public class DbTestDataCreator {
                 nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
                 nonno.setEnabled(true);
                 listNonni.add(nonno);
+                Optional<LineaEntity> check;
+                switch (i % 3) {
+                    case 0:
+                        check = lineaRepository.findByNome("linea1");
+                        break;
+                    case 1:
+                        check = lineaRepository.findByNome("linea2");
+                        break;
+                    default:
+                        // Fake linea3 per inserire dei nonni non amministratori di linea
+                        check = lineaRepository.findByNome("linea3");
+                        break;
+                }
+
+                if (check.isPresent()) {
+                    LineaEntity lineaEntity = check.get();
+                    lineaEntity.getAdminList().add(nonno.getUsername());
+                    lineaRepository.save(lineaEntity);
+                }
                 count++;
             }
             i++;
