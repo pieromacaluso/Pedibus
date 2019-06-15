@@ -46,14 +46,14 @@ fra le scelte.
 In questa schermata è possibile accedere inserendo le proprie credenziali. Se la richiesta di Login è positiva si viene reindirizzati verso la pagina delle presenze.
 
 #### Richiesta Cambio Password (`http://localhost:4200/recover`)
-In questa schermata è possibile chiedere il cambio delle proprie credenziali.
+In questa schermata è possibile chiedere il cambio delle credenziali.
 
 #### Cambio Password (`http://localhost:4200/recover/{idToken}`)
 Una volta ricevuta la mail di cambio password, in questa schermata è possibile procedere con il cambio delle credenziali.
 
 ### Sign-Up (`http://localhost:4200/sign-up`)
 In questa schermata è possibile registrarsi inserendo mail e password (due volte). L'inserimento della mail scatena richieste al server per verificare se questa
-non sia già presente nel database. Una volta ricevuta la conferma che la richiesta di registrazione è andata a buon fine la pagina mostra una conferma e un'esortazione
+non sia già presente nel database. Una volta ricevuta la conferma che la richiesta di registrazione è andata a buon fine la pagina mostra una conferma e un invito
 a controllare la propria casella di posta elettronica.
 
 #### Conferma Password (`http://localhost:4200/confirm/{idToken}`)
@@ -68,14 +68,12 @@ Sono disponibili anche due frecce per cambiare giorno velocemente.
 ### Prenotazioni e Presenze
 Nel corpo centrale dell'app vengono mostrate le fermate con l'elenco alfabetico degli alunni prenotati e, in fondo, quello degli alunni non prenotati. 
 Gli alunni prenotati potranno essere contrassegnati come presenti premendo sul loro nome. Il pulsante bianco indica un alunno prenotato di cui non è stata confermata la presenza, mentre il pulsante color verde acqua rappresenta un alunno con presenza alla fermata confermata.
-All'avvio dell'applicazione i pulsanti saranno tutti bianchi come default. 
 
 Per quanto riguarda gli alunni non Prenotati, l'accompagnatore potrà cliccare sul bottone di riferimento. Verrà visualizzata una finestra di dialogo attraverso cui
 l'accompagnatore potrà verificare la nuova prenotazione, inserire la fermata e confermare. Una volta concluso l'alunno verrà contrassegnato come presente alla fermata
 indicata e rimosso dalla lista dei non prenotati.
 
-Il meccanismo di aggiornamento è stato implementato con l'utilizzo di Broker per poter inviare le modifiche in tempo reale a tutti gli utenti che visualizzano in quel
-momento la pagina presenze.
+Il meccanismo di aggiornamento è stato implementato con l'utilizzo di WebSocketMessageBroker per poter inviare le modifiche in tempo reale a tutti gli utenti che stanno visualizzando la stessa pagina presenze.
 
 #### I ruoli
 
@@ -85,7 +83,7 @@ All'interno della nostra applicazioni abbiamo 3 ruoli principali:
 - **ROLE_ADMIN**: utente amministratore di Linea, possono modificare le linee di cui hanno questo ruolo.
 - **ROLE_SYS-ADMIN**: utente amministratore di sistema, può fare tutto.
 
-Ecco alcuni utenti utili per mostrare le funzionalità:
+Ecco alcuni utenti utili per testare le funzionalità:
 
 ##### ROLE_SYS-ADMIN
 **email**: applicazioni.internet.mmap@gmail.com
@@ -93,7 +91,7 @@ Ecco alcuni utenti utili per mostrare le funzionalità:
 **password**: `12345@Sys`
 
 ##### ROLE_ADMIN e ROLE_USER
-La password in ogni caso è sempre  `1!qwerty1!`
+La password è sempre  `1!qwerty1!`
 
 50 genitori con ROLE_USER, ad es:  
 (genitori.json)
