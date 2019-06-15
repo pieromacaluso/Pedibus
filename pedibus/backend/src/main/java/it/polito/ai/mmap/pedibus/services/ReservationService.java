@@ -6,7 +6,9 @@ import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotValidException;
-import it.polito.ai.mmap.pedibus.objectDTO.*;
+import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
 import it.polito.ai.mmap.pedibus.resources.PrenotazioneChildResource;
@@ -169,16 +171,16 @@ public class ReservationService {
      */
     public List<PrenotazioneChildResource> findAlunniFermata(Date data, Integer id, boolean verso) {
         // TODO: (Piero) Questo metodo secondo me è migliorabile, se avete idee, mastruzzate qui!
-        HashMap<String, PrenotazioneEntity> prenotazioni =(HashMap<String, PrenotazioneEntity>)prenotazioneRepository
+        HashMap<String, PrenotazioneEntity> prenotazioni = (HashMap<String, PrenotazioneEntity>) prenotazioneRepository
                 .findAllByDataAndIdFermataAndVerso(data, id, verso).stream()
                 .collect(
-                Collectors.toMap(PrenotazioneEntity::getCfChild, p -> p));
+                        Collectors.toMap(PrenotazioneEntity::getCfChild, p -> p));
         Set<String> cfList = prenotazioni.keySet();
-        HashMap<String, ChildEntity> children =(HashMap<String, ChildEntity>)
+        HashMap<String, ChildEntity> children = (HashMap<String, ChildEntity>)
                 ((List<ChildEntity>) childRepository.findAllById(cfList)).stream().collect(
-                Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
+                        Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
         List<PrenotazioneChildResource> result = new ArrayList<>();
-        for (String cf :cfList){
+        for (String cf : cfList) {
             PrenotazioneEntity p = prenotazioni.get(cf);
             ChildEntity c = children.get(cf);
             result.add(new PrenotazioneChildResource(p, c));
@@ -195,9 +197,11 @@ public class ReservationService {
      * @throws Exception
      */
     public Integer manageHandled(Boolean verso, String data, String cfChild, Boolean isSet) throws Exception {
+
         PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
-        prenotazioneEntity.setPresoInCarico(isSet);
-        prenotazioneRepository.save(prenotazioneEntity);
+        PrenotazioneDTO pre = new PrenotazioneDTO(prenotazioneEntity);
+        pre.setPresoInCarico(isSet);
+        updatePrenotazione(pre, prenotazioneEntity.getId());
         return prenotazioneEntity.getIdFermata();
     }
 

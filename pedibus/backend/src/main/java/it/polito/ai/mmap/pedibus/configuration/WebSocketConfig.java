@@ -37,21 +37,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/handled","/reservation");
     }
-
-    // TODO: bozza di pseudo autenticazione WebSocket?
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor =
-                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    Authentication user = jwtTokenService.getAuthentication(Objects.requireNonNull(accessor.getNativeHeader("Auth")).get(0));
-                    accessor.setUser(user);
-                }
-                return message;
-            }
-        });
-    }
 }
