@@ -117,17 +117,20 @@ public class DbTestDataCreator {
         count = 0;
         List<PrenotazioneEntity> prenotazioniList = new LinkedList<>();
         PrenotazioneEntity prenotazioneEntity;
+        int randLinea;
+        int randFermata;
         for (int day = 0; day < 3; day++) {
             childEntityIterable = childList.iterator();
             while (childEntityIterable.hasNext()) {
                 ChildEntity childEntity = childEntityIterable.next();
-                int randFermata = (Math.abs(new Random().nextInt()) % 8) + 1; //la linea 1 ha 8 fermate
+                randFermata = (Math.abs(new Random().nextInt()) % 8) + 1; //la linea 1 ha 8 fermate
+                randLinea = (Math.abs(new Random().nextInt()) % 2) + 1; //linea 1 o 2
                 prenotazioneEntity = new PrenotazioneEntity();
                 prenotazioneEntity.setCfChild(childEntity.getCodiceFiscale());
                 prenotazioneEntity.setData(MongoZonedDateTime.parseData("yyyy-MM-dd HH:mm z", LocalDate.now().plus(day, ChronoUnit.DAYS).toString() + " 12:00 GMT+00:00"));
-                prenotazioneEntity.setIdFermata(randFermata);
-                prenotazioneEntity.setNomeLinea("linea1");
-                prenotazioneEntity.setVerso(randFermata < 5); //1-4 = true = andata
+                prenotazioneEntity.setIdFermata(randFermata + (100*(randLinea-1)));
+                prenotazioneEntity.setNomeLinea("linea"+randLinea);
+                prenotazioneEntity.setVerso(randFermata < 5); //1-4 = 101-104 = true = andata
 
                 if (!prenotazioneRepository.findByCfChildAndData(prenotazioneEntity.getCfChild(), prenotazioneEntity.getData()).isPresent()) {
                     prenotazioniList.add(prenotazioneEntity);
