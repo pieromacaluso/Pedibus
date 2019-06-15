@@ -1,0 +1,16 @@
+<mat-card ngClass="container" ngClass.lt-md="container-mobile">
+  <div *ngIf="isLoading(); else postFinished">
+    <div class="mat-headline">    <mat-spinner [diameter]="40"></mat-spinner>Conferma Account in corso...</div>
+  </div>
+  <ng-template #postFinished>
+    <div *ngIf="isOk(); else notOk">
+      <div class="mat-headline">      <mat-icon mat-card-image aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">check</mat-icon>
+        Conferma Account effettuata correttamente!</div>
+      <button mat-raised-button color="primary" (click)="goToLogin()">Vai al Login</button>
+    </div>
+    <ng-template #notOk>
+      <div class="mat-headline">  <mat-icon mat-card-image aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">close</mat-icon>
+        Conferma Account fallita!</div>
+    </ng-template>
+  </ng-template>
+</mat-card>
