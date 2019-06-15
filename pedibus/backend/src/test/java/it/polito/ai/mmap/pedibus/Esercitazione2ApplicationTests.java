@@ -189,9 +189,9 @@ public class Esercitazione2ApplicationTests {
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento errato " + res + "...");
-        logger.info("POST /reservations/linea1/" + LocalDate.now() + "/ con verso errato ...");
+        logger.info("POST /reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/ con verso errato ...");
 
-        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
@@ -216,9 +216,9 @@ public class Esercitazione2ApplicationTests {
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento corretto " + res + "...");
-        logger.info("POST /reservations/linea1/" + LocalDate.now() + "/ con verso corretto ...");
+        logger.info("POST /reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/ con verso corretto ...");
 
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
@@ -227,7 +227,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -251,9 +251,9 @@ public class Esercitazione2ApplicationTests {
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento errato " + res + "...");
-        logger.info("POST /reservations/linea3/" + LocalDate.now() + "/ con linea errata ...");
+        logger.info("POST /reservations/linea3/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/ con linea errata ...");
 
-        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
@@ -278,7 +278,7 @@ public class Esercitazione2ApplicationTests {
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento " + res + "...");
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -288,7 +288,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo reservation " + idRes + " ...");
-        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -298,7 +298,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -333,14 +333,14 @@ public class Esercitazione2ApplicationTests {
         String resFalseJson = mapper.writeValueAsString(resFalse);
 
         logger.info("Inserimento " + resTrue + " with toward true and " + resFalse + " with toward false");
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
         String idResTrue = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
 
-        MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resFalseJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -350,7 +350,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo reservation with toward true ...");
-        this.mockMvc.perform(get("/reservations/verso/linea1/" + LocalDate.now() + "/true")
+        this.mockMvc.perform(get("/reservations/verso/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -359,11 +359,11 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idResTrue)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idResTrue)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idResFalse)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idResFalse)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -398,14 +398,14 @@ public class Esercitazione2ApplicationTests {
         String resFalseJson = mapper.writeValueAsString(resFalse);
 
         logger.info("Inserimento " + resTrue + " with toward true and " + resFalse + " with toward false");
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
         String idResTrue = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
 
-        MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1False = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resFalseJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -415,7 +415,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo reservation with toward true ...");
-        this.mockMvc.perform(get("/reservations/verso/linea1/" + LocalDate.now() + "/false")
+        this.mockMvc.perform(get("/reservations/verso/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/false")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -424,11 +424,11 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idResTrue)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idResTrue)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idResFalse)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idResFalse)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -467,7 +467,7 @@ public class Esercitazione2ApplicationTests {
 
 
         logger.info("Inserimento prenotazione " + res + " andata ...");
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -491,7 +491,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("Lettura eseguita!");
 
         logger.info("Controllo bambini non prenotati ritorno...");
-        this.mockMvc.perform(get("/notreservations/" + LocalDate.now() + "/false")
+        this.mockMvc.perform(get("/notreservations/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/false")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -510,7 +510,7 @@ public class Esercitazione2ApplicationTests {
             }
         }
 
-        this.mockMvc.perform(get("/notreservations/" + LocalDate.now() + "/true")
+        this.mockMvc.perform(get("/notreservations/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -521,7 +521,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -546,7 +546,7 @@ public class Esercitazione2ApplicationTests {
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
@@ -555,15 +555,15 @@ public class Esercitazione2ApplicationTests {
 
         logger.info("Inserito correttamente!");
 
-        logger.info("POST /reservations/linea1/" + LocalDate.now() + "/ duplicato ...");
-        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        logger.info("POST /reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/ duplicato ...");
+        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -586,7 +586,7 @@ public class Esercitazione2ApplicationTests {
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
@@ -596,8 +596,8 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo posizione nomeAlunno nelle linee di " + idRes);
-        logger.info("GET /reservations/linea1/" + LocalDate.now() + "/ per controllo presenza utente ...");
-        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now())
+        logger.info("GET /reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/ per controllo presenza utente ...");
+        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -605,7 +605,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -628,7 +628,7 @@ public class Esercitazione2ApplicationTests {
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
@@ -642,14 +642,14 @@ public class Esercitazione2ApplicationTests {
         PrenotazioneResource resWrong = PrenotazioneResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(true).build();
         String resWrongJson = mapper.writeValueAsString(resWrong);
 
-        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resWrongJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -671,7 +671,7 @@ public class Esercitazione2ApplicationTests {
         PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento e controllo posizione " + res + "...");
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
@@ -679,7 +679,7 @@ public class Esercitazione2ApplicationTests {
         String idRes = mapper.readValue(result1.getResponse().getContentAsString(), String.class);
 
 
-        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now())
+        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -691,13 +691,13 @@ public class Esercitazione2ApplicationTests {
         PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(false).build();
         String resCorrectJson = mapper.writeValueAsString(resCorrect);
 
-        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
         logger.info("Controllo nuova posizione prenotazione");
-        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now())
+        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -705,7 +705,7 @@ public class Esercitazione2ApplicationTests {
 
         logger.info("PASSED");
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -725,12 +725,12 @@ public class Esercitazione2ApplicationTests {
         String token = node.get("token").asText();
 
         logger.info("Cancellazione a caso errata con numero...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/12345")
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/12345")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
         logger.info("Cancellazione a caso errata con objectID...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/5cc9c667c947dc1d2eb496ee")
+        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/5cc9c667c947dc1d2eb496ee")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
