@@ -26,13 +26,19 @@ Altri utenti:
 La password in ogni caso è -> 1!qwerty1!
 
 Abbiamo 50 genitori con ROLE_USER, ad es:  
-(primi 50 file userDTO.json)
+(genitori.json)
 - miles.reilly@test.it
 - enid.crawford@test.it
 - morales.holloway@test.it
 
-50 nonni con ROLE_ADMIN, ad es:   
-(secondi 50 file userDTO.json)   
-- burks.schwartz@test.it
-- julianne.perry@test.it
-- edwina.cantu@test.it
+25 nonni con ROLE_ADMIN, linea1:   
+(nonni_linea1.json) 
+- reed.snyder@test.it
+- alexandra.winters@test.it
+- briana.butler@test.it
+  
+25 nonni con ROLE_ADMIN, linea2:   
+(nonni_linea2.json) 
+- mai.berg@test.it
+- cooley.bradshaw@test.it
+- juliet.salazar@test.it
