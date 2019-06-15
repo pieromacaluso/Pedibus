@@ -123,12 +123,9 @@ public class AuthenticationRestController {
      * Risponde sempre 200 - Ok
      */
     @PostMapping("/recover")
-    public void recover(@RequestBody String email) {
-        try {
-            userService.recoverAccount(email);
-        } catch (UsernameNotFoundException ignored) {
-            logger.error("Tentativo recupero password con mail errata >" + email + "<");
-        }
+    public void recover(@RequestBody String email) throws UsernameNotFoundException {
+        logger.info("Tentativo recupero password con mail >" + email + "<");
+        userService.recoverAccount(email);
     }
 
     /**
