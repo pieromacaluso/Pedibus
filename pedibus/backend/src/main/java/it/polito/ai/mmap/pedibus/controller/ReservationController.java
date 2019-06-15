@@ -16,6 +16,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,10 +34,8 @@ public class ReservationController {
     ReservationService reservationService;
     @Autowired
     UserService userService;
-
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-
 
     /**
      * Restituisce un oggetto JSON contenente due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
@@ -65,7 +64,7 @@ public class ReservationController {
 
     @GetMapping("/reservations/verso/{nome_linea}/{data}/{verso}")
     public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
-        logger.info("GET /reservations/" + nomeLinea + "/" + data + "/"+verso+" è stato contattato");
+        logger.info("GET /reservations/" + nomeLinea + "/" + data + "/" + verso + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso);
     }
@@ -165,9 +164,13 @@ public class ReservationController {
      */
     @PostMapping("/reservations/handled/{nomeLinea}/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("nomeLinea") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
-        Integer idFermata = reservationService.manageHandled(verso, data, cfChild, isSet);
-        logger.info("/handled/" + data + "/" + nomeLinea + "/" + verso);
-        simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + nomeLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, idFermata));
+        Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+
+        Integer idFermata = reservationService.manageHandled(verso, date, cfChild, isSet);
+        if (idFermata != -1) {
+            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + nomeLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, idFermata));
+            logger.info("/handled/" + data + "/" + nomeLinea + "/" + verso);
+        }
 
     }
 
@@ -183,7 +186,9 @@ public class ReservationController {
 
     @PostMapping("/reservations/arrived/{verso}/{data}/{isSet}")
     public void manageArrived(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
-        reservationService.manageArrived(verso, data, cfChild, isSet);
+        Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+        if (reservationService.manageArrived(verso, date, cfChild, isSet))
+            logger.info("Child " + cfChild + " is arrived");
     }
 
 }

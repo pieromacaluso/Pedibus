@@ -32,9 +32,7 @@ public class ReservationService {
 
 
     /**
-     * Aggiunge una nuova prenotazione al db. Controlla:
-     * - se per quella Linea esiste una fermata con quel id
-     * - se esiste già una prenotazione per lo stesso utente nello stesso giorno con lo stesso verso, in tal caso l'inserimento non viene eseguito
+     * Aggiunge una nuova prenotazione al db
      *
      * @param prenotazioneDTO PrenotazioneDTO
      */
@@ -65,10 +63,14 @@ public class ReservationService {
 
     /**
      * Controlla che i dettagli della prenotazione siano consistenti:
+     * - si sta cercando di effettuare l'operazione per una prenotazione futura
      * - La fermata è nel verso indicato
      * - Si sta cercando di prenotare per uno dei proprio children o system-admin o amministratore della linea
+     * - se per quella Linea esiste una fermata con quel id
+     * - se esiste già una prenotazione per lo stesso utente nello stesso giorno con lo stesso verso, in tal caso l'inserimento non viene eseguito
      *
-     * @param prenotazioneDTO: Oggetto PrenotazioneDTO
+     * * @param prenotazioneDTO: Oggetto PrenotazioneDTO
+     *
      * @return True se la prenotazione è valida, altrimenti False
      */
     private Boolean isValidPrenotation(PrenotazioneDTO prenotazioneDTO) {
@@ -76,7 +78,8 @@ public class ReservationService {
         FermataDTO fermataDTO = lineeService.getFermataById(prenotazioneDTO.getIdFermata());
         LineaDTO lineaDTO = lineeService.getLineByName(prenotazioneDTO.getNomeLinea());
 
-        return ((lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
+        return (prenotazioneDTO.getData().after(MongoZonedDateTime.getStartOfToday()) &&
+                (lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
                 (lineaDTO.getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso())) &&
                 (principal.getChildrenList().contains(prenotazioneDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()));
     }
@@ -121,9 +124,8 @@ public class ReservationService {
      * @return
      * @throws Exception
      */
-    public PrenotazioneEntity getChildReservation(Boolean verso, String data, String cfChild) throws Exception {
-        Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        Optional<PrenotazioneEntity> check = prenotazioneRepository.findByCfChildAndDataAndVerso(cfChild, date, verso);
+    public PrenotazioneEntity getChildReservation(Boolean verso, Date data, String cfChild) throws Exception {
+        Optional<PrenotazioneEntity> check = prenotazioneRepository.findByCfChildAndDataAndVerso(cfChild, data, verso);
         if (check.isPresent()) {
             return check.get();
         } else {
@@ -143,6 +145,7 @@ public class ReservationService {
 
     /**
      * Elimina la prenotazione indicata dall'objectId controllando:
+     * - si sta cercando di effettuare l'operazione per una prenotazione futura
      * - Dettagli siano consistenti
      * - Si sta cercando di cancellare uno dei proprio children o system-admin o amministratore della linea
      *
@@ -154,7 +157,7 @@ public class ReservationService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PrenotazioneEntity prenotazione = getReservationFromId(reservationId);
         LineaDTO lineaDTO = lineeService.getLineByName(prenotazione.getNomeLinea());
-        if (prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
+        if (prenotazione.getData().after(MongoZonedDateTime.getStartOfToday()) && prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
             prenotazioneRepository.delete(prenotazione);
         } else {
             throw new IllegalArgumentException("Errore in cancellazione prenotazione");
@@ -196,13 +199,15 @@ public class ReservationService {
      * @param cfChild
      * @throws Exception
      */
-    public Integer manageHandled(Boolean verso, String data, String cfChild, Boolean isSet) throws Exception {
-
-        PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
-        PrenotazioneDTO pre = new PrenotazioneDTO(prenotazioneEntity);
-        pre.setPresoInCarico(isSet);
-        updatePrenotazione(pre, prenotazioneEntity.getId());
-        return prenotazioneEntity.getIdFermata();
+    public Integer manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet) throws Exception {
+        if (MongoZonedDateTime.isToday(data)) {
+            PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
+            PrenotazioneDTO pre = new PrenotazioneDTO(prenotazioneEntity);
+            pre.setPresoInCarico(isSet);
+            updatePrenotazione(pre, prenotazioneEntity.getId());
+            return prenotazioneEntity.getIdFermata();
+        }
+        return -1;
     }
 
     /**
@@ -213,10 +218,14 @@ public class ReservationService {
      * @param cfChild
      * @throws Exception
      */
-    public void manageArrived(Boolean verso, String data, String cfChild, Boolean isSet) throws Exception {
-        PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
-        prenotazioneEntity.setArrivatoScuola(isSet);
-        prenotazioneRepository.save(prenotazioneEntity);
+    public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet) throws Exception {
+        if (MongoZonedDateTime.isToday(data)) {
+            PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
+            prenotazioneEntity.setArrivatoScuola(isSet);
+            prenotazioneRepository.save(prenotazioneEntity);
+            return true;
+        }
+        return false;
     }
 
     /**
