@@ -171,20 +171,19 @@ public class ReservationService {
 
     private boolean checkTime(Date data, FermataDTO fermataDTO) {
         //se la prenotazione è per oggi allora controlla che sia prima dell'arrivo alla fermata o che il ruolo sia ADMIN o SYSTEM_ADMIN
-        RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
-        RoleEntity roleSystemAdmin = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!principal.getRoleList().contains(roleSystemAdmin)) {
+        Boolean isAdmin = principal.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN"));
+        if (!principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
             if (data.before(MongoZonedDateTime.getStartOfTomorrow())) {
                 //prenotazione per oggi o nel passato
-                if (principal.getRoleList().contains(roleAdmin)) {
+                if (isAdmin) {
                     return data.after(MongoZonedDateTime.getStartOfToday());
                 } else {
                     return data.before(fermataDTO.getDateOrario());
                 }
             } else {
                 //prenotazione per domani o nel futuro
-                return !principal.getRoleList().contains(roleAdmin);
+                return !isAdmin;
             }
         }
         return true;
