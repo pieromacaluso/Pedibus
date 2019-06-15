@@ -11,6 +11,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
+import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.resources.PrenotazioneChildResource;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ import java.util.stream.Collectors;
 public class ReservationService {
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     ChildRepository childRepository;
@@ -208,6 +212,15 @@ public class ReservationService {
             return prenotazioneEntity.getIdFermata();
         }
         return -1;
+    }
+
+    public boolean canModify(String nomeLinea) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean canModify = false;
+        if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
+           return true;
+        else
+            return lineeService.getLineByName(nomeLinea).getAdminList().contains(principal.getUsername());
     }
 
     /**

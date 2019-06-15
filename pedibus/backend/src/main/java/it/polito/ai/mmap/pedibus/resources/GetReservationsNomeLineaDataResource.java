@@ -1,8 +1,10 @@
 package it.polito.ai.mmap.pedibus.resources;
 
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
+import it.polito.ai.mmap.pedibus.services.JwtTokenService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
 import it.polito.ai.mmap.pedibus.services.UserService;
@@ -22,10 +24,11 @@ public class GetReservationsNomeLineaDataResource {
     List<FermataDTOAlunni> alunniPerFermataAndata;
     List<FermataDTOAlunni> alunniPerFermataRitorno;
     List<ChildDTO> childrenNotReserved;
+    Boolean canModify;
 
 
 
-    public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, ReservationService reservationService) {
+    public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, ReservationService reservationService, boolean canModify) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
         alunniPerFermataAndata = (lineeService.getLineByName(nomeLina)).getAndata().stream()
                 .map(FermataDTOAlunni::new)
@@ -39,9 +42,12 @@ public class GetReservationsNomeLineaDataResource {
                 .collect(Collectors.toList());
         // false per indicare il ritorno
         alunniPerFermataRitorno.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), false)));
+
+        this.canModify = canModify;
+
     }
 
-    public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, UserService userService, ReservationService reservationService, boolean verso) {
+    public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, UserService userService, ReservationService reservationService, boolean verso, boolean canModify) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
         if (verso) {
             alunniPerFermataAndata = (lineeService.getLineByName(nomeLina)).getAndata().stream()
@@ -65,6 +71,7 @@ public class GetReservationsNomeLineaDataResource {
 
         childrenNotReserved=userService.getAllChildrenById(tmp);
 
+        this.canModify = canModify;
     }
 
     @Data
