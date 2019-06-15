@@ -29,7 +29,7 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
             errorMessage = `Error: ${error.error.message}`;
           } else {
             // server-side error
-            errorMessage = `Error Code: ${error.error.errorMessage}`;
+            errorMessage = `${error.error.errorMessage}`;
           }
           console.log(error);
           this.snackBar.open(
