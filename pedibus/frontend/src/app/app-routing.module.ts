@@ -18,7 +18,7 @@ const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard]},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
-  {path: 'passDimenticata', component: ForgotPasswordComponent},
+  {path: 'recover', component: ForgotPasswordComponent},
   {path: 'recover/:token', component: RecoverComponent},
   {path: 'confirm/:token', component: ConfirmComponent},
   {path: '', redirectTo: 'presenze', pathMatch: 'full'},

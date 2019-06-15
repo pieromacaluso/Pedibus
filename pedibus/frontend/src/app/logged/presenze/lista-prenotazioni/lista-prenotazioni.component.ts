@@ -89,19 +89,26 @@ export class ListaPrenotazioniComponent implements OnInit {
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 
-  openDialog(alu: AlunnoNotReserved) {
-    this.dialog.closeAll();
+  isAdmin(){
+    return this.authService.isAdmin();
+  }
 
-    this.componentMatDialogRef = this.dialog.open(AdminBookDialogComponent, {
-      hasBackdrop: true,
-      data: {
-        alunno: alu,
-        res: this.reservations,
-        data: this.prenotazione.data,
-        verso: this.prenotazione.verso,
-        linea: this.prenotazione.linea
-      }
-    });
+  openDialog(alu: AlunnoNotReserved) {
+    if (this.authService.isAdmin()) {
+
+      this.dialog.closeAll();
+
+      this.componentMatDialogRef = this.dialog.open(AdminBookDialogComponent, {
+        hasBackdrop: true,
+        data: {
+          alunno: alu,
+          res: this.reservations,
+          data: this.prenotazione.data,
+          verso: this.prenotazione.verso,
+          linea: this.prenotazione.linea
+        }
+      });
+    }
   }
 
   showLoading() {

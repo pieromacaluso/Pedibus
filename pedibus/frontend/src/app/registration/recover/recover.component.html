@@ -1,26 +1,47 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
-  <mat-icon mat-card-image aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">restore</mat-icon>
-  <div class="mat-headline">Change password</div>
-  <form (ngSubmit)="submit($event)">
-    <mat-form-field  ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
-      <!-- TODO: controllare se va bene (input) o è meglio (blur) -->
-      <input type="email" matInput id="email" name="email" placeholder="Email" required email [(ngModel)]="model.email"
-             #email="ngModel">
-      <mat-error *ngIf="email.invalid && email.touched">Email non valida</mat-error>
-    </mat-form-field>
-    <br>
-    <mat-form-field ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
-      <input type="password" id="password" name="password" matInput placeholder="Password" required pattern="^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$" [(ngModel)]="model.password" #password="ngModel">
-      <mat-error *ngIf="password.invalid && password.touched">Password non valida</mat-error>
-    </mat-form-field>
-    <br>
-    <mat-form-field  ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
-      <input type="password" id="passMatch" name="passMatch" matInput required [pattern]="model.password" placeholder="Ripeti Password"
-             [(ngModel)]="model.passMatch" #passMatch="ngModel">
-      <mat-error *ngIf="passMatch.invalid && passMatch.touched">Le due password non coincidono</mat-error>
-    </mat-form-field>
-    <br>
-    <button type="reset" mat-button>Reset</button>
-    <button type="submit" [disabled]="passMatch.invalid || password.invalid " mat-raised-button color="primary">Change password</button>
-  </form>
+  <div *ngIf="isLoading(); else postFinished">
+    <mat-icon mat-card-image aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">
+      restore
+    </mat-icon>
+    <div class="mat-headline">Change password</div>
+    <form (ngSubmit)="submit($event)">
+      <mat-form-field ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
+        <input type="password" id="password" name="password" matInput placeholder="Password" required
+               pattern="^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$"
+               [(ngModel)]="model.password" #password="ngModel">
+        <mat-error *ngIf="password.invalid && password.touched">Password non valida</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
+        <input type="password" id="passMatch" name="passMatch" matInput required [pattern]="model.password"
+               placeholder="Ripeti Password"
+               [(ngModel)]="model.passMatch" #passMatch="ngModel">
+        <mat-error *ngIf="passMatch.invalid && passMatch.touched">Le due password non coincidono</mat-error>
+      </mat-form-field>
+      <br>
+      <button type="reset" mat-button>Reset</button>
+      <button type="submit" [disabled]="passMatch.invalid || password.invalid " mat-raised-button color="primary">Change
+        password
+      </button>
+    </form>
+  </div>
+  <ng-template #postFinished>
+    <div *ngIf="isOk(); else notOk">
+      <div class="mat-headline">
+        <mat-icon mat-card-image aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">
+          check
+        </mat-icon>
+        Cambio Password effettuato correttamente!
+      </div>
+      <button mat-raised-button color="primary" (click)="goToLogin()">Vai al Login</button>
+    </div>
+    <ng-template #notOk>
+      <div class="mat-headline">
+        <mat-icon mat-card-image aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">
+          close
+        </mat-icon>
+        Cambio Password fallito!
+      </div>
+    </ng-template>
+  </ng-template>
 </mat-card>

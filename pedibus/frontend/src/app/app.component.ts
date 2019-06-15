@@ -38,9 +38,9 @@ export class AppComponent {
 
   getAuthData() {
     if (this.auth.getExpiration() == null) {
-      return 'User logged: ' + this.auth.isLoggedIn() + ', expiration: not defined';
+      return !environment.production ? 'User logged: ' + this.auth.isLoggedIn() + ', expiration: not defined' : '';
     } else {
-      return 'User logged: ' + this.auth.isLoggedIn() + ', expiration: ' + this.auth.getExpiration().toLocaleString();
+      return !environment.production ? 'User logged: ' + this.auth.isLoggedIn() + ', expiration: ' + this.auth.getExpiration().toLocaleString() : '';
     }
   }
 }

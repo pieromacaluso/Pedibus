@@ -12,7 +12,7 @@ export class SignInComponent implements OnInit {
 
   model: SignInModel;
   serverErrors: string;
-  forgotLink = '../passDimenticata';
+  forgotLink = '../recover';
 
   constructor(private auth: AuthService, private router: Router) {
     this.model = {email: '', password: ''};

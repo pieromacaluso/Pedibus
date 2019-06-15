@@ -11,10 +11,22 @@ export class ForgotPasswordComponent implements OnInit {
 
   model = {email: ''};
 
+
+  postStatus = false;
+  confirmStatus = false;
+
   constructor(private auth: AuthService, private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
+  }
+
+  isLoading() {
+    return !this.postStatus;
+  }
+
+  isOk() {
+    return this.confirmStatus && this.postStatus;
   }
 
   submit(event) {
@@ -23,12 +35,21 @@ export class ForgotPasswordComponent implements OnInit {
       if (formValid) {
         console.log('form valid');
         this.auth.postRecover(this.model.email).subscribe((res) => {
-            this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
+          this.postStatus = true;
+          this.confirmStatus = true;
+            // this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
           }, (error1 => {
-            console.log(error1);
+          this.postStatus = true;
+          this.confirmStatus = false;
           })
         );
       }
     }
+  }
+
+  restart() {
+    this.model.email = '';
+    this.postStatus = false;
+    this.confirmStatus = false;
   }
 }

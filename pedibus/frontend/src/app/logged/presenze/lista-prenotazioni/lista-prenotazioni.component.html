@@ -37,6 +37,7 @@
           <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
             <button mat-stroked-button class="alunno-presenza mat-background-accent"
                     [class.presente]="alunno.presoInCarico"
+                    [disableRipple]="!isAdmin()"
                     (click)="togglePresenza(res.fermata.id, alunno)"
                     *ngFor="let alunno of sortedAlunni(res.alunni); "><mat-progress-bar class="progress-bar-button" *ngIf="showLoadingButton(alunno)" mode="indeterminate"></mat-progress-bar>
               {{alunno.surname + " " + alunno.name}}</button>
@@ -61,7 +62,7 @@
                       *ngIf="(notReserved); then thenAlunniNot; else elseAlunniNot"></mat-card-content>
     <ng-template #thenAlunniNot>
       <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
-        <button (click)="openDialog(alunno)" mat-stroked-button class="alunno-presenza mat-background-accent"
+        <button (click)="openDialog(alunno)" [disableRipple]="!isAdmin()" mat-stroked-button class="alunno-presenza mat-background-accent"
                 *ngFor="let alunno of sortedNotReserved(notReserved); "><mat-progress-bar class="progress-bar-button" *ngIf="showLoadingButton(alunno)" mode="indeterminate"></mat-progress-bar><mat-icon aria-hidden="false" aria-label="Example home icon" *ngIf="alunno">add</mat-icon>{{alunno.surname + " " + alunno.name}}</button>
       </mat-card-content>
     </ng-template>

@@ -1,3 +1,21 @@
+<!-- BOTTONI MOBILE -->
+<div class="dark-theme">
+
+  <button type=”button” class="mat-fab mat-accent dark-theme fab-left" (click)="modifyDate(-1);" fxHide=""
+          fxShow.lt-sm="">
+          <span class="mat-button-wrapper">
+            <mat-icon class="mat-icon material-icons"
+                      role="img" aria-hidden="true">keyboard_arrow_left</mat-icon>
+          </span>
+  </button>
+  <button type=”button” class="mat-fab mat-accent dark-theme fab-right" (click)="modifyDate(1);" fxHide=""
+          fxShow.lt-sm="">
+          <span class="mat-button-wrapper">
+            <mat-icon class="mat-icon material-icons"
+                      role="img" aria-hidden="true">keyboard_arrow_right</mat-icon>
+          </span>
+  </button>
+</div>
 <!-- TOOLBAR -->
 <mat-card ngClass="container dark-theme" ngClass.lt-md="container-mobile dark-theme">
   <!-- TOOLBAR ROW -->

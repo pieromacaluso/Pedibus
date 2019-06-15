@@ -14,6 +14,7 @@ export class SignUpComponent implements OnInit {
   model: SignUpModel;
   serverErrors: string;
   isPresent: boolean;
+  success = false;
 
   constructor(private auth: AuthService, private snackBar: MatSnackBar) {
     this.model = {email: '', password: '', passMatch: '', terms: false};
@@ -39,7 +40,8 @@ export class SignUpComponent implements OnInit {
       }
       if (formValid) {
         this.auth.signUp(this.model).subscribe((value => {
-          this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
+          // this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
+          this.success = true;
         }), error1 => {
           this.serverErrors = (error1 as HttpErrorResponse).error.errorMessage;
         });

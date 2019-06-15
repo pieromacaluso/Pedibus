@@ -5,6 +5,7 @@ import {SignInModel, SignUpModel} from './models';
 import {shareReplay, tap} from 'rxjs/operators';
 import * as moment from 'moment';
 import * as jwt_decode from 'jwt-decode';
+import {myRxStompConfig} from '../my-rx-stomp.config';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,9 @@ export class AuthService {
     localStorage.setItem('id_token', authResult.token);
     localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
+    myRxStompConfig.connectHeaders = {
+      Auth: authResult.token
+    };
   }
 
   logout() {

@@ -1,7 +1,7 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
   <mat-icon mat-card-image aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">person_add</mat-icon>
   <div class="mat-headline">Sign Up</div>
-  <form (ngSubmit)="submit($event)" >
+  <form (ngSubmit)="submit($event)" *ngIf="!success; else successBlock">
     <mat-form-field  ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
       <!-- TODO: controllare se va bene (input) o è meglio (blur) -->
       <input type="email" matInput id="email" name="email" placeholder="Email" required email [(ngModel)]="model.email"
@@ -34,4 +34,10 @@
     <button type="reset" mat-button>Reset</button>
     <button type="submit" [disabled]="isPresent || passMatch.invalid || password.invalid || email.invalid || !model.terms" mat-raised-button color="primary">Register</button>
   </form>
+  <ng-template #successBlock>
+    <div>
+      <div class="mat-headline">Registrazione Account effettuata correttamente</div>
+      <div >Controlla la tua casella di posta e clicca sul link che troverai per confermare il tuo account!</div>
+    </div>
+  </ng-template>
 </mat-card>

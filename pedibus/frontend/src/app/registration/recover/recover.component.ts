@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {SignUpModel} from '../models';
 
@@ -10,14 +10,26 @@ import {SignUpModel} from '../models';
 })
 export class RecoverComponent implements OnInit {
 
-  model = {email: '', password: '', passMatch: ''};
+  model = {password: '', passMatch: ''};
   token;
 
-  constructor(private auth: AuthService, private route: ActivatedRoute) {
+  postStatus = false;
+  confirmStatus = false;
+
+  constructor(private auth: AuthService, private route: ActivatedRoute, private router: Router) {
   }
 
   ngOnInit() {
     this.token = this.route.snapshot.paramMap.get('token');
+  }
+
+
+  isLoading() {
+    return !this.postStatus;
+  }
+
+  isOk() {
+    return this.confirmStatus && this.postStatus;
   }
 
   submit(event) {
@@ -31,8 +43,17 @@ export class RecoverComponent implements OnInit {
       if (formValid) {
         this.auth.postNewPassword(this.token, this.model).subscribe((res) => {
           console.log('new pass:', res);
-        }, (error) => console.log(error));
+          this.postStatus = true;
+          this.confirmStatus = true;
+        }, (error) => {
+          this.postStatus = true;
+          this.confirmStatus = false;
+        });
       }
     }
+  }
+
+  goToLogin() {
+    this.router.navigate(['sign-in']);
   }
 }
