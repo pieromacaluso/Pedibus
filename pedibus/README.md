@@ -79,9 +79,9 @@ Il meccanismo di aggiornamento è stato implementato con l'utilizzo di WebSocket
 
 All'interno della nostra applicazioni abbiamo 3 ruoli principali:
 
-- **ROLE_USER**: utente base, può solo visualizzare la finestra delle presenze e vederne i mutamenti.
-- **ROLE_ADMIN**: utente amministratore di Linea, possono modificare le linee di cui hanno questo ruolo.
-- **ROLE_SYS-ADMIN**: utente amministratore di sistema, può fare tutto.
+- **ROLE_USER**: proprio di un utente base, può solo visualizzare la finestra delle presenze e vederne i mutamenti.
+- **ROLE_ADMIN**: proprio di un utente amministratore di Linea, per le linee di cui ha questo ruolo può aggiungere prenotazioni per i bambini non presenti e segnare come presi in carico i bambini, tutto ciò solo nel giorno odierno.
+- **ROLE_SYS-ADMIN**: proprio dell'utente amministratore di sistema, può fare tutto.
 
 Ecco alcuni utenti utili per testare le funzionalità:
 
