@@ -1,5 +1,4 @@
 import { InjectableRxStompConfig } from '@stomp/ng2-stompjs';
-import {environment} from '../environments/environment';
 
 const prepareBrokerURL = (path: string): string => {
   // Create a relative http(s) URL relative to current page
@@ -17,7 +16,7 @@ export const myRxStompConfig: InjectableRxStompConfig = {
   // Headers
   // Typical keys: login, passcode, host
   connectHeaders: {
-    // Authentication: ' Bearer ' + localStorage.getItem('id_token')
+    Auth: localStorage.getItem('id_token')
   },
 
   // How often to heartbeat?
