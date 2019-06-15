@@ -72,7 +72,7 @@ public class ReservationService {
      * - Si sta cercando di prenotare per uno dei proprio children o system-admin o amministratore della linea
      * - se per quella Linea esiste una fermata con quel id
      * - se esiste già una prenotazione per lo stesso utente nello stesso giorno con lo stesso verso, in tal caso l'inserimento non viene eseguito
-     *
+     * <p>
      * * @param prenotazioneDTO: Oggetto PrenotazioneDTO
      *
      * @return True se la prenotazione è valida, altrimenti False
@@ -82,7 +82,7 @@ public class ReservationService {
         FermataDTO fermataDTO = lineeService.getFermataById(prenotazioneDTO.getIdFermata());
         LineaDTO lineaDTO = lineeService.getLineByName(prenotazioneDTO.getNomeLinea());
 
-        return (prenotazioneDTO.getData().after(MongoZonedDateTime.getStartOfToday()) &&
+        return (checkTime(prenotazioneDTO.getData(), fermataDTO) &&
                 (lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) ||
                 (lineaDTO.getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso())) &&
                 (principal.getChildrenList().contains(prenotazioneDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()));
@@ -161,11 +161,20 @@ public class ReservationService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PrenotazioneEntity prenotazione = getReservationFromId(reservationId);
         LineaDTO lineaDTO = lineeService.getLineByName(prenotazione.getNomeLinea());
-        if (prenotazione.getData().after(MongoZonedDateTime.getStartOfToday()) && prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
+        FermataDTO fermataDTO = lineeService.getFermataById(prenotazione.getIdFermata());
+        if (checkTime(prenotazione.getData(), fermataDTO) && prenotazione.getData().equals(data) && lineeService.getLineByName(prenotazione.getNomeLinea()).getNome().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
             prenotazioneRepository.delete(prenotazione);
         } else {
             throw new IllegalArgumentException("Errore in cancellazione prenotazione");
         }
+    }
+
+    private boolean checkTime(Date data, FermataDTO fermataDTO) {
+        //se la prenotazione è per oggi allora controlla che sia prima dell'arrivo alla fermata
+        if (data.before(MongoZonedDateTime.getStartOfTomorrow()))
+            return data.before(fermataDTO.getDateOrario());
+        else
+            return true;
     }
 
     /**
@@ -218,7 +227,7 @@ public class ReservationService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean canModify = false;
         if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
-           return true;
+            return true;
         else
             return lineeService.getLineByName(nomeLinea).getAdminList().contains(principal.getUsername());
     }

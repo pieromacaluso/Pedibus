@@ -1,8 +1,11 @@
 package it.polito.ai.mmap.pedibus.objectDTO;
 
 import it.polito.ai.mmap.pedibus.entity.FermataEntity;
+import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +24,11 @@ public class FermataDTO {
         id = fermataEntity.getId();
         nome = fermataEntity.getName();
         orario = fermataEntity.getOrario();
+    }
+
+    public Date getDateOrario()
+    {
+        return MongoZonedDateTime.getMongoZonedDateTimeFromTime(orario);
     }
 
 }
