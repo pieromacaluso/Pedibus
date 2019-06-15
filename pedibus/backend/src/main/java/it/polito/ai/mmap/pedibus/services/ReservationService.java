@@ -171,17 +171,23 @@ public class ReservationService {
 
     private boolean checkTime(Date data, FermataDTO fermataDTO) {
         //se la prenotazione è per oggi allora controlla che sia prima dell'arrivo alla fermata o che il ruolo sia ADMIN o SYSTEM_ADMIN
-        if (data.before(MongoZonedDateTime.getStartOfTomorrow())) {
-            RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
-            RoleEntity roleSystemAdmin = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
-            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal.getRoleList().contains(roleAdmin) || principal.getRoleList().contains(roleSystemAdmin)) {
-                return data.after(MongoZonedDateTime.getStartOfToday());
+        RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
+        RoleEntity roleSystemAdmin = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!principal.getRoleList().contains(roleSystemAdmin)) {
+            if (data.before(MongoZonedDateTime.getStartOfTomorrow())) {
+                //prenotazione per oggi o nel passato
+                if (principal.getRoleList().contains(roleAdmin)) {
+                    return data.after(MongoZonedDateTime.getStartOfToday());
+                } else {
+                    return data.before(fermataDTO.getDateOrario());
+                }
             } else {
-                return data.before(fermataDTO.getDateOrario());
+                //prenotazione per domani o nel futuro
+                return !principal.getRoleList().contains(roleAdmin);
             }
-        } else
-            return true;
+        }
+        return true;
     }
 
     /**
