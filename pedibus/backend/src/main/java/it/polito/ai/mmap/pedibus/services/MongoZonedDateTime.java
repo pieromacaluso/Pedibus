@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 public class MongoZonedDateTime extends Date {
 
-    public static Date parseData(String completeData) {
+    private static Date parseData(String completeData) {
         ZonedDateTime londonTime = ZonedDateTime.parse(completeData, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS z"));
         return Date.from(londonTime.toInstant());
     }
