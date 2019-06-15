@@ -66,18 +66,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/recover/**").permitAll()
+//                .and()
+//                .authorizeRequests()//todo delete
+//                .antMatchers("/reservations/**").permitAll()
+//                .and()
+//                .authorizeRequests()//todo delete
+//                .antMatchers("/notreservations/**").permitAll()
+//                .and()
+//                .authorizeRequests()//todo delete
+//                .antMatchers("/lines/**").permitAll()
                 .and()
                 .authorizeRequests()//todo delete
-                .antMatchers("/reservations/**").permitAll()
-                .and()
-                .authorizeRequests()//todo delete
-                .antMatchers("/notreservations/**").permitAll()
-                .and()
-                .authorizeRequests()//todo delete
-                .antMatchers("/lines/**").permitAll()
-                .and()
-                .authorizeRequests()//todo delete
-                .antMatchers("/debug/**").permitAll()
+                .antMatchers("/debug/**").access("hasAnyRole('SYSTEM-ADMIN')")
                 .and()
                 .authorizeRequests()
                 .antMatchers("/users/**").access("hasAnyRole('ADMIN','SYSTEM-ADMIN')")

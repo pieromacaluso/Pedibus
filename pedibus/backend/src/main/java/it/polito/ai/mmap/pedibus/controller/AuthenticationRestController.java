@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.pedibus.controller;
 
-import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -99,7 +97,7 @@ public class AuthenticationRestController {
     }
 
     @GetMapping("/register/checkMail/{email}")
-    public boolean checkUserMailDuplicate(@PathVariable String email){
+    public boolean checkUserMailDuplicate(@PathVariable String email) {
         return userService.checkMailIsPresent(email);
     }
 
