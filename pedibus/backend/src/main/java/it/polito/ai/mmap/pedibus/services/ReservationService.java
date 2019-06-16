@@ -83,7 +83,8 @@ public class ReservationService {
         LineaDTO lineaDTO = lineeService.getLineById(prenotazioneDTO.getIdLinea());
 
 
-        return (checkTime(prenotazioneDTO.getData(), fermataDTO) &&
+        return (!fermataDTO.getNome().equals("Scuola") &&
+                checkTime(prenotazioneDTO.getData(), fermataDTO) &&
                 ((lineaDTO.getAndata().contains(fermataDTO) && prenotazioneDTO.getVerso()) || (lineaDTO.getRitorno().contains(fermataDTO) && !prenotazioneDTO.getVerso()))) &&
                 (principal.getChildrenList().contains(prenotazioneDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()));
     }
