@@ -38,7 +38,7 @@ public class ReservationController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @Value("${arrivatoScuola}")
+    @Value("${arrivoScuola}")
     String arrivoScuola;
 
     @Value("${partenzaScuola}")
