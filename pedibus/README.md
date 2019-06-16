@@ -23,7 +23,7 @@ Dopo aver scompattato l'archivio `mmap-lab05-v1.zip`, posizionarsi da terminale 
 
 ## Docker Compose-Up
 1. Posizionarsi da terminale all'interno della cartella `mmap-lab05-v1` (dove si trova il `docker-compose.yml`)
-2. Avviare il comando `docker-compose up`
+2. Avviare il comando `docker-compose up --build`
 3. Aprire il browser e dirigersi su `http://localhost:4200`
 
 `http://localhost:4200` è valido solo su Mac, Linux e Windows non Home. Se si possiede Windows Home il link potrebbe cambiare (e.g. `http://192.168.99.100:4200`).
@@ -45,6 +45,8 @@ fra le scelte.
 ### Sign-In (`http://localhost:4200/sign-in`)
 In questa schermata è possibile accedere inserendo le proprie credenziali. Se la richiesta di Login è positiva si viene reindirizzati verso la pagina delle presenze.
 
+![SIGN IN](screenshot/00_signin.png)
+
 ### Richiesta Cambio Password (`http://localhost:4200/recover`)
 In questa schermata è possibile chiedere il cambio delle credenziali.
 
@@ -56,9 +58,10 @@ In questa schermata è possibile registrarsi inserendo mail e password (due volt
 non sia già presente nel database. Una volta ricevuta la conferma che la richiesta di registrazione è andata a buon fine la pagina mostra una conferma e un invito
 a controllare la propria casella di posta elettronica.
 
+![SIGN UP](screenshot/01_signup.png)
+
 ### Conferma Password (`http://localhost:4200/confirm/{idToken}`)
 Una volta ricevuta la mail di conferma, questa schermata serve a confermare la propria iscrizione.
-
 
 ### Interfaccia Presenze (`http://localhost:4200/presenze`)
 
@@ -74,6 +77,16 @@ l'accompagnatore potrà verificare la nuova prenotazione, inserire la fermata e 
 indicata e rimosso dalla lista dei non prenotati.
 
 Il meccanismo di aggiornamento è stato implementato con l'utilizzo di WebSocketMessageBroker per poter inviare le modifiche in tempo reale a tutti gli utenti che stanno visualizzando la stessa pagina presenze.
+
+![PRESENZE1](screenshot/02_00_presenze.png)
+
+![PRESENZE2](screenshot/02_01_presenze.png)
+
+![PRESENZE3](screenshot/02_02_presenze.png)
+
+Esempio schermata da Mobile
+
+![PRESENZEMobile](screenshot/03_00_presenze_mobile.png)
 
 ## I ruoli
 
@@ -114,4 +127,4 @@ La password è sempre  `1!qwerty1!`
 ### Esempio di utilizzo
 In questa veloce GIF mostriamo l'utilizzo dell'applicazione.
 
-![Esempio di Utilizzo](screenshot/esempio.gif)
+![Esempio di Utilizzo](screenshot/02_03_presenze.gif)
