@@ -39,11 +39,6 @@ public class ReservationController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    /*@Value("${arrivoScuola}")
-    String arrivoScuola;
-
-    @Value("${partenzaScuola}")
-    String partenzaScuola;*/
 
     /**
      * Restituisce un oggetto JSON contenente due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
@@ -60,8 +55,6 @@ public class ReservationController {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
         GetReservationsNomeLineaDataResource getReservationsNomeLineaDataResource = new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, canModify);
-       /* getReservationsNomeLineaDataResource.setArrivoScuola(arrivoScuola);
-        getReservationsNomeLineaDataResource.setPartenzaScuola(partenzaScuola);*/
         return getReservationsNomeLineaDataResource;
     }
 
@@ -80,8 +73,6 @@ public class ReservationController {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
         GetReservationsNomeLineaDataResource getReservationsNomeLineaDataResource =  new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
-        /*getReservationsNomeLineaDataResource.setArrivoScuola(arrivoScuola);
-        getReservationsNomeLineaDataResource.setPartenzaScuola(partenzaScuola);*/
         return getReservationsNomeLineaDataResource;
     }
 
