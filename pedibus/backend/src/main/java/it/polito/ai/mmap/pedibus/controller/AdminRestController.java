@@ -68,7 +68,7 @@ public class AdminRestController {
                     lineeService.delAdminLine(userID, permissionDTO.getLinea());
                 }
         } else {
-            throw new PermissionDeniedException("User has no right to do this operation");
+            throw new PermissionDeniedException("Non hai i privilegi per eseguire questa operazione");
         }
 
     }

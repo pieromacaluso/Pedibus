@@ -73,7 +73,7 @@ public class AuthenticationRestController {
             model.put("token", userService.getJwtToken(username));
             return ok(model);
         } else {
-            throw new BadCredentialsException("Bad credentials");
+            throw new BadCredentialsException("Credenziali non valide");
         }
 
     }

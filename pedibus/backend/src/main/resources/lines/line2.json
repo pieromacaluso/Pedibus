@@ -2,8 +2,6 @@
   "id": "linea2",
   "nome": "Linea 2",
   "adminMast": "applicazioni.internet.mmap@gmail.com",
-  "arrivoScuola": "8:15",
-  "partenzaScuola": "13:00",
   "andata": [
     {
       "id": 101,

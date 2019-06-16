@@ -144,7 +144,7 @@ public class LineeService {
     public void addAdminLine(String userID, String idLinea) {
         Optional<LineaEntity> check = lineaRepository.findById(idLinea);
         if (!check.isPresent()) {
-            throw new LineaNotFoundException("Linea not found");
+            throw new LineaNotFoundException("Linea non trovata");
         }
         LineaEntity lineaEntity = check.get();
         ArrayList<String> adminList = lineaEntity.getAdminList();
@@ -160,7 +160,7 @@ public class LineeService {
     public void delAdminLine(String userID, String idLinea) {
         Optional<LineaEntity> check = lineaRepository.findById(idLinea);
         if (!check.isPresent()) {
-            throw new LineaNotFoundException("Linea not found");
+            throw new LineaNotFoundException("Linea non trovata");
         }
         LineaEntity lineaEntity = check.get();
         ArrayList<String> adminList = lineaEntity.getAdminList();

@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<UserEntity> check = userRepository.findByUsername(email);
         if (!check.isPresent()) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("Utente inesistente");
         }
         UserEntity userEntity = check.get();
         return userEntity;
@@ -109,7 +109,7 @@ public class UserService implements UserDetailsService {
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 userEntity.setCreationDate(MongoZonedDateTime.getNow());
             } else {
-                throw new UserAlreadyPresentException("User already registered");
+                throw new UserAlreadyPresentException("Utente già registrato");
 
             }
         } else {
@@ -199,7 +199,7 @@ public class UserService implements UserDetailsService {
     public void recoverAccount(String email) throws RecoverProcessNotValidException {
         Optional<UserEntity> check = userRepository.findByUsernameAndIsEnabled(email, true);
         if (!check.isPresent())
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("Utente inesistente");
 
         UserEntity userEntity = check.get();
         RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getId());
@@ -268,7 +268,7 @@ public class UserService implements UserDetailsService {
                 ChildEntity childEntity = c.get();
                 childrenEntities.add(childEntity);
             } else
-                throw new ChildNotFoundException("Child not found");
+                throw new ChildNotFoundException("Alunno non trovato");
         }
 
         return childrenEntities.stream().map(ChildDTO::new).collect(Collectors.toList());
@@ -327,7 +327,7 @@ public class UserService implements UserDetailsService {
     public void registerChild(ChildDTO childDTO) {
         Optional<ChildEntity> c = childRepository.findById(childDTO.getCodiceFiscale());
         if (c.isPresent())
-            throw new ChildAlreadyPresentException("Child with same Fiscal Code present");
+            throw new ChildAlreadyPresentException("Alunno con stesso codice fiscale trovato");
         Optional<FermataEntity> checkFerm = fermataRepository.findById(childDTO.getIdFermataDefault());
         if (!checkFerm.isPresent()) {
             throw new FermataNotFoundException();
@@ -361,7 +361,7 @@ public class UserService implements UserDetailsService {
             } else
                 throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
         } else
-            throw new ChildNotFoundException("child not found");
+            throw new ChildNotFoundException("Bambino non trovato");
     }
 
     /**
@@ -393,6 +393,6 @@ public class UserService implements UserDetailsService {
             childRepository.delete(childEntity);
 
         } else
-            throw new ChildNotFoundException("child not found");
+            throw new ChildNotFoundException("Bambino non trovato");
     }
 }
