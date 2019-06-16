@@ -46,6 +46,7 @@ export class ListaPrenotazioniComponent implements OnInit {
           .subscribe((message: Message) => {
             const res = JSON.parse(message.body);
             console.log(res);
+            // tslint:disable-next-line:max-line-length
             const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
             al.presoInCarico = res.isSet;
           });

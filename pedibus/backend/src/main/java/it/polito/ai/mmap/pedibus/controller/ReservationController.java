@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
-import it.polito.ai.mmap.pedibus.resources.GetChildrenNotReservedLineaDataResource;
-import it.polito.ai.mmap.pedibus.resources.GetReservationsNomeLineaDataResource;
-import it.polito.ai.mmap.pedibus.resources.HandledResource;
-import it.polito.ai.mmap.pedibus.resources.PrenotazioneResource;
+import it.polito.ai.mmap.pedibus.resources.*;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
@@ -59,21 +56,20 @@ public class ReservationController {
     }
 
     /**
-     * Restituisce un oggetto JSON contenente una liste, riportanti, per ogni fermata di andata o ritorno, l’elenco delle
+     * Restituisce un oggetto JSON contenente una lista, riportante, per ogni fermata di andata o ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
      * @param nomeLinea nome linea
      * @param data      data in esame
-     * @return GetReservationsNomeLineaDataResource
+     * @return GetReservationsNomeLineaDataVersoResource
      */
 
     @GetMapping("/reservations/verso/{nome_linea}/{data}/{verso}")
-    public GetReservationsNomeLineaDataResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
+    public GetReservationsNomeLineaDataVersoResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + "/" + verso + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
-        GetReservationsNomeLineaDataResource getReservationsNomeLineaDataResource =  new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
-        return getReservationsNomeLineaDataResource;
+        return   new GetReservationsNomeLineaDataVersoResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
     }
 
     /**
