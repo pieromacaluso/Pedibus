@@ -15,7 +15,7 @@
       <div *ngIf="(this.prenotazione.verso === 'Ritorno')">
         <div fxLayout="row">
           <mat-card-header>
-            <mat-card-title class="stop-clock">{{this.resource.partenzaScuola}}</mat-card-title>
+            <mat-card-title class="stop-clock">{{this.resource.orarioScuola}}</mat-card-title>
           </mat-card-header>
           <img class="cross" [src]="cross" alt="Bus Stop"/>
           <mat-card-header>
@@ -70,7 +70,7 @@
         <!--        <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"></mat-card-content>-->
         <div fxLayout="row">
           <mat-card-header>
-            <mat-card-title class="stop-clock">{{this.resource.arrivoScuola}}</mat-card-title>
+            <mat-card-title class="stop-clock">{{this.resource.orarioScuola}}</mat-card-title>
           </mat-card-header>
           <img class="cross" [src]="cross" alt="Bus Stop"/>
           <mat-card-header>

@@ -9,8 +9,7 @@
 
 export interface LineReservationVerso {
   alunniPerFermata: AlunniPerFermata[];
-  arrivoScuola: string;
-  partenzaScuola: string;
+  orarioScuola: string;
   childrenNotReserved: AlunnoNotReserved[];
   canModify: boolean;
 }
