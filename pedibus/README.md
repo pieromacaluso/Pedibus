@@ -50,8 +50,14 @@ In questa schermata è possibile accedere inserendo le proprie credenziali. Se l
 ### Richiesta Cambio Password (`http://localhost:4200/recover`)
 In questa schermata è possibile chiedere il cambio delle credenziali.
 
+![SIGN UP](screenshot/03_recover.png)
+
+
 ### Cambio Password (`http://localhost:4200/recover/{idToken}`)
 Una volta ricevuta la mail di cambio password, in questa schermata è possibile procedere con il cambio delle credenziali.
+
+![SIGN UP](screenshot/04_change.png)
+
 
 ### Sign-Up (`http://localhost:4200/sign-up`)
 In questa schermata è possibile registrarsi inserendo mail e password (due volte). L'inserimento della mail scatena richieste al server per verificare se questa
