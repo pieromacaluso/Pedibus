@@ -45,10 +45,10 @@ fra le scelte.
 ### Sign-In (`http://localhost:4200/sign-in`)
 In questa schermata è possibile accedere inserendo le proprie credenziali. Se la richiesta di Login è positiva si viene reindirizzati verso la pagina delle presenze.
 
-#### Richiesta Cambio Password (`http://localhost:4200/recover`)
+### Richiesta Cambio Password (`http://localhost:4200/recover`)
 In questa schermata è possibile chiedere il cambio delle credenziali.
 
-#### Cambio Password (`http://localhost:4200/recover/{idToken}`)
+### Cambio Password (`http://localhost:4200/recover/{idToken}`)
 Una volta ricevuta la mail di cambio password, in questa schermata è possibile procedere con il cambio delle credenziali.
 
 ### Sign-Up (`http://localhost:4200/sign-up`)
@@ -56,7 +56,7 @@ In questa schermata è possibile registrarsi inserendo mail e password (due volt
 non sia già presente nel database. Una volta ricevuta la conferma che la richiesta di registrazione è andata a buon fine la pagina mostra una conferma e un invito
 a controllare la propria casella di posta elettronica.
 
-#### Conferma Password (`http://localhost:4200/confirm/{idToken}`)
+### Conferma Password (`http://localhost:4200/confirm/{idToken}`)
 Una volta ricevuta la mail di conferma, questa schermata serve a confermare la propria iscrizione.
 
 
@@ -75,7 +75,7 @@ indicata e rimosso dalla lista dei non prenotati.
 
 Il meccanismo di aggiornamento è stato implementato con l'utilizzo di WebSocketMessageBroker per poter inviare le modifiche in tempo reale a tutti gli utenti che stanno visualizzando la stessa pagina presenze.
 
-#### I ruoli
+## I ruoli
 
 All'interno della nostra applicazioni abbiamo 3 ruoli principali:
 
