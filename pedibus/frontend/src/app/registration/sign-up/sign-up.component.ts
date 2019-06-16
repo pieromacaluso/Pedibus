@@ -3,6 +3,9 @@ import {SignUpModel} from '../models';
 import {AuthService} from '../auth.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material';
+import {AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-sign-up',
@@ -11,57 +14,84 @@ import {MatSnackBar} from '@angular/material';
 })
 export class SignUpComponent implements OnInit {
 
-  model: SignUpModel;
-  serverErrors: string;
-  isPresent: boolean;
-  success = false;
 
   constructor(private auth: AuthService, private snackBar: MatSnackBar) {
     this.model = {email: '', password: '', passMatch: '', terms: false};
+    this.form = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email], this.userValidator()),
+      password: new FormControl('', [Validators.required,
+        Validators.pattern(/^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$/)]),
+      passMatch: new FormControl('', [Validators.required,
+        Validators.pattern(/^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$/)]),
+      terms: new FormControl('', [Validators.required])
+    }, [SignUpComponent.passwordConfirming]);
   }
 
-  ngOnInit() {
-  }
+  model: SignUpModel;
+  serverErrors: string;
+  success = false;
+  form: FormGroup;
 
-  checkPresence() {
-    return this.isPresent;
-  }
 
-  submit(event) {
-    if (event.isTrusted) {
-      let formValid = true;
-      for (let count = 0; count < 4; count++) {
-        if (!event.target[count].validity.valid) {
-          formValid = false;
-        }
-      }
-      if (this.isPresent || !this.model.terms) {
-        formValid = false;
-      }
-      if (formValid) {
-        this.auth.signUp(this.model).subscribe((value => {
-          // this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
-          this.success = true;
-        }), error1 => {
-          this.serverErrors = (error1 as HttpErrorResponse).error.errorMessage;
-        });
+  static removeError(control: AbstractControl, error: string) {
+    const err = control.errors; // get control errors
+    if (err) {
+      delete err[error]; // delete your own error
+      if (!Object.keys(err).length) { // if no errors left
+        control.setErrors(null); // set control errors to null making it VALID
+      } else {
+        control.setErrors(err); // controls got other errors so set them back
       }
     }
   }
 
-  checkDuplicate() {
-    if (this.validateEmail(this.model.email)) {
-      this.auth.checkDuplicate(this.model.email).subscribe((value => {
-        typeof value === 'boolean' ? this.isPresent = value : this.isPresent = false;
-        console.log(this.isPresent);
+  static addError(control: AbstractControl, error: string) {
+    const err = control.errors; // get control errors
+    if (err) {
+      err[error] = true; // create your error on the already existing vector
+      control.setErrors(err); // controls got other errors so set them back
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static passwordConfirming(control: AbstractControl) {
+    const password = control.get('password');
+    const passMatch = control.get('passMatch');
+    if (password && passMatch && password.value !== passMatch.value) {
+      if (!SignUpComponent.addError(control.get('password'), 'notMatching')) {
+        control.get('password').setErrors({notMatching: true});
+      }
+    } else {
+      SignUpComponent.removeError(control.get('password'), 'notMatching');
+    }
+    console.log(control.get('password').errors);
+    return password && passMatch && password.value !== passMatch.value ? {notMatching: true} : null;
+  }
+
+
+  ngOnInit() {
+  }
+
+  submit() {
+    console.log(this.form.get('password').getError('notMatching'));
+    if (this.form.valid) {
+      this.auth.signUp(this.model).subscribe((value => {
+        // this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
+        this.success = true;
       }), error1 => {
         this.serverErrors = (error1 as HttpErrorResponse).error.errorMessage;
       });
     }
   }
 
-  validateEmail(email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+  userValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+      return this.auth.checkDuplicate(control.value)
+        .pipe(
+          map(duplicate => (duplicate) ? {duplicate: true} : null)
+        );
+    };
   }
 }
