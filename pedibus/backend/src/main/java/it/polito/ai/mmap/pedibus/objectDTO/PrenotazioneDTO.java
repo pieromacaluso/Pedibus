@@ -25,7 +25,6 @@ public class PrenotazioneDTO {
         verso = prenotazioneResource.getVerso();
         idFermata = prenotazioneResource.getIdFermata();
         cfChild = prenotazioneResource.getCfChild();
-        // TODO: check
         presoInCarico = false;
         arrivatoScuola = false;
     }

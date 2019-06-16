@@ -42,7 +42,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "**").permitAll()//allow CORS option calls
                 .and()
-                // TODO: attualmente permettiamo a tutti di mettersi in ascolto di messaggi. Non capisco perchè non si inserisca l'auth header
                 .authorizeRequests()
                 .antMatchers("/messages/**").permitAll()
                 .and()
@@ -66,18 +65,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/recover/**").permitAll()
-//                .and()
-//                .authorizeRequests()//todo delete
-//                .antMatchers("/reservations/**").permitAll()
-//                .and()
-//                .authorizeRequests()//todo delete
-//                .antMatchers("/notreservations/**").permitAll()
-//                .and()
-//                .authorizeRequests()//todo delete
-//                .antMatchers("/lines/**").permitAll()
-                .and()
-                .authorizeRequests()//todo delete, l'endpoint non è presente in produzione
-                .antMatchers("/debug/**").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/users/**").access("hasAnyRole('ADMIN','SYSTEM-ADMIN')")

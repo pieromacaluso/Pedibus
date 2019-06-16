@@ -147,7 +147,6 @@ public class ReservationController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        //todo spostare nel service per non appesantire controller
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneEntity checkPren = reservationService.getReservationFromId(reservationId);
 

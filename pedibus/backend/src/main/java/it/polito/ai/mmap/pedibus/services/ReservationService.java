@@ -198,7 +198,6 @@ public class ReservationService {
      * @return Lista di nomi alunni
      */
     public List<PrenotazioneChildResource> findAlunniFermata(Date data, Integer id, boolean verso) {
-        // TODO: (Piero) Questo metodo secondo me è migliorabile, se avete idee, mastruzzate qui!
         HashMap<String, PrenotazioneEntity> prenotazioni = (HashMap<String, PrenotazioneEntity>) prenotazioneRepository
                 .findAllByDataAndIdFermataAndVerso(data, id, verso).stream()
                 .collect(
