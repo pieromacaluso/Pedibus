@@ -2,7 +2,6 @@
   <mat-icon aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">vpn_key</mat-icon>
   <div class="mat-headline">Sign In</div>
   <form  [formGroup]="form" (ngSubmit)="submit()">
-    {{form.valid}}<br>
     <mat-form-field ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
       <input type="email" matInput id="email" name="email" placeholder="Email" required email formControlName="email">
       <mat-error *ngIf="form.controls['email'].hasError('required')">Email obbligatoria</mat-error>
