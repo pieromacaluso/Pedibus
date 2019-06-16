@@ -75,9 +75,10 @@ export class SignUpComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.form.get('password').getError('notMatching'));
     if (this.form.valid) {
-      this.auth.signUp(this.model).subscribe((value => {
+      const model = {email: this.form.controls.email.value, password:  this.form.controls.password.value,
+        passMatch:  this.form.controls.passMatch.value, terms:  this.form.controls.terms.value};
+      this.auth.signUp(model).subscribe((value => {
         // this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
         this.success = true;
       }), error1 => {
