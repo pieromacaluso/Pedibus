@@ -1,5 +1,5 @@
 import {Component, Inject, Injectable, Input, OnInit, SimpleChange} from '@angular/core';
-import {AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
+import {LineReservation, AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
@@ -20,19 +20,16 @@ import {$} from 'protractor';
 })
 export class ListaPrenotazioniComponent implements OnInit {
 
+  resource: LineReservation;
   reservations: AlunniPerFermata[];
 
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
   countLoading: any = 0;
-  private notReserved: AlunnoNotReserved[];
-  private arrivoScuola: string;
-  private partenzaScuola: string;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
   private handledSub: Subscription;
   private openedDialog: any = 0;
   private resSub: Subscription;
-  private modEnabled: boolean;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -62,7 +59,7 @@ export class ListaPrenotazioniComponent implements OnInit {
         this.resSub = this.rxStompService.watch('/reservation' + this.pathSub(prenotazione))
           .subscribe((message: Message) => {
             const res = JSON.parse(message.body);
-            const oldAlunno = this.notReserved.find(a => a.codiceFiscale === res.cfChild);
+            const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
             const newAlunno: Alunno = {
               codiceFiscale: oldAlunno.codiceFiscale,
               name: oldAlunno.name,
@@ -78,11 +75,8 @@ export class ListaPrenotazioniComponent implements OnInit {
         this.prenotazione = prenotazione;
         this.countLoading++;
         this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione).subscribe((rese) => {
+          this.resource = rese;
           this.reservations = this.prenotazione.verso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
-          this.notReserved = rese.childrenNotReserved;
-          this.modEnabled = rese.canModify;
-          this.arrivoScuola = rese.arrivoScuola;
-          this.partenzaScuola = rese.partenzaScuola;
           this.countLoading--;
         }, (error) => console.error(error));
       }
@@ -118,7 +112,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   canModify() {
-    return this.authService.isAdmin() && this.isModifiable() && this.modEnabled;
+    return this.authService.isAdmin() && this.isModifiable() && this.resource.canModify;
   }
 
   showLoading() {
@@ -163,9 +157,9 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   deleteNotReserved(al: AlunnoNotReserved) {
-    const index: number = this.notReserved.indexOf(al);
+    const index: number = this.resource.childrenNotReserved.indexOf(al);
     if (index !== -1) {
-      this.notReserved.splice(index, 1);
+      this.resource.childrenNotReserved.splice(index, 1);
     }
   }
 

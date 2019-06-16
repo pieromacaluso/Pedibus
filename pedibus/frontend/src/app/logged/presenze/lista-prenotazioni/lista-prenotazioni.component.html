@@ -3,7 +3,7 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
 
   <div class="container"
-       *ngIf="(reservations); then thenBlock; else elseBlock"
+       *ngIf="(this.reservations); then thenBlock; else elseBlock"
        role="list">
   </div>
 
@@ -18,7 +18,7 @@
       <div *ngIf="(first && this.prenotazione.verso === 'Ritorno')">
         <div fxLayout="row">
           <mat-card-header>
-            <mat-card-title class="stop-clock">{{this.partenzaScuola}}</mat-card-title>
+            <mat-card-title class="stop-clock">{{this.resource.partenzaScuola}}</mat-card-title>
           </mat-card-header>
           <img class="cross" [src]="cross" alt="Bus Stop"/>
           <mat-card-header>
@@ -66,7 +66,7 @@
         <!--        <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"></mat-card-content>-->
         <div fxLayout="row">
           <mat-card-header>
-            <mat-card-title class="stop-clock">{{this.arrivoScuola}}</mat-card-title>
+            <mat-card-title class="stop-clock">{{this.resource.arrivoScuola}}</mat-card-title>
           </mat-card-header>
           <img class="cross" [src]="cross" alt="Bus Stop"/>
           <mat-card-header>
@@ -81,12 +81,12 @@
       <mat-card-title>Bambini non prenotati</mat-card-title>
     </mat-card-header>
     <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"
-                      *ngIf="(notReserved); then thenAlunniNot; else elseAlunniNot"></mat-card-content>
+                      *ngIf="(this.resource.childrenNotReserved); then thenAlunniNot; else elseAlunniNot"></mat-card-content>
     <ng-template #thenAlunniNot>
       <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
         <button (click)="openDialog(alunno)" [disableRipple]="!canModify()" mat-stroked-button
                 class="alunno-presenza mat-background-accent"
-                *ngFor="let alunno of sortedNotReserved(notReserved); ">
+                *ngFor="let alunno of sortedNotReserved(this.resource.childrenNotReserved); ">
           <mat-progress-bar class="progress-bar-button" *ngIf="showLoadingButton(alunno)"
                             mode="indeterminate"></mat-progress-bar>
           <mat-icon aria-hidden="false" aria-label="Example home icon" *ngIf="alunno">add</mat-icon>
