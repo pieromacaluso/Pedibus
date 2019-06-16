@@ -20,14 +20,14 @@
     },
     {
       "id": 4,
-      "nome": "Scuola",
+      "nome": "Montevideo",
       "orario": "08:00"
     }
   ],
   "ritorno": [
     {
       "id": 5,
-      "nome": "Scuola",
+      "nome": "Montevideo",
       "orario": "13:10"
     },
     {

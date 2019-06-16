@@ -1,8 +1,10 @@
 package it.polito.ai.mmap.pedibus.resources;
 
 
+import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
 import it.polito.ai.mmap.pedibus.services.UserService;
@@ -21,6 +23,8 @@ public class GetReservationsNomeLineaDataResource {
 
     List<FermataDTOAlunni> alunniPerFermataAndata;
     List<FermataDTOAlunni> alunniPerFermataRitorno;
+    String arrivoScuola;
+    String partenzaScuola;
     List<ChildDTO> childrenNotReserved;
     Boolean canModify;
 
@@ -28,37 +32,43 @@ public class GetReservationsNomeLineaDataResource {
 
     public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, ReservationService reservationService, boolean canModify) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
-        alunniPerFermataAndata = (lineeService.getLineById(nomeLina)).getAndata().stream()
+        LineaDTO lineaDTO = lineeService.getLineById(nomeLina);
+        alunniPerFermataAndata = lineaDTO.getAndata().stream()
                 .map(FermataDTOAlunni::new)
                 .collect(Collectors.toList());
         // true per indicare l'andata
         alunniPerFermataAndata.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), true)));
 
 
-        alunniPerFermataRitorno = (lineeService.getLineById(nomeLina)).getRitorno().stream()
+        alunniPerFermataRitorno = lineaDTO.getRitorno().stream()
                 .map(FermataDTOAlunni::new)
                 .collect(Collectors.toList());
         // false per indicare il ritorno
         alunniPerFermataRitorno.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), false)));
 
         this.canModify = canModify;
+        arrivoScuola = lineaDTO.getArrivoScuola();
+        partenzaScuola = lineaDTO.getPartenzaScuola();
 
     }
 
     public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, UserService userService, ReservationService reservationService, boolean verso, boolean canModify) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
+        LineaDTO lineaDTO = lineeService.getLineById(nomeLina);
         if (verso) {
-            alunniPerFermataAndata = (lineeService.getLineById(nomeLina)).getAndata().stream()
+            alunniPerFermataAndata = lineaDTO.getAndata().stream()
                     .map(FermataDTOAlunni::new)
                     .collect(Collectors.toList());
             // true per indicare l'andata
             alunniPerFermataAndata.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), true)));
+            arrivoScuola = lineaDTO.getArrivoScuola();
         } else {
-            alunniPerFermataRitorno = (lineeService.getLineById(nomeLina)).getRitorno().stream()
+            alunniPerFermataRitorno = lineaDTO.getRitorno().stream()
                     .map(FermataDTOAlunni::new)
                     .collect(Collectors.toList());
             // false per indicare il ritorno
             alunniPerFermataRitorno.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), false)));
+            partenzaScuola = lineaDTO.getPartenzaScuola();
         }
 
         List<String> tmp;

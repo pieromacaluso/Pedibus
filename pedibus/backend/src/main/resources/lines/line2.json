@@ -2,6 +2,8 @@
   "id": "linea2",
   "nome": "Linea 2",
   "adminMast": "applicazioni.internet.mmap@gmail.com",
+  "arrivoScuola": "8:15",
+  "partenzaScuola": "13:00",
   "andata": [
     {
       "id": 101,
@@ -20,14 +22,14 @@
     },
     {
       "id": 104,
-      "nome": "Scuola",
+      "nome": "Rivotti",
       "orario": "08:00"
     }
   ],
   "ritorno": [
     {
       "id": 105,
-      "nome": "Scuola",
+      "nome": "Rivotti",
       "orario": "13:10"
     },
     {
