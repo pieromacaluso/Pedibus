@@ -36,7 +36,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     // this.connect();
     this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
       if (prenotazione.linea && prenotazione.verso && prenotazione.data) {
-
+        this.prenotazione = null;
         // Disiscrizione dalla Broker handledSub precedente se esiste
         if (this.handledSub) {
           this.handledSub.unsubscribe();

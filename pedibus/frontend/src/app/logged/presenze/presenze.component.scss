@@ -84,11 +84,22 @@
 
   margin: 0 0 0 94px;
 }
+.prenotazioni-disabled {
+  opacity: 0.3;
+  pointer-events:none;
+}
 
 .prenotazioni-mobile {
   border-color: mat-color($pedibus-theme-primary, default);
   border-style: solid;
   border-width: 0 0 0 2px;
+  padding: 8px;
+}
+.noprenotazioni {
+  padding: 8px;
+}
+
+.noprenotazioni-mobile {
   padding: 8px;
 }
 

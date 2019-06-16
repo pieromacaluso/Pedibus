@@ -67,7 +67,6 @@ export class ApiService {
       verso: idVerso
     };
 
-    // TODO: problemi, ne manda due e non so perchè
     console.log('POSTTT:' + nuovaPrenotazione.cfChild + ' ' + nuovaPrenotazione.idFermata + ' ' + nuovaPrenotazione.verso);
 
     return this.httpClient

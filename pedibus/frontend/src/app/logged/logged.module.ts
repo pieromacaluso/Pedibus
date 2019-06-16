@@ -8,7 +8,7 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatNativeDateModule, MatProgressBarModule,
+  MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule,
   MatSelectModule
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -33,7 +33,8 @@ import {AdminBookDialogComponent} from './presenze/lista-prenotazioni/admin-book
     FlexLayoutModule,
     MatProgressBarModule,
     MatDialogModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinnerModule
   ],
   exports: [
   ],

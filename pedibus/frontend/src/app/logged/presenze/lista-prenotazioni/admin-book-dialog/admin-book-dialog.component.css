@@ -1,0 +1,8 @@
+@import "../lista-prenotazioni.component.scss";
+
+.progress-bar-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
