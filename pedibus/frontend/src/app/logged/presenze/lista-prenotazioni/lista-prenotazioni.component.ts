@@ -26,6 +26,8 @@ export class ListaPrenotazioniComponent implements OnInit {
   prenotazione: PrenotazioneRequest;
   countLoading: any = 0;
   private notReserved: AlunnoNotReserved[];
+  private arrivoScuola: string;
+  private partenzaScuola: string;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
   private handledSub: Subscription;
   private openedDialog: any = 0;
@@ -79,6 +81,8 @@ export class ListaPrenotazioniComponent implements OnInit {
           this.reservations = this.prenotazione.verso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
           this.notReserved = rese.childrenNotReserved;
           this.modEnabled = rese.canModify;
+          this.arrivoScuola = rese.arrivoScuola;
+          this.partenzaScuola = rese.partenzaScuola;
           this.countLoading--;
         }, (error) => console.error(error));
       }
@@ -91,7 +95,7 @@ export class ListaPrenotazioniComponent implements OnInit {
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 
-  isAdmin(){
+  isAdmin() {
     return this.authService.isAdmin();
   }
 
@@ -112,9 +116,11 @@ export class ListaPrenotazioniComponent implements OnInit {
       });
     }
   }
+
   canModify() {
     return this.authService.isAdmin() && this.isModifiable() && this.modEnabled;
   }
+
   showLoading() {
     return this.countLoading > 0 || !this.rxStompService.connected();
   }
