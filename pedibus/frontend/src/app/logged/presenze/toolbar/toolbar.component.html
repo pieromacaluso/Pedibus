@@ -50,9 +50,9 @@
       </mat-form-field>
       <!-- DATEPICKER -->
       <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
-        <input matInput (dateChange)="emitRequest()"  [matDatepicker]="picker" placeholder="Seleziona data" [(ngModel)]="richiesta.data">
+        <input matInput (dateChange)="emitRequest()" [matDatepicker]="picker" placeholder="Seleziona data" [(ngModel)]="richiesta.data">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker  #picker></mat-datepicker>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
     </mat-card-header>
     <div fxFlex="10%" fxFlex.lt-sm="0%" fxLayoutAlign="space-around center" fxHide.lt-sm="">

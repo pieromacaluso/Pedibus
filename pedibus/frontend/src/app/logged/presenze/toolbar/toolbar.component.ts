@@ -16,7 +16,7 @@ export class ToolbarComponent implements OnInit {
 
   constructor(private syncService: SyncService) {
     this.richiesta = {linea: 'linea1', verso: 'Andata', data: new Date()};
-    this.richiesta.linea.split('linea')
+    this.richiesta.linea.split('linea');
     this.emitRequest();
   }
 
