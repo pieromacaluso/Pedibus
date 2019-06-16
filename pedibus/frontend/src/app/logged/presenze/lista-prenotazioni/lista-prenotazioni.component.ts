@@ -111,7 +111,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   canModify() {
-    return this.authService.isAdmin() && this.isModifiable() && this.resource.canModify;
+    return this.authService.isAdmin() && this.resource.canModify;
   }
 
   showLoading() {
