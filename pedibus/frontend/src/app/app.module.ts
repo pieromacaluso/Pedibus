@@ -11,7 +11,7 @@ import {
   MatSnackBarModule,
   MatTabsModule,
   MatToolbarModule,
-  MatChipsModule
+  MatChipsModule, MAT_DATE_LOCALE
 } from '@angular/material';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -47,6 +47,8 @@ import {LoggedModule} from './logged/logged.module';
     MatCardModule
   ],
   providers: [DatePipe,
+
+    {provide: MAT_DATE_LOCALE, useValue: 'it-IT'},
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpExceptionsInterceptor,
