@@ -1,6 +1,16 @@
-export interface LineReservation {
-  alunniPerFermataAndata: AlunniPerFermata[];
-  alunniPerFermataRitorno: AlunniPerFermata[];
+// export interface LineReservation {
+//   alunniPerFermataAndata: AlunniPerFermata[];
+//   alunniPerFermataRitorno: AlunniPerFermata[];
+//   arrivoScuola: string;
+//   partenzaScuola: string;
+//   childrenNotReserved: AlunnoNotReserved[];
+//   canModify: boolean;
+// }
+
+export interface LineReservationVerso {
+  alunniPerFermata: AlunniPerFermata[];
+  arrivoScuola: string;
+  partenzaScuola: string;
   childrenNotReserved: AlunnoNotReserved[];
   canModify: boolean;
 }

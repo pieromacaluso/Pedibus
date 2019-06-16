@@ -1,5 +1,5 @@
 import {Component, Inject, Injectable, Input, OnInit, SimpleChange} from '@angular/core';
-import {AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
+import {LineReservationVerso, AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
@@ -20,17 +20,15 @@ import {$} from 'protractor';
 })
 export class ListaPrenotazioniComponent implements OnInit {
 
-  reservations: AlunniPerFermata[];
+  resource: LineReservationVerso;
 
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
   countLoading: any = 0;
-  private notReserved: AlunnoNotReserved[];
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
   private handledSub: Subscription;
   private openedDialog: any = 0;
   private resSub: Subscription;
-  private modEnabled: boolean;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -48,7 +46,7 @@ export class ListaPrenotazioniComponent implements OnInit {
           .subscribe((message: Message) => {
             const res = JSON.parse(message.body);
             console.log(res);
-            const al = this.reservations.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
+            const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
             al.presoInCarico = res.isSet;
           });
 
@@ -60,7 +58,7 @@ export class ListaPrenotazioniComponent implements OnInit {
         this.resSub = this.rxStompService.watch('/reservation' + this.pathSub(prenotazione))
           .subscribe((message: Message) => {
             const res = JSON.parse(message.body);
-            const oldAlunno = this.notReserved.find(a => a.codiceFiscale === res.cfChild);
+            const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
             const newAlunno: Alunno = {
               codiceFiscale: oldAlunno.codiceFiscale,
               name: oldAlunno.name,
@@ -69,16 +67,14 @@ export class ListaPrenotazioniComponent implements OnInit {
               arrivatoScuola: false,
               update: false
             };
-            const al = this.reservations.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
+            const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
             this.deleteNotReserved(oldAlunno);
             this.togglePresenza(res.idFermata, newAlunno);
           });
         this.prenotazione = prenotazione;
         this.countLoading++;
         this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione).subscribe((rese) => {
-          this.reservations = this.prenotazione.verso === 'Andata' ? rese.alunniPerFermataAndata : rese.alunniPerFermataRitorno;
-          this.notReserved = rese.childrenNotReserved;
-          this.modEnabled = rese.canModify;
+          this.resource = rese;
           this.countLoading--;
         }, (error) => console.error(error));
       }
@@ -91,7 +87,7 @@ export class ListaPrenotazioniComponent implements OnInit {
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 
-  isAdmin(){
+  isAdmin() {
     return this.authService.isAdmin();
   }
 
@@ -104,7 +100,7 @@ export class ListaPrenotazioniComponent implements OnInit {
         hasBackdrop: true,
         data: {
           alunno: alu,
-          res: this.reservations,
+          res: this.resource.alunniPerFermata,
           data: this.prenotazione.data,
           verso: this.prenotazione.verso,
           linea: this.prenotazione.linea
@@ -112,9 +108,11 @@ export class ListaPrenotazioniComponent implements OnInit {
       });
     }
   }
+
   canModify() {
-    return this.authService.isAdmin() && this.isModifiable() && this.modEnabled;
+    return this.authService.isAdmin() && this.isModifiable() && this.resource.canModify;
   }
+
   showLoading() {
     return this.countLoading > 0 || !this.rxStompService.connected();
   }
@@ -125,7 +123,7 @@ export class ListaPrenotazioniComponent implements OnInit {
 
   togglePresenza(id: number, alunno: Alunno) {
     if (this.canModify()) {
-      const al = this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
+      const al = this.resource.alunniPerFermata.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
       al.update = true;
       this.apiService.postPresenza(al, this.prenotazione, !al.presoInCarico).subscribe((rese) => {
         console.log('presenza subscribe emitted something');
@@ -138,7 +136,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   presente(id: number, alunno: Alunno): boolean {
-    return this.reservations.find(p => p.fermata.id === id).alunni.find(a => a === alunno).presoInCarico;
+    return this.resource.alunniPerFermata.find(p => p.fermata.id === id).alunni.find(a => a === alunno).presoInCarico;
   }
 
   sortedAlunni(alu: Alunno[]) {
@@ -157,9 +155,9 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   deleteNotReserved(al: AlunnoNotReserved) {
-    const index: number = this.notReserved.indexOf(al);
+    const index: number = this.resource.childrenNotReserved.indexOf(al);
     if (index !== -1) {
-      this.notReserved.splice(index, 1);
+      this.resource.childrenNotReserved.splice(index, 1);
     }
   }
 
