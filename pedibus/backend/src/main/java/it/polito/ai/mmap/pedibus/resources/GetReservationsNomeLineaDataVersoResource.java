@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 @Data
 public class GetReservationsNomeLineaDataVersoResource {
     List<FermataDTOAlunni> alunniPerFermata;
-    String arrivoScuola;
-    String partenzaScuola;
+    String orarioScuola;
     List<ChildDTO> childrenNotReserved;
     Boolean canModify;
 
@@ -29,11 +28,14 @@ public class GetReservationsNomeLineaDataVersoResource {
     public GetReservationsNomeLineaDataVersoResource(String nomeLina, Date data, LineeService lineeService, UserService userService, ReservationService reservationService, boolean verso, boolean canModify) {
         // Ordinati temporalmente, quindi seguendo l'andamento del percorso
         ArrayList<FermataDTO> fermate;
-        if (verso)
+        if (verso) {
             fermate = lineeService.getLineById(nomeLina).getAndata();
-        else
+            this.orarioScuola = lineeService.getArrivoScuola();
+        }else {
             fermate = lineeService.getLineById(nomeLina).getRitorno();
+            this.orarioScuola = lineeService.getPartenzaScuola();
 
+        }
         alunniPerFermata = fermate.stream()
                 .map(FermataDTOAlunni::new)
                 .collect(Collectors.toList());
@@ -49,8 +51,6 @@ public class GetReservationsNomeLineaDataVersoResource {
         childrenNotReserved = userService.getAllChildrenById(tmp);
 
         this.canModify = canModify;
-        this.arrivoScuola = lineeService.getArrivoScuola();
-        this.partenzaScuola = lineeService.getPartenzaScuola();
     }
 
     @Data
