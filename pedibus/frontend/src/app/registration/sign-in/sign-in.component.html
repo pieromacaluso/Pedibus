@@ -1,25 +1,25 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
   <mat-icon aria-hidden="false" aria-label="Example home icon" color="primary" class="main-image">vpn_key</mat-icon>
   <div class="mat-headline">Sign In</div>
-  <form (ngSubmit)="submit($event)">
+  <form  [formGroup]="form" (ngSubmit)="submit()">
+    {{form.valid}}<br>
     <mat-form-field ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
-      <input type="email" matInput id="email" name="email" placeholder="Email" required email [(ngModel)]="model.email"
-             #email="ngModel">
-      <mat-error *ngIf="email.invalid && email.touched">Email non valida</mat-error>
+      <input type="email" matInput id="email" name="email" placeholder="Email" required email formControlName="email">
+      <mat-error *ngIf="form.controls['email'].hasError('required')">Email obbligatoria</mat-error>
+      <mat-error *ngIf="form.controls['email'].hasError('email')">Email non valida</mat-error>
     </mat-form-field>
     <br>
     <mat-form-field ngClass.lt-sm="form-field-mobile" ngClass.gt-sm="form-field">
-      <input type="password" id="password" name="password" matInput placeholder="Password" required
-             pattern="^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$"
-             [(ngModel)]="model.password" #password="ngModel">
-      <mat-error *ngIf="password.invalid && password.touched">Password non valida</mat-error>
+      <input type="password" id="password" name="password" matInput placeholder="Password" required formControlName="password">
+      <mat-error *ngIf="form.controls['password'].hasError('required')">Password obbligatoria</mat-error>
+      <mat-error *ngIf="form.controls['password'].hasError('pattern')">Password non valida</mat-error>
     </mat-form-field>
     <br>
     <section class="mat-typography forgot">
       <a [routerLink]="forgotLink">Password dimenticata?</a>
     </section>
     <button type="reset" mat-button>Reset</button>
-    <button type="submit" mat-raised-button color="primary">Login</button>
+    <button type="submit" [disabled]="!form.valid" mat-raised-button color="primary">Login</button>
     <mat-error *ngIf="serverErrors" [innerHTML]="serverErrors">{{serverErrors}}</mat-error>
   </form>
 </mat-card>

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {SignInModel, SignUpModel} from '../models';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
+import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-sign-in',
@@ -10,35 +11,33 @@ import {Router} from '@angular/router';
 })
 export class SignInComponent implements OnInit {
 
-  model: SignInModel;
   serverErrors: string;
   forgotLink = '../recover';
+  form: FormGroup;
 
   constructor(private auth: AuthService, private router: Router) {
-    this.model = {email: '', password: ''};
+    this.form = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required,
+        Validators.pattern(/^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\S+$).{8,}$/)])
+    });
   }
 
   ngOnInit() {
   }
 
-  submit(event) {
-    if (event.isTrusted) {
-      let formValid = true;
-      for (let count = 0; count < 2; count++) {
-        if (!event.target[count].validity.valid) {
-          formValid = false;
-        }
-      }
-      if (formValid) {
-        this.auth.signIn(this.model).subscribe(response => {
-          console.log('called');
-          console.log('response: ' + response);
-          this.router.navigate(['presenze']);
-        }, (error) => {
-          this.serverErrors = error.errorMessage;
-        });
-      }
+  submit() {
+    if (this.form.valid) {
+      const model = {email: this.form.controls.email.value, password:  this.form.controls.password.value};
+      this.auth.signIn(model).subscribe(response => {
+        console.log('called');
+        console.log('response: ' + response);
+        this.router.navigate(['presenze']);
+      }, (error) => {
+        this.serverErrors = error.errorMessage;
+      });
     }
-  }
 
+
+  }
 }
