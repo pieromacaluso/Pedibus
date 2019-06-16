@@ -174,6 +174,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     today.setMinutes(0);
     today.setSeconds(0);
     today.setMilliseconds(0);
-    return preno.getTime() >= today.getTime();
+    // console.log(today, preno);
+    return preno.getTime() === today.getTime();
   }
 }
