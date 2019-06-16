@@ -36,7 +36,8 @@
       <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
         <mat-label>Seleziona linea</mat-label>
         <mat-select (selectionChange)="emitRequest()" [(ngModel)]="richiesta.linea">
-          <mat-option *ngFor="let linea of linee; let i = index" [value]="linea">{{lineeNomi[i]}}
+          <mat-option *ngFor="let linea of linee; let i = index" [value]="linea">
+            <p *ngIf="linee !== null">{{lineeNomi[i]}}</p>
           </mat-option>
         </mat-select>
       </mat-form-field>

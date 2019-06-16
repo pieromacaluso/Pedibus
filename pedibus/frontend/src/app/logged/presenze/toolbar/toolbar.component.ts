@@ -1,6 +1,7 @@
 import {Component, Input, OnInit, Output} from '@angular/core';
 import {PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-toolbar',
@@ -9,8 +10,8 @@ import {SyncService} from '../sync.service';
 })
 export class ToolbarComponent implements OnInit {
 
-  @Input() linee;
-  @Input() lineeNomi;
+  @Input() linee: Observable<string[]>;
+  @Input() lineeNomi: Observable<string[]>;
   richiesta: PrenotazioneRequest;
 
 

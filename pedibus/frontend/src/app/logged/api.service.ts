@@ -5,6 +5,7 @@ import {Alunno, LineReservationVerso, NotReservation, NuovaPrenotazione, Prenota
 import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import {map, publishReplay, share, shareReplay} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,10 +17,11 @@ export class ApiService {
   constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
   }
 
-  getLinee() {
+  getLinee(): Observable<string[]> {
     return this.httpClient.get<string[]>(this.baseURL + 'lines');
   }
-  getLineeNomi() {
+
+  getLineeNomi(): Observable<string[]> {
     return this.httpClient.get<string[]>(this.baseURL + 'lines/name');
   }
 
@@ -52,7 +54,8 @@ export class ApiService {
   versoToInt(verso: string) {
     return verso === 'Andata' ? 1 : 0;
   }
-  dateToString(date: Date){
+
+  dateToString(date: Date) {
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }
 
