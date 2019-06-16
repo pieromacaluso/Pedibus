@@ -9,10 +9,10 @@ services:
       - 443:443
     depends_on:
       - app
-    networks:
-      pedibus-network:
-        aliases:
-          - frontend
+    #networks:
+    #  pedibus-network:
+    #    aliases:
+    #      - frontend
 
   mongodb:
     image: mongo
@@ -25,10 +25,10 @@ services:
     ports:
       - 27017:27017
     command: mongod --smallfiles --logpath=/dev/null # --quiet
-    networks:
-      pedibus-network:
-        aliases:
-          - mongo
+    #networks:
+    #  pedibus-network:
+    #    aliases:
+    #      - frontend
 
   app:
     container_name: app
@@ -44,9 +44,9 @@ services:
       
     depends_on:
       - mongodb
-    networks:
-      pedibus-network:
-        aliases:
-          - app
-networks:
-  pedibus-network:
+    #networks:
+    #  pedibus-network:
+    #    aliases:
+    #      - frontend
+#networks:
+#  pedibus-network:

@@ -48,6 +48,8 @@ public class GetReservationsNomeLineaDataResource {
         alunniPerFermataRitorno.forEach((f) -> f.setAlunni(reservationService.findAlunniFermata(data, f.getFermata().getId(), false)));
 
         this.canModify = canModify;
+        this.arrivoScuola=lineeService.getArrivoScuola();
+        this.partenzaScuola=lineeService.getPartenzaScuola();
     }
 
     public GetReservationsNomeLineaDataResource(String nomeLina, Date data, LineeService lineeService, UserService userService, ReservationService reservationService, boolean verso, boolean canModify) {
@@ -76,6 +78,8 @@ public class GetReservationsNomeLineaDataResource {
         childrenNotReserved=userService.getAllChildrenById(tmp);
 
         this.canModify = canModify;
+        this.arrivoScuola=lineeService.getArrivoScuola();
+        this.partenzaScuola=lineeService.getPartenzaScuola();
     }
 
     @Data

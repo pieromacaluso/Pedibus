@@ -13,8 +13,10 @@ import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
 import it.polito.ai.mmap.pedibus.repository.FermataRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;
 import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
+import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Data
 public class LineeService {
 
     @Autowired
@@ -32,6 +35,11 @@ public class LineeService {
     PrenotazioneRepository prenotazioneRepository;
     @Autowired
     UserService userService;
+
+    @Value("${arrivoScuola}")
+    String arrivoScuola;
+    @Value("${partenzaScuola}")
+    String partenzaScuola;
 
     /**
      * Salva lista Fermate sul DB
