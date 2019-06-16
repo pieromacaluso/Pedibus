@@ -16,6 +16,8 @@ Ad oggi (pre consegna es5):
 - Un genitore ha solo il ruolo USER  
 - Tutti i nonni hanno ruolo ADMIN per una linea
 - Quando aggiungiamo attraverso endpoint il ruolo ADMIN ha un account lo sommiamo a quello di USER
+- I vari ADMIN possono effettuare/modificare una prenotazione solo nel giorno corrente e per la linea di cui è amministratore
+- Il system admin può effettuare/modificare una prenotazione quando vuole
 
 ## User breakdown
 System admin:   
