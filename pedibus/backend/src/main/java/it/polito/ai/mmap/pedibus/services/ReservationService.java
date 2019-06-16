@@ -222,10 +222,11 @@ public class ReservationService {
      * @param verso
      * @param data
      * @param cfChild
+     * @param nomeLinea
      * @throws Exception
      */
-    public Integer manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet) throws Exception {
-        if (MongoZonedDateTime.isToday(data)) {
+    public Integer manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String nomeLinea) throws Exception {
+        if (canModify(nomeLinea, data)) {
             PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
             PrenotazioneDTO pre = new PrenotazioneDTO(prenotazioneEntity);
             pre.setPresoInCarico(isSet);
@@ -238,10 +239,14 @@ public class ReservationService {
     public boolean canModify(String nomeLinea, Date date) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean canModify = false;
-        if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")) && MongoZonedDateTime.isToday(date))
+        if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
             return true;
-        else
-            return lineeService.getLineById(nomeLinea).getAdminList().contains(principal.getUsername());
+        else {
+            if (lineeService.getLineById(nomeLinea).getAdminList().contains(principal.getUsername()) && MongoZonedDateTime.isToday(date)){
+                return true;
+            } else return false;
+
+        }
     }
 
     /**
@@ -250,10 +255,11 @@ public class ReservationService {
      * @param verso
      * @param data
      * @param cfChild
+     * @param nomeLinea
      * @throws Exception
      */
-    public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet) throws Exception {
-        if (MongoZonedDateTime.isToday(data)) {
+    public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String nomeLinea) throws Exception {
+        if (canModify(nomeLinea, data)) {
             PrenotazioneEntity prenotazioneEntity = getChildReservation(verso, data, cfChild);
             prenotazioneEntity.setArrivatoScuola(isSet);
             prenotazioneRepository.save(prenotazioneEntity);

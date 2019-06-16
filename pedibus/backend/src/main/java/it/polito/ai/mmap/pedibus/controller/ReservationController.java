@@ -169,7 +169,7 @@ public class ReservationController {
     public void manageHandled(@PathVariable("nomeLinea") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
         Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
 
-        Integer idFermata = reservationService.manageHandled(verso, date, cfChild, isSet);
+        Integer idFermata = reservationService.manageHandled(verso, date, cfChild, isSet, nomeLinea);
         if (idFermata != -1) {
             simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + nomeLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, idFermata));
             logger.info("/handled/" + data + "/" + nomeLinea + "/" + verso);
@@ -187,10 +187,10 @@ public class ReservationController {
      * @param isSet   true per indicare che è arrivato, false per annullare
      */
 
-    @PostMapping("/reservations/arrived/{verso}/{data}/{isSet}")
-    public void manageArrived(@PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
+    @PostMapping("/reservations/arrived/{nomeLinea}/{verso}/{data}/{isSet}")
+    public void manageArrived(@PathVariable("verso") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        if (reservationService.manageArrived(verso, date, cfChild, isSet))
+        if (reservationService.manageArrived(verso, date, cfChild, isSet, nomeLinea))
             logger.info("Child " + cfChild + " is arrived");
     }
 
