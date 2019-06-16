@@ -16,6 +16,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,11 @@ public class ReservationController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Value("${arrivatoScuola}")
+    String arrivoScuola;
+
+    @Value("${partenzaScuola}")
+    String partenzaScuola;
 
     /**
      * Restituisce un oggetto JSON contenente due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
@@ -52,7 +58,10 @@ public class ReservationController {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
-        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, canModify);
+        GetReservationsNomeLineaDataResource getReservationsNomeLineaDataResource = new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, canModify);
+        getReservationsNomeLineaDataResource.setArrivoScuola(arrivoScuola);
+        getReservationsNomeLineaDataResource.setPartenzaScuola(partenzaScuola);
+        return getReservationsNomeLineaDataResource;
     }
 
     /**
@@ -69,7 +78,10 @@ public class ReservationController {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + "/" + verso + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
-        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
+        GetReservationsNomeLineaDataResource getReservationsNomeLineaDataResource =  new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
+        getReservationsNomeLineaDataResource.setArrivoScuola(arrivoScuola);
+        getReservationsNomeLineaDataResource.setPartenzaScuola(partenzaScuola);
+        return getReservationsNomeLineaDataResource;
     }
 
     /**

@@ -24,11 +24,7 @@ public class GetReservationsNomeLineaDataResource {
 
     List<FermataDTOAlunni> alunniPerFermataAndata;
     List<FermataDTOAlunni> alunniPerFermataRitorno;
-
-    @Value("${arrivatoScuola}")
     String arrivoScuola;
-
-    @Value("${partenzaScuola}")
     String partenzaScuola;
     List<ChildDTO> childrenNotReserved;
     Boolean canModify;
