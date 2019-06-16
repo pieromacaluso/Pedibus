@@ -16,12 +16,12 @@ export class ToolbarComponent implements OnInit {
 
 
   constructor(private syncService: SyncService) {
+    // TODO delete se non fixiamo
     // this.linee.subscribe((lineArr) => {
-    //     this.richiesta = {linea: lineArr[0], verso: 'Andata', data: new Date()};
-    //     this.richiesta.linea.split('linea');
-    //     this.emitRequest();
-    //   }, (error => console.error(error)));
-
+    //   this.richiesta = {linea: lineArr[0], verso: 'Andata', data: new Date()};
+    //   this.richiesta.linea.split('linea');
+    //   this.emitRequest();
+    // }, (error => console.error(error)));
     this.richiesta = {linea: 'linea1', verso: 'Andata', data: new Date()};
     this.richiesta.linea.split('linea');
     this.emitRequest();
