@@ -45,7 +45,6 @@ export class AuthService {
   }
 
   private setSession(authResult) {
-    // TODO: aggiunto .jwtToken, da verificare che ci sia ancora in backend a fine es5
     console.log(JSON.stringify(jwt_decode(authResult.token)));
     const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
     console.log('expires at: ' + expiresAt);
