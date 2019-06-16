@@ -3,7 +3,7 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
 
   <div class="container"
-       *ngIf="(this.reservations); then thenBlock; else elseBlock"
+       *ngIf="(this.resource.alunniPerFermata); then thenBlock; else elseBlock"
        role="list">
   </div>
 
@@ -11,7 +11,7 @@
 
 
     <div class="card-stops"
-         *ngFor="let res of reservations; let first = first; let last = last"
+         *ngFor="let res of resource.alunniPerFermata; let first = first; let last = last"
          [ngClass]="{ first: first, last: last }">
 
       <!--Scuola ritorno-->
