@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PresenzeComponent } from './presenze/presenze.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {PresenzeComponent} from './presenze/presenze.component';
 import {
   MatButtonModule,
   MatCardModule,
@@ -12,13 +12,27 @@ import {
   MatSelectModule
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { ToolbarComponent } from './presenze/toolbar/toolbar.component';
-import { ListaPrenotazioniComponent } from './presenze/lista-prenotazioni/lista-prenotazioni.component';
+import {ToolbarComponent} from './presenze/toolbar/toolbar.component';
+import {ListaPrenotazioniComponent} from './presenze/lista-prenotazioni/lista-prenotazioni.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {AdminBookDialogComponent} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
+import {FortmatLinePipe} from './presenze/toolbar/fortmat-line.pipe';
+import {DisponibilitaComponent} from './disponibilita/disponibilita.component';
+import {TurniComponent} from './turni/turni.component';
+import {ComunicazioniComponent} from './comunicazioni/comunicazioni.component';
+import {NotificheComponent} from './notifiche/notifiche.component';
 
 @NgModule({
-  declarations: [PresenzeComponent, ToolbarComponent, ListaPrenotazioniComponent, AdminBookDialogComponent],
+  declarations: [
+    PresenzeComponent,
+    ToolbarComponent,
+    ListaPrenotazioniComponent,
+    AdminBookDialogComponent,
+    FortmatLinePipe,
+    DisponibilitaComponent,
+    TurniComponent,
+    ComunicazioniComponent,
+    NotificheComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -36,8 +50,8 @@ import {AdminBookDialogComponent} from './presenze/lista-prenotazioni/admin-book
     ReactiveFormsModule,
     MatProgressSpinnerModule
   ],
-  exports: [
-  ],
+  exports: [],
   entryComponents: [AdminBookDialogComponent]
 })
-export class LoggedModule { }
+export class LoggedModule {
+}

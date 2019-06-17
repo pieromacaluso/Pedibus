@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {Observable} from 'rxjs';
@@ -8,20 +8,19 @@ import {Observable} from 'rxjs';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent implements OnChanges {
 
-  @Input() linee: Observable<string[]>;
-  @Input() lineeNomi: Observable<string[]>;
+  @Input() linee: string[];
   richiesta: PrenotazioneRequest;
 
 
   constructor(private syncService: SyncService) {
-    this.richiesta = {linea: 'linea1', verso: 'Andata', data: new Date()};
-    this.richiesta.linea.split('linea');
-    this.emitRequest();
   }
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges) {
+    this.richiesta = {linea: this.linee[0], verso: 'Andata', data: new Date()};
+    this.richiesta.linea.split('linea');
+    this.emitRequest();
   }
 
   emitRequest() {
