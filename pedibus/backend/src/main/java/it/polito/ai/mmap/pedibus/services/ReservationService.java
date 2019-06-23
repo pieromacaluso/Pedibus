@@ -105,15 +105,17 @@ public class ReservationService {
     }
 
     /**
-     * PrenotazioneEntity da ReservationID
+     * Restituisce la prenotazione controllando che nomeLinea e Data corrispondano a quelli del reservation_id
      *
-     * @param reservationId ReservationID
-     * @return PrenotazioneEntity
+     * @param nomeLinea
+     * @param data
+     * @param reservationId
+     * @return
      */
     public PrenotazioneDTO getReservationCheck(String nomeLinea, Date data, ObjectId reservationId) {
         Optional<PrenotazioneEntity> checkPrenotazione = prenotazioneRepository.findById(reservationId);
         if (checkPrenotazione.isPresent()) {
-             PrenotazioneEntity prenotazioneEntity = checkPrenotazione.get();
+            PrenotazioneEntity prenotazioneEntity = checkPrenotazione.get();
             if (lineeService.getLineById(nomeLinea).getId().equals(prenotazioneEntity.getIdLinea()) && data.equals(prenotazioneEntity.getData()))
                 return new PrenotazioneDTO(prenotazioneEntity);
             else
