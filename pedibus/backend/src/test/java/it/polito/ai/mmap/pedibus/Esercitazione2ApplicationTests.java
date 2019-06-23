@@ -354,8 +354,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alunniPerFermataAndata").isNotEmpty())
-                .andExpect(jsonPath("$.alunniPerFermataRitorno").isEmpty());
+                .andExpect(jsonPath("$.alunniPerFermata").isNotEmpty());
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
@@ -419,8 +418,7 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alunniPerFermataAndata").isEmpty())
-                .andExpect(jsonPath("$.alunniPerFermataRitorno").isNotEmpty());
+                .andExpect(jsonPath("$.alunniPerFermata").isNotEmpty());
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");

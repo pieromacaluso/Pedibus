@@ -17,6 +17,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,10 +110,14 @@ public class ReservationService {
      * @param reservationId ReservationID
      * @return PrenotazioneEntity
      */
-    public PrenotazioneEntity getReservationFromId(ObjectId reservationId) {
-        Optional<PrenotazioneEntity> prenotazione = prenotazioneRepository.findById(reservationId);
-        if (prenotazione.isPresent()) {
-            return prenotazione.get();
+    public PrenotazioneDTO getReservationCheck(String nomeLinea, Date data, ObjectId reservationId) {
+        Optional<PrenotazioneEntity> checkPrenotazione = prenotazioneRepository.findById(reservationId);
+        if (checkPrenotazione.isPresent()) {
+             PrenotazioneEntity prenotazioneEntity = checkPrenotazione.get();
+            if (lineeService.getLineById(nomeLinea).getId().equals(prenotazioneEntity.getIdLinea()) && data.equals(prenotazioneEntity.getData()))
+                return new PrenotazioneDTO(prenotazioneEntity);
+            else
+                throw new PrenotazioneNotFoundException("Prenotazione " + reservationId + " non trovata");
         } else {
             throw new PrenotazioneNotFoundException("Prenotazione " + reservationId + " non trovata");
         }
@@ -137,15 +142,6 @@ public class ReservationService {
         }
     }
 
-    /**
-     * PrenotazioneDTO da ReservationId per controller
-     *
-     * @param reservationId
-     * @return
-     */
-    public PrenotazioneDTO getPrenotazioneDTO(ObjectId reservationId) {
-        return new PrenotazioneDTO(getReservationFromId(reservationId));
-    }
 
     /**
      * Elimina la prenotazione indicata dall'objectId controllando:
@@ -158,15 +154,21 @@ public class ReservationService {
      * @param reservationId: Id Prenotazione
      */
     public void deletePrenotazione(String nomeLinea, Date data, ObjectId reservationId) {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        PrenotazioneEntity prenotazione = getReservationFromId(reservationId);
-        LineaDTO lineaDTO = lineeService.getLineById(prenotazione.getIdLinea());
-        FermataDTO fermataDTO = lineeService.getFermataById(prenotazione.getIdFermata());
-        if (checkTime(prenotazione.getData(), fermataDTO) && prenotazione.getData().equals(data) && lineeService.getLineById(prenotazione.getIdLinea()).getId().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
-            prenotazioneRepository.delete(prenotazione);
+        Optional<PrenotazioneEntity> checkPrenotazione = prenotazioneRepository.findById(reservationId);
+        if (checkPrenotazione.isPresent()) {
+            PrenotazioneEntity prenotazione = checkPrenotazione.get();
+            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            LineaDTO lineaDTO = lineeService.getLineById(prenotazione.getIdLinea());
+            FermataDTO fermataDTO = lineeService.getFermataById(prenotazione.getIdFermata());
+            if (checkTime(prenotazione.getData(), fermataDTO) && prenotazione.getData().equals(data) && lineeService.getLineById(prenotazione.getIdLinea()).getId().equals(nomeLinea) && (principal.getChildrenList().contains(prenotazione.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
+                prenotazioneRepository.delete(prenotazione);
+            } else {
+                throw new IllegalArgumentException("Errore in cancellazione prenotazione");
+            }
         } else {
             throw new IllegalArgumentException("Errore in cancellazione prenotazione");
         }
+
     }
 
     private boolean checkTime(Date data, FermataDTO fermataDTO) {
@@ -237,11 +239,10 @@ public class ReservationService {
 
     public boolean canModify(String nomeLinea, Date date) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean canModify = false;
         if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
             return true;
         else {
-            if (lineeService.getLineById(nomeLinea).getAdminList().contains(principal.getUsername()) && MongoZonedDateTime.isToday(date)){
+            if (lineeService.getLineById(nomeLinea).getAdminList().contains(principal.getUsername()) && MongoZonedDateTime.isToday(date)) {
                 return true;
             } else return false;
 

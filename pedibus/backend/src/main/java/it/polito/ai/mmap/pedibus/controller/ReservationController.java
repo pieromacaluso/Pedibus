@@ -32,6 +32,8 @@ public class ReservationController {
     ReservationService reservationService;
     @Autowired
     UserService userService;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -51,8 +53,7 @@ public class ReservationController {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
-        GetReservationsNomeLineaDataResource getReservationsNomeLineaDataResource = new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, canModify);
-        return getReservationsNomeLineaDataResource;
+        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, canModify);
     }
 
     /**
@@ -69,7 +70,7 @@ public class ReservationController {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + "/" + verso + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
-        return   new GetReservationsNomeLineaDataVersoResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
+        return new GetReservationsNomeLineaDataVersoResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
     }
 
     /**
@@ -82,7 +83,7 @@ public class ReservationController {
 
     @GetMapping("/notreservations/{data}/{verso}")
     public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data, @PathVariable("verso") boolean verso) {
-        logger.info("GET /NotReservations/" + data + " è stato contattato");
+        logger.info("GET /notreservations/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         return new GetChildrenNotReservedLineaDataResource(dataFormatted, verso, reservationService, userService);
     }
@@ -98,13 +99,12 @@ public class ReservationController {
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        logger.info("Nuova Prenotazione" + prenotazioneResource.toString());
+        logger.info("Nuova Prenotazione " + prenotazioneResource.toString());
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
         String idPrenotazione = reservationService.addPrenotazione(prenotazioneDTO);
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + nomeLinea + "/" + ((prenotazioneResource.getVerso()) ? 1 : 0), prenotazioneResource);
-        return mapper.writeValueAsString(idPrenotazione);
+        return objectMapper.writeValueAsString(idPrenotazione);
     }
 
 
@@ -119,6 +119,7 @@ public class ReservationController {
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        logger.info("Aggiornamento prenotazione " + reservationId);
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
         reservationService.updatePrenotazione(prenotazioneDTO, reservationId);
@@ -133,6 +134,7 @@ public class ReservationController {
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        logger.info("Eliminazione prenotazione" + reservationId);
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         reservationService.deletePrenotazione(nomeLinea, dataFormatted, reservationId);
     }
@@ -147,13 +149,9 @@ public class ReservationController {
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        logger.info("/reservations/{nome_linea}/{data}/{reservation_id} è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneEntity checkPren = reservationService.getReservationFromId(reservationId);
-
-        if (lineeService.getLineById(nomeLinea).getId().equals(checkPren.getIdLinea()) && dataFormatted.equals(checkPren.getData()))
-            return new PrenotazioneDTO(checkPren);
-        else
-            throw new IllegalArgumentException("Prenotazione non esistente");
+        return reservationService.getReservationCheck(nomeLinea, dataFormatted, reservationId);
     }
 
     /**
