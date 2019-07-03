@@ -2,7 +2,8 @@ import {Component, Inject} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {AlunniPerFermata, Alunno, AlunnoNotReserved, NuovaPrenotazione} from '../../../line-details';
 import {SignInModel} from '../../../../registration/models';
-import {FormControl, Validators} from '@angular/forms';
+import {FormControl, FormBuilder, Validators} from '@angular/forms';
+
 import {ApiService} from '../../../api.service';
 import {first} from 'rxjs/operators';
 
@@ -22,12 +23,16 @@ export interface DialogData {
 })
 export class AdminBookDialogComponent {
 
-  formControl = new FormControl('', [Validators.required]);
+
+  private prenotazioneForm = this.fb.group({
+    fermataSelect: ['', [Validators.required]]
+  });
 
   constructor(
     public dialogRef: MatDialogRef<AdminBookDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private apiService: ApiService) {
+    private apiService: ApiService,
+    private fb: FormBuilder) {
   }
 
   onNoClick(): void {
@@ -38,8 +43,8 @@ export class AdminBookDialogComponent {
 
   submit() {
     console.log('submit function called');
-    if (this.formControl.valid) {
-      this.data.fermataId = this.formControl.value;
+    if (this.prenotazioneForm.controls.fermataSelect.valid) {
+      this.data.fermataId = this.prenotazioneForm.controls.fermataSelect.value;
       this.data.alunno.update = true;
       this.nuovaPrenotazione(this.data);
     }
