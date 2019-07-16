@@ -255,8 +255,6 @@ public class Esercitazione3ApplicationTests {
         Optional<RecoverTokenEntity> recoverCheck = this.recoverTokenRepository.findByUserId(check.get().getId());
         assert recoverCheck.isPresent();
         UUID = recoverCheck.get().getId().toString();
-        this.mockMvc.perform(get("/recover/" + UUID))
-                .andExpect(status().isOk());
         UserDTO user1 = new UserDTO();
         user1.setPassword("12345@User");
         user1.setPassMatch("12345@User");
