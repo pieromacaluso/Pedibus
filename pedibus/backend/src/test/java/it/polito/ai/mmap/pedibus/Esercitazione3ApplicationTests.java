@@ -283,9 +283,9 @@ public class Esercitazione3ApplicationTests {
 
     @Test
     public void getUserTest() throws Exception {
-        logger.info("Test GET /users");
+        logger.info("Test GET /admin/users");
         // No user --> Unauthorized
-        this.mockMvc.perform(get("/users"))
+        this.mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isUnauthorized());
 
         // User with no rights --> Forbidden
@@ -314,7 +314,7 @@ public class Esercitazione3ApplicationTests {
         String token = node.get("token").asText();
 
         // No user --> Unauthorized
-        this.mockMvc.perform(get("/users")
+        this.mockMvc.perform(get("/admin/users")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
 
@@ -330,7 +330,7 @@ public class Esercitazione3ApplicationTests {
         token = node.get("token").asText();
 
         // No user --> Unauthorized
-        this.mockMvc.perform(get("/users")
+        this.mockMvc.perform(get("/admin/users")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
@@ -346,7 +346,7 @@ public class Esercitazione3ApplicationTests {
     @Test
     public void putUsers() throws Exception {
 
-        logger.info("Test PUT /users");
+        logger.info("Test PUT /admin/users");
         // SYS-ADMIN
         ObjectMapper mapper = new ObjectMapper();
         UserDTO user = new UserDTO();
@@ -382,22 +382,22 @@ public class Esercitazione3ApplicationTests {
         perm.setAddOrDel(true);
         json = mapper.writeValueAsString(perm);
 
-        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isUnauthorized());
 
         perm.setAddOrDel(false);
         json = mapper.writeValueAsString(perm);
-        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isUnauthorized());
 
@@ -410,15 +410,15 @@ public class Esercitazione3ApplicationTests {
         token = node.get("token").asText();
 
         perm.setAddOrDel(false);
-
-        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+        json = mapper.writeValueAsString(perm);
+        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
 
         perm.setAddOrDel(true);
-
-        this.mockMvc.perform(put("/users/" + "appmmap@pieromacaluso.com")
+        json = mapper.writeValueAsString(perm);
+        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());

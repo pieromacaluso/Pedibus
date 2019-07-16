@@ -40,7 +40,7 @@ public class AdminRestController {
      *
      * @return
      */
-    @GetMapping(value = "/users")
+    @GetMapping(value = "/admin/users")
     //tramite consumers è possibile indicare quale header Content-Type deve avere la richiesta
     public ResponseEntity getUsers() {
         List<UserEntity> allUsers = userService.getAllUsers();
@@ -53,7 +53,7 @@ public class AdminRestController {
      * Un admin di una linea o il system-admin inserisce @param userID come admin per @param nomeLinea, indica tramite @addOrDel se aggiungere(true) o eliminare(false) il permesso
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione si troverà i privilegi di admin
      */
-    @PutMapping("/users/{userID}")
+    @PutMapping("/admin/users/{userID}")
     public void setUserAdmin(@RequestBody PermissionDTO permissionDTO, @PathVariable("userID") String userID) {
         UserEntity principal;
         LineaDTO lineaDTO = lineeService.getLineById(permissionDTO.getLinea());
