@@ -16,7 +16,7 @@ import org.springframework.hateoas.ResourceSupport;
 
 @Data
 @Builder
-public class PrenotazioneResource
+public class ReservationResource
 {
     private String cfChild;
     private Integer idFermata;

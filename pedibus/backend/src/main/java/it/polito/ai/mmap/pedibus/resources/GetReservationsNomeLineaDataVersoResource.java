@@ -56,7 +56,7 @@ public class GetReservationsNomeLineaDataVersoResource {
     @Data
     public static class FermataDTOAlunni {
         FermataDTO fermata;
-        List<PrenotazioneChildResource> alunni;
+        List<ReservationChildResource> alunni;
 
         FermataDTOAlunni(FermataDTO f) {
             fermata = f;

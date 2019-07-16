@@ -20,7 +20,7 @@ import java.io.IOException;
  * - 100 Child
  * - 50 genitori con 2 figli        username = primi 50 contenuti nel file genitori.json e pw = 1!qwerty1!
  * - 50 nonni                       username = secondi 50 contenuti nel file genitori.json e pw = 1!qwerty1!
- * - 1 prenotazione/figlio per oggi, domani e dopo domani (o andata o ritorno)
+ * - 1 reservation/figlio per oggi, domani e dopo domani (o andata o ritorno)
  */
 @Profile("dev")
 @RestController
@@ -35,7 +35,7 @@ public class DebugController {
     UserRepository userRepository;
 
     @Autowired
-    PrenotazioneRepository prenotazioneRepository;
+    ReservationRepository reservationRepository;
 
     @Autowired
     DbTestDataCreator dbTestDataCreator;
@@ -45,15 +45,15 @@ public class DebugController {
     {
         userRepository.deleteAll();
         childRepository.deleteAll();
-        prenotazioneRepository.deleteAll();
-        logger.info("Child, user e prenotazioni sono state cancellate");
+        reservationRepository.deleteAll();
+        logger.info("Child, user e reservations sono state cancellate");
 
     }
 
     @PostMapping("/debug/make")
-    public void makeChildUserPrenotazioni() throws IOException {
+    public void makeChildUserReservations() throws IOException {
         logger.info("POST /debug/make è stato contattato");
-        dbTestDataCreator.makeChildUserPrenotazioni();
+        dbTestDataCreator.makeChildUserReservations();
     }
 
 

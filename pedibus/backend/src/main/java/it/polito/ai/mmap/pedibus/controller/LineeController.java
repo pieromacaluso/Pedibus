@@ -41,7 +41,7 @@ public class LineeController {
         logger.info("Caricamento linee completato.");
         if (environment.getActiveProfiles()[0].equals("prod")) {
             logger.info("Creazione Basi di dati di test in corso...");
-            dbTestDataCreator.makeChildUserPrenotazioni();
+            dbTestDataCreator.makeChildUserReservations();
             logger.info("Creazione Basi di dati di test completata.");
         } else {
             logger.info("Creazione Basi di dati di test non effettuata con DEV Profile");

@@ -38,7 +38,7 @@ public class DbTestDataCreator {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    PrenotazioneRepository prenotazioneRepository;
+    ReservationRepository reservationRepository;
     @Autowired
     FermataRepository fermataRepository;
 
@@ -51,10 +51,10 @@ public class DbTestDataCreator {
      * - 50 genitori con 2 figli        contenuti nel file genitori.json e pw = 1!qwerty1!
      * - 25 nonni admin della linea1    contenuti nel file nonni_linea1.json e pw = 1!qwerty1!
      * - 25 nonni admin della linea2    contenuti nel file nonni_linea2.json e pw = 1!qwerty1!
-     * - 1 prenotazione/figlio per oggi, domani e dopo domani (o andata o ritorno)
+     * - 1 reservation/figlio per oggi, domani e dopo domani (o andata o ritorno)
      */
-    public void makeChildUserPrenotazioni() throws IOException {
-        prenotazioneRepository.deleteAll();
+    public void makeChildUserReservations() throws IOException {
+        reservationRepository.deleteAll();
         int count = 0;
         RoleEntity roleUser = roleRepository.findByRole("ROLE_USER");
         RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
@@ -115,8 +115,8 @@ public class DbTestDataCreator {
 
         i = 0;
         count = 0;
-        List<PrenotazioneEntity> prenotazioniList = new LinkedList<>();
-        PrenotazioneEntity prenotazioneEntity;
+        List<ReservationEntity> reservationsList = new LinkedList<>();
+        ReservationEntity reservationEntity;
         int randLinea;
         int randFermata;
         for (int day = 0; day < 3; day++) {
@@ -125,23 +125,23 @@ public class DbTestDataCreator {
                 ChildEntity childEntity = childEntityIterable.next();
                 randFermata = (Math.abs(new Random().nextInt()) % 8) + 1; //la linea 1 ha 8 fermate
                 randLinea = (Math.abs(new Random().nextInt()) % 2) + 1; //linea 1 o 2
-                prenotazioneEntity = new PrenotazioneEntity();
-                prenotazioneEntity.setCfChild(childEntity.getCodiceFiscale());
-                prenotazioneEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
-                prenotazioneEntity.setIdFermata(randFermata + (100 * (randLinea - 1)));
-                prenotazioneEntity.setIdLinea("linea" + randLinea);
-                prenotazioneEntity.setVerso(randFermata < 5); //1-4 = 101-104 = true = andata
+                reservationEntity = new ReservationEntity();
+                reservationEntity.setCfChild(childEntity.getCodiceFiscale());
+                reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
+                reservationEntity.setIdFermata(randFermata + (100 * (randLinea - 1)));
+                reservationEntity.setIdLinea("linea" + randLinea);
+                reservationEntity.setVerso(randFermata < 5); //1-4 = 101-104 = true = andata
 
-                if (!prenotazioneRepository.findByCfChildAndData(prenotazioneEntity.getCfChild(), prenotazioneEntity.getData()).isPresent()) {
-                    prenotazioniList.add(prenotazioneEntity);
+                if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
+                    reservationsList.add(reservationEntity);
                     count++;
                 }
                 i++;
             }
         }
 
-        prenotazioneRepository.saveAll(prenotazioniList);
-        logger.info(count + " prenotazioni per oggi, domani e dopodomani caricate");
+        reservationRepository.saveAll(reservationsList);
+        logger.info(count + " reservations per oggi, domani e dopodomani caricate");
 
 
     }

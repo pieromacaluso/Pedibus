@@ -2,8 +2,8 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
-import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
+import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.*;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
@@ -90,65 +90,65 @@ public class ReservationController {
 
     /**
      * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
-     * restituisce un identificatore univoco della prenotazione creata
+     * restituisce un identificatore univoco della reservation creata
      *
-     * @param prenotazioneResource JSON Body Prenotazione
+     * @param reservationResource JSON Body Reservation
      * @param nomeLinea            nome linea
      * @param data                 data in esame
-     * @return identificatore univoco prenotazione
+     * @return identificatore univoco reservation
      */
     @PostMapping("/reservations/{nome_linea}/{data}")
-    public String postReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) throws JsonProcessingException {
+    public String postReservation(@RequestBody ReservationResource reservationResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) throws JsonProcessingException {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        logger.info("Nuova Prenotazione " + prenotazioneResource.toString());
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
-        String idPrenotazione = reservationService.addPrenotazione(prenotazioneDTO);
-        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + nomeLinea + "/" + ((prenotazioneResource.getVerso()) ? 1 : 0), prenotazioneResource);
-        return objectMapper.writeValueAsString(idPrenotazione);
+        logger.info("Nuova Reservation " + reservationResource.toString());
+        ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
+        String idReservation = reservationService.addReservation(reservationDTO);
+        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + nomeLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
+        return objectMapper.writeValueAsString(idReservation);
     }
 
 
     /**
-     * Invia un oggetto JSON che permette di aggiornare i dati relativi alla prenotazione indicata.
-     * Il reservation_id ci permette di identificare la prenotazione da modificare, il body contiene i dati aggiornati.
+     * Invia un oggetto JSON che permette di aggiornare i dati relativi alla reservation indicata.
+     * Il reservation_id ci permette di identificare la reservation da modificare, il body contiene i dati aggiornati.
      *
-     * @param prenotazioneResource JSON Body Prenotazione
+     * @param reservationResource JSON Body Reservation
      * @param nomeLinea            nome linea
      * @param data                 data in esame
-     * @param reservationId        id Prenotazione da aggiornare
+     * @param reservationId        id Reservation da aggiornare
      */
     @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public void updateReservation(@RequestBody PrenotazioneResource prenotazioneResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        logger.info("Aggiornamento prenotazione " + reservationId);
+    public void updateReservation(@RequestBody ReservationResource reservationResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        logger.info("Aggiornamento reservation " + reservationId);
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        PrenotazioneDTO prenotazioneDTO = new PrenotazioneDTO(prenotazioneResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
-        reservationService.updatePrenotazione(prenotazioneDTO, reservationId);
+        ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
+        reservationService.updateReservation(reservationDTO, reservationId);
     }
 
     /**
-     * Elimina la prenotazione indicata
+     * Elimina la reservation indicata
      *
      * @param nomeLinea     nome linea
      * @param data          data in esame
-     * @param reservationId id prenotazione
+     * @param reservationId id reservation
      */
     @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
     public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        logger.info("Eliminazione prenotazione" + reservationId);
+        logger.info("Eliminazione reservation" + reservationId);
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        reservationService.deletePrenotazione(nomeLinea, dataFormatted, reservationId);
+        reservationService.deleteReservation(nomeLinea, dataFormatted, reservationId);
     }
 
     /**
-     * Restituisce la prenotazione controllando che nomeLinea e Data corrispondano a quelli del reservation_id
+     * Restituisce la reservation controllando che nomeLinea e Data corrispondano a quelli del reservation_id
      *
      * @param nomeLinea     nome linea
      * @param data          data in esame
-     * @param reservationId id prenotazione
-     * @return PrenotazioneDTO
+     * @param reservationId id reservation
+     * @return ReservationDTO
      */
     @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public PrenotazioneDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+    public ReservationDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         logger.info("/reservations/{nome_linea}/{data}/{reservation_id} è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         return reservationService.getReservationCheck(nomeLinea, dataFormatted, reservationId);

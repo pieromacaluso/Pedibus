@@ -2,17 +2,17 @@ package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.entity.FermataEntity;
 import it.polito.ai.mmap.pedibus.entity.LineaEntity;
-import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
+import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
 import it.polito.ai.mmap.pedibus.exception.FermataNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.PrenotazioneNotValidException;
+import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
+import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.FermataRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;
-import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
+import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class LineeService {
     @Autowired
     FermataRepository fermataRepository;
     @Autowired
-    PrenotazioneRepository prenotazioneRepository;
+    ReservationRepository reservationRepository;
     @Autowired
     UserService userService;
 
@@ -66,10 +66,10 @@ public class LineeService {
     }
 
     /**
-     * Eliminazione di tutte le prenotazioni dal DB
+     * Eliminazione di tutte le reservations dal DB
      */
-    public void dropAllPrenotazioni() {
-        prenotazioneRepository.deleteAll();
+    public void dropAllReservations() {
+        reservationRepository.deleteAll();
     }
 
     /**

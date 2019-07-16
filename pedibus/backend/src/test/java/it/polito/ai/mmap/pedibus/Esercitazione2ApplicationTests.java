@@ -8,10 +8,10 @@ import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
-import it.polito.ai.mmap.pedibus.repository.PrenotazioneRepository;
+import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
-import it.polito.ai.mmap.pedibus.resources.PrenotazioneResource;
+import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import it.polito.ai.mmap.pedibus.services.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -67,7 +67,7 @@ public class Esercitazione2ApplicationTests {
     UserRepository userRepository;
 
     @Autowired
-    PrenotazioneRepository prenotazioneRepository;
+    ReservationRepository reservationRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -113,7 +113,7 @@ public class Esercitazione2ApplicationTests {
     public void tearDownMethod() {
         childMap.values().forEach(childEntity ->
         {
-            prenotazioneRepository.deleteAllByCfChild(childEntity.getCodiceFiscale());
+            reservationRepository.deleteAllByCfChild(childEntity.getCodiceFiscale());
             childRepository.delete(childEntity);
         });
         userEntityMap.values().forEach(userEntity -> {
@@ -185,7 +185,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(false).build();
+        ReservationResource res = ReservationResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(false).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento errato " + res + "...");
@@ -212,7 +212,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento corretto " + res + "...");
@@ -247,7 +247,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(false).build();
+        ReservationResource res = ReservationResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(false).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento errato " + res + "...");
@@ -274,7 +274,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento " + res + "...");
@@ -308,10 +308,10 @@ public class Esercitazione2ApplicationTests {
 
     /**
      * Test che controlla il funzionamento dell'engPoint GET /reservations/verso/{nome_linea}/{data}/{verso} con verso andata(true).
-     * Tale endPoint deve ritornare tutte le prenotazioni per una determinata combinazione di linea,data e verso.
-     * La fase di test inizia senza nessuna prenotazione.
-     * Vengono effettuate due prenotazioni una con verso andata e una con verso ritorno.
-     * Il test controlla che alla chiamata dell'endPoint con verso andata si ottenga solo la prenotazione di andata e non anche quella di ritorno.
+     * Tale endPoint deve ritornare tutte le reservations per una determinata combinazione di linea,data e verso.
+     * La fase di test inizia senza nessuna reservation.
+     * Vengono effettuate due reservations una con verso andata e una con verso ritorno.
+     * Il test controlla che alla chiamata dell'endPoint con verso andata si ottenga solo la reservation di andata e non anche quella di ritorno.
      *
      * @throws Exception
      */
@@ -327,8 +327,8 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource resTrue = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
-        PrenotazioneResource resFalse = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(8).verso(false).build();
+        ReservationResource resTrue = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource resFalse = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(8).verso(false).build();
         String resTrueJson = mapper.writeValueAsString(resTrue);
         String resFalseJson = mapper.writeValueAsString(resFalse);
 
@@ -372,10 +372,10 @@ public class Esercitazione2ApplicationTests {
 
     /**
      * Test che controlla il funzionamento dell'engPoint GET /reservations/verso/{nome_linea}/{data}/{verso} con verso ritorno(false).
-     * Tale endPoint deve ritornare tutte le prenotazioni per una determinata combinazione di linea,data e verso.
-     * La fase di test inizia senza nessuna prenotazione.
-     * Vengono effettuate due prenotazioni una con verso andata e una con verso ritorno.
-     * Il test controlla che alla chiamata dell'endPoint con verso ritorno si ottenga solo la prenotazione di ritorno e non anche quella di andata.
+     * Tale endPoint deve ritornare tutte le reservations per una determinata combinazione di linea,data e verso.
+     * La fase di test inizia senza nessuna reservation.
+     * Vengono effettuate due reservations una con verso andata e una con verso ritorno.
+     * Il test controlla che alla chiamata dell'endPoint con verso ritorno si ottenga solo la reservation di ritorno e non anche quella di andata.
      *
      * @throws Exception
      */
@@ -391,8 +391,8 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource resTrue = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
-        PrenotazioneResource resFalse = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(8).verso(false).build();
+        ReservationResource resTrue = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource resFalse = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(8).verso(false).build();
         String resTrueJson = mapper.writeValueAsString(resTrue);
         String resFalseJson = mapper.writeValueAsString(resFalse);
 
@@ -436,11 +436,11 @@ public class Esercitazione2ApplicationTests {
 
     /**
      * Test che controlla il funzionamento dell'endoPoint GET /notreservations/{data}/{verso}.
-     * Tale endPoint deve ritornare solo i bambini che non hanno una prenotazione per tale data e verso.
-     * La fase di test inizia senza nessuna prenotazione, si leggono quindi tutti i bambini.
-     * Viene effettuata solo una prenotazione per una data e verso andata.
-     * In tale caso, l' endPoint testato con verso ritorno dovrebbe ritornare tutti i bambini del db visto che non sono presenti prenotazioni con verso ritorno.
-     * Se però si usa l'endpoint con verso andata, si deve ottenere la lista dei bambini precedentemente letta a meno del bambino che ha effettuato la prenotazione con verso andata.
+     * Tale endPoint deve ritornare solo i bambini che non hanno una reservation per tale data e verso.
+     * La fase di test inizia senza nessuna reservation, si leggono quindi tutti i bambini.
+     * Viene effettuata solo una reservation per una data e verso andata.
+     * In tale caso, l' endPoint testato con verso ritorno dovrebbe ritornare tutti i bambini del db visto che non sono presenti reservations con verso ritorno.
+     * Se però si usa l'endpoint con verso andata, si deve ottenere la lista dei bambini precedentemente letta a meno del bambino che ha effettuato la reservation con verso andata.
      *
      * @throws Exception
      */
@@ -460,11 +460,11 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resTrueJson = mapper.writeValueAsString(res);
 
 
-        logger.info("Inserimento prenotazione " + res + " andata ...");
+        logger.info("Inserimento reservation " + res + " andata ...");
         MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
                 .header("Authorization", "Bearer " + token))
@@ -498,7 +498,7 @@ public class Esercitazione2ApplicationTests {
 
         logger.info("Controllo bambini non prenotati andata...");
 
-        //rimozione da allChildren del bambino che ha effettuato sopra la prenotazione
+        //rimozione da allChildren del bambino che ha effettuato sopra la reservation
         Iterator<Map<String, Object>> i = listAllChildren.iterator();
         while (i.hasNext()) {
             Map<String, Object> child = i.next();
@@ -540,7 +540,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
@@ -580,7 +580,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
@@ -622,7 +622,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
@@ -636,8 +636,8 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserito correttamente!");
 
 
-        logger.info("Modifico Prenotazione in modo errato");
-        PrenotazioneResource resWrong = PrenotazioneResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(true).build();
+        logger.info("Modifico Reservation in modo errato");
+        ReservationResource resWrong = ReservationResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(true).build();
         String resWrongJson = mapper.writeValueAsString(resWrong);
 
         this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
@@ -666,7 +666,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
         logger.info("Inserimento e controllo posizione " + res + "...");
         MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
@@ -685,8 +685,8 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserito e controllato correttamente!");
 
 
-        logger.info("Modifico Prenotazione ...");
-        PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(false).build();
+        logger.info("Modifico Reservation ...");
+        ReservationResource resCorrect = ReservationResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(false).build();
         String resCorrectJson = mapper.writeValueAsString(resCorrect);
 
         this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS) + "/" + idRes)
@@ -694,7 +694,7 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        logger.info("Controllo nuova posizione prenotazione");
+        logger.info("Controllo nuova posizione reservation");
         this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4,ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
@@ -737,16 +737,16 @@ public class Esercitazione2ApplicationTests {
 
     @Test
     public void reservation_checkPermissionGenitore() throws Exception {
-        logger.info("Test inserimento prenotazione per un proprio figlio");
+        logger.info("Test inserimento reservation per un proprio figlio");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userDTOMap.get("testGenitore"));
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
         String token = mapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
-        String idRes = inserimentoPrenotazioneGenitore();
+        String idRes = inserimentoReservationGenitore();
 
-        logger.info("Test modifica prenotazione per un proprio figlio");
-        PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(2).verso(true).build();
+        logger.info("Test modifica reservation per un proprio figlio");
+        ReservationResource resCorrect = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(2).verso(true).build();
         String resCorrectJson = mapper.writeValueAsString(resCorrect);
         MvcResult result1 = this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
@@ -754,7 +754,7 @@ public class Esercitazione2ApplicationTests {
                 .andExpect(status().isOk()).andReturn();
 
 
-        logger.info("Test delete prenotazione per un proprio figlio");
+        logger.info("Test delete reservation per un proprio figlio");
         this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
@@ -765,32 +765,32 @@ public class Esercitazione2ApplicationTests {
 
     @Test
     public void reservation_checkPermissionNonGenitore() throws Exception {
-        //creazione prenotazione valida
-        String idRes = inserimentoPrenotazioneGenitore();
+        //creazione reservation valida
+        String idRes = inserimentoReservationGenitore();
 
-        logger.info("Test inserimento prenotazione per un figlio altrui");
+        logger.info("Test inserimento reservation per un figlio altrui");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userDTOMap.get("testNonGenitore"));
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
         String token = mapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
-        logger.info("Inserimento prenotazione: " + res);
+        logger.info("Inserimento reservation: " + res);
         this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(2, ChronoUnit.DAYS) + "/")
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError()).andReturn();
 
-        logger.info("Test modifica prenotazione per un figlio altrui");
-        PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
+        logger.info("Test modifica reservation per un figlio altrui");
+        ReservationResource resCorrect = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resCorrectJson = mapper.writeValueAsString(resCorrect);
         this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
 
-        logger.info("Test delete prenotazione per un figlio altrui");
+        logger.info("Test delete reservation per un figlio altrui");
         this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
@@ -801,15 +801,15 @@ public class Esercitazione2ApplicationTests {
 
     @Test
     public void reservation_checkPermissionNonno() throws Exception {
-        logger.info("Test inserimento prenotazione Nonno");
+        logger.info("Test inserimento reservation Nonno");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userDTOMap.get("testNonno"));
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
         String token = mapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
-        logger.info("Inserimento prenotazione: " + res);
+        logger.info("Inserimento reservation: " + res);
         MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now())
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
@@ -818,15 +818,15 @@ public class Esercitazione2ApplicationTests {
 
         //Ora come ora un nonno con ruolo admin può prenotare solo per il giorno stesso
 
-        logger.info("Test modifica prenotazione per nonno");
-        PrenotazioneResource resCorrect = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
+        logger.info("Test modifica reservation per nonno");
+        ReservationResource resCorrect = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resCorrectJson = mapper.writeValueAsString(resCorrect);
         this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        logger.info("Test delete prenotazione per nonno");
+        logger.info("Test delete reservation per nonno");
         this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now() + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
@@ -835,15 +835,15 @@ public class Esercitazione2ApplicationTests {
     }
 
 
-    private String inserimentoPrenotazioneGenitore() throws Exception {
+    private String inserimentoReservationGenitore() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userDTOMap.get("testGenitore"));
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
         String token = mapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
-        PrenotazioneResource res = PrenotazioneResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
-        logger.info("Inserimento prenotazione: " + res);
+        logger.info("Inserimento reservation: " + res);
         MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/")
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))

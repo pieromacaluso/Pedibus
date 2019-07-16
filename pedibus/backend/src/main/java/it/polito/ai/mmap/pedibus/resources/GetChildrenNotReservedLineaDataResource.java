@@ -1,8 +1,8 @@
 package it.polito.ai.mmap.pedibus.resources;
 
-import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
+import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.PrenotazioneDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
 import it.polito.ai.mmap.pedibus.services.UserService;

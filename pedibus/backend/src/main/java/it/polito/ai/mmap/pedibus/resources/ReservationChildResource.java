@@ -2,8 +2,8 @@ package it.polito.ai.mmap.pedibus.resources;
 
 
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
-import it.polito.ai.mmap.pedibus.entity.PrenotazioneEntity;
-import it.polito.ai.mmap.pedibus.resources.PrenotazioneResource;
+import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
+import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class PrenotazioneChildResource {
+public class ReservationChildResource {
 
     private String codiceFiscale;
     private String name;
@@ -19,7 +19,7 @@ public class PrenotazioneChildResource {
     private Boolean presoInCarico;
     private Boolean arrivatoScuola;
 
-    public PrenotazioneChildResource(PrenotazioneEntity p, ChildEntity c){
+    public ReservationChildResource(ReservationEntity p, ChildEntity c){
         this.codiceFiscale = p.getCfChild();
         this.name = c.getName();
         this.surname = c.getSurname();
