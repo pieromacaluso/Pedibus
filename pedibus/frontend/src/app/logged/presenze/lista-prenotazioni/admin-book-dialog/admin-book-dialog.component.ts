@@ -24,7 +24,7 @@ export interface DialogData {
 export class AdminBookDialogComponent {
 
 
-  private prenotazioneForm = this.fb.group({
+  prenotazioneForm = this.fb.group({
     fermataSelect: ['', [Validators.required]]
   });
 

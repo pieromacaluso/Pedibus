@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# 1. build backend
+cd backend/
+./mvnw clean install -Pprod -Dmaven.test.skip=true
+
+# 2. build frontend
+cd ../frontend/
+npm install
+ng build --prod
+
+# 3. open browser
+firefox -new-window http://localhost:4200/ &
+
+# 4. run app
+cd ..
+sudo docker-compose down --volumes
+sudo docker-compose up --build
+
+# 5. remove dangling containers
+sudo docker system prune -f

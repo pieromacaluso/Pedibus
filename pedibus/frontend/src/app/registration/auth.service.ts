@@ -71,6 +71,11 @@ export class AuthService {
     return false;
   }
 
+  getRoles(): string[] {
+    const roles = JSON.parse(localStorage.getItem('roles'));
+    return roles;
+  }
+
   public isLoggedIn() {
     if (this.getExpiration() == null) {
       return false;
