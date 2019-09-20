@@ -185,22 +185,16 @@ public class Esercitazione2ApplicationTests {
     @Test
     public void insertReservation_correctVerso() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = mapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
+        String token = loginAsAdmin();
 
-        ReservationResource res = ReservationResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(true).build();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
+        ReservationResource res = ReservationResource.builder().cfChild("RSSMRA30A01H501I").idFermata(lineaEntity.getAndata().get(0)).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento corretto " + res + "...");
-        logger.info("POST /reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ con verso corretto ...");
+        logger.info("POST /reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ con verso corretto ...");
 
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
@@ -209,7 +203,7 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
 
         logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -220,22 +214,16 @@ public class Esercitazione2ApplicationTests {
     @Test
     public void insertReservation_wrongLine() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = mapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
+        String token = loginAsAdmin();
 
-        ReservationResource res = ReservationResource.builder().cfChild("RSSMRA30A01H501I").idFermata(1).verso(false).build();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
+        ReservationResource res = ReservationResource.builder().cfChild("RSSMRA30A01H501I").idFermata(lineaEntity.getAndata().get(0)).verso(true).build();
         String resJson = mapper.writeValueAsString(res);
 
         logger.info("Inserimento errato " + res + "...");
-        logger.info("POST /reservations/linea3/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ con linea errata ...");
+        logger.info("POST /reservations/lineaErr/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ con linea errata ...");
 
-        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+        this.mockMvc.perform(post("/reservations/lineaErr/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
