@@ -10,7 +10,7 @@ npm install
 ng build --prod
 
 # 3. open browser
-firefox -new-window http://localhost:4200/ &
+firefox http://localhost:4200/ &
 
 # 4. run app
 cd ..
