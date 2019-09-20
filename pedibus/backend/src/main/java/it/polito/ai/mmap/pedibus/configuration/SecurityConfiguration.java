@@ -65,6 +65,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/recover/**").permitAll()
+                .and()//TODO remove
+                .authorizeRequests()
+                .antMatchers("/debug/**").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/admin/users/**").access("hasAnyRole('ADMIN','SYSTEM-ADMIN')")

@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
+import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
-import it.polito.ai.mmap.pedibus.repository.ChildRepository;
-import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
-import it.polito.ai.mmap.pedibus.repository.RoleRepository;
-import it.polito.ai.mmap.pedibus.repository.UserRepository;
+import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import it.polito.ai.mmap.pedibus.services.*;
 import org.junit.*;
@@ -31,6 +29,7 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -65,6 +64,9 @@ public class Esercitazione2ApplicationTests {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    LineaRepository lineaRepository;
 
     @Autowired
     ReservationRepository reservationRepository;
@@ -135,9 +137,7 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
         logger.info("Test GET /lines ...");
-        List<String> expectedResult = new ArrayList<>();
-        expectedResult.add("linea1");
-        expectedResult.add("linea2");
+        List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
         String expectedJson = mapper.writeValueAsString(expectedResult);
 
 
@@ -161,14 +161,14 @@ public class Esercitazione2ApplicationTests {
         JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
-        String linea = "linea1";
-        logger.info("Test GET /lines/" + linea + " ...");
+        String lineaID = lineaRepository.findAll().get(0).getId();
+        logger.info("Test GET /lines/" + lineaID + " ...");
 
-        this.mockMvc.perform(get("/lines/" + linea)
+        this.mockMvc.perform(get("/lines/" + lineaID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(linea));
+                .andExpect(jsonPath("$.id").value(lineaID));
 
         logger.info("PASSED");
     }
