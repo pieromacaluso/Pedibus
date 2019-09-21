@@ -9,8 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface RecoverTokenRepository extends MongoRepository<RecoverTokenEntity, Integer> {
-    Optional<RecoverTokenEntity> findById(ObjectId id);
+public interface RecoverTokenRepository extends MongoRepository<RecoverTokenEntity, ObjectId> {
     Optional<RecoverTokenEntity> findByUserId(ObjectId id);
 
 }

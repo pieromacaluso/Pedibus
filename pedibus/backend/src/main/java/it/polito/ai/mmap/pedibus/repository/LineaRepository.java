@@ -6,7 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface LineaRepository extends MongoRepository<LineaEntity, Integer> {
-     Optional<LineaEntity> findByNome(String name);
-     Optional<LineaEntity> findById(String id);
+public interface LineaRepository extends MongoRepository<LineaEntity, String> {
 }

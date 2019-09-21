@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ActivationTokenRepository extends MongoRepository<ActivationTokenEntity, ObjectId> {
-    Optional<ActivationTokenEntity> findById(ObjectId id);
     Optional<ActivationTokenEntity> findByUserId(ObjectId id);
 
 }
