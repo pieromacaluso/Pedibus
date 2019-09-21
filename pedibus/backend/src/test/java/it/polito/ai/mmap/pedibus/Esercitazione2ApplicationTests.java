@@ -12,6 +12,7 @@ import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsNomeLineaDataVersoResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import it.polito.ai.mmap.pedibus.services.*;
+import org.bson.types.ObjectId;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -200,6 +201,38 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
     }
 
+    /**
+     * Controlla POST /reservations/{nome_linea}/{data} con un inserimento duplicato
+     *
+     * @throws Exception
+     */
+    @Test
+    public void insertReservation_duplicate() throws Exception {
+        String token = loginAsAdmin();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
+
+        ReservationResource res = ReservationResource.builder().cfChild(childMap.get(1).getCodiceFiscale()).idFermata(lineaEntity.getAndata().get(0)).verso(true).build();
+        String resJson = objectMapper.writeValueAsString(res);
+        logger.info("Inserimento " + res + "...");
+
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+                .contentType(MediaType.APPLICATION_JSON).content(resJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String idRes = objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
+        logger.info("Inserito correttamente!");
+
+        logger.info("POST /reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ duplicato ...");
+        this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+                .contentType(MediaType.APPLICATION_JSON).content(resJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isInternalServerError());
+        logger.info("PASSED");
+    }
+
 
     /**
      * Controlla che tramite POST /reservations/{nome_linea}/{data}
@@ -352,7 +385,7 @@ public class Esercitazione2ApplicationTests {
      * @throws Exception
      */
     @Test
-    public void getNotReservations_check() throws Exception {
+    public void getNotReservations() throws Exception {
         String token = loginAsAdmin();
         int dayShift = 1000; //per essere certi che ci sia solo la prenotazione di test che inseriamo
 
@@ -408,63 +441,17 @@ public class Esercitazione2ApplicationTests {
 
     }
 
-    @Test
-    public void insertReservation_duplicate() throws Exception {
-
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
-        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
-        String resJson = objectMapper.writeValueAsString(res);
-        logger.info("Inserimento " + res + "...");
-
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
-                .contentType(MediaType.APPLICATION_JSON).content(resJson)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk()).andReturn();
-
-        String idRes = objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
-
-        logger.info("Inserito correttamente!");
-
-        logger.info("POST /reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ duplicato ...");
-        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
-                .contentType(MediaType.APPLICATION_JSON).content(resJson)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isInternalServerError());
-        logger.info("PASSED");
-
-        logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-        logger.info("DONE");
-    }
 
     @Test
     public void getReservation_checkReservationPositionInLine() throws Exception {
+        String token = loginAsAdmin();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
 
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
-        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild(childMap.get(1).getCodiceFiscale()).idFermata(lineaEntity.getAndata().get(0)).verso(true).build();
         String resJson = objectMapper.writeValueAsString(res);
         logger.info("Inserimento " + res + "...");
 
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
@@ -474,42 +461,71 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserito correttamente!");
 
         logger.info("Controllo posizione nomeAlunno nelle linee di " + idRes);
-        logger.info("GET /reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ per controllo presenza utente ...");
-        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+        logger.info("GET /reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ per controllo presenza utente ...");
+
+        //TODO (marcof) non capisco perchè il bimbo prenotato dovrebbe essere il primo della lista (contando che ci possono già essere altre prenotazioni)
+        this.mockMvc.perform(get("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.alunniPerFermataAndata[0].alunni[0].codiceFiscale").value(res.getCfChild()));
         logger.info("PASSED");
-
-        logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-        logger.info("DONE");
     }
 
+    /**
+     * Controlla PUT /reservations/{nome_linea}/{data}/{reservation_id}
+     *
+     * @throws Exception
+     */
     @Test
-    public void putReservation_updateWrong() throws Exception {
+    public void putReservation() throws Exception {
+        String token = loginAsAdmin();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
 
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
-        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        ReservationResource res = ReservationResource.builder().cfChild(childMap.get(1).getCodiceFiscale()).idFermata(lineaEntity.getAndata().get(0)).verso(true).build();
         String resJson = objectMapper.writeValueAsString(res);
-        logger.info("Inserimento " + res + "...");
-
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+        logger.info("Inserimento e controllo posizione " + res + "...");
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk()).andReturn();
+
+        String idRes = objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
+
+        logger.info("Modifico Reservation ...");
+        ReservationResource resUpdated = ReservationResource.builder().cfChild(childMap.get(1).getCodiceFiscale()).idFermata(lineaEntity.getRitorno().get(0)).verso(false).build();
+        String resCorrectJson = objectMapper.writeValueAsString(resUpdated);
+
+        this.mockMvc.perform(put("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
+                .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        Optional<ReservationEntity> reservationEntityCheck = reservationRepository.findById(new ObjectId(idRes));
+        assert reservationEntityCheck.isPresent();
+        assert reservationEntityCheck.get().equalsResource(resUpdated);
+
+        logger.info("PASSED");
+    }
+
+    /**
+     * Controlla PUT /reservations/{nome_linea}/{data}/{reservation_id} con verso/id fermata non congruente
+     *
+     * @throws Exception
+     */
+    @Test
+    public void putReservationWrong() throws Exception {
+        String token = loginAsAdmin();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
+        ReservationResource res = ReservationResource.builder().cfChild(childMap.get(1).getCodiceFiscale()).idFermata(lineaEntity.getAndata().get(0)).verso(true).build();
+        String resJson = objectMapper.writeValueAsString(res);
+        logger.info("Inserimento " + res + "...");
+
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+                .contentType(MediaType.APPLICATION_JSON).content(resJson)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
 
         String idRes = objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
 
@@ -517,98 +533,34 @@ public class Esercitazione2ApplicationTests {
 
 
         logger.info("Modifico Reservation in modo errato");
-        ReservationResource resWrong = ReservationResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(true).build();
+        ReservationResource resWrong = ReservationResource.builder().cfChild(childMap.get(1).getCodiceFiscale()).idFermata(lineaEntity.getRitorno().get(0)).verso(true).build();
         String resWrongJson = objectMapper.writeValueAsString(resWrong);
 
-        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
+        this.mockMvc.perform(put("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resWrongJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
         logger.info("PASSED");
-
-        logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-        logger.info("DONE");
     }
 
-    @Test
-    public void putReservation_updateCorrect_checkPosition() throws Exception {
 
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
-        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
-        String resJson = objectMapper.writeValueAsString(res);
-        logger.info("Inserimento e controllo posizione " + res + "...");
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
-                .contentType(MediaType.APPLICATION_JSON).content(resJson)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk()).andReturn();
-
-        String idRes = objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
-
-
-        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alunniPerFermataAndata[0].alunni[0].codiceFiscale").value(res.getCfChild()));
-        logger.info("Inserito e controllato correttamente!");
-
-
-        logger.info("Modifico Reservation ...");
-        ReservationResource resCorrect = ReservationResource.builder().cfChild("CLLCRL80A01H501D").idFermata(5).verso(false).build();
-        String resCorrectJson = objectMapper.writeValueAsString(resCorrect);
-
-        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
-                .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-
-        logger.info("Controllo nuova posizione reservation");
-        this.mockMvc.perform(get("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alunniPerFermataRitorno[0].alunni[0].codiceFiscale").value(resCorrect.getCfChild()));
-
-        logger.info("PASSED");
-        logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-        logger.info("DONE");
-    }
-
+    /**
+     * Controlla DELETE /reservations/{nome_linea}/{data}/{reservation_id} con il reservation_id random/non congruente
+     *
+     * @throws Exception
+     */
     @Test
     public void deleteReservation_randomID() throws Exception {
+        String token = loginAsAdmin();
 
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
         logger.info("Cancellazione a caso errata con numero...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/12345")
+        this.mockMvc.perform(delete("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/12345")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
         logger.info("Cancellazione a caso errata con objectID...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/5cc9c667c947dc1d2eb496ee")
+        this.mockMvc.perform(delete("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(1000, ChronoUnit.DAYS) + "/" + new ObjectId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
@@ -618,24 +570,27 @@ public class Esercitazione2ApplicationTests {
     @Test
     public void reservation_checkPermissionGenitore() throws Exception {
         logger.info("Test inserimento reservation per un proprio figlio");
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
 
         String json = objectMapper.writeValueAsString(userDTOMap.get("testGenitore"));
         MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
         String token = objectMapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
+
         String idRes = inserimentoReservationGenitore();
 
         logger.info("Test modifica reservation per un proprio figlio");
         ReservationResource resCorrect = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(2).verso(true).build();
         String resCorrectJson = objectMapper.writeValueAsString(resCorrect);
-        MvcResult result1 = this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
+        MvcResult result1 = this.mockMvc.perform(put("/reservations/"+lineaEntity.getId()+"/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
                 .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk())
+                .andReturn();
 
 
         logger.info("Test delete reservation per un proprio figlio");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/"+lineaEntity.getId()+"/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -647,17 +602,22 @@ public class Esercitazione2ApplicationTests {
     public void reservation_checkPermissionNonGenitore() throws Exception {
         //creazione reservation valida
         String idRes = inserimentoReservationGenitore();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
 
         logger.info("Test inserimento reservation per un figlio altrui");
 
         String json = objectMapper.writeValueAsString(userDTOMap.get("testNonGenitore"));
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
+        MvcResult result = this.mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
         String token = objectMapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
+
         ReservationResource res = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resJson = objectMapper.writeValueAsString(res);
         logger.info("Inserimento reservation: " + res);
-        this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(2, ChronoUnit.DAYS) + "/")
+        this.mockMvc.perform(post("/reservations/"+lineaEntity.getId()+"/" + LocalDate.now().plus(2, ChronoUnit.DAYS) + "/")
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError()).andReturn();
@@ -665,18 +625,16 @@ public class Esercitazione2ApplicationTests {
         logger.info("Test modifica reservation per un figlio altrui");
         ReservationResource resCorrect = ReservationResource.builder().cfChild(userEntityMap.get("testGenitore").getChildrenList().iterator().next()).idFermata(1).verso(true).build();
         String resCorrectJson = objectMapper.writeValueAsString(resCorrect);
-        this.mockMvc.perform(put("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
+        this.mockMvc.perform(put("/reservations/"+lineaEntity.getId()+"/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
 
         logger.info("Test delete reservation per un figlio altrui");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
+        this.mockMvc.perform(delete("/reservations/"+lineaEntity.getId()+"/" + LocalDate.now().plus(1, ChronoUnit.DAYS) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError());
-
-
     }
 
     @Test

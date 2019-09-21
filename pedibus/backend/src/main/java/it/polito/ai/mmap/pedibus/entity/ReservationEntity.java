@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.pedibus.entity;
 
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
+import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -25,9 +26,9 @@ public class ReservationEntity {
     private boolean arrivatoScuola;
 
     public ReservationEntity(ReservationDTO reservationDTO) {
-        cfChild =reservationDTO.getCfChild();
-        data=reservationDTO.getData();
-        verso=reservationDTO.getVerso();
+        cfChild = reservationDTO.getCfChild();
+        data = reservationDTO.getData();
+        verso = reservationDTO.getVerso();
         idFermata = reservationDTO.getIdFermata();
         idLinea = reservationDTO.getIdLinea();
         this.presoInCarico = reservationDTO.getPresoInCarico();
@@ -36,13 +37,17 @@ public class ReservationEntity {
 
     public void update(ReservationDTO reservationDTO) {
         //non viene modificato l'id perchè si vuole solo aggiornare i campi della stessa reservation
-        this.cfChild =reservationDTO.getCfChild();
-        this.data=reservationDTO.getData();
-        this.verso=reservationDTO.getVerso();
+        this.cfChild = reservationDTO.getCfChild();
+        this.data = reservationDTO.getData();
+        this.verso = reservationDTO.getVerso();
         this.idFermata = reservationDTO.getIdFermata();
         this.idLinea = reservationDTO.getIdLinea();
         this.presoInCarico = reservationDTO.getPresoInCarico();
         this.arrivatoScuola = reservationDTO.getArrivatoScuola();
     }
 
+
+    public boolean equalsResource(ReservationResource reservationResource) {
+        return this.cfChild.equals(reservationResource.getCfChild()) && this.verso == reservationResource.getVerso() && this.idFermata.equals(reservationResource.getIdFermata());
+    }
 }
