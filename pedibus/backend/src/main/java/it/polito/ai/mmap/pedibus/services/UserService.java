@@ -251,8 +251,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public List<ChildEntity> getAllChildren() {
-        return childRepository.findAll();
+    public List<ChildDTO> getAllChildren() {
+        return childRepository.findAll().stream().map(ChildDTO::new).collect(Collectors.toList());
     }
 
     public List<String> getAllChildrenId() {

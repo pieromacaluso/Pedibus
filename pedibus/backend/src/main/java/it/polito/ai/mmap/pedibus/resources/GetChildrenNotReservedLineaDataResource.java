@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+//TODO in teoria non è più usato, restituiamo un List<childDTO> direttamente e il costruttore è stato incorporato in reservationService.getChildrenNotReserved
 @Data
 public class GetChildrenNotReservedLineaDataResource {
 

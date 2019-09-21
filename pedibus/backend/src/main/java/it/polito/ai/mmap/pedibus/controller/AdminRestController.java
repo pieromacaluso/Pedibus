@@ -4,6 +4,7 @@ package it.polito.ai.mmap.pedibus.controller;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.PermissionDTO;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
@@ -36,8 +37,8 @@ public class AdminRestController {
     /**
      * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti gli utenti registrati.
      * Essendo usato da admin può essere più utile restituire le UserEntity e non UserDTO per poter osservare
-     * maggior dettagli quili ruoli e altro.
-     *
+     * maggior dettagli quali ruoli e altro.
+     * TODO (marcof) non mi convince troppo restituire un entity perchè dovrebbe funzionare solo come oggetto tramite per il db, c'è da capire che dati gli possono servire e metterli nel dto (?)
      * @return
      */
     @GetMapping(value = "/admin/users")
@@ -78,11 +79,12 @@ public class AdminRestController {
      * @return
      */
     @GetMapping("/admin/children/")
-    public ResponseEntity getChildre(){
-        List<ChildEntity> allChildren=userService.getAllChildren();
-        Map<Object, Object> model = new HashMap<>();
-        model.put("ListaChildren", allChildren);
-        return ok(model);
+    public List<ChildDTO> getChildren(){
+        return userService.getAllChildren();
+//        List<ChildDTO> allChildren=userService.getAllChildren();
+//        Map<Object, Object> model = new HashMap<>();
+//        model.put("ListaChildren", allChildren);
+//        return ok(model);
     }
 
 }

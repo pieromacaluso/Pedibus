@@ -6,6 +6,7 @@ import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
@@ -34,6 +35,9 @@ public class ReservationService {
     ChildRepository childRepository;
     @Autowired
     LineeService lineeService;
+
+    @Autowired
+    UserService userService;
 
 
     /**
@@ -144,6 +148,12 @@ public class ReservationService {
         }
     }
 
+    public List<ChildDTO> getChildrenNotReserved(Date data, boolean verso){
+        List<String> bambiniDataVerso=getAllChildrenForReservationDataVerso(data,verso);
+        List<String> bambini=userService.getAllChildrenId();
+
+        return userService.getAllChildrenById(bambini.stream().filter(bambino->!bambiniDataVerso.contains(bambino)).collect(Collectors.toList()));
+    }
 
     /**
      * Elimina la reservation indicata dall'objectId controllando:

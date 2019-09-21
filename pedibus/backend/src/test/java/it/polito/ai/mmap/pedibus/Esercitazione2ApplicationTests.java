@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.*;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsNomeLineaDataVersoResource;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.thymeleaf.spring5.expression.Mvc;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
@@ -190,11 +192,10 @@ public class Esercitazione2ApplicationTests {
         logger.info("Inserimento " + res + "...");
         logger.info("POST /reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/ con verso corretto ...");
 
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+        this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk()).andReturn();
-        String idRes = objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
+                .andExpect(status().isOk());
 
         logger.info("PASSED");
     }
@@ -287,7 +288,8 @@ public class Esercitazione2ApplicationTests {
 
     /**
      * Controlla GET /reservations/verso/{nome_linea}/{data}/{verso}
-     * Tale endPoint deve ritornare tutte le reservations per una determinata combinazione di linea,data e verso.
+     * Tale endPoint deve ritornare tutte le reservations per una determinata combinazione di linea, data e verso.
+     *
      * @throws Exception
      */
     @Test
@@ -313,7 +315,7 @@ public class Esercitazione2ApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        logger.info("Inserito correttamente!");
+        logger.info("Prenotazioni inserite correttamente!");
 
         logger.info("Controllo reservation with towards true ...");
         MvcResult result = this.mockMvc.perform(get("/reservations/verso/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/true")
@@ -322,7 +324,10 @@ public class Esercitazione2ApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         GetReservationsNomeLineaDataVersoResource resource = objectMapper.readValue(result.getResponse().getContentAsString(), GetReservationsNomeLineaDataVersoResource.class);
+        //controllo che ci sia il bimbo prenotato alla fermata, verso, data giusta
         assert (resource.getAlunniPerFermata().stream().filter(fermataDTOAlunni -> fermataDTOAlunni.getFermata().getId().equals(lineaEntity.getAndata().get(0))).collect(Collectors.toList()).get(0).getAlunni().stream().filter(alunni -> alunni.getCodiceFiscale().equals(childMap.get(1).getCodiceFiscale())).count() == 1);
+
+//  TODO  Eliminare se si considera sufficiente testare il verso di andata
 
 //        logger.info("Controllo reservation with towards false ...");
 //        result = this.mockMvc.perform(get("/reservations/verso/" + lineaEntity.getId() + "/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/false")
@@ -338,95 +343,68 @@ public class Esercitazione2ApplicationTests {
 
 
     /**
-     * Test che controlla il funzionamento dell'endoPoint GET /notreservations/{data}/{verso}.
+     * Controlla GET /notreservations/{data}/{verso}.
      * Tale endPoint deve ritornare solo i bambini che non hanno una reservation per tale data e verso.
-     * La fase di test inizia senza nessuna reservation, si leggono quindi tutti i bambini.
-     * Viene effettuata solo una reservation per una data e verso andata.
-     * In tale caso, l' endPoint testato con verso ritorno dovrebbe ritornare tutti i bambini del db visto che non sono presenti reservations con verso ritorno.
-     * Se però si usa l'endpoint con verso andata, si deve ottenere la lista dei bambini precedentemente letta a meno del bambino che ha effettuato la reservation con verso andata.
+     * Viene effettuata solo una reservation per una data a @dayShift da oggi e verso andata.
+     * Con verso=ritorno vogliamo che ritorni tutti i bambini del db.
+     * Con verso=andata, vogliamo la lista dei bambini precedentemente letta priva del bambino per cui abbiamo prenotato con verso andata.
      *
      * @throws Exception
      */
     @Test
     public void getNotReservations_check() throws Exception {
+        String token = loginAsAdmin();
+        int dayShift = 1000; //per essere certi che ci sia solo la prenotazione di test che inseriamo
 
-
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-
-        String json = objectMapper.writeValueAsString(user);
-
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
-        ReservationResource res = ReservationResource.builder().cfChild("SNDPTN80C15H501C").idFermata(1).verso(true).build();
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
+        ReservationResource res = ReservationResource.builder().cfChild(childMap.get(1).getCodiceFiscale()).idFermata(lineaEntity.getAndata().get(0)).verso(true).build();
         String resTrueJson = objectMapper.writeValueAsString(res);
 
-
         logger.info("Inserimento reservation " + res + " andata ...");
-        MvcResult result1 = this.mockMvc.perform(post("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS))
+        MvcResult result1 = this.mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + LocalDate.now().plus(dayShift, ChronoUnit.DAYS))
                 .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        String idRes = objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
 
         logger.info("Inserito correttamente!");
 
-        logger.info("Lettura di tutti i bambini iscritti...");
-        MvcResult result1Child = this.mockMvc.perform(get("/admin/children/")
-                .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andReturn();
-        String idResChildren = result1Child.getResponse().getContentAsString();
+//      TODO eliminare, ho pensato non fosse necessario usare un endpoint http, ma si può passare direttamente dal db
 
-        Map<String, List<Map<String, Object>>> allChildren = objectMapper.readValue(idResChildren, new TypeReference<Map<String, List<Map<String, Object>>>>() {
-        });
-        List<Map<String, Object>> listAllChildren = allChildren.get("ListaChildren");
+//        logger.info("Lettura di tutti i bambini iscritti...");
+//        MvcResult result1Child = this.mockMvc.perform(get("/admin/children/")
+//                .contentType(MediaType.APPLICATION_JSON).content(resTrueJson)
+//                .header("Authorization", "Bearer " + token))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//        String resChildren = result1Child.getResponse().getContentAsString();
+//
+//        List<ChildDTO> allChildList = objectMapper.readValue(resChildren, new TypeReference<List<ChildDTO>>() {
+//        });
+//        logger.info("Lettura bambini eseguita!");
 
-        logger.info("Lettura eseguita!");
+        List<ChildDTO> allChildList = childRepository.findAll().stream().map(ChildDTO::new).collect(Collectors.toList());
+
 
         logger.info("Controllo bambini non prenotati ritorno...");
-        this.mockMvc.perform(get("/notreservations/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/false")
+        this.mockMvc.perform(get("/notreservations/" + LocalDate.now().plus(dayShift, ChronoUnit.DAYS) + "/false")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.childrenNotReserved").value(listAllChildren));
+                .andExpect(content().string(objectMapper.writeValueAsString(allChildList)));
         logger.info("Corretto");
+
 
         logger.info("Controllo bambini non prenotati andata...");
+        List<ChildDTO> childListWithoutBooked = allChildList.stream().filter(childDTO -> !childDTO.getCodiceFiscale().equals(childMap.get(1).getCodiceFiscale())).collect(Collectors.toList());
 
-        //rimozione da allChildren del bambino che ha effettuato sopra la reservation
-        Iterator<Map<String, Object>> i = listAllChildren.iterator();
-        while (i.hasNext()) {
-            Map<String, Object> child = i.next();
-            if (child.containsKey("codiceFiscale")) {
-                if (child.get("codiceFiscale").toString().compareTo("SNDPTN80C15H501C") == 0)
-                    i.remove();
-            }
-        }
-
-        this.mockMvc.perform(get("/notreservations/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/true")
+        this.mockMvc.perform(get("/notreservations/" + LocalDate.now().plus(dayShift, ChronoUnit.DAYS) + "/true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.childrenNotReserved").value(listAllChildren));
-        logger.info("Corretto");
-
+                .andExpect(content().string(objectMapper.writeValueAsString(childListWithoutBooked)));
 
         logger.info("PASSED");
-
-        logger.info("Ripristino stato precedente...");
-        this.mockMvc.perform(delete("/reservations/linea1/" + LocalDate.now().plus(4, ChronoUnit.DAYS) + "/" + idRes)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-
-        logger.info("DONE");
 
     }
 

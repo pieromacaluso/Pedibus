@@ -3,6 +3,7 @@ package it.polito.ai.mmap.pedibus.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.*;
 import it.polito.ai.mmap.pedibus.services.LineeService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 public class ReservationController {
@@ -82,10 +84,10 @@ public class ReservationController {
      */
 
     @GetMapping("/notreservations/{data}/{verso}")
-    public GetChildrenNotReservedLineaDataResource getNotReservations(@PathVariable("data") String data, @PathVariable("verso") boolean verso) {
+    public List<ChildDTO> getNotReservations(@PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /notreservations/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return new GetChildrenNotReservedLineaDataResource(dataFormatted, verso, reservationService, userService);
+        return reservationService.getChildrenNotReserved(dataFormatted, verso);
     }
 
     /**
