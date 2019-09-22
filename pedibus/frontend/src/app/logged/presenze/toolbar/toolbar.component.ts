@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Output, SimpleChanges, EventEmitter} from '@angular/core';
 import {PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {Observable} from 'rxjs';

@@ -13,11 +13,15 @@ import {AuthGuard} from './auth.guard';
 import {ForgotPasswordComponent} from './registration/forgot-password/forgot-password.component';
 import {RecoverComponent} from './registration/recover/recover.component';
 import {ConfirmComponent} from './registration/confirm/confirm.component';
+import { DisponibilitaComponent } from './logged/disponibilita/disponibilita.component';
+import { ComunicazioniComponent } from './logged/comunicazioni/comunicazioni.component';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard]},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
+  {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard]},
+  {path: 'comunicazioni', component: ComunicazioniComponent, canActivate: [AuthGuard]},
   {path: 'recover', component: ForgotPasswordComponent},
   {path: 'recover/:token', component: RecoverComponent},
   {path: 'confirm/:token', component: ConfirmComponent},

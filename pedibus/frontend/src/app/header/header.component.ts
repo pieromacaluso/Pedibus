@@ -12,15 +12,15 @@ export class HeaderComponent implements OnInit {
   opened: boolean;
   logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
-  loggedIcon = ['people'];
-  loggedLinks = ['presenze'];
-  loggedTitle = ['Presenze'];
+  loggedIcon = ['people', 'schedule', 'notification_important'];
+  loggedLinks = ['presenze', 'disponibilita', 'comunicazioni'];
+  loggedTitle = ['Presenze', 'disponibilita', ''];
 
   notLoggedIcon = ['vpn_key', 'person_add'];
   notLoggedLinks = ['sign-in', 'sign-up'];
   notLoggedTitle = ['Sign In', 'Sign Up'];
-  activeLoggedLink;
-  activeNotLoggedLink;
+  activeLoggedLink: any;
+  activeNotLoggedLink: any;
 
   constructor(private auth: AuthService, private router: Router) {
     this.userLogged = this.auth.isLoggedIn();
