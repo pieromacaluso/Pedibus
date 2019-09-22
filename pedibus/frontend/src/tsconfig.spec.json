@@ -5,7 +5,11 @@
     "types": [
       "jasmine",
       "node"
-    ]
+    ],
+    "lib": [
+      "dom",
+      "es7"
+   ]
   },
   "files": [
     "test.ts",

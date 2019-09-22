@@ -15,6 +15,8 @@ import {RecoverComponent} from './registration/recover/recover.component';
 import {ConfirmComponent} from './registration/confirm/confirm.component';
 import { DisponibilitaComponent } from './logged/disponibilita/disponibilita.component';
 import { ComunicazioniComponent } from './logged/comunicazioni/comunicazioni.component';
+import { AdminBookDialogComponent } from './logged/presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
+import { TurniComponent } from './logged/turni/turni.component';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
@@ -22,6 +24,7 @@ const appRoutes: Routes = [
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard]},
   {path: 'comunicazioni', component: ComunicazioniComponent, canActivate: [AuthGuard]},
+  {path: 'turni', component: TurniComponent, canActivate: [AuthGuard]},
   {path: 'recover', component: ForgotPasswordComponent},
   {path: 'recover/:token', component: RecoverComponent},
   {path: 'confirm/:token', component: ConfirmComponent},
