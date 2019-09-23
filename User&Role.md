@@ -29,9 +29,9 @@ La password in ogni caso è -> 1!qwerty1!
 
 Abbiamo 50 genitori con ROLE_USER, ad es:  
 (genitori.json)
-- miles.reilly@test.it
-- enid.crawford@test.it
-- morales.holloway@test.it
+- miles.reilly@test.it        cf-5cfe2813c413075ac504f2bf Francine Little || cf-5cfe2813060656d86cf96a01 Hester Roy
+- enid.crawford@test.it       cf-5cfe28131ee6759e737cf2c7 Jordan Merritt || cf-5cfe28131467b27c48d5de0d Noreen Gilbert
+- morales.holloway@test.it    cf-5cfe2813323ed36c229a5798 Maria Martinez || cf-5cfe28131cad412d17c49722 Barber Rojas
 
 25 nonni con ROLE_ADMIN, linea1:   
 (nonni_linea1.json) 
