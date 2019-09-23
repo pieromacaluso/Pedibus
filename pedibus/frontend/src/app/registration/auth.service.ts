@@ -73,7 +73,7 @@ export class AuthService {
 
   getRoles(): string[] {
     const roles = JSON.parse(localStorage.getItem('roles'));
-    return roles;
+    return roles as string[];
   }
 
   public isLoggedIn() {

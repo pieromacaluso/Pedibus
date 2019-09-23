@@ -24,10 +24,10 @@ export class ListaPrenotazioniComponent implements OnInit {
 
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
-  countLoading: any = 0;
+  countLoading = 0;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
   private handledSub: Subscription;
-  private openedDialog: any = 0;
+  // private openedDialog: any = 0;
   private resSub: Subscription;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
@@ -162,7 +162,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     }
   }
 
-  private isModifiable() {
+  /*private isModifiable() {
     const today = new Date();
     const preno = this.prenotazione.data;
     preno.setHours(0);
@@ -175,5 +175,5 @@ export class ListaPrenotazioniComponent implements OnInit {
     today.setMilliseconds(0);
     // console.log(today, preno);
     return preno.getTime() === today.getTime();
-  }
+  }*/
 }
