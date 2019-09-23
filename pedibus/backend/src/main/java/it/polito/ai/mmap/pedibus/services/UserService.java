@@ -341,6 +341,15 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * Recuperiamo da db i figli dell'utente loggato
+     * @return
+     */
+    public List<ChildDTO> getMyChildren() {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return  ((List<ChildEntity>) childRepository.findAllById(principal.getChildrenList())).stream().map(ChildDTO::new).collect(Collectors.toList());
+    }
+
+    /**
      * Metodo che permette di cambiare la fermata di default di un bambino o dal suo genitore o da un System-Admin
      *
      * @param idFermata
@@ -395,4 +404,6 @@ public class UserService implements UserDetailsService {
         } else
             throw new ChildNotFoundException("Bambino non trovato");
     }
+
+
 }
