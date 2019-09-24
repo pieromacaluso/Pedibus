@@ -14,7 +14,7 @@ public class UserController {
     UserService userService;
 
     /**
-     * Un utente loggato recupera la lista dei suoi figli
+     * Tramite questo endpoint un utente loggato recupera la lista dei suoi figli
      *
      * @return
      */
@@ -23,20 +23,22 @@ public class UserController {
         return userService.getMyChildren();
     }
 
-    /**
-     * L'utente loggato può aggiungere un suo figlio
-     *
-     * @param childDTO
-     */
-    @PostMapping("/children")
-    public void registerChild(@RequestBody ChildDTO childDTO) {
-        userService.registerChild(childDTO);
-    }
+    // todo probabilmente da cancellare, i bimbi vengono aggiunti tramite json (?)
 
-    @DeleteMapping("children")
-    public void delChild(@RequestBody String idChild) {
-        userService.delChild(idChild);
-    }
+//    /**
+//     * L'utente loggato può aggiungere un suo figlio
+//     *
+//     * @param childDTO
+//     */
+//    @PostMapping("/children")
+//    public void registerChild(@RequestBody ChildDTO childDTO) {
+//        userService.registerChild(childDTO);
+//    }
+//
+//    @DeleteMapping("children")
+//    public void delChild(@RequestBody String idChild) {
+//        userService.delChild(idChild);
+//    }
 
     /**
      * Permette ad un genitore di cambiare la fermata di default di uno dei figli

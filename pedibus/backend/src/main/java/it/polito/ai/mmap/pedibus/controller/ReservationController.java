@@ -67,7 +67,7 @@ public class ReservationController {
      * @return GetReservationsNomeLineaDataVersoResource
      */
 
-    @GetMapping("/reservations/verso/{nome_linea}/{data}/{verso}")
+    @GetMapping("/reservations/{nome_linea}/{data}/{verso}")
     public GetReservationsNomeLineaDataVersoResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/" + nomeLinea + "/" + data + "/" + verso + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
@@ -99,6 +99,24 @@ public class ReservationController {
      * @param data                 data in esame
      * @return identificatore univoco reservation
      */
+
+
+    /**
+     * Restituisce la reservation controllando che nomeLinea e Data corrispondano a quelli del reservation_id
+     *
+     * @param nomeLinea     nome linea
+     * @param data          data in esame
+     * @param reservationId id reservation
+     * @return ReservationDTO
+     */
+    @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
+    public ReservationDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        logger.info("/reservations/{nome_linea}/{data}/{reservation_id} è stato contattato");
+        Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+        return reservationService.getReservationCheck(nomeLinea, dataFormatted, reservationId);
+    }
+
+
     @PostMapping("/reservations/{nome_linea}/{data}")
     public String postReservation(@RequestBody ReservationResource reservationResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) throws JsonProcessingException {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
@@ -141,20 +159,7 @@ public class ReservationController {
         reservationService.deleteReservation(nomeLinea, dataFormatted, reservationId);
     }
 
-    /**
-     * Restituisce la reservation controllando che nomeLinea e Data corrispondano a quelli del reservation_id
-     *
-     * @param nomeLinea     nome linea
-     * @param data          data in esame
-     * @param reservationId id reservation
-     * @return ReservationDTO
-     */
-    @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public ReservationDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        logger.info("/reservations/{nome_linea}/{data}/{reservation_id} è stato contattato");
-        Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return reservationService.getReservationCheck(nomeLinea, dataFormatted, reservationId);
-    }
+
 
     /**
      * Usato da admin linea per indicare che ha preso il bambino dalla fermata

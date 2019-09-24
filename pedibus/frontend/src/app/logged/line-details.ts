@@ -23,10 +23,6 @@ export interface AlunnoNotReserved {
   update: boolean;
 }
 
-export interface NotReservation {
-  childrenNotReserved: AlunnoNotReserved[];
-}
-
 export interface AlunniPerFermata {
   fermata: Fermata;
   alunni: Alunno[];

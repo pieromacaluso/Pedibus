@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Alunno, LineReservationVerso, NotReservation, NuovaPrenotazione, PrenotazioneRequest} from './line-details';
+import {Alunno, AlunnoNotReserved, LineReservationVerso, NuovaPrenotazione, PrenotazioneRequest} from './line-details';
 import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import {map, publishReplay, share, shareReplay} from 'rxjs/operators';
@@ -28,7 +28,7 @@ export class ApiService {
   getPrenotazioneByLineaAndDateAndVerso(p: PrenotazioneRequest) {
     const idVerso = this.versoToInt(p.verso);
     if (p.linea && p.data) {
-      return this.httpClient.get<LineReservationVerso>(this.baseURL + 'reservations/verso/' + p.linea + '/' +
+      return this.httpClient.get<LineReservationVerso>(this.baseURL + 'reservations/' + p.linea + '/' +
         this.datePipe.transform(p.data, 'yyyy-MM-dd') + '/' + idVerso);
     }
   }
@@ -46,7 +46,7 @@ export class ApiService {
   getNonPrenotati(date: Date, verso: string) {
     const idVerso = this.versoToInt(verso);
     if (verso && date) {
-      return this.httpClient.get<NotReservation>(
+      return this.httpClient.get<AlunnoNotReserved[]>(
         this.baseURL + 'notreservations/' + this.datePipe.transform(date, 'yyyy-MM-dd') + '/' + idVerso);
     }
   }
