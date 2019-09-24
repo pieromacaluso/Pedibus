@@ -41,13 +41,26 @@ public class AdminRestController {
      * TODO (marcof) non mi convince troppo restituire un entity perchè dovrebbe funzionare solo come oggetto tramite per il db, c'è da capire che dati gli possono servire e metterli nel dto (?)
      * @return
      */
-    @GetMapping(value = "/admin/users")
+    @GetMapping("/admin/users")
     //tramite consumers è possibile indicare quale header Content-Type deve avere la richiesta
     public ResponseEntity getUsers() {
         List<UserEntity> allUsers = userService.getAllUsers();
         Map<Object, Object> model = new HashMap<>();
         model.put("ListaUtenti", allUsers);
         return ok(model);
+    }
+
+    /**
+     * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti i bambini
+     * @return
+     */
+    @GetMapping("/admin/children/")
+    public List<ChildDTO> getChildren(){
+        return userService.getAllChildren();
+//        List<ChildDTO> allChildren=userService.getAllChildren();
+//        Map<Object, Object> model = new HashMap<>();
+//        model.put("ListaChildren", allChildren);
+//        return ok(model);
     }
 
     /**
@@ -74,17 +87,6 @@ public class AdminRestController {
 
     }
 
-    /**
-     * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti i bambini
-     * @return
-     */
-    @GetMapping("/admin/children/")
-    public List<ChildDTO> getChildren(){
-        return userService.getAllChildren();
-//        List<ChildDTO> allChildren=userService.getAllChildren();
-//        Map<Object, Object> model = new HashMap<>();
-//        model.put("ListaChildren", allChildren);
-//        return ok(model);
-    }
+
 
 }

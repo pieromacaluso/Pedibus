@@ -18,7 +18,7 @@ public class UserController {
      *
      * @return
      */
-    @GetMapping("/children/")
+    @GetMapping("/children")
     public List<ChildDTO> getMyChildren() {
         return userService.getMyChildren();
     }
@@ -46,7 +46,7 @@ public class UserController {
      * @param childId
      * @param idFerm
      */
-    @PutMapping("/children/updateChildStop/{childId}/{idFerm}")
+    @PutMapping("/children/{childId}/{idFerm}")
     public void updateChildStop(@PathVariable String childId, @PathVariable String idFerm) {
         Integer idFermata = Integer.parseInt(idFerm);
         userService.updateChildStop(idFermata, childId);

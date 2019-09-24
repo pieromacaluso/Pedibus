@@ -12,6 +12,6 @@ public interface ReservationRepository extends MongoRepository<ReservationEntity
     Optional<ReservationEntity> findByCfChildAndDataAndVerso(String cfChild, Date data, boolean verso);
     Optional<ReservationEntity> findByCfChildAndData(String cfChild, Date data);
     List<ReservationEntity> findAllByDataAndIdFermataAndVerso(Date data, Integer id, boolean verso);
-    List<ReservationEntity> deleteAllByCfChild(String cfChild);
+    void deleteAllByCfChild(String cfChild);
     List<ReservationEntity> findByDataAndVerso(Date data,boolean verso);
 }

@@ -3,11 +3,13 @@ package it.polito.ai.mmap.pedibus;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.ActivationTokenEntity;
+import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.PermissionDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.ActivationTokenRepository;
+import it.polito.ai.mmap.pedibus.repository.LineaRepository;
 import it.polito.ai.mmap.pedibus.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.services.JsonHandlerService;
@@ -28,15 +30,26 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.sound.sampled.Line;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+/*
+ * - Usando i dati di test qualsiasi aggiunta o modifica viene cancellata dopo ogni test
+ * - Non supporre che tra 4, n giorni le uniche prenotazioni siano quelle introdotte come test
+ * - usare solo gli endpoint http che si stanno testando (a meno che lo si faccia per comodità), per il resto fare accesso diretto al db
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class Esercitazione3ApplicationTests {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Value("${superadmin.email}")
     private String superAdminMail;
     @Value("${superadmin.password}")
@@ -46,10 +59,14 @@ public class Esercitazione3ApplicationTests {
     JsonHandlerService jsonHandlerService;
     @Autowired
     LineeService lineeService;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
+    LineaRepository lineaRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -57,264 +74,298 @@ public class Esercitazione3ApplicationTests {
     @Autowired
     private ActivationTokenRepository activationTokenRepository;
 
+    private String mailTest = "appmmap@pieromacaluso.com";
 
     @After
     public void tearDownMethod() {
-        //se fallivano dei test rimaneva sul db
-        Optional<UserEntity> check = userRepository.findByUsername("appmmap@pieromacaluso.com");
-        if (check.isPresent())
+        Optional<UserEntity> check = userRepository.findByUsername(mailTest);
+        if (check.isPresent()) {
             userRepository.delete(check.get());
+            recoverTokenRepository.deleteByUserId(check.get().getId());
+        }
 
+        //cancello l'utente di test dalla lista degli admin di tutte le linee
+        List<LineaEntity> lineaEntityList = lineaRepository.findAll();
+        lineaEntityList.forEach(lineaEntity -> lineaEntity.getAdminList().remove(mailTest));
+        lineaRepository.saveAll(lineaEntityList);
     }
 
+    /**
+     * Controlla l'endpoint POST /login con dati corretti
+     *
+     * @throws Exception
+     */
     @Test
     public void postLogin_correct() throws Exception {
         logger.info("Test POST /login ...");
+
         UserDTO user = new UserDTO();
         user.setEmail(superAdminMail);
         user.setPassword(superAdminPass);
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(user);
-
-        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+        String json = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
     }
 
+    /**
+     * Controlla l'endpoint POST /login con username e pw sbagliata
+     *
+     * @throws Exception
+     */
     @Test
     public void postLogin_incorrect() throws Exception {
         logger.info("Test POST /login ...");
+
         UserDTO user = new UserDTO();
         user.setEmail(superAdminMail);
         user.setPassword("aimaimaim");
-        ObjectMapper mapper = new ObjectMapper();
-        String json1 = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String json1 = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isUnauthorized());
 
         user.setEmail("applicazioni.internet.mmapgmail.com");
         user.setPassword("aimaimaim");
-        String json2 = mapper.writeValueAsString(user);
+        String json2 = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json2))
+        mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json2))
                 .andExpect(status().isUnauthorized());
 
         user.setEmail(superAdminMail);
         user.setPassword("1");
-        String json3 = mapper.writeValueAsString(user);
+        String json3 = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
+        mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
                 .andExpect(status().isUnauthorized());
 
         logger.info("PASSED");
     }
 
+    /**
+     * Controlla POST /register con dati corretti
+     *
+     * @throws Exception
+     */
     @Test
     public void postRegister_correct() throws Exception {
         logger.info("Test POST /register ...");
         UserDTO user = new UserDTO();
-        user.setEmail("appmmap@pieromacaluso.com");
+        user.setEmail(mailTest);
         user.setPassword("321@User");
         user.setPassMatch("321@User");
-        ObjectMapper mapper = new ObjectMapper();
-        String json1 = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String json1 = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        if (this.userRepository.findByUsername("appmmap@pieromacaluso.com").isPresent()) {
-            this.userRepository.delete(this.userRepository.findByUsername("appmmap@pieromacaluso.com").get());
-        }
     }
 
+    /**
+     * Controlla POST /register con un utente duplicato
+     *
+     * @throws Exception
+     */
     @Test
     public void postRegister_duplicate() throws Exception {
         logger.info("Test POST /register duplicate ...");
         UserDTO user = new UserDTO();
-        user.setEmail("appmmap@pieromacaluso.com");
+        user.setEmail(mailTest);
         user.setPassword("321@User");
         user.setPassMatch("321@User");
-        ObjectMapper mapper = new ObjectMapper();
-        String json1 = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String json1 = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isInternalServerError());
 
         logger.info("PASSED");
-        if (this.userRepository.findByUsername("appmmap@pieromacaluso.com").isPresent()) {
-            this.userRepository.delete(this.userRepository.findByUsername("appmmap@pieromacaluso.com").get());
-        }
     }
 
+    /**
+     * Controlla POSt /register con pw che non matchano, email non valida, pw troppo corta
+     *
+     * @throws Exception
+     */
     @Test
     public void postRegister_incorrect() throws Exception {
         logger.info("Test POST /register incorrect ...");
         UserDTO user = new UserDTO();
         logger.info("Passwords does not match ...");
 
-        user.setEmail("appmmap@pieromacaluso.com");
+        user.setEmail(mailTest);
         user.setPassword("321@User");
         user.setPassMatch("12345678");
-        ObjectMapper mapper = new ObjectMapper();
-        String json1 = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String json1 = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isInternalServerError());
 
         logger.info("Password not valid ...");
 
-        user.setEmail("appmmap@pieromacaluso.com");
+        user.setEmail(mailTest);
         user.setPassword("1");
         user.setPassMatch("1");
-        String json2 = mapper.writeValueAsString(user);
+        String json2 = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json2))
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json2))
                 .andExpect(status().isInternalServerError());
 
         logger.info("Email not valid ...");
         user.setEmail("appmmappieromacaluso.com");
         user.setPassword("321@User");
         user.setPassMatch("321@User");
-        String json3 = mapper.writeValueAsString(user);
+        String json3 = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json3))
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json3))
                 .andExpect(status().isInternalServerError());
 
         logger.info("PASSED");
-        if (this.userRepository.findByUsername("appmmap@pieromacaluso.com").isPresent()) {
-            this.userRepository.delete(this.userRepository.findByUsername("appmmap@pieromacaluso.com").get());
-        }
     }
 
+    /**
+     * Controlla GET /confirm/{randomUUID} con dati corretti
+     *
+     * @throws Exception
+     */
     @Test
     public void getConfirmRandomUUID_correct() throws Exception {
         logger.info("Test GET /confirm/{randomUUID} correct ...");
         UserDTO user = new UserDTO();
-        user.setEmail("appmmap@pieromacaluso.com");
+        user.setEmail(mailTest);
         user.setPassword("321@User");
         user.setPassMatch("321@User");
-        ObjectMapper mapper = new ObjectMapper();
-        String json1 = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String json1 = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> checkUser = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        Optional<UserEntity> checkUser = userRepository.findByUsername(mailTest);
         assert checkUser.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(checkUser.get().getId());
+        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(checkUser.get().getId());
         assert activationCheck.isPresent();
         String UUID = activationCheck.get().getId().toString();
-        this.mockMvc.perform(get("/confirm/" + UUID))
+        mockMvc.perform(get("/confirm/" + UUID))
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        this.userRepository.delete(checkUser.get());
-
     }
 
+    /**
+     * Controlla GET /confirm/{randomUUID} con un UUID non appartente a nessuno
+     *
+     * @throws Exception
+     */
     @Test
     public void getConfirmRandomUUID_incorrect() throws Exception {
         logger.info("Test GET /confirm/{randomUUID} incorrect ...");
 
-        this.mockMvc.perform(get("/confirm/123456789"))
+        mockMvc.perform(get("/confirm/123456789"))
                 .andExpect(status().isNotFound());
 
         logger.info("PASSED");
     }
 
+    /**
+     * Controlla che POST /recover risponda sempre 200 come da specifiche
+     *
+     * @throws Exception
+     */
     @Test
     public void postRecover_always200() throws Exception {
-        logger.info("Test ALL /recover");
-        String email = "appmmap@pieromacaluso.com";
+        logger.info("Test POST /recover");
+        String email = mailTest;
         UserDTO user = new UserDTO();
         user.setEmail(email);
         user.setPassword("321@User");
         user.setPassMatch("321@User");
-        ObjectMapper mapper = new ObjectMapper();
-        String json1 = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String json1 = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> check = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        Optional<UserEntity> check = userRepository.findByUsername(mailTest);
         assert check.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(check.get().getId());
+        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(check.get().getId());
         assert activationCheck.isPresent();
         String UUID = activationCheck.get().getId().toString();
-        this.mockMvc.perform(get("/confirm/" + UUID))
+        mockMvc.perform(get("/confirm/" + UUID))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
+        mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
                 .andExpect(status().isOk());
 
-        Optional<RecoverTokenEntity> recoverCheck = this.recoverTokenRepository.findByUserId(check.get().getId());
+        Optional<RecoverTokenEntity> recoverCheck = recoverTokenRepository.findByUserId(check.get().getId());
         assert recoverCheck.isPresent();
         UUID = recoverCheck.get().getId().toString();
         UserDTO user1 = new UserDTO();
         user1.setPassword("12345@User");
         user1.setPassMatch("12345@User");
-        String json2 = mapper.writeValueAsString(user1);
-        this.mockMvc.perform(post("/recover/" + UUID).contentType(MediaType.APPLICATION_JSON).content(json2))
+        String json2 = objectMapper.writeValueAsString(user1);
+        mockMvc.perform(post("/recover/" + UUID).contentType(MediaType.APPLICATION_JSON).content(json2))
                 .andExpect(status().isOk());
 
         user.setPassword("12345@User");
-        String json3 = mapper.writeValueAsString(user);
+        String json3 = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
+        mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
                 .andExpect(status().isOk());
 
         email = "ciao";
-        this.mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
+        mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        Optional<UserEntity> userCheck = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
-        if (userCheck.isPresent()) {
-            Optional<RecoverTokenEntity> tokenCheck = this.recoverTokenRepository.findById(userCheck.get().getId());
-            tokenCheck.ifPresent(recoverTokenEntity -> this.recoverTokenRepository.delete(recoverTokenEntity));
-            this.userRepository.delete(userCheck.get());
-        }
     }
 
+    /**
+     * Controlla che GET /admin/users sia accessibile solo all'admin
+     *
+     * @throws Exception
+     */
     @Test
     public void getUserTest() throws Exception {
         logger.info("Test GET /admin/users");
         // No user --> Unauthorized
-        this.mockMvc.perform(get("/admin/users"))
+        mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isUnauthorized());
 
         // User with no rights --> Forbidden
-        String email = "appmmap@pieromacaluso.com";
+        String email = mailTest;
         UserDTO user = new UserDTO();
         user.setEmail(email);
         user.setPassword("321@User");
         user.setPassMatch("321@User");
-        ObjectMapper mapper = new ObjectMapper();
-        String json1 = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String json1 = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> check = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        Optional<UserEntity> check = userRepository.findByUsername(mailTest);
         assert check.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(check.get().getId());
+        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(check.get().getId());
         assert activationCheck.isPresent();
         String UUID = activationCheck.get().getId().toString();
-        this.mockMvc.perform(get("/confirm/" + UUID))
+        mockMvc.perform(get("/confirm/" + UUID))
                 .andExpect(status().isOk());
 
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json1))
+        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json1))
                 .andExpect(status().isOk()).andReturn();
-        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
         // No user --> Unauthorized
-        this.mockMvc.perform(get("/admin/users")
+        mockMvc.perform(get("/admin/users")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
 
@@ -322,115 +373,114 @@ public class Esercitazione3ApplicationTests {
         user = new UserDTO();
         user.setEmail(superAdminMail);
         user.setPassword(superAdminPass);
-        String json = mapper.writeValueAsString(user);
+        String json = objectMapper.writeValueAsString(user);
 
-        result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+        result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
-        node = mapper.readTree(result.getResponse().getContentAsString());
+        node = objectMapper.readTree(result.getResponse().getContentAsString());
         token = node.get("token").asText();
 
         // No user --> Unauthorized
-        this.mockMvc.perform(get("/admin/users")
+        mockMvc.perform(get("/admin/users")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
-        Optional<UserEntity> userCheck = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
-        if (userCheck.isPresent()) {
-            Optional<RecoverTokenEntity> tokenCheck = this.recoverTokenRepository.findById(userCheck.get().getId());
-            tokenCheck.ifPresent(recoverTokenEntity -> this.recoverTokenRepository.delete(recoverTokenEntity));
-            this.userRepository.delete(userCheck.get());
-        }
     }
 
+    /**
+     * Controlla PUT /admin/users/{userID}
+     *
+     * @throws Exception
+     */
     @Test
     public void putUsers() throws Exception {
 
         logger.info("Test PUT /admin/users");
         // SYS-ADMIN
-        ObjectMapper mapper = new ObjectMapper();
+
         UserDTO user = new UserDTO();
         user.setEmail(superAdminMail);
         user.setPassword(superAdminPass);
-        String json = mapper.writeValueAsString(user);
-        MvcResult result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+        String json = objectMapper.writeValueAsString(user);
+        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
-        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
         String token = node.get("token").asText();
 
         // USER-TEST
-        String email = "appmmap@pieromacaluso.com";
+        String email = mailTest;
         user = new UserDTO();
         user.setEmail(email);
         user.setPassword("321@User");
         user.setPassMatch("321@User");
-        mapper = new ObjectMapper();
-        json = mapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json))
+        json = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> check = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
+        Optional<UserEntity> check = userRepository.findByUsername(mailTest);
         assert check.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = this.activationTokenRepository.findByUserId(check.get().getId());
+        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(check.get().getId());
         assert activationCheck.isPresent();
         String UUID = activationCheck.get().getId().toString();
-        this.mockMvc.perform(get("/confirm/" + UUID))
+        mockMvc.perform(get("/confirm/" + UUID))
                 .andExpect(status().isOk());
-        PermissionDTO perm = new PermissionDTO();
-        perm.setLinea("linea1");
-        perm.setAddOrDel(true);
-        json = mapper.writeValueAsString(perm);
 
-        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
+        PermissionDTO perm = new PermissionDTO();
+        perm.setLinea(lineaEntity.getId());
+        perm.setAddOrDel(true);
+        json = objectMapper.writeValueAsString(perm);
+
+        mockMvc.perform(put("/admin/users/" + mailTest)
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
+        mockMvc.perform(put("/admin/users/" + mailTest)
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isUnauthorized());
+
+        assert lineaRepository.findById(lineaEntity.getId()).get().getAdminList().contains(mailTest);
 
         perm.setAddOrDel(false);
-        json = mapper.writeValueAsString(perm);
-        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
+        json = objectMapper.writeValueAsString(perm);
+        mockMvc.perform(put("/admin/users/" + mailTest)
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
+        mockMvc.perform(put("/admin/users/" + mailTest)
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isUnauthorized());
 
-        user.setEmail("appmmap@pieromacaluso.com");
+        assert !lineaRepository.findById(lineaEntity.getId()).get().getAdminList().contains(mailTest);
+
+
+        user.setEmail(mailTest);
         user.setPassword("321@User");
-        json = mapper.writeValueAsString(user);
-        result = this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+        json = objectMapper.writeValueAsString(user);
+        result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
-        node = mapper.readTree(result.getResponse().getContentAsString());
+        node = objectMapper.readTree(result.getResponse().getContentAsString());
         token = node.get("token").asText();
 
         perm.setAddOrDel(false);
-        json = mapper.writeValueAsString(perm);
-        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
+        json = objectMapper.writeValueAsString(perm);
+        mockMvc.perform(put("/admin/users/" + mailTest)
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
 
         perm.setAddOrDel(true);
-        json = mapper.writeValueAsString(perm);
-        this.mockMvc.perform(put("/admin/users/" + "appmmap@pieromacaluso.com")
+        json = objectMapper.writeValueAsString(perm);
+        mockMvc.perform(put("/admin/users/" + mailTest)
                 .contentType(MediaType.APPLICATION_JSON).content(json)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
 
         logger.info("PASSED");
-        Optional<UserEntity> userCheck = this.userRepository.findByUsername("appmmap@pieromacaluso.com");
-        if (userCheck.isPresent()) {
-            Optional<RecoverTokenEntity> tokenCheck = this.recoverTokenRepository.findById(userCheck.get().getId());
-            tokenCheck.ifPresent(recoverTokenEntity -> this.recoverTokenRepository.delete(recoverTokenEntity));
-            this.userRepository.delete(userCheck.get());
-        }
+
     }
-
-
 }

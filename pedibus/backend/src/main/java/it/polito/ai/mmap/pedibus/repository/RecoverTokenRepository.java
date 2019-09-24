@@ -11,5 +11,6 @@ import java.util.Optional;
 
 public interface RecoverTokenRepository extends MongoRepository<RecoverTokenEntity, ObjectId> {
     Optional<RecoverTokenEntity> findByUserId(ObjectId id);
+    void deleteByUserId(ObjectId id);
 
 }

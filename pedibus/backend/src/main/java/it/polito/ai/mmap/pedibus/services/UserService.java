@@ -320,6 +320,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * TODO cancellare
      * Metodo che permette ad un genitore di registrare un suo figlio
      *
      * @param childDTO
@@ -374,6 +375,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * //TODO cancellare
      * Metodo che permette di eliminare un bambino. Eseguibile o dal genitore o da un System-Admin
      *
      * @param idChild
