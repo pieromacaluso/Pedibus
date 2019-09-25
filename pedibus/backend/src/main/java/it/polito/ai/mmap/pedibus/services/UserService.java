@@ -5,6 +5,7 @@ import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -320,92 +321,43 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * TODO cancellare
-     * Metodo che permette ad un genitore di registrare un suo figlio
-     *
-     * @param childDTO
-     */
-    public void registerChild(ChildDTO childDTO) {
-        Optional<ChildEntity> c = childRepository.findById(childDTO.getCodiceFiscale());
-        if (c.isPresent())
-            throw new ChildAlreadyPresentException("Alunno con stesso codice fiscale trovato");
-        Optional<FermataEntity> checkFerm = fermataRepository.findById(childDTO.getIdFermataDefault());
-        if (!checkFerm.isPresent()) {
-            throw new FermataNotFoundException();
-        }
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ChildEntity childEntity = new ChildEntity(childDTO, principal.getId());
-        principal.addChild(childDTO.getCodiceFiscale());
-        childRepository.save(childEntity);
-        userRepository.save(principal);
-        logger.info("New Child " + childDTO.getCodiceFiscale() + " by user " + principal.getUsername());
-    }
-
-    /**
      * Recuperiamo da db i figli dell'utente loggato
+     *
      * @return
      */
     public List<ChildDTO> getMyChildren() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return  ((List<ChildEntity>) childRepository.findAllById(principal.getChildrenList())).stream().map(ChildDTO::new).collect(Collectors.toList());
+        return ((List<ChildEntity>) childRepository.findAllById(principal.getChildrenList())).stream().map(ChildDTO::new).collect(Collectors.toList());
     }
 
     /**
      * Metodo che permette di cambiare la fermata di default di un bambino o dal suo genitore o da un System-Admin
      *
-     * @param idFermata
-     * @param cf
+     * @param cfChild
+     * @param stopRes
      */
-    public void updateChildStop(Integer idFermata, String cf) {
-        Optional<ChildEntity> c = childRepository.findById(cf);
+    public void updateChildStop(String cfChild, ChildDefaultStopResource stopRes) {
+        Optional<ChildEntity> c = childRepository.findById(cfChild);
         if (c.isPresent()) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal.getChildrenList().contains(cf) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
-                if (fermataRepository.findById(idFermata).isPresent()) {
-                    ChildEntity childEntity = c.get();
-                    childEntity.setIdFermataDefault(idFermata);
-                    childRepository.save(childEntity);
-                } else
+            if (principal.getChildrenList().contains(cfChild) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+                ChildEntity childEntity = c.get();
+
+                if (fermataRepository.findById(stopRes.getIdFermataAndata()).isPresent())
+                    childEntity.setIdFermataAndata(stopRes.getIdFermataAndata());
+                else
                     throw new FermataNotFoundException();
 
+                if (fermataRepository.findById(stopRes.getIdFermataRitorno()).isPresent())
+                    childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
+                else
+                    throw new FermataNotFoundException();
+
+                childRepository.save(childEntity);
+
             } else
                 throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
         } else
             throw new ChildNotFoundException("Bambino non trovato");
     }
-
-    /**
-     * //TODO cancellare
-     * Metodo che permette di eliminare un bambino. Eseguibile o dal genitore o da un System-Admin
-     *
-     * @param idChild
-     */
-    public void delChild(String idChild) {
-        Optional<ChildEntity> c = childRepository.findById(idChild);
-        if (c.isPresent()) {
-            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            ChildEntity childEntity = c.get();
-
-            /*Rimozione dall'utente genitore*/
-            if (principal.getChildrenList().contains(idChild)) {
-                principal.getChildrenList().remove(childEntity);
-                userRepository.save(principal);
-
-            } else if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
-                Optional<UserEntity> p = userRepository.findById(childEntity.getIdParent());
-                if (p.isPresent()) {
-                    UserEntity parent = p.get();
-                    parent.getChildrenList().remove(childEntity);
-                    userRepository.save(parent);
-                }
-            } else
-                throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
-            /*Eliminazione entity*/
-            childRepository.delete(childEntity);
-
-        } else
-            throw new ChildNotFoundException("Bambino non trovato");
-    }
-
-
 }

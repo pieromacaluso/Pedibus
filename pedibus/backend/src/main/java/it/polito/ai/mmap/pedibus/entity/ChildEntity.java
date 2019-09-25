@@ -1,21 +1,12 @@
 package it.polito.ai.mmap.pedibus.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.io.IOException;
 
 @Data
 @AllArgsConstructor
@@ -27,14 +18,16 @@ public class ChildEntity {
     private String codiceFiscale; //Se si cambia questo campo bisogna cambiare "$.alunniPerFermataAndata[0].alunni[0].codiceFiscale" in test2
     private String name;
     private String surname;
-    private Integer idFermataDefault;   //in fase di registrazione ad ogni bambino bisogna indicare la sua fermata di default dalla quale partire/arrivare
+    private Integer idFermataAndata;   //in fase di registrazione ad ogni bambino bisogna indicare la sua fermata di default dalla quale partire/arrivare
+    private Integer idFermataRitorno;
     private ObjectId idParent;
 
     public ChildEntity(ChildDTO childDTO) {
         codiceFiscale = childDTO.getCodiceFiscale();
         name = childDTO.getName();
         surname = childDTO.getSurname();
-        idFermataDefault = childDTO.getIdFermataDefault();
+        idFermataAndata = childDTO.getIdFermataAndata();
+        idFermataRitorno = childDTO.getIdFermataRitorno();
         idParent = childDTO.getIdParent();
     }
 
@@ -42,7 +35,8 @@ public class ChildEntity {
         codiceFiscale = childDTO.getCodiceFiscale();
         name = childDTO.getName();
         surname = childDTO.getSurname();
-        idFermataDefault = childDTO.getIdFermataDefault();
+        idFermataAndata = childDTO.getIdFermataAndata();
+        idFermataRitorno = childDTO.getIdFermataRitorno();
         idParent = idPar;
     }
 
