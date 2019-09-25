@@ -24,22 +24,6 @@ public class UserController {
         return userService.getMyChildren();
     }
 
-    // todo probabilmente da cancellare, i bimbi vengono aggiunti tramite json (?)
-
-//    /**
-//     * L'utente loggato può aggiungere un suo figlio
-//     *
-//     * @param childDTO
-//     */
-//    @PostMapping("/children")
-//    public void registerChild(@RequestBody ChildDTO childDTO) {
-//        userService.registerChild(childDTO);
-//    }
-//
-//    @DeleteMapping("children")
-//    public void delChild(@RequestBody String idChild) {
-//        userService.delChild(idChild);
-//    }
 
     /**
      * Permette ad un genitore di cambiare le fermate di default di uno dei figli
