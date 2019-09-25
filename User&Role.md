@@ -1,6 +1,6 @@
 ## Role breakdown
 
-|  | USER | ACCOMPAGNATORE | ADMIN | SYSTEM-ADMIN |
+|  | USER | GUIDE | ADMIN | SYSTEM-ADMIN |
 | --- | --- | --- | --- | --- |
 | Mamma | <ul><li> - [x] </li></ul> | <ul><li> - [ ] </li></ul> | <ul><li> - [ ] </li></ul> | <ul><li> - [ ] </li></ul> |
 | Mamma casalinga | <ul><li> - [x] </li></ul> | <ul><li> - [x] </li></ul> | <ul><li> - [ ] </li></ul> | <ul><li> - [ ] </li></ul> |
@@ -33,14 +33,20 @@ Abbiamo 50 genitori con ROLE_USER, ad es:
 - enid.crawford@test.it       cf-5cfe28131ee6759e737cf2c7 Jordan Merritt || cf-5cfe28131467b27c48d5de0d Noreen Gilbert
 - morales.holloway@test.it    cf-5cfe2813323ed36c229a5798 Maria Martinez || cf-5cfe28131cad412d17c49722 Barber Rojas
 
-25 nonni con ROLE_ADMIN, linea1:   
-(nonni_linea1.json) 
-- reed.snyder@test.it
-- alexandra.winters@test.it
-- briana.butler@test.it
+25 nonni con ROLE_GUIDE della prima linea, di cui i primi 5 anche ROLE_ADMIN:   
+(nonni_0.json) 
+- reed.snyder@test.it ADMIN  
+- alexandra.winters@test.it ADMIN  
+- briana.butler@test.it ADMIN  
+- holcomb.waller@test.it"  
+- hammond.bowen@test.it  
+- hurst.cohen@test.it
   
-25 nonni con ROLE_ADMIN, linea2:   
-(nonni_linea2.json) 
-- mai.berg@test.it
-- cooley.bradshaw@test.it
-- juliet.salazar@test.it
+25 nonni con ROLE_ADMIN della seconda linea, di cui i primi 5 anche ROLE_ADMIN:   
+(nonni_1.json) 
+- mai.berg@test.it ADMIN  
+- cooley.bradshaw@test.it ADMIN   
+- juliet.salazar@test.it ADMIN  
+- tabatha.mcpherson@test.it  
+- burks.schwartz@test.it  
+- julianne.perry@test.it
