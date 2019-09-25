@@ -10,9 +10,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 public class JsonHandlerService {
@@ -31,25 +35,16 @@ public class JsonHandlerService {
      * Metodo che legge i JSON delle fermate e li salva sul DB
      */
     public void readPiedibusLines() {
-        int countPiedibusLine = 0;
-        try {
-            countPiedibusLine = Objects.requireNonNull(ResourceUtils.getFile("classpath:lines//").list()).length;
-            countPiedibusLine++;
-        } catch (IOException e) {
-            logger.error("Directory lines inesistente");
-            e.printStackTrace();
-            System.exit(-1);
-        }
-        for (int i = 1; i < countPiedibusLine; i++) {
-            try {
-                LineaDTO lineaDTO = objectMapper.readValue(ResourceUtils.getFile("classpath:lines/line" + i + ".json"), LineaDTO.class);
+          try {
+            Iterator<File> fileIterator = Arrays.asList(Objects.requireNonNull(ResourceUtils.getFile("classpath:lines//").listFiles())).iterator();
+            while (fileIterator.hasNext()) {
+                LineaDTO lineaDTO = objectMapper.readValue(fileIterator.next(), LineaDTO.class);
                 try {
                     //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin
                     ArrayList<String> adminList = lineeService.getLineById(lineaDTO.getId()).getAdminList();
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
                 } catch (LineaNotFoundException e) {
-
                     lineaDTO.setAdminList(new ArrayList<>());
                 }
 
@@ -58,11 +53,14 @@ public class JsonHandlerService {
                 lineeService.addFermate(lineaDTO.getRitorno());
 
                 logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
-            } catch (IOException e) {
-                logger.error("File lineN.json mancanti");
-                e.printStackTrace();
-                System.exit(-1);
             }
+
+        } catch (IOException e) {
+            logger.error("File riguardanti le linee mancanti");
+            e.printStackTrace();
+            System.exit(-1);
         }
+
+
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
+import javax.management.relation.Role;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -49,15 +50,19 @@ public class DbTestDataCreator {
      * crea:
      * - 100 Child
      * - 50 genitori con 2 figli        contenuti nel file genitori.json e pw = 1!qwerty1!
-     * - 25 nonni admin della linea1    contenuti nel file nonni_linea1.json e pw = 1!qwerty1!
-     * - 25 nonni admin della linea2    contenuti nel file nonni_linea2.json e pw = 1!qwerty1!
+     * - 25 nonni GUIDE della prima linea    contenuti nel file nonni_0.json e pw = 1!qwerty1! i primi 5 sono anche admin
+     * - 25 nonni GUIDE della seconda linea    contenuti nel file nonni_1.json e pw = 1!qwerty1! i primi 5 sono anche admin
      * - 1 reservation/figlio per oggi, domani e dopo domani (o andata o ritorno)
      */
     public void makeChildUserReservations() throws IOException {
         reservationRepository.deleteAll();
+        userRepository.deleteAll();
+        childRepository.deleteAll();
         int count = 0;
         RoleEntity roleUser = roleRepository.findByRole("ROLE_USER");
         RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
+        RoleEntity roleGuide = roleRepository.findByRole("ROLE_GUIDE");
+        List<LineaEntity> lineaEntityList = lineaRepository.findAll();
 
 
         List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/childEntity.json"), new TypeReference<List<ChildEntity>>() {
@@ -72,13 +77,9 @@ public class DbTestDataCreator {
             ChildEntity child2 = childEntityIterable.next();
             UserEntity parent = userList.get(i);
             parent.setChildrenList(new HashSet<>(Arrays.asList(child1.getCodiceFiscale(), child2.getCodiceFiscale())));
-            Optional<UserEntity> checkDuplicate = userRepository.findByUsername(parent.getUsername());
-            if (!checkDuplicate.isPresent()) {
-                parent.setEnabled(true);
-                parent = userRepository.save(parent); //per avere l'objectId
-                count++;
-            } else
-                parent = checkDuplicate.get();
+            parent.setEnabled(true);
+
+            parent = userRepository.save(parent); //per avere l'objectId
 
             userList.set(i, parent);
             child1.setIdParent(parent.getId());
@@ -87,29 +88,26 @@ public class DbTestDataCreator {
             i++;
         }
         childRepository.saveAll(childList);
-        logger.info(count + " genitori caricati");
+        logger.info("Tutti i genitori e i figli caricati");
 
-
-        count = 0;
         LinkedList<UserEntity> listNonni = new LinkedList<>();
-        for (i = 1; i <= 2; i++) {
-            for (UserEntity nonno : userEntityListConverter("nonni_linea" + i + ".json", roleAdmin)) {
-                Optional<UserEntity> checkDuplicate = userRepository.findByUsername(nonno.getUsername());
-                if (!checkDuplicate.isPresent()) {
-                    nonno.setRoleList(new HashSet<>(Arrays.asList(roleAdmin)));
-                    nonno.setEnabled(true);
-                    listNonni.add(nonno);
-                    Optional<LineaEntity> check = lineaRepository.findById("linea" + i);
+        for (i = 0; i <= 1; i++) {
+            count = 0;
+            for (UserEntity nonno : userEntityListConverter("nonni_" + i + ".json", roleGuide)) {
+                nonno.setEnabled(true);
 
-                    if (check.isPresent()) {
-                        LineaEntity lineaEntity = check.get();
-                        lineaEntity.getAdminList().add(nonno.getUsername());
-                        lineaRepository.save(lineaEntity);
-                    }
-                    count++;
+                if (count < 5) {
+                    LineaEntity lineaEntity = lineaEntityList.get(i);
+                    nonno.getRoleList().add(roleAdmin);
+                    lineaEntity.getAdminList().add(nonno.getUsername());
+                    lineaRepository.save(lineaEntity);
                 }
+                listNonni.add(nonno);
+
+                count++;
             }
         }
+
         userRepository.saveAll(listNonni);
         logger.info(count + " nonni caricati");
 
@@ -118,19 +116,23 @@ public class DbTestDataCreator {
         List<ReservationEntity> reservationsList = new LinkedList<>();
         ReservationEntity reservationEntity;
         int randLinea;
-        int randFermata;
         for (int day = 0; day < 3; day++) {
             childEntityIterable = childList.iterator();
             while (childEntityIterable.hasNext()) {
                 ChildEntity childEntity = childEntityIterable.next();
-                randFermata = (Math.abs(new Random().nextInt()) % 8) + 1; //la linea 1 ha 8 fermate
-                randLinea = (Math.abs(new Random().nextInt()) % 2) + 1; //linea 1 o 2
+                randLinea = (Math.abs(new Random().nextInt()) % 2);
                 reservationEntity = new ReservationEntity();
                 reservationEntity.setCfChild(childEntity.getCodiceFiscale());
                 reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
-                reservationEntity.setIdFermata(randFermata + (100 * (randLinea - 1)));
-                reservationEntity.setIdLinea("linea" + randLinea);
-                reservationEntity.setVerso(randFermata < 5); //1-4 = 101-104 = true = andata
+                reservationEntity.setIdLinea(lineaEntityList.get(randLinea).getId());
+                reservationEntity.setVerso(new Random().nextBoolean());
+                if (reservationEntity.isVerso()) {
+                    int index = (Math.abs(new Random().nextInt()) % lineaEntityList.get(randLinea).getAndata().size());
+                    reservationEntity.setIdFermata(lineaEntityList.get(randLinea).getAndata().get(index));
+                } else {
+                    int index = (Math.abs(new Random().nextInt()) % lineaEntityList.get(randLinea).getRitorno().size());
+                    reservationEntity.setIdFermata(lineaEntityList.get(randLinea).getRitorno().get(index));
+                }
 
                 if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
                     reservationsList.add(reservationEntity);

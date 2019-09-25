@@ -298,8 +298,7 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity;
         if (check.isPresent()) {
             userEntity = check.get();
-            if (userEntity.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN")))
-                userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
+            userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
 
             userRepository.save(userEntity);
         }
@@ -310,6 +309,7 @@ public class UserService implements UserDetailsService {
         // Per aggiungere un ruolo di default basta aggiungere una add qui sotto.
         // roles.add("ROLE_XYZ");
         roles.add("ROLE_USER");
+        roles.add("ROLE_GUIDE");
         roles.add("ROLE_ADMIN");
         roles.add("ROLE_SYSTEM-ADMIN");
         for (String role : roles) {
