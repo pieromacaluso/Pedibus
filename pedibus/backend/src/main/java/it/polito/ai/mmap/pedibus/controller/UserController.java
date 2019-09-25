@@ -45,9 +45,9 @@ public class UserController {
      * Permette ad un genitore di cambiare le fermate di default di uno dei figli
      *
      * @param cfChild
-     * @param sRes
+     * @param stopRes
      */
-    @PutMapping("/children/stop/{childId}")
+    @PutMapping("/children/stops/{childId}")
     public void updateChildStop(@PathVariable String cfChild, @RequestBody ChildDefaultStopResource stopRes) {
         userService.updateChildStop(cfChild, stopRes);
     }

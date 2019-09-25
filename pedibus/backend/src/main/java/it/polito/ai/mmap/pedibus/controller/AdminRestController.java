@@ -1,12 +1,11 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 
-import it.polito.ai.mmap.pedibus.entity.ChildEntity;
+import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.PermissionDTO;
+import it.polito.ai.mmap.pedibus.repository.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.UserService;
@@ -64,22 +63,22 @@ public class AdminRestController {
     }
 
     /**
-     * Un admin di una linea o il system-admin inserisce @param userID come admin per @param nomeLinea, indica tramite @addOrDel se aggiungere(true) o eliminare(false) il permesso
+     * Un admin di una linea o il system-admin inserisce un utente come admin per una linea, indicando tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione si troverà i privilegi di admin
      */
     @PutMapping("/admin/users/{userID}")
-    public void setUserAdmin(@RequestBody PermissionDTO permissionDTO, @PathVariable("userID") String userID) {
+    public void setUserAdmin(@RequestBody PermissionResource permissionResource, @PathVariable("userID") String userID) {
         UserEntity principal;
-        LineaDTO lineaDTO = lineeService.getLineById(permissionDTO.getLinea());
+        LineaEntity lineaEntity = lineeService.getLineaEntityById(permissionResource.getIdLinea());
 
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (lineaDTO.getAdminList().contains(principal.getUsername()) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
-                if(permissionDTO.isAddOrDel()){
+        if (lineaEntity.getAdminList().contains(principal.getUsername()) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+                if(permissionResource.isAddOrDel()){
                     userService.addAdmin(userID);
-                    lineeService.addAdminLine(userID, permissionDTO.getLinea());
+                    lineeService.addAdminLine(userID, permissionResource.getIdLinea());
                 }else{
                     userService.delAdmin(userID);
-                    lineeService.delAdminLine(userID, permissionDTO.getLinea());
+                    lineeService.delAdminLine(userID, permissionResource.getIdLinea());
                 }
         } else {
             throw new PermissionDeniedException("Non hai i privilegi per eseguire questa operazione");

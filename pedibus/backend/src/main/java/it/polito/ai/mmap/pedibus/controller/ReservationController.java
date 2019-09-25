@@ -2,7 +2,6 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.*;
@@ -14,8 +13,6 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,34 +42,32 @@ public class ReservationController {
      * Restituisce un oggetto JSON contenente due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
-     * @param nomeLinea nome linea
+     * @param idLinea id della linea
      * @param data      data in esame
-     * @return GetReservationsNomeLineaDataResource
+     * @return GetReservationsIdLineaDataResource
      */
 
-    @GetMapping("/reservations/{nome_linea}/{data}")
-    public GetReservationsNomeLineaDataResource getReservations(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) {
-        logger.info("GET /reservations/" + nomeLinea + "/" + data + " è stato contattato");
+    @GetMapping("/reservations/{id_linea}/{data}")
+    public GetReservationsIdLineaDataResource getReservations(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data) {
+        logger.info("GET /reservations/" + idLinea + "/" + data + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
-        return new GetReservationsNomeLineaDataResource(nomeLinea, dataFormatted, lineeService, reservationService, canModify);
+        return reservationService.getReservationsResource(idLinea, dataFormatted);
     }
 
     /**
      * Restituisce un oggetto JSON contenente una lista, riportante, per ogni fermata di andata o ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
-     * @param nomeLinea nome linea
+     * @param idLinea id della linea
      * @param data      data in esame
-     * @return GetReservationsNomeLineaDataVersoResource
+     * @return GetReservationsidLineaDataVersoResource
      */
 
-    @GetMapping("/reservations/verso/{nome_linea}/{data}/{verso}")
-    public GetReservationsNomeLineaDataVersoResource getReservationsToward(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
-        logger.info("GET /reservations/verso/" + nomeLinea + "/" + data + "/" + verso + " è stato contattato");
+    @GetMapping("/reservations/verso/{id_linea}/{data}/{verso}")
+    public GetReservationsIdDataVersoResource getReservationsToward(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
+        logger.info("GET /reservations/verso/" + idLinea + "/" + data + "/" + verso + " è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        boolean canModify = reservationService.canModify(nomeLinea, dataFormatted);
-        return new GetReservationsNomeLineaDataVersoResource(nomeLinea, dataFormatted, lineeService, userService, reservationService, verso, canModify);
+        return reservationService.getReservationsVersoResource(idLinea, dataFormatted, verso);
     }
 
     /**
@@ -95,35 +90,35 @@ public class ReservationController {
      * restituisce un identificatore univoco della reservation creata
      *
      * @param reservationResource JSON Body Reservation
-     * @param nomeLinea            nome linea
+     * @param idLinea            id linea
      * @param data                 data in esame
      * @return identificatore univoco reservation
      */
 
 
     /**
-     * Restituisce la reservation controllando che nomeLinea e Data corrispondano a quelli del reservation_id
+     * Restituisce la reservation controllando che idLinea e Data corrispondano a quelli del reservation_id
      *
-     * @param nomeLinea     nome linea
+     * @param idLinea     id linea
      * @param data          data in esame
      * @param reservationId id reservation
      * @return ReservationDTO
      */
-    @GetMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public ReservationDTO getReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
-        logger.info("/reservations/{nome_linea}/{data}/{reservation_id} è stato contattato");
+    @GetMapping("/reservations/{id_linea}/{data}/{reservation_id}")
+    public ReservationDTO getReservation(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+        logger.info("/reservations/{id_linea}/{data}/{reservation_id} è stato contattato");
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        return reservationService.getReservationCheck(nomeLinea, dataFormatted, reservationId);
+        return reservationService.getReservationCheck(idLinea, dataFormatted, reservationId);
     }
 
 
-    @PostMapping("/reservations/{nome_linea}/{data}")
-    public String postReservation(@RequestBody ReservationResource reservationResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data) throws JsonProcessingException {
+    @PostMapping("/reservations/{id_linea}/{data}")
+    public String postReservation(@RequestBody ReservationResource reservationResource, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data) throws JsonProcessingException {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
         logger.info("Nuova Reservation " + reservationResource.toString());
-        ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
+        ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         String idReservation = reservationService.addReservation(reservationDTO);
-        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + nomeLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
+        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
         return objectMapper.writeValueAsString(idReservation);
     }
 
@@ -131,19 +126,19 @@ public class ReservationController {
     /**
      * Usato da admin linea per indicare che ha preso il bambino dalla fermata
      *
-     * @param nomeLinea
+     * @param idLinea
      * @param verso
      * @param data
      * @param cfChild   true per indicare che è stato preso, false per annullare
      */
-    @PostMapping("/reservations/handled/{nomeLinea}/{verso}/{data}/{isSet}")
-    public void manageHandled(@PathVariable("nomeLinea") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
+    @PostMapping("/reservations/handled/{idLinea}/{verso}/{data}/{isSet}")
+    public void manageHandled(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
         Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
 
-        Integer idFermata = reservationService.manageHandled(verso, date, cfChild, isSet, nomeLinea);
+        Integer idFermata = reservationService.manageHandled(verso, date, cfChild, isSet, idLinea);
         if (idFermata != -1) {
-            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + nomeLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, idFermata));
-            logger.info("/handled/" + data + "/" + nomeLinea + "/" + verso);
+            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, idFermata));
+            logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         }
 
     }
@@ -158,10 +153,10 @@ public class ReservationController {
      * @param isSet   true per indicare che è arrivato, false per annullare
      */
 
-    @PostMapping("/reservations/arrived/{nomeLinea}/{verso}/{data}/{isSet}")
-    public void manageArrived(@PathVariable("verso") String nomeLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
+    @PostMapping("/reservations/arrived/{idLinea}/{verso}/{data}/{isSet}")
+    public void manageArrived(@PathVariable("verso") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         Date date = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        if (reservationService.manageArrived(verso, date, cfChild, isSet, nomeLinea))
+        if (reservationService.manageArrived(verso, date, cfChild, isSet, idLinea))
             logger.info("Child " + cfChild + " is arrived");
     }
 
@@ -170,30 +165,30 @@ public class ReservationController {
      * Il reservation_id ci permette di identificare la reservation da modificare, il body contiene i dati aggiornati.
      *
      * @param reservationResource JSON Body Reservation
-     * @param nomeLinea           nome linea
+     * @param idLinea           id linea
      * @param data                data in esame
      * @param reservationId       id Reservation da aggiornare
      */
-    @PutMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public void updateReservation(@RequestBody ReservationResource reservationResource, @PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+    @PutMapping("/reservations/{id_linea}/{data}/{reservation_id}")
+    public void updateReservation(@RequestBody ReservationResource reservationResource, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         logger.info("Aggiornamento reservation " + reservationId);
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineById(nomeLinea).getId(), dataFormatted);
+        ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         reservationService.updateReservation(reservationDTO, reservationId);
     }
 
     /**
      * Elimina la reservation indicata
      *
-     * @param nomeLinea     nome linea
+     * @param idLinea     id linea
      * @param data          data in esame
      * @param reservationId id reservation
      */
-    @DeleteMapping("/reservations/{nome_linea}/{data}/{reservation_id}")
-    public void deleteReservation(@PathVariable("nome_linea") String nomeLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
+    @DeleteMapping("/reservations/{id_linea}/{data}/{reservation_id}")
+    public void deleteReservation(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         logger.info("Eliminazione reservation" + reservationId);
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
-        reservationService.deleteReservation(nomeLinea, dataFormatted, reservationId);
+        reservationService.deleteReservation(idLinea, dataFormatted, reservationId);
     }
 
 

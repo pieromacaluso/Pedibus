@@ -7,15 +7,15 @@ import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
-import it.polito.ai.mmap.pedibus.repository.ChildRepository;
-import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
-import it.polito.ai.mmap.pedibus.repository.RoleRepository;
+import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.resources.FermataAlunniResource;
+import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
+import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationChildResource;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,6 +30,13 @@ public class ReservationService {
 
     @Autowired
     ChildRepository childRepository;
+
+    @Autowired
+    LineaRepository lineaRepository;
+
+    @Autowired
+    FermataRepository fermataRepository;
+
     @Autowired
     LineeService lineeService;
 
@@ -82,12 +89,12 @@ public class ReservationService {
     private Boolean isValidReservation(ReservationDTO reservationDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FermataDTO fermataDTO = lineeService.getFermataById(reservationDTO.getIdFermata());
-        LineaDTO lineaDTO = lineeService.getLineById(reservationDTO.getIdLinea());
+        LineaEntity lineaEntity = lineeService.getLineaEntityById(reservationDTO.getIdLinea());
 
 
         return (checkTime(reservationDTO.getData(), fermataDTO) &&
-                ((lineaDTO.getAndata().contains(fermataDTO) && reservationDTO.getVerso()) || (lineaDTO.getRitorno().contains(fermataDTO) && !reservationDTO.getVerso()))) &&
-                (principal.getChildrenList().contains(reservationDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()));
+                ((lineaEntity.getAndata().contains(fermataDTO.getId()) && reservationDTO.getVerso()) || (lineaEntity.getRitorno().contains(fermataDTO.getId()) && !reservationDTO.getVerso()))) &&
+                (principal.getChildrenList().contains(reservationDTO.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaEntity.getAdminList().contains(principal.getUsername()));
     }
 
     /**
@@ -106,18 +113,18 @@ public class ReservationService {
     }
 
     /**
-     * Restituisce la reservation controllando che nomeLinea e Data corrispondano a quelli del reservation_id
+     * Restituisce la reservation controllando che idLinea e Data corrispondano a quelli del reservation_id
      *
-     * @param nomeLinea
+     * @param idLinea
      * @param data
      * @param reservationId
      * @return
      */
-    public ReservationDTO getReservationCheck(String nomeLinea, Date data, ObjectId reservationId) {
+    public ReservationDTO getReservationCheck(String idLinea, Date data, ObjectId reservationId) {
         Optional<ReservationEntity> checkReservation = reservationRepository.findById(reservationId);
         if (checkReservation.isPresent()) {
             ReservationEntity reservationEntity = checkReservation.get();
-            if (lineeService.getLineById(nomeLinea).getId().equals(reservationEntity.getIdLinea()) && data.equals(reservationEntity.getData()))
+            if (idLinea.equals(reservationEntity.getIdLinea()) && data.equals(reservationEntity.getData()))
                 return new ReservationDTO(reservationEntity);
             else
                 throw new ReservationNotFoundException("Reservation " + reservationId + " non trovata");
@@ -158,18 +165,18 @@ public class ReservationService {
      * - Dettagli siano consistenti
      * - Si sta cercando di cancellare uno dei proprio children o system-admin o amministratore della linea
      *
-     * @param nomeLinea:     Nome della Linea
+     * @param idLinea:       id della Linea
      * @param data:          Data
      * @param reservationId: Id Reservation
      */
-    public void deleteReservation(String nomeLinea, Date data, ObjectId reservationId) {
+    public void deleteReservation(String idLinea, Date data, ObjectId reservationId) {
         Optional<ReservationEntity> checkReservation = reservationRepository.findById(reservationId);
         if (checkReservation.isPresent()) {
             ReservationEntity reservation = checkReservation.get();
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            LineaDTO lineaDTO = lineeService.getLineById(reservation.getIdLinea());
+            LineaEntity lineaEntity = lineaRepository.findById(reservation.getIdLinea()).get();
             FermataDTO fermataDTO = lineeService.getFermataById(reservation.getIdFermata());
-            if (checkTime(reservation.getData(), fermataDTO) && reservation.getData().equals(data) && lineeService.getLineById(reservation.getIdLinea()).getId().equals(nomeLinea) && (principal.getChildrenList().contains(reservation.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaDTO.getAdminList().contains(principal.getUsername()))) {
+            if (checkTime(reservation.getData(), fermataDTO) && reservation.getData().equals(data) && idLinea.equals(reservation.getIdLinea()) && (principal.getChildrenList().contains(reservation.getCfChild()) || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN") || lineaEntity.getAdminList().contains(principal.getUsername()))) {
                 reservationRepository.delete(reservation);
             } else {
                 throw new IllegalArgumentException("Errore in cancellazione reservation");
@@ -232,11 +239,11 @@ public class ReservationService {
      * @param verso
      * @param data
      * @param cfChild
-     * @param nomeLinea
+     * @param idLinea
      * @throws Exception
      */
-    public Integer manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String nomeLinea) throws Exception {
-        if (canModify(nomeLinea, data)) {
+    public Integer manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
+        if (canModify(idLinea, data)) {
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             pre.setPresoInCarico(isSet);
@@ -246,17 +253,14 @@ public class ReservationService {
         return -1;
     }
 
-    public boolean canModify(String nomeLinea, Date date) {
+    public boolean canModify(String idLinea, Date date) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LineaDTO lineaDTO = lineeService.getLineById(nomeLinea);
+
+        LineaEntity lineaEntity = lineeService.getLineaEntityById(idLinea);
         if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
             return true;
 
-        if ((lineaDTO.getAdminList().contains(principal.getUsername()) || lineaDTO.getGuideList().contains(principal.getUsername())) && MongoZonedDateTime.isToday(date))
-            return true;
-
-        return false;
-
+        return ((lineaEntity.getAdminList().contains(principal.getUsername()) || lineaEntity.getGuideList().contains(principal.getUsername())) && MongoZonedDateTime.isToday(date));
 
     }
 
@@ -266,11 +270,11 @@ public class ReservationService {
      * @param verso
      * @param data
      * @param cfChild
-     * @param nomeLinea
+     * @param idLinea
      * @throws Exception
      */
-    public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String nomeLinea) throws Exception {
-        if (canModify(nomeLinea, data)) {
+    public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
+        if (canModify(idLinea, data)) {
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             reservationEntity.setArrivatoScuola(isSet);
             reservationRepository.save(reservationEntity);
@@ -278,6 +282,70 @@ public class ReservationService {
         }
         return false;
     }
+
+    /**
+     * Costruisce l'oggetto richiesto da GET /reservations/verso/{id_linea}/{data}/{verso}
+     *
+     * @param idLinea
+     * @param dataFormatted
+     * @param verso
+     * @return
+     */
+    public GetReservationsIdDataVersoResource getReservationsVersoResource(String idLinea, Date dataFormatted, boolean verso) {
+        GetReservationsIdDataVersoResource res = new GetReservationsIdDataVersoResource();
+        // Ordinati temporalmente, quindi seguendo l'andamento del percorso
+        List<FermataDTO> fermate;
+        if (verso) {
+            fermate = lineeService.getLineaDTOById(idLinea).getAndata();
+            res.setOrarioScuola(lineeService.getArrivoScuola());
+        } else {
+            fermate = lineeService.getLineaDTOById(idLinea).getRitorno();
+            res.setOrarioScuola(lineeService.getPartenzaScuola());
+
+        }
+        res.setAlunniPerFermata(fermate.stream()
+                .map(FermataAlunniResource::new)
+                .collect(Collectors.toList()));
+        res.getAlunniPerFermata().forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), verso)));
+
+
+        List<String> tmp;
+
+        List<String> bambiniDataVerso = getAllChildrenForReservationDataVerso(dataFormatted, verso);
+        List<String> bambini = userService.getAllChildrenId();                                                    //tutti i bambini iscritti
+        tmp = bambini.stream().filter(bambino -> !bambiniDataVerso.contains(bambino)).collect(Collectors.toList());     //tutti i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
+
+        res.setChildrenNotReserved(userService.getAllChildrenById(tmp));
+
+        res.setCanModify(canModify(idLinea, dataFormatted));
+
+        return res;
+    }
+
+    public GetReservationsIdLineaDataResource getReservationsResource(String idLinea, Date dataFormatted) {
+        GetReservationsIdLineaDataResource res = new GetReservationsIdLineaDataResource();
+        // Ordinati temporalmente, quindi seguendo l'andamento del percorso
+        LineaDTO lineaDTO = lineeService.getLineaDTOById(idLinea);
+        res.setAlunniPerFermataAndata(lineaDTO.getAndata().stream()
+                .map(FermataAlunniResource::new)
+                .collect(Collectors.toList()));
+        // true per indicare l'andata
+        res.getAlunniPerFermataAndata().forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), true)));
+
+
+        res.setAlunniPerFermataRitorno(lineaDTO.getRitorno().stream()
+                .map(FermataAlunniResource::new)
+                .collect(Collectors.toList()));
+        // false per indicare il ritorno
+        res.getAlunniPerFermataRitorno().forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), false)));
+
+        res.setCanModify(canModify(idLinea, dataFormatted));
+        res.setArrivoScuola(lineeService.getArrivoScuola());
+        res.setPartenzaScuola(lineeService.getPartenzaScuola());
+
+        return res;
+    }
+
 
     /**
      * ritorna tutti i bambini prenotati per una determinata giornata in una detrminata linea

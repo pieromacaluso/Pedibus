@@ -11,11 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -41,11 +37,11 @@ public class JsonHandlerService {
                 LineaDTO lineaDTO = objectMapper.readValue(fileIterator.next(), LineaDTO.class);
                 try {
                     //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin
-                    ArrayList<String> adminList = lineeService.getLineById(lineaDTO.getId()).getAdminList();
+                    ArrayList<String> adminList = lineeService.getLineaEntityById(lineaDTO.getId()).getAdminList();
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
 
-                    ArrayList<String> guideList = lineeService.getLineById(lineaDTO.getId()).getGuideList();
+                    ArrayList<String> guideList = lineeService.getLineaEntityById(lineaDTO.getId()).getGuideList();
                     if(guideList != null)
                         lineaDTO.setGuideList(guideList);
 

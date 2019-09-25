@@ -80,12 +80,12 @@ public class LineeController {
     /**
      * Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno.
      *
-     * @param name nome Linea
+     * @param idLinea id della Linea
      * @return LineaDTO
      */
-    @GetMapping("/lines/{nome_linea}")
-    public LineaDTO getStopsLine(@PathVariable("nome_linea") String name) {
-        return lineeService.getLineById(name);
+    @GetMapping("/lines/{id_linea}")
+    public LineaDTO getStopsLine(@PathVariable("id_linea") String idLinea) {
+        return lineeService.getLineaDTOById(idLinea);
     }
 
 

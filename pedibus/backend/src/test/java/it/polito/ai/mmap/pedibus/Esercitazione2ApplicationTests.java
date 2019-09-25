@@ -6,7 +6,7 @@ import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
-import it.polito.ai.mmap.pedibus.resources.GetReservationsNomeLineaDataVersoResource;
+import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import it.polito.ai.mmap.pedibus.services.*;
 import org.bson.types.ObjectId;
@@ -167,7 +167,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     /**
-     * Controlla che GET /lines/{nome_linea} funzioni come da specifiche
+     * Controlla che GET /lines/{id_linea} funzioni come da specifiche
      *
      * @throws Exception
      */
@@ -188,7 +188,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     /**
-     * Controlla POST /reservations/{nome_linea}/{data} con dei dati corretti
+     * Controlla POST /reservations/{id_linea}/{data} con dei dati corretti
      *
      * @throws Exception
      */
@@ -211,7 +211,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     /**
-     * Controlla POST /reservations/{nome_linea}/{data} con un inserimento duplicato
+     * Controlla POST /reservations/{id_linea}/{data} con un inserimento duplicato
      *
      * @throws Exception
      */
@@ -245,7 +245,7 @@ public class Esercitazione2ApplicationTests {
 
 
     /**
-     * Controlla che tramite POST /reservations/{nome_linea}/{data}
+     * Controlla che tramite POST /reservations/{id_linea}/{data}
      * non si possa inserire una prenotazione per una fermata nel verso sbagliato
      *
      * @throws Exception
@@ -270,7 +270,7 @@ public class Esercitazione2ApplicationTests {
 
 
     /**
-     * Controlla che tramite POST /reservations/{nome_linea}/{data}
+     * Controlla che tramite POST /reservations/{id_linea}/{data}
      * non si possa inserire una prenotazione per una linea indicando la fermata di un'altra linea
      *
      * @throws Exception
@@ -294,7 +294,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     /**
-     * Controlla GET /reservations/{nome_linea}/{data}/{reservation_id} con dati corretti
+     * Controlla GET /reservations/{id_linea}/{data}/{reservation_id} con dati corretti
      *
      * @throws Exception
      */
@@ -327,7 +327,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     /**
-     * Controlla GET /reservations/verso/{nome_linea}/{data}/{verso}
+     * Controlla GET /reservations/verso/{id_linea}/{data}/{verso}
      * Tale endPoint deve ritornare tutte le reservations per una determinata combinazione di linea, data e verso.
      *
      * @throws Exception
@@ -363,7 +363,7 @@ public class Esercitazione2ApplicationTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();
-        GetReservationsNomeLineaDataVersoResource resource = objectMapper.readValue(result.getResponse().getContentAsString(), GetReservationsNomeLineaDataVersoResource.class);
+        GetReservationsIdDataVersoResource resource = objectMapper.readValue(result.getResponse().getContentAsString(), GetReservationsIdDataVersoResource.class);
         //controllo che ci sia il bimbo prenotato alla fermata, verso, data giusta
         assert (resource.getAlunniPerFermata().stream().filter(fermataDTOAlunni -> fermataDTOAlunni.getFermata().getId().equals(lineaEntity.getAndata().get(0))).collect(Collectors.toList()).get(0).getAlunni().stream().filter(alunni -> alunni.getCodiceFiscale().equals(childMap.get(1).getCodiceFiscale())).count() == 1);
 
@@ -450,7 +450,7 @@ public class Esercitazione2ApplicationTests {
 
 
     /**
-     * Controlla PUT /reservations/{nome_linea}/{data}/{reservation_id}
+     * Controlla PUT /reservations/{id_linea}/{data}/{reservation_id}
      *
      * @throws Exception
      */
@@ -486,7 +486,7 @@ public class Esercitazione2ApplicationTests {
     }
 
     /**
-     * Controlla PUT /reservations/{nome_linea}/{data}/{reservation_id} con verso/id fermata non congruente
+     * Controlla PUT /reservations/{id_linea}/{data}/{reservation_id} con verso/id fermata non congruente
      *
      * @throws Exception
      */
@@ -522,7 +522,7 @@ public class Esercitazione2ApplicationTests {
 
 
     /**
-     * Controlla DELETE /reservations/{nome_linea}/{data}/{reservation_id} con il reservation_id random/non congruente
+     * Controlla DELETE /reservations/{id_linea}/{data}/{reservation_id} con il reservation_id random/non congruente
      * todo (marcof) non capisco perchè testiamo che non si possa cancellare un objectId a caso, se casualmente prendiamo quello di una prenotazione dovremmo poterla cancellare, anche il numero a caso mi lascia un po' perplesso
      *
      * @throws Exception

@@ -6,7 +6,7 @@ import it.polito.ai.mmap.pedibus.entity.ActivationTokenEntity;
 import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
-import it.polito.ai.mmap.pedibus.objectDTO.PermissionDTO;
+import it.polito.ai.mmap.pedibus.repository.PermissionResource;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.ActivationTokenRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;
@@ -14,7 +14,6 @@ import it.polito.ai.mmap.pedibus.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.services.JsonHandlerService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,15 +24,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import javax.sound.sampled.Line;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -429,8 +425,8 @@ public class Esercitazione3ApplicationTests {
                 .andExpect(status().isOk());
 
         LineaEntity lineaEntity = lineaRepository.findAll().get(0);
-        PermissionDTO perm = new PermissionDTO();
-        perm.setLinea(lineaEntity.getId());
+        PermissionResource perm = new PermissionResource();
+        perm.setIdLinea(lineaEntity.getId());
         perm.setAddOrDel(true);
         json = objectMapper.writeValueAsString(perm);
 

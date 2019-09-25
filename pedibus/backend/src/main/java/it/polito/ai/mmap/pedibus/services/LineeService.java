@@ -99,20 +99,35 @@ public class LineeService {
     }
 
     /**
-     * Restituisce una LineaDTO a partire dal suo nome
+     * Restituisce una LineaEntity a partire dal suo nome
      *
-     * @param idLine nome linea
-     * @return LineaDTO
+     * @param idLinea id linea
+     * @return LineaEntity
      */
-    public LineaDTO getLineById(String idLine) {
-        Optional<LineaEntity> linea = lineaRepository.findById(idLine);
+    public LineaEntity getLineaEntityById(String idLinea) {
+        Optional<LineaEntity> linea = lineaRepository.findById(idLinea);
         if (linea.isPresent()) {
-            return new LineaDTO(linea.get(), fermataRepository);
+            return linea.get();
         } else {
-            throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLine);
+            throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLinea);
         }
     }
 
+    /**
+     * Restituisce una LineaDTO a partire dal suo nome
+     * Se possibile usare l'entity che è più leggera
+     *
+     * @param idLinea id linea
+     * @return LineaEntity
+     */
+    public LineaDTO getLineaDTOById(String idLinea) {
+        Optional<LineaEntity> linea = lineaRepository.findById(idLinea);
+        if (linea.isPresent()) {
+            return new LineaDTO(linea.get(), fermataRepository);
+        } else {
+            throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLinea);
+        }
+    }
 
     /**
      * Restituisce tutte le linee in DB
