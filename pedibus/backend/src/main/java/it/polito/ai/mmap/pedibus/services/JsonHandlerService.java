@@ -44,8 +44,14 @@ public class JsonHandlerService {
                     ArrayList<String> adminList = lineeService.getLineById(lineaDTO.getId()).getAdminList();
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
+
+                    ArrayList<String> guideList = lineeService.getLineById(lineaDTO.getId()).getGuideList();
+                    if(guideList != null)
+                        lineaDTO.setGuideList(guideList);
+
                 } catch (LineaNotFoundException e) {
                     lineaDTO.setAdminList(new ArrayList<>());
+                    lineaDTO.setGuideList(new ArrayList<>());
                 }
 
                 lineeService.addLinea(lineaDTO);

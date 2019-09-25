@@ -17,6 +17,7 @@ public class LineaDTO {
     private String nome;
     private String adminMast;
     private ArrayList<String> adminList;
+    private ArrayList<String> guideList;
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
 

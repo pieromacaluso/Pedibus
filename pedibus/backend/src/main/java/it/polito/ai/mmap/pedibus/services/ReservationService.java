@@ -1,9 +1,6 @@
 package it.polito.ai.mmap.pedibus.services;
 
-import it.polito.ai.mmap.pedibus.entity.ChildEntity;
-import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
-import it.polito.ai.mmap.pedibus.entity.RoleEntity;
-import it.polito.ai.mmap.pedibus.entity.UserEntity;
+import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
@@ -148,11 +145,11 @@ public class ReservationService {
         }
     }
 
-    public List<ChildDTO> getChildrenNotReserved(Date data, boolean verso){
-        List<String> bambiniDataVerso=getAllChildrenForReservationDataVerso(data,verso);
-        List<String> bambini=userService.getAllChildrenId();
+    public List<ChildDTO> getChildrenNotReserved(Date data, boolean verso) {
+        List<String> bambiniDataVerso = getAllChildrenForReservationDataVerso(data, verso);
+        List<String> bambini = userService.getAllChildrenId();
 
-        return userService.getAllChildrenById(bambini.stream().filter(bambino->!bambiniDataVerso.contains(bambino)).collect(Collectors.toList()));
+        return userService.getAllChildrenById(bambini.stream().filter(bambino -> !bambiniDataVerso.contains(bambino)).collect(Collectors.toList()));
     }
 
     /**
@@ -251,14 +248,16 @@ public class ReservationService {
 
     public boolean canModify(String nomeLinea, Date date) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LineaDTO lineaDTO = lineeService.getLineById(nomeLinea);
         if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
             return true;
-        else {
-            if (lineeService.getLineById(nomeLinea).getAdminList().contains(principal.getUsername()) && MongoZonedDateTime.isToday(date)) {
-                return true;
-            } else return false;
 
-        }
+        if ((lineaDTO.getAdminList().contains(principal.getUsername()) || lineaDTO.getGuideList().contains(principal.getUsername())) && MongoZonedDateTime.isToday(date))
+            return true;
+
+        return false;
+
+
     }
 
     /**
