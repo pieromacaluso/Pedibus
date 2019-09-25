@@ -26,6 +26,8 @@ export class ListaPrenotazioniComponent implements OnInit {
   prenotazione: PrenotazioneRequest;
   countLoading = 0;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
+  bottomCardTitle: string;
+  children: any[] = [];
   private handledSub: Subscription;
   // private openedDialog: any = 0;
   private resSub: Subscription;
@@ -81,6 +83,20 @@ export class ListaPrenotazioniComponent implements OnInit {
       }
     }, (error) => console.error(error));
 
+    this.setBottoCardTitle();
+
+  }
+
+  setBottoCardTitle() {
+    if (this.authService.getRoles().includes('ROLE_USER')) {
+      this.bottomCardTitle = 'Prenota fermata';
+      this.apiService.getChildren().subscribe((childs) => {
+        this.children = childs;
+      });
+    }
+    if (this.authService.getRoles().includes('ROLE_ADMIN')) {
+      this.bottomCardTitle = 'Bambini non prenotati';
+    }
   }
 
   private pathSub(prenotazione: PrenotazioneRequest) {
@@ -147,9 +163,19 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   sortedNotReserved(alu: AlunnoNotReserved[]) {
-    return alu.sort((a, b) => {
-      return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
-    });
+    if (this.authService.getRoles().includes('ROLE_USER')) {
+     // todo: 1. get children, 2. filtra, 3. ordina
+      return alu.filter((a) => this.children.find((c) => c.codiceFiscale === a.codiceFiscale))
+      .sort((a, b) => {
+        return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
+      });
+
+  }
+    if (this.authService.getRoles().includes('ROLE_ADMIN')) {
+      return alu.sort((a, b) => {
+        return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
+      });
+    }
   }
 
   ngOnInit(): void {

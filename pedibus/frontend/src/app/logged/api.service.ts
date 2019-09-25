@@ -17,6 +17,10 @@ export class ApiService {
   constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
   }
 
+  getChildren(): Observable<any[]> {
+    return this.httpClient.get<any[]>(this.baseURL + 'children');
+  }
+
   getLinee(): Observable<string[]> {
     return this.httpClient.get<string[]>(this.baseURL + 'lines');
   }
@@ -28,7 +32,7 @@ export class ApiService {
   getPrenotazioneByLineaAndDateAndVerso(p: PrenotazioneRequest) {
     const idVerso = this.versoToInt(p.verso);
     if (p.linea && p.data) {
-      return this.httpClient.get<LineReservationVerso>(this.baseURL + 'reservations/' + p.linea + '/' +
+      return this.httpClient.get<LineReservationVerso>(this.baseURL + 'reservations/verso/' + p.linea + '/' +
         this.datePipe.transform(p.data, 'yyyy-MM-dd') + '/' + idVerso);
     }
   }
