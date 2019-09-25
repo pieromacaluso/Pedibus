@@ -6,7 +6,7 @@ import it.polito.ai.mmap.pedibus.entity.ActivationTokenEntity;
 import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.RecoverTokenEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
-import it.polito.ai.mmap.pedibus.repository.PermissionResource;
+import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.ActivationTokenRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;

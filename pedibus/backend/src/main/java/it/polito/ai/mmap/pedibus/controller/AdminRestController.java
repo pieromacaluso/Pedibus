@@ -5,7 +5,7 @@ import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
-import it.polito.ai.mmap.pedibus.repository.PermissionResource;
+import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.UserService;

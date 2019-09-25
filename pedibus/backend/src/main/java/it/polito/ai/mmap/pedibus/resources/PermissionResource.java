@@ -1,4 +1,4 @@
-package it.polito.ai.mmap.pedibus.repository;
+package it.polito.ai.mmap.pedibus.resources;
 
 import lombok.Data;
 
