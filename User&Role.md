@@ -19,6 +19,14 @@ Ad oggi (pre consegna es5):
 - I vari ADMIN possono effettuare/modificare una prenotazione solo nel giorno corrente e per la linea di cui è amministratore
 - Il system admin può effettuare/modificare una prenotazione quando vuole
 
+Ad oggi (consegna progetto)
+- Un genitore ha il ruolo di USER, ma può assumerne altri
+- Tutti i nonni sono GUIDE per una linea, alcuni ADMIN
+- Quando aggiungiamo il ruolo ADMIN lo sommiamo agli altri
+- Un ADMIN può aggiungere/modificare/cancellare una prenotazione solo per la sua linea e per il giorno corrente (GUIDE no)
+- Sia ADMIN che GUIDE possono segnare un bimbo come handled/arrived
+- Un SYS-ADMIN può fare quello che vuole
+
 ## User breakdown
 System admin:   
 applicazioni.internet.mmap@gmail.com  
