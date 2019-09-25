@@ -17,7 +17,7 @@ public class FermataEntity {
 
     private String name;
     private String orario;
-    private String nomeLinea;
+    private String idLinea;
     private Boolean verso;
 
     /**

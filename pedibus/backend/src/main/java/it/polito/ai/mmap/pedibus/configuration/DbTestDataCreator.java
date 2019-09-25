@@ -52,7 +52,7 @@ public class DbTestDataCreator {
      * - 50 genitori con 2 figli        contenuti nel file genitori.json e pw = 1!qwerty1!
      * - 25 nonni GUIDE della prima linea    contenuti nel file nonni_0.json e pw = 1!qwerty1! i primi 5 sono anche admin
      * - 25 nonni GUIDE della seconda linea    contenuti nel file nonni_1.json e pw = 1!qwerty1! i primi 5 sono anche admin
-     * - 1 reservation/figlio per oggi, domani e dopo domani (o andata o ritorno)
+     * - 1 reservation/figlio per oggi, domani e dopo domani (andata e ritorno)
      */
     public void makeChildUserReservations() throws IOException {
         reservationRepository.deleteAll();
@@ -120,19 +120,26 @@ public class DbTestDataCreator {
             childEntityIterable = childList.iterator();
             while (childEntityIterable.hasNext()) {
                 ChildEntity childEntity = childEntityIterable.next();
-                randLinea = (Math.abs(new Random().nextInt()) % 2);
+
+                //andata
                 reservationEntity = new ReservationEntity();
                 reservationEntity.setCfChild(childEntity.getCodiceFiscale());
                 reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
-                reservationEntity.setIdLinea(lineaEntityList.get(randLinea).getId());
-                reservationEntity.setVerso(new Random().nextBoolean());
-                if (reservationEntity.isVerso()) {
-                    int index = (Math.abs(new Random().nextInt()) % lineaEntityList.get(randLinea).getAndata().size());
-                    reservationEntity.setIdFermata(lineaEntityList.get(randLinea).getAndata().get(index));
-                } else {
-                    int index = (Math.abs(new Random().nextInt()) % lineaEntityList.get(randLinea).getRitorno().size());
-                    reservationEntity.setIdFermata(lineaEntityList.get(randLinea).getRitorno().get(index));
+                reservationEntity.setIdLinea(fermataRepository.findById(childEntity.getIdFermataAndata()).get().getIdLinea());
+                reservationEntity.setVerso(true);
+                reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
+                if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
+                    reservationsList.add(reservationEntity);
+                    count++;
                 }
+
+                //ritorno
+                reservationEntity = new ReservationEntity();
+                reservationEntity.setCfChild(childEntity.getCodiceFiscale());
+                reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
+                reservationEntity.setIdLinea(fermataRepository.findById(childEntity.getIdFermataRitorno()).get().getIdLinea());
+                reservationEntity.setVerso(false);
+                reservationEntity.setIdFermata(childEntity.getIdFermataRitorno());
 
                 if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
                     reservationsList.add(reservationEntity);
@@ -144,8 +151,6 @@ public class DbTestDataCreator {
 
         reservationRepository.saveAll(reservationsList);
         logger.info(count + " reservations per oggi, domani e dopodomani caricate");
-
-
     }
 
 

@@ -13,15 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-
-/**
- * - una post a http://localhost:8080/debug/make genera:
- * <p>
- * - 100 Child
- * - 50 genitori con 2 figli        username = primi 50 contenuti nel file genitori.json e pw = 1!qwerty1!
- * - 50 nonni                       username = secondi 50 contenuti nel file genitori.json e pw = 1!qwerty1!
- * - 1 reservation/figlio per oggi, domani e dopo domani (o andata o ritorno)
- */
 @Profile("dev")
 @RestController
 public class DebugController {
