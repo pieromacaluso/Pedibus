@@ -137,7 +137,8 @@ export class ListaPrenotazioniComponent implements OnInit {
           res: this.resource.alunniPerFermata,
           data: this.prenotazione.data,
           verso: this.prenotazione.verso,
-          linea: this.prenotazione.linea
+          linea: this.prenotazione.linea,
+          resource: this.resource
         }
       });
   }
