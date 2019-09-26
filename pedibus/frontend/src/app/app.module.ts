@@ -11,7 +11,7 @@ import {
   MatSnackBarModule,
   MatTabsModule,
   MatToolbarModule,
-  MatChipsModule, MAT_DATE_LOCALE
+  MAT_DATE_LOCALE
 } from '@angular/material';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -29,7 +29,7 @@ import {LoggedModule} from './logged/logged.module';
   declarations: [
     AppComponent,
     PageNotFoundComponent,
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,

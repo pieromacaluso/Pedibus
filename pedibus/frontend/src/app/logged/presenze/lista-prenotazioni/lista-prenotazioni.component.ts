@@ -4,14 +4,13 @@ import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig} from '@angular/material/dialog';
-import {AdminBookDialogComponent, DialogData} from './admin-book-dialog/admin-book-dialog.component';
-import {filter} from 'rxjs/operators';
+import {AdminBookDialogComponent} from './admin-book-dialog/admin-book-dialog.component';
 import {MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {Message} from '@stomp/stompjs';
 import {Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
-import {$} from 'protractor';
+import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -26,6 +25,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   prenotazione: PrenotazioneRequest;
   countLoading = 0;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
+  deleteDialogRef: MatDialogRef<DeleteDialogComponent>;
   bottomCardTitle: string;
   children: any[] = [];
   private handledSub: Subscription;
@@ -92,6 +92,7 @@ export class ListaPrenotazioniComponent implements OnInit {
       this.bottomCardTitle = 'Prenota fermata';
       this.apiService.getChildren().subscribe((childs) => {
         this.children = childs;
+        console.log('children:', childs);
       });
     }
     if (this.authService.getRoles().includes('ROLE_ADMIN')) {
@@ -126,8 +127,24 @@ export class ListaPrenotazioniComponent implements OnInit {
     }
   }
 
+  openDeleteDialog(alu: Alunno) {
+    this.dialog.closeAll();
+
+    this.deleteDialogRef = this.dialog.open(DeleteDialogComponent, {
+        hasBackdrop: true,
+        data: {
+          alunno: alu,
+          res: this.resource.alunniPerFermata,
+          data: this.prenotazione.data,
+          verso: this.prenotazione.verso,
+          linea: this.prenotazione.linea
+        }
+      });
+  }
+
   canModify() {
     return this.authService.isAdmin() && this.resource.canModify;
+    // return true;
   }
 
   showLoading() {
@@ -149,6 +166,12 @@ export class ListaPrenotazioniComponent implements OnInit {
         console.error(error);
         al.update = false;
       });
+    }
+    if (this.authService.isUser()) {
+      const isChild = this.children.find((c) => c.codiceFiscale === alunno.codiceFiscale);
+      if (isChild) {
+        this.openDeleteDialog(alunno);
+      }
     }
   }
 

@@ -71,6 +71,14 @@ export class AuthService {
     return false;
   }
 
+  isUser() {
+    if (this.isLoggedIn()) {
+      const roles = JSON.parse(localStorage.getItem('roles'));
+      return roles.find(role => role === 'ROLE_USER') && !roles.find(role => role === 'ROLE_ADMIN');
+    }
+    return false;
+  }
+
   getRoles(): string[] {
     const roles = JSON.parse(localStorage.getItem('roles'));
     return roles as string[];

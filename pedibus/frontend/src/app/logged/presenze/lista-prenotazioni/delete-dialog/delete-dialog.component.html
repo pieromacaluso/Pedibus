@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>Elimina Prenotazione</h1>
+<form [formGroup]="prenotazioneForm" (ngSubmit)="submit()">
+<div mat-dialog-content class="dialog-theme">
+  <p class="mat-body">Stai eliminando una prenotazione con questi dati:</p>
+  <p class="mat-body"><b>Alunno:</b> {{data.alunno.surname}} {{data.alunno.name}}</p>
+  <p class="mat-body"><b>Data:</b> {{data.data.toLocaleDateString()}}</p>
+  <p class="mat-body"><b>Linea:</b> {{data.linea}}</p>
+  <p class="mat-body"><b>Verso:</b> {{data.verso}}</p>
+  <!--
+    <mat-form-field>
+      <mat-label>Fermata:</mat-label>
+      <mat-select formControlName="fermataSelect">
+        <mat-option *ngFor="let fermata of data.res" [value]="fermata.fermata.id" >{{fermata.fermata.nome}}
+          ({{fermata.fermata.orario}})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="prenotazioneForm.controls.fermataSelect.invalid">Scegli una fermata</mat-error>
+    </mat-form-field>
+    -->
+</div>
+<mat-dialog-actions>
+  <button mat-button type="button" (click)="onNoClick()">Annulla</button>
+  <button type="submit" mat-raised-button color="primary" ><mat-progress-bar class="progress-bar-button" *ngIf="data.alunno.update" mode="indeterminate"></mat-progress-bar>
+    Elimina</button>
+</mat-dialog-actions>
+</form>

@@ -21,6 +21,7 @@ import {DisponibilitaComponent} from './disponibilita/disponibilita.component';
 import {TurniComponent} from './turni/turni.component';
 import {ComunicazioniComponent} from './comunicazioni/comunicazioni.component';
 import {NotificheComponent} from './notifiche/notifiche.component';
+import { DeleteDialogComponent } from './presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import {NotificheComponent} from './notifiche/notifiche.component';
     DisponibilitaComponent,
     TurniComponent,
     ComunicazioniComponent,
-    NotificheComponent],
+    NotificheComponent,
+    DeleteDialogComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -51,7 +53,7 @@ import {NotificheComponent} from './notifiche/notifiche.component';
     MatProgressSpinnerModule
   ],
   exports: [],
-  entryComponents: [AdminBookDialogComponent]
+  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent]
 })
 export class LoggedModule {
 }

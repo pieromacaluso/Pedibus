@@ -7,7 +7,7 @@ import {ApiService} from '../../../api.service';
 
 
 export interface DialogData {
-  alunno: AlunnoNotReserved;
+  alunno: Alunno;
   data: Date;
   verso: string;
   linea: string;
@@ -16,25 +16,24 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-admin-book-dialog',
-  templateUrl: 'admin-book-dialog.component.html',
+  selector: 'app-delete-dialog',
+  templateUrl: './delete-dialog.component.html',
+  styleUrls: ['./delete-dialog.component.css']
 })
-export class AdminBookDialogComponent {
-
+export class DeleteDialogComponent {
 
   prenotazioneForm = this.fb.group({
     fermataSelect: ['', [Validators.required]]
   });
 
   constructor(
-    public dialogRef: MatDialogRef<AdminBookDialogComponent>,
+    public dialogRef: MatDialogRef<DeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private apiService: ApiService,
     private fb: FormBuilder) {
   }
 
   onNoClick(): void {
-    console.log('noclick');
     this.dialogRef.close();
   }
 
@@ -44,19 +43,12 @@ export class AdminBookDialogComponent {
     if (this.prenotazioneForm.controls.fermataSelect.valid) {
       this.data.fermataId = this.prenotazioneForm.controls.fermataSelect.value;
       this.data.alunno.update = true;
-      this.nuovaPrenotazione(this.data);
+      this.deletePrenotazione(this.data);
     }
   }
 
-  nuovaPrenotazione(data: DialogData) {
-    console.log('nuovaPrenotazione function called');
-    this.apiService.postPrenotazioneDialog(data).subscribe((rese) => {
-      console.log('subscribe in nuovaPrenotazione emmited something');
-      data.alunno.update = false;
-      this.dialogRef.close();
-    }, (error) => {
-      console.error(error);
-      data.alunno.update = false;
-    });
+  deletePrenotazione(data: DialogData) {
+    console.log('delete prenotazione function called');
   }
+
 }
