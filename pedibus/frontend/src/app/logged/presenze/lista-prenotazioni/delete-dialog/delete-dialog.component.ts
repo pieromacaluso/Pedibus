@@ -39,16 +39,15 @@ export class DeleteDialogComponent {
 
 
   submit() {
-    console.log('submit function called');
-    if (this.prenotazioneForm.controls.fermataSelect.valid) {
       this.data.fermataId = this.prenotazioneForm.controls.fermataSelect.value;
       this.data.alunno.update = true;
       this.deletePrenotazione(this.data);
-    }
   }
 
   deletePrenotazione(data: DialogData) {
     console.log('delete prenotazione function called');
+    this.apiService.deletePrenotazioneGenitore(data.alunno.codiceFiscale, data.linea, data.data, data.verso)
+      .subscribe((res) => console.log('result:', res), (err) => console.log('err:', err));
   }
 
 }

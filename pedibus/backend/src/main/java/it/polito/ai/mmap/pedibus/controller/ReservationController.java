@@ -191,5 +191,16 @@ public class ReservationController {
         reservationService.deleteReservation(idLinea, dataFormatted, reservationId);
     }
 
+    /**
+     * Versione alternativa al metodo precedente
+     */
+
+    @DeleteMapping("/reservations/{codiceFiscale}/{id_linea}/{data}/{verso}")
+    public void deletePrenotazione(@PathVariable("codiceFiscale") String codiceFiscale, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
+        logger.info("Elininazione prenotazione -> codice fiscale: " + codiceFiscale + ", data: " + data + ", verso: " + verso);
+        Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);
+        reservationService.deleteReservation(codiceFiscale, dataFormatted, idLinea, verso);
+    }
+
 
 }

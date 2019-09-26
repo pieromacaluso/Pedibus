@@ -59,6 +59,10 @@ export class ApiService {
     return verso === 'Andata' ? 1 : 0;
   }
 
+  versoToBool(verso: string) {
+    return verso === 'Andata' ? true : false;
+  }
+
   dateToString(date: Date) {
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }
@@ -76,5 +80,14 @@ export class ApiService {
     return this.httpClient
       .post(this.baseURL + 'reservations/' + data.linea + '/' + this.datePipe
         .transform(data.data, 'yyyy-MM-dd'), nuovaPrenotazione);
+  }
+
+  /**
+   * Permette ad un genitore di eliminare una prenotazione riguardante il figlio
+   */
+  deletePrenotazioneGenitore(codiceFiscale: string, idLinea: string, data: Date, verso: string) {
+    return this.httpClient
+      .delete(this.baseURL + 'reservations/' + codiceFiscale + '/' + idLinea + '/'
+      + this.datePipe.transform(data, 'yyyy-MM-dd') + '/' + this.versoToBool(verso));
   }
 }
