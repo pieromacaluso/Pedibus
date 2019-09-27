@@ -110,7 +110,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   openDialog(alu: AlunnoNotReserved) {
-    if (this.canModify()) {
+    if (this.canModify() || (this.authService.isUser() && (this.children.find((c) => c.codiceFiscale === alu.codiceFiscale)))) {
 
       this.dialog.closeAll();
 

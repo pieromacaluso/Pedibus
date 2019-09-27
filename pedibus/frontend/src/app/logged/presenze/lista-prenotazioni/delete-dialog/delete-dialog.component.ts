@@ -52,13 +52,14 @@ export class DeleteDialogComponent {
         console.log('result:', res);
         data.alunno.update = false;
         this.dialogRef.close();
-        const indexFermata = this.data.resource.alunniPerFermata.findIndex((afe) => {
-          console.log('afe-id:', afe.fermata.nome, 'data-id:', this.data.linea);
-          return afe.fermata.id === this.data.fermataId;
+        let afeIndex = 0;
+        this.data.res.forEach((afe) => {
+          const index = afe.alunni.findIndex((a) => a.codiceFiscale === this.data.alunno.codiceFiscale);
+          if (index !== -1) {
+            this.data.resource.alunniPerFermata[afeIndex].alunni.splice(index, 1);
+          }
+          afeIndex++;
         });
-        const indexAlunno = this.data.resource.alunniPerFermata[indexFermata]
-          .alunni.findIndex((a) => a.codiceFiscale === data.alunno.codiceFiscale);
-        this.data.resource.alunniPerFermata[indexFermata].alunni.splice(indexAlunno, 1);
         this.data.resource.childrenNotReserved.push({
           codiceFiscale: data.alunno.codiceFiscale,
           name: data.alunno.name,

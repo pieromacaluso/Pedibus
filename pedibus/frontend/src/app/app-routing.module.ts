@@ -17,14 +17,15 @@ import { DisponibilitaComponent } from './logged/disponibilita/disponibilita.com
 import { ComunicazioniComponent } from './logged/comunicazioni/comunicazioni.component';
 import { AdminBookDialogComponent } from './logged/presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import { TurniComponent } from './logged/turni/turni.component';
+import { AdminGuard } from './admin.guard';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard]},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
-  {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard]},
-  {path: 'comunicazioni', component: ComunicazioniComponent, canActivate: [AuthGuard]},
-  {path: 'turni', component: TurniComponent, canActivate: [AuthGuard]},
+  {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, AdminGuard]},
+  {path: 'comunicazioni', component: ComunicazioniComponent, canActivate: [AuthGuard, AdminGuard]},
+  {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard]},
   {path: 'recover', component: ForgotPasswordComponent},
   {path: 'recover/:token', component: RecoverComponent},
   {path: 'confirm/:token', component: ConfirmComponent},
