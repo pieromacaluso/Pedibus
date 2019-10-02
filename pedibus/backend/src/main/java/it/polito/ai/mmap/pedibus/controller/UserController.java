@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
+import it.polito.ai.mmap.pedibus.services.ChildService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    ChildService childService;
 
     /**
      * Tramite questo endpoint un utente loggato recupera la lista dei suoi figli
@@ -21,7 +22,7 @@ public class UserController {
      */
     @GetMapping("/children")
     public List<ChildDTO> getMyChildren() {
-        return userService.getMyChildren();
+        return childService.getMyChildren();
     }
 
 
@@ -33,6 +34,6 @@ public class UserController {
      */
     @PutMapping("/children/stops/{childId}")
     public void updateChildStop(@PathVariable String cfChild, @RequestBody ChildDefaultStopResource stopRes) {
-        userService.updateChildStop(cfChild, stopRes);
+        childService.updateChildStop(cfChild, stopRes);
     }
 }

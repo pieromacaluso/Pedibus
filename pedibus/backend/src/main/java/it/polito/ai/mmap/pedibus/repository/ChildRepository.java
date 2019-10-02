@@ -7,5 +7,4 @@ import java.util.Optional;
 
 
 public interface ChildRepository extends MongoRepository<ChildEntity, String> {
-    Optional<ChildEntity> findByCodiceFiscale(String cf);
 }

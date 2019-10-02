@@ -7,6 +7,7 @@ import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
+import it.polito.ai.mmap.pedibus.services.ChildService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ public class AdminRestController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    ChildService childService;
     @Autowired
     LineeService lineeService;
     @Autowired
@@ -55,7 +58,7 @@ public class AdminRestController {
      */
     @GetMapping("/admin/children/")
     public List<ChildDTO> getChildren(){
-        return userService.getAllChildren();
+        return childService.getAllChildren();
 //        List<ChildDTO> allChildren=userService.getAllChildren();
 //        Map<Object, Object> model = new HashMap<>();
 //        model.put("ListaChildren", allChildren);

@@ -70,8 +70,7 @@ public class UserService implements UserDetailsService {
         if (!check.isPresent()) {
             throw new UsernameNotFoundException("Utente inesistente");
         }
-        UserEntity userEntity = check.get();
-        return userEntity;
+        return check.get();
     }
 
     public boolean checkMailIsPresent(String email) throws UsernameNotFoundException {
@@ -252,28 +251,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public List<ChildDTO> getAllChildren() {
-        return childRepository.findAll().stream().map(ChildDTO::new).collect(Collectors.toList());
-    }
 
-    public List<String> getAllChildrenId() {
-        return childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
-    }
-
-    public List<ChildDTO> getAllChildrenById(List<String> childrenId) {
-        List<ChildEntity> childrenEntities = new ArrayList<>();
-
-        for (String cf : childrenId) {
-            Optional<ChildEntity> c = childRepository.findByCodiceFiscale(cf);
-            if (c.isPresent()) {
-                ChildEntity childEntity = c.get();
-                childrenEntities.add(childEntity);
-            } else
-                throw new ChildNotFoundException("Alunno non trovato");
-        }
-
-        return childrenEntities.stream().map(ChildDTO::new).collect(Collectors.toList());
-    }
 
     /**
      * Se la mail dell'admin non corrisponde a nessun account ne creo uno vuoto con tali privilegi che poi l'utente quando si registra riempirà,
@@ -318,46 +296,5 @@ public class UserService implements UserDetailsService {
             if (roleEntity == null)
                 roleRepository.save(RoleEntity.builder().role(role).build());
         }
-    }
-
-    /**
-     * Recuperiamo da db i figli dell'utente loggato
-     *
-     * @return
-     */
-    public List<ChildDTO> getMyChildren() {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ((List<ChildEntity>) childRepository.findAllById(principal.getChildrenList())).stream().map(ChildDTO::new).collect(Collectors.toList());
-    }
-
-    /**
-     * Metodo che permette di cambiare la fermata di default di un bambino o dal suo genitore o da un System-Admin
-     *
-     * @param cfChild
-     * @param stopRes
-     */
-    public void updateChildStop(String cfChild, ChildDefaultStopResource stopRes) {
-        Optional<ChildEntity> c = childRepository.findById(cfChild);
-        if (c.isPresent()) {
-            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal.getChildrenList().contains(cfChild) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
-                ChildEntity childEntity = c.get();
-
-                if (fermataRepository.findById(stopRes.getIdFermataAndata()).isPresent())
-                    childEntity.setIdFermataAndata(stopRes.getIdFermataAndata());
-                else
-                    throw new FermataNotFoundException();
-
-                if (fermataRepository.findById(stopRes.getIdFermataRitorno()).isPresent())
-                    childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
-                else
-                    throw new FermataNotFoundException();
-
-                childRepository.save(childEntity);
-
-            } else
-                throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
-        } else
-            throw new ChildNotFoundException("Bambino non trovato");
     }
 }

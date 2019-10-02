@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,8 @@ public class DbTestDataCreator {
     ReservationRepository reservationRepository;
     @Autowired
     FermataRepository fermataRepository;
+    @Autowired
+    LineeService lineeService;
 
     @Autowired
     private Environment environment;
@@ -125,7 +128,7 @@ public class DbTestDataCreator {
                 reservationEntity = new ReservationEntity();
                 reservationEntity.setCfChild(childEntity.getCodiceFiscale());
                 reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
-                reservationEntity.setIdLinea(fermataRepository.findById(childEntity.getIdFermataAndata()).get().getIdLinea());
+                reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea());
                 reservationEntity.setVerso(true);
                 reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
                 if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
@@ -137,7 +140,7 @@ public class DbTestDataCreator {
                 reservationEntity = new ReservationEntity();
                 reservationEntity.setCfChild(childEntity.getCodiceFiscale());
                 reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
-                reservationEntity.setIdLinea(fermataRepository.findById(childEntity.getIdFermataRitorno()).get().getIdLinea());
+                reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataRitorno()).getIdLinea());
                 reservationEntity.setVerso(false);
                 reservationEntity.setIdFermata(childEntity.getIdFermataRitorno());
 

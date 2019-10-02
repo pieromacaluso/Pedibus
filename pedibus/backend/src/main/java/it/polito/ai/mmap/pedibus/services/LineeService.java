@@ -49,9 +49,9 @@ public class LineeService {
      * @return LineaEntity
      */
     public LineaEntity getLineaEntityById(String idLinea) {
-        Optional<LineaEntity> linea = lineaRepository.findById(idLinea);
-        if (linea.isPresent()) {
-            return linea.get();
+        Optional<LineaEntity> checkLinea = lineaRepository.findById(idLinea);
+        if (checkLinea.isPresent()) {
+            return checkLinea.get();
         } else {
             throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLinea);
         }
@@ -80,7 +80,7 @@ public class LineeService {
      * @param idFermata ID fermata
      * @return FermataEntity
      */
-    FermataEntity getFermataEntityById(Integer idFermata) {
+    public FermataEntity getFermataEntityById(Integer idFermata) {
         Optional<FermataEntity> check = fermataRepository.findById(idFermata);
         if (check.isPresent()) {
             return check.get();
@@ -96,7 +96,7 @@ public class LineeService {
      * @param idFermata ID fermata
      * @return FermataDTO
      */
-     FermataDTO getFermataDTOById(Integer idFermata) {
+    public FermataDTO getFermataDTOById(Integer idFermata) {
         Optional<FermataEntity> check = fermataRepository.findById(idFermata);
         if (check.isPresent()) {
             return new FermataDTO(check.get());
@@ -125,23 +125,18 @@ public class LineeService {
     }
 
 
-
-
     /**
      * Aggiunge alla lista di admin di una linea l'user indicato
+     *
      * @param userID
      * @param idLinea
      */
     public void addAdminLine(String userID, String idLinea) {
-        Optional<LineaEntity> check = lineaRepository.findById(idLinea);
-        if (!check.isPresent()) {
-            throw new LineaNotFoundException("Linea non trovata");
-        }
-        LineaEntity lineaEntity = check.get();
+        LineaEntity lineaEntity = getLineaEntityById(idLinea);
         ArrayList<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
             adminList = new ArrayList<>(Arrays.asList(userID));
-        else if(!adminList.contains(userID))
+        else if (!adminList.contains(userID))
             adminList.add(userID);
 
         lineaEntity.setAdminList(adminList);
@@ -149,15 +144,11 @@ public class LineeService {
     }
 
     public void delAdminLine(String userID, String idLinea) {
-        Optional<LineaEntity> check = lineaRepository.findById(idLinea);
-        if (!check.isPresent()) {
-            throw new LineaNotFoundException("Linea non trovata");
-        }
-        LineaEntity lineaEntity = check.get();
+        LineaEntity lineaEntity = getLineaEntityById(idLinea);
         ArrayList<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
             adminList = new ArrayList<>(Arrays.asList(userID));
-        else if(adminList.contains(userID))
+        else if (adminList.contains(userID))
             adminList.remove(userID);
 
         lineaEntity.setAdminList(adminList);

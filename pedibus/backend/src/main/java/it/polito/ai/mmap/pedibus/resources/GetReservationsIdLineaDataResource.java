@@ -24,6 +24,5 @@ public class GetReservationsIdLineaDataResource {
     List<FermataAlunniResource> alunniPerFermataRitorno;
     String arrivoScuola;
     String partenzaScuola;
-    List<ChildDTO> childrenNotReserved;
     Boolean canModify;
 }
