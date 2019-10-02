@@ -85,15 +85,7 @@ public class ReservationController {
         return reservationService.getChildrenNotReserved(dataFormatted, verso);
     }
 
-    /**
-     * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
-     * restituisce un identificatore univoco della reservation creata
-     *
-     * @param reservationResource JSON Body Reservation
-     * @param idLinea            id linea
-     * @param data                 data in esame
-     * @return identificatore univoco reservation
-     */
+
 
 
     /**
@@ -111,7 +103,15 @@ public class ReservationController {
         return reservationService.getReservationCheck(idLinea, dataFormatted, reservationId);
     }
 
-
+    /**
+     * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
+     * restituisce un identificatore univoco della reservation creata
+     *
+     * @param reservationResource JSON Body Reservation
+     * @param idLinea            id linea
+     * @param data                 data in esame
+     * @return identificatore univoco reservation
+     */
     @PostMapping("/reservations/{id_linea}/{data}")
     public String postReservation(@RequestBody ReservationResource reservationResource, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data) throws JsonProcessingException {
         Date dataFormatted = MongoZonedDateTime.getMongoZonedDateTimeFromDate(data);

@@ -41,62 +41,6 @@ public class LineeService {
     @Value("${partenzaScuola}")
     String partenzaScuola;
 
-    /**
-     * Salva lista Fermate sul DB
-     *
-     * @param listaFermate lista fermate
-     */
-    void addFermate(List<FermataDTO> listaFermate) {
-
-        fermataRepository.saveAll(listaFermate.stream().map(FermataEntity::new).collect(Collectors.toList()));
-    }
-
-    /**
-     * Eliminazione di tutte le fermate dal DB
-     */
-    public void dropAllFermate() {
-        fermataRepository.deleteAll();
-    }
-
-    /**
-     * Eliminazione di tutte le linee dal DB
-     */
-    public void dropAllLinee() {
-        lineaRepository.deleteAll();
-    }
-
-    /**
-     * Eliminazione di tutte le reservations dal DB
-     */
-    public void dropAllReservations() {
-        reservationRepository.deleteAll();
-    }
-
-    /**
-     * Fermata da ID fermata
-     *
-     * @param idFermata ID fermata
-     * @return FermataDTO
-     */
-     FermataDTO getFermataById(Integer idFermata) {
-        Optional<FermataEntity> check = fermataRepository.findById(idFermata);
-        if (check.isPresent()) {
-            return new FermataDTO(check.get());
-        } else {
-            throw new FermataNotFoundException("Fermata con ID " + idFermata + " non trovata!");
-        }
-    }
-
-    /**
-     * Salva una linea sul DB
-     *
-     * @param lineaDTO Linea DTO
-     */
-    void addLinea(LineaDTO lineaDTO) {
-        LineaEntity lineaEntity = new LineaEntity(lineaDTO);
-        lineaRepository.save(lineaEntity);
-
-    }
 
     /**
      * Restituisce una LineaEntity a partire dal suo nome
@@ -130,13 +74,37 @@ public class LineeService {
     }
 
     /**
-     * Restituisce tutte le linee in DB
+     * FermataEntity da ID fermata
+     * Ha un costo minore del DTO
      *
-     * @return Lista LineaEntity
+     * @param idFermata ID fermata
+     * @return FermataEntity
      */
-    public List<LineaEntity> getAllLines() {
-        return lineaRepository.findAll();
+    FermataEntity getFermataEntityById(Integer idFermata) {
+        Optional<FermataEntity> check = fermataRepository.findById(idFermata);
+        if (check.isPresent()) {
+            return check.get();
+        } else {
+            throw new FermataNotFoundException("Fermata con ID " + idFermata + " non trovata!");
+        }
     }
+
+    /**
+     * FermataDTO da ID fermata
+     * Ha un costo maggiore dell'entity
+     *
+     * @param idFermata ID fermata
+     * @return FermataDTO
+     */
+     FermataDTO getFermataDTOById(Integer idFermata) {
+        Optional<FermataEntity> check = fermataRepository.findById(idFermata);
+        if (check.isPresent()) {
+            return new FermataDTO(check.get());
+        } else {
+            throw new FermataNotFoundException("Fermata con ID " + idFermata + " non trovata!");
+        }
+    }
+
 
     /**
      * Restituisce tutti i nomi delle linee presenti in DB

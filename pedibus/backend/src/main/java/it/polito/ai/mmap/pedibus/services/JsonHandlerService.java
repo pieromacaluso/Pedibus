@@ -1,8 +1,12 @@
 package it.polito.ai.mmap.pedibus.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.pedibus.entity.FermataEntity;
+import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
+import it.polito.ai.mmap.pedibus.repository.FermataRepository;
+import it.polito.ai.mmap.pedibus.repository.LineaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class JsonHandlerService {
@@ -24,7 +29,13 @@ public class JsonHandlerService {
     ObjectMapper objectMapper;
 
     @Autowired
+    LineaRepository lineaRepository;
+
+    @Autowired
     LineeService lineeService;
+
+    @Autowired
+    FermataRepository fermataRepository;
 
 
     /**
@@ -50,9 +61,10 @@ public class JsonHandlerService {
                     lineaDTO.setGuideList(new ArrayList<>());
                 }
 
-                lineeService.addLinea(lineaDTO);
-                lineeService.addFermate(lineaDTO.getAndata());
-                lineeService.addFermate(lineaDTO.getRitorno());
+                LineaEntity lineaEntity = new LineaEntity(lineaDTO);
+                lineaRepository.save(lineaEntity);
+                fermataRepository.saveAll(lineaDTO.getAndata().stream().map(FermataEntity::new).collect(Collectors.toList()));
+                fermataRepository.saveAll(lineaDTO.getRitorno().stream().map(FermataEntity::new).collect(Collectors.toList()));
 
                 logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
             }

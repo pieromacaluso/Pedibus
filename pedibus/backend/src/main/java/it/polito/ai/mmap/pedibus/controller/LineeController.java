@@ -39,6 +39,8 @@ public class LineeController {
         logger.info("Caricamento linee in corso...");
         jsonHandlerService.readPiedibusLines();
         logger.info("Caricamento linee completato.");
+//        dbTestDataCreator.makeChildUserReservations();
+
         if (environment.getActiveProfiles()[0].equals("prod")) {
             logger.info("Creazione Basi di dati di test in corso...");
             dbTestDataCreator.makeChildUserReservations();

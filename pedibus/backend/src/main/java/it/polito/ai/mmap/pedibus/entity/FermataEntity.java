@@ -1,10 +1,14 @@
 package it.polito.ai.mmap.pedibus.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
+import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
 
 
 @Data
@@ -28,6 +32,11 @@ public class FermataEntity {
         this.id = fermataDTO.getId();
         this.name = fermataDTO.getNome();
         this.orario = fermataDTO.getOrario();
+    }
+    @JsonIgnore
+    public Date getDateOrario()
+    {
+        return MongoZonedDateTime.getMongoZonedDateTimeFromTime(orario);
     }
 
 }

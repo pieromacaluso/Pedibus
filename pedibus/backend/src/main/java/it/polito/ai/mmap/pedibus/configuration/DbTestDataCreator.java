@@ -109,7 +109,7 @@ public class DbTestDataCreator {
         }
 
         userRepository.saveAll(listNonni);
-        logger.info(count + " nonni caricati");
+        logger.info(count*i + " nonni caricati");
 
         i = 0;
         count = 0;
