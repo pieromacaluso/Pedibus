@@ -26,6 +26,8 @@ public class ChildService {
     UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    UserService userService;
 
     @Autowired
     ReservationRepository reservationRepository;
@@ -68,7 +70,7 @@ public class ChildService {
         Optional<ChildEntity> c = childRepository.findById(cfChild);
         if (c.isPresent()) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal.getChildrenList().contains(cfChild) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+            if (principal.getChildrenList().contains(cfChild) || principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
                 ChildEntity childEntity = c.get();
 
                 if (fermataRepository.findById(stopRes.getIdFermataAndata()).isPresent())

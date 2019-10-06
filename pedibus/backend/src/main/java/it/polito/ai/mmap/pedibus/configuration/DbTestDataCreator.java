@@ -7,6 +7,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class DbTestDataCreator {
     @Autowired
     LineaRepository lineaRepository;
     @Autowired
-    RoleRepository roleRepository;
+    UserService userService;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -62,9 +63,9 @@ public class DbTestDataCreator {
         userRepository.deleteAll();
         childRepository.deleteAll();
         int count = 0;
-        RoleEntity roleUser = roleRepository.findByRole("ROLE_USER");
-        RoleEntity roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
-        RoleEntity roleGuide = roleRepository.findByRole("ROLE_GUIDE");
+        RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
+        RoleEntity roleAdmin = userService.getRoleEntityById("ROLE_ADMIN");
+        RoleEntity roleGuide = userService.getRoleEntityById("ROLE_GUIDE");
         List<LineaEntity> lineaEntityList = lineaRepository.findAll();
 
 

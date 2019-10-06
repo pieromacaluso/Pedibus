@@ -99,8 +99,8 @@ public class Esercitazione2ApplicationTests {
 
     @PostConstruct
     public void postInit() {
-        roleUser = roleRepository.findByRole("ROLE_USER");
-        roleAdmin = roleRepository.findByRole("ROLE_ADMIN");
+        roleUser = roleRepository.findById("ROLE_USER").get();
+        roleAdmin = roleRepository.findById("ROLE_ADMIN").get();
         childMap.put(0, new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi"));
         childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
         childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));

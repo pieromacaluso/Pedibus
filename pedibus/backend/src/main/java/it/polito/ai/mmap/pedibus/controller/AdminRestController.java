@@ -75,7 +75,7 @@ public class AdminRestController {
         LineaEntity lineaEntity = lineeService.getLineaEntityById(permissionResource.getIdLinea());
 
         principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (lineaEntity.getAdminList().contains(principal.getUsername()) || principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+        if (lineaEntity.getAdminList().contains(principal.getUsername()) || principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
                 if(permissionResource.isAddOrDel()){
                     userService.addAdmin(userID);
                     lineeService.addAdminLine(userID, permissionResource.getIdLinea());

@@ -2,16 +2,13 @@ package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.*;
-import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
-import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -73,6 +70,19 @@ public class UserService implements UserDetailsService {
         return check.get();
     }
 
+    /**
+     * Metodo che restituisce un RoleEntity a partire dal suo identificativo
+     *
+     * @param idRole
+     * @return
+     */
+    public RoleEntity getRoleEntityById(String idRole) {
+        Optional<RoleEntity> checkRole = roleRepository.findById(idRole);
+        if (checkRole.isPresent())
+            return checkRole.get();
+        else
+            throw new IllegalStateException();
+    }
 
     /**
      * Metodo che gestisce la registrazione
@@ -91,7 +101,7 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
         if (check.isPresent()) {
             userEntity = check.get();
-            RoleEntity roleEntity = roleRepository.findByRole("ROLE_ADMIN");
+            RoleEntity roleEntity = getRoleEntityById("ROLE_ADMIN");
             Optional<UserEntity> checkAdmin = userRepository.findByRoleListContainingAndUsernameAndIsEnabled(roleEntity, userDTO.getEmail(), false);
             Optional<ActivationTokenEntity> checkToken = activationTokenRepository.findByUserId(userEntity.getId());
 
@@ -109,7 +119,7 @@ public class UserService implements UserDetailsService {
 
             }
         } else {
-            RoleEntity userRole = roleRepository.findByRole("ROLE_USER");
+            RoleEntity userRole = getRoleEntityById("ROLE_USER");
             userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder);
 
         }
@@ -209,7 +219,7 @@ public class UserService implements UserDetailsService {
     public String getJwtToken(String username) {
         List<String> roles = new ArrayList<>();
         UserEntity userEntity = (UserEntity) loadUserByUsername(username);
-        roles.addAll(userEntity.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()));
+        roles.addAll(userEntity.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList()));
         return jwtTokenService.createToken(username, roles);
     }
 
@@ -227,7 +237,7 @@ public class UserService implements UserDetailsService {
         userDTO.setEmail(superAdminMail);
         userDTO.setPassword(superAdminPass);
 
-        RoleEntity role = roleRepository.findByRole("ROLE_SYSTEM-ADMIN");
+        RoleEntity role = getRoleEntityById("ROLE_SYSTEM-ADMIN");
 
         UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder);
         userEntity.setEnabled(true);
@@ -257,32 +267,31 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> check = userRepository.findByUsername(userID);
         UserEntity userEntity;
         if (!check.isPresent()) {
-            userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleRepository.findByRole("ROLE_ADMIN"))));
+            userEntity = new UserEntity(userID, new HashSet<>(Collections.singletonList(getRoleEntityById("ROLE_ADMIN"))));
         } else {
             userEntity = check.get();
         }
-        userEntity.getRoleList().add(roleRepository.findByRole("ROLE_ADMIN"));
+        userEntity.getRoleList().add(getRoleEntityById("ROLE_ADMIN"));
         userRepository.save(userEntity);
     }
 
     public void delAdmin(String userID) {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
-        userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
+        userEntity.getRoleList().remove(getRoleEntityById("ROLE_ADMIN"));
         userRepository.save(userEntity);
     }
 
     public void createRoles() {
         ArrayList<String> roles = new ArrayList<>();
-        // Per aggiungere un ruolo di default basta aggiungere una add qui sotto.
-        // roles.add("ROLE_XYZ");
+
         roles.add("ROLE_USER");
         roles.add("ROLE_GUIDE");
         roles.add("ROLE_ADMIN");
         roles.add("ROLE_SYSTEM-ADMIN");
-        for (String role : roles) {
-            RoleEntity roleEntity = roleRepository.findRoleEntityByRole(role);
-            if (roleEntity == null)
-                roleRepository.save(RoleEntity.builder().role(role).build());
+        for (String id : roles) {
+            Optional<RoleEntity> checkRole = roleRepository.findById(id);
+            if (!checkRole.isPresent())
+                roleRepository.save(new RoleEntity(id));
         }
     }
 }

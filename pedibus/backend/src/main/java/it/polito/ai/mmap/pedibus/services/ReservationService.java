@@ -1,7 +1,6 @@
 package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.entity.*;
-import it.polito.ai.mmap.pedibus.exception.ChildNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
@@ -107,7 +106,7 @@ public class ReservationService {
                 && ((lineaEntity.getAndata().contains(fermataEntity.getId()) && reservationDTO.getVerso())
                 || (lineaEntity.getRitorno().contains(fermataEntity.getId()) && !reservationDTO.getVerso())))
                 && (principal.getChildrenList().contains(reservationDTO.getCfChild())
-                || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList())
+                || principal.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList())
                 .contains("ROLE_SYSTEM-ADMIN")
                 || lineaEntity.getAdminList().contains(principal.getUsername()));
     }
@@ -193,7 +192,7 @@ public class ReservationService {
                 && reservationEntity.getData().equals(data)
                 && idLinea.equals(reservationEntity.getIdLinea())
                 && (principal.getChildrenList().contains(reservationEntity.getCfChild())
-                || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN")
+                || principal.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN")
                 || lineaEntity.getAdminList().contains(principal.getUsername()))) {
             reservationRepository.delete(reservationEntity);
         } else {
@@ -210,7 +209,7 @@ public class ReservationService {
             FermataEntity fermataEntity = lineeService.getFermataEntityById(reservation.getIdFermata());
             if (checkTime(reservation.getData(), fermataEntity)
                     && (principal.getChildrenList().contains(reservation.getCfChild())
-                    || principal.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN")
+                    || principal.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN")
                     || lineaEntity.getAdminList().contains(principal.getUsername()))) {
                 reservationRepository.delete(reservation);
             }
@@ -223,8 +222,8 @@ public class ReservationService {
         // se la reservation è per oggi allora controlla che sia prima dell'arrivo alla
         // fermata o che il ruolo sia ADMIN o SYSTEM_ADMIN
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Boolean isAdmin = principal.getRoleList().contains(roleRepository.findByRole("ROLE_ADMIN"));
-        if (!principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN"))) {
+        Boolean isAdmin = principal.getRoleList().contains(userService.getRoleEntityById("ROLE_ADMIN"));
+        if (!principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
             if (data.before(MongoZonedDateTime.getStartOfTomorrow())) {
                 // reservation per oggi o nel passato
                 if (isAdmin) {
@@ -288,7 +287,7 @@ public class ReservationService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         LineaEntity lineaEntity = lineeService.getLineaEntityById(idLinea);
-        if (principal.getRoleList().contains(roleRepository.findByRole("ROLE_SYSTEM-ADMIN")))
+        if (principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN")))
             return true;
 
         return ((lineaEntity.getAdminList().contains(principal.getUsername())

@@ -2,20 +2,16 @@ package it.polito.ai.mmap.pedibus.entity;
 
 import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
-import it.polito.ai.mmap.pedibus.services.UserService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.*;
 
 /**
@@ -84,7 +80,7 @@ public class UserEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         roleList.forEach(role ->
-                grantedAuthorities.add(new SimpleGrantedAuthority(role.getRole())));
+                grantedAuthorities.add(new SimpleGrantedAuthority(role.getId())));
 
         return grantedAuthorities;
     }
