@@ -27,16 +27,7 @@ public class ReservationService {
     ReservationRepository reservationRepository;
 
     @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
     ChildRepository childRepository;
-
-    @Autowired
-    LineaRepository lineaRepository;
-
-    @Autowired
-    FermataRepository fermataRepository;
 
     @Autowired
     LineeService lineeService;

@@ -97,12 +97,8 @@ public class LineeService {
      * @return FermataDTO
      */
     public FermataDTO getFermataDTOById(Integer idFermata) {
-        Optional<FermataEntity> check = fermataRepository.findById(idFermata);
-        if (check.isPresent()) {
-            return new FermataDTO(check.get());
-        } else {
-            throw new FermataNotFoundException("Fermata con ID " + idFermata + " non trovata!");
-        }
+        return new FermataDTO(getFermataEntityById(idFermata));
+
     }
 
 

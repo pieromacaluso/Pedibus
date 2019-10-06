@@ -31,6 +31,12 @@ public class UserService implements UserDetailsService {
     RoleRepository roleRepository;
     @Autowired
     JwtTokenService jwtTokenService;
+    @Autowired
+    private RecoverTokenRepository recoverTokenRepository;
+    @Autowired
+    private ActivationTokenRepository activationTokenRepository;
+    @Autowired
+    private GMailService gMailService;
 
     @Value("${mail.baseURL}")
     private String baseURL;
@@ -40,16 +46,6 @@ public class UserService implements UserDetailsService {
     private String RECOVER_ACCOUNT_SUBJECT;
     @Value("${mail.minutes_to_enable}")
     private int minuti;
-    @Autowired
-    private RecoverTokenRepository recoverTokenRepository;
-    @Autowired
-    private ActivationTokenRepository activationTokenRepository;
-    @Autowired
-    private ChildRepository childRepository;
-    @Autowired
-    private GMailService gMailService;
-    @Autowired
-    private FermataRepository fermataRepository;
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
