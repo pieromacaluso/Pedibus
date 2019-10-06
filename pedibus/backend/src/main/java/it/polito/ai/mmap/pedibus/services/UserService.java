@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.services;
 
+import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -29,11 +31,7 @@ public class UserService implements UserDetailsService {
     RoleRepository roleRepository;
     @Autowired
     JwtTokenService jwtTokenService;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Value("${superadmin.email}")
-    private String superAdminMail;
-    @Value("${superadmin.password}")
-    private String superAdminPass;
+
     @Value("${mail.baseURL}")
     private String baseURL;
     @Value("${mail.registration_subject}")
@@ -224,35 +222,6 @@ public class UserService implements UserDetailsService {
     }
 
 
-    /**
-     * Permette di creare in automatico, se non presente, l'utente con privilegio SYSTEM-ADMIN. Tale utente è già abilitato senza l'invio dell'email.
-     */
-    public void registerSuperUser() {
-        Optional<UserEntity> check = userRepository.findByUsername(superAdminMail);
-        if (check.isPresent()) {
-            return;
-        }
-
-        UserDTO userDTO = new UserDTO();
-        userDTO.setEmail(superAdminMail);
-        userDTO.setPassword(superAdminPass);
-
-        RoleEntity role = getRoleEntityById("ROLE_SYSTEM-ADMIN");
-
-        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder);
-        userEntity.setEnabled(true);
-        userRepository.save(userEntity);
-
-// TODO dovrebbe essere una rimanenza di qualcosa che non serve più (marcof)
-
-//        check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
-//        if (check.isPresent()) {
-//            userEntity = check.get();
-//            userRepository.save(userEntity);
-//            logger.info("SuperAdmin configurato ed abilitato.");
-//        }
-    }
-
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
@@ -279,19 +248,5 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
         userEntity.getRoleList().remove(getRoleEntityById("ROLE_ADMIN"));
         userRepository.save(userEntity);
-    }
-
-    public void createRoles() {
-        ArrayList<String> roles = new ArrayList<>();
-
-        roles.add("ROLE_USER");
-        roles.add("ROLE_GUIDE");
-        roles.add("ROLE_ADMIN");
-        roles.add("ROLE_SYSTEM-ADMIN");
-        for (String id : roles) {
-            Optional<RoleEntity> checkRole = roleRepository.findById(id);
-            if (!checkRole.isPresent())
-                roleRepository.save(new RoleEntity(id));
-        }
     }
 }

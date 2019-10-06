@@ -1,23 +1,26 @@
-package it.polito.ai.mmap.pedibus.configuration;
+package it.polito.ai.mmap.pedibus.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.*;
+import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
+import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
-import javax.management.relation.Role;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -25,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DbTestDataCreator {
+public class DataCreationService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -46,9 +49,121 @@ public class DbTestDataCreator {
     FermataRepository fermataRepository;
     @Autowired
     LineeService lineeService;
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     private Environment environment;
+
+    @Value("${superadmin.email}")
+    private String superAdminMail;
+    @Value("${superadmin.password}")
+    private String superAdminPass;
+
+
+    /**
+     * Metodo eseguito all'avvio della classe come init per leggere le linee del pedibus.
+     */
+    @PostConstruct
+    public void init() throws IOException {
+        logger.info("Caricamento ruoli e sysAdmin in corso...");
+        createRolesAndSysAdmin();
+        logger.info("Ruoli e sysAdmin gestiti correttamente.");
+
+        logger.info("Caricamento linee in corso...");
+        readPiedibusLines();
+        logger.info("Caricamento linee completato.");
+//        makeChildUserReservations();
+
+        if (environment.getActiveProfiles()[0].equals("prod")) {
+            logger.info("Creazione Basi di dati di test in corso...");
+            makeChildUserReservations();
+            logger.info("Creazione Basi di dati di test completata.");
+        } else {
+            logger.info("Creazione Basi di dati di test non effettuata con DEV Profile");
+        }
+    }
+
+    /**
+     * Crea i ruoli e se non presente, l'utente con privilegio SYSTEM-ADMIN. Tale utente è già abilitato senza l'invio dell'email.
+     */
+    public void createRolesAndSysAdmin() {
+        ArrayList<String> roles = new ArrayList<>();
+
+        roles.add("ROLE_USER");
+        roles.add("ROLE_GUIDE");
+        roles.add("ROLE_ADMIN");
+        roles.add("ROLE_SYSTEM-ADMIN");
+        for (String id : roles) {
+            Optional<RoleEntity> checkRole = roleRepository.findById(id);
+            if (!checkRole.isPresent())
+                roleRepository.save(new RoleEntity(id));
+        }
+
+
+        Optional<UserEntity> check = userRepository.findByUsername(superAdminMail);
+        if (check.isPresent()) {
+            return;
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setEmail(superAdminMail);
+        userDTO.setPassword(superAdminPass);
+
+        RoleEntity role = userService.getRoleEntityById("ROLE_SYSTEM-ADMIN");
+
+        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder);
+        userEntity.setEnabled(true);
+        userRepository.save(userEntity);
+
+// TODO dovrebbe essere una rimanenza di qualcosa che non serve più (marcof)
+
+//        check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
+//        if (check.isPresent()) {
+//            userEntity = check.get();
+//            userRepository.save(userEntity);
+//            logger.info("SuperAdmin configurato ed abilitato.");
+//        }
+    }
+
+
+    /**
+     * Metodo che legge i JSON delle fermate e li salva sul DB
+     */
+    public void readPiedibusLines() {
+        try {
+            Iterator<File> fileIterator = Arrays.asList(Objects.requireNonNull(ResourceUtils.getFile("classpath:lines//").listFiles())).iterator();
+            while (fileIterator.hasNext()) {
+                LineaDTO lineaDTO = objectMapper.readValue(fileIterator.next(), LineaDTO.class);
+                try {
+                    //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin
+                    ArrayList<String> adminList = lineeService.getLineaEntityById(lineaDTO.getId()).getAdminList();
+                    if (adminList != null)
+                        lineaDTO.setAdminList(adminList);
+
+                    ArrayList<String> guideList = lineeService.getLineaEntityById(lineaDTO.getId()).getGuideList();
+                    if(guideList != null)
+                        lineaDTO.setGuideList(guideList);
+
+                } catch (LineaNotFoundException e) {
+                    lineaDTO.setAdminList(new ArrayList<>());
+                    lineaDTO.setGuideList(new ArrayList<>());
+                }
+
+                LineaEntity lineaEntity = new LineaEntity(lineaDTO);
+                lineaRepository.save(lineaEntity);
+                fermataRepository.saveAll(lineaDTO.getAndata().stream().map(FermataEntity::new).collect(Collectors.toList()));
+                fermataRepository.saveAll(lineaDTO.getRitorno().stream().map(FermataEntity::new).collect(Collectors.toList()));
+
+                logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
+            }
+
+        } catch (IOException e) {
+            logger.error("File riguardanti le linee mancanti");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
 
     /**
      * crea:

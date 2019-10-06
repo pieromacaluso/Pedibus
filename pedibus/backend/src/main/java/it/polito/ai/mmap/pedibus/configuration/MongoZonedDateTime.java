@@ -1,4 +1,4 @@
-package it.polito.ai.mmap.pedibus.services;
+package it.polito.ai.mmap.pedibus.configuration;
 
 import lombok.Data;
 import org.springframework.stereotype.Service;

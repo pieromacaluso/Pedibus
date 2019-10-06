@@ -58,8 +58,6 @@ public class Esercitazione2ApplicationTests {
     ObjectMapper objectMapper;
 
     @Autowired
-    JsonHandlerService jsonHandlerService;
-    @Autowired
     LineeService lineeService;
     @Autowired
     UserService userService;

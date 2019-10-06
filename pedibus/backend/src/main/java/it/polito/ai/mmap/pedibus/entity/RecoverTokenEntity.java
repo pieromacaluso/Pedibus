@@ -1,20 +1,15 @@
 package it.polito.ai.mmap.pedibus.entity;
 
-import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.nio.charset.Charset;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.Random;
 
 /**
  * Classe che serve a memorizzare temporaneamente il

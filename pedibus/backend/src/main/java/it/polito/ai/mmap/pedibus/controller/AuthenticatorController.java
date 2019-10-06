@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AuthenticatorController {
 
-    @Autowired
-    private UserService userService;
-
     @GetMapping("/recover/{randomUUID}")
     public String recoverPage(@PathVariable("randomUUID") String randomUUID, Model model)
     {

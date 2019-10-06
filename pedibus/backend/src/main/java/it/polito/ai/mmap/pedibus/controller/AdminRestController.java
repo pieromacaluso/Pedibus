@@ -7,33 +7,34 @@ import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
-import it.polito.ai.mmap.pedibus.services.ChildService;
-import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.UserService;
+import it.polito.ai.mmap.pedibus.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.*;
 
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 public class AdminRestController {
-
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    Environment environment;
     @Autowired
     UserService userService;
     @Autowired
     ChildService childService;
     @Autowired
     LineeService lineeService;
-    @Autowired
-    RoleRepository roleRepository;
+
 
 
     /**

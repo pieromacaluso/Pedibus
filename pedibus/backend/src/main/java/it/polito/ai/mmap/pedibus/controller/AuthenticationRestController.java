@@ -30,6 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 public class AuthenticationRestController {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     UserService userService;
@@ -39,21 +40,6 @@ public class AuthenticationRestController {
     JwtTokenService jwtTokenService;
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
-    /**
-     * Metodo che inizializza, se non presente, l'utente SYSTEM-ADMIN indicato nelle application.properties
-     */
-    @PostConstruct
-    public void init() {
-        logger.info("Caricamento ruoli in corso...");
-        userService.createRoles();
-        logger.info("Caricamento ruoli completato.");
-        userService.registerSuperUser();
-        logger.info("SuperAdmin creato o esistente.");
-    }
 
     /**
      * L'utente invia un json contente email e password, le validiamo e controlliamo se l'utente è attivo e la password è corretta.

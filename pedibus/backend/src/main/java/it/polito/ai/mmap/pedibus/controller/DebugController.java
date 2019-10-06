@@ -1,7 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 
-import it.polito.ai.mmap.pedibus.configuration.DbTestDataCreator;
+import it.polito.ai.mmap.pedibus.services.DataCreationService;
 import it.polito.ai.mmap.pedibus.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class DebugController {
     ReservationRepository reservationRepository;
 
     @Autowired
-    DbTestDataCreator dbTestDataCreator;
+    DataCreationService dataCreationService;
 
     @PostMapping("/debug/delete")
     public void deletAll()
@@ -44,7 +44,7 @@ public class DebugController {
     @PostMapping("/debug/make")
     public void makeChildUserReservations() throws IOException {
         logger.info("POST /debug/make è stato contattato");
-        dbTestDataCreator.makeChildUserReservations();
+        dataCreationService.makeChildUserReservations();
     }
 
 

@@ -1,6 +1,6 @@
 package it.polito.ai.mmap.pedibus.entity;
 
-import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;

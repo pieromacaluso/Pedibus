@@ -6,7 +6,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.*;
 import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.bson.types.ObjectId;

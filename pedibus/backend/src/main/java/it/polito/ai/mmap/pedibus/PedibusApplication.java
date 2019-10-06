@@ -11,6 +11,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+
 
 @SpringBootApplication
 @EnableAsync
@@ -19,6 +22,7 @@ public class PedibusApplication {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 
     @Bean("threadPoolTaskExecutor")

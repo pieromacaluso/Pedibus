@@ -12,7 +12,6 @@ import it.polito.ai.mmap.pedibus.repository.ActivationTokenRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;
 import it.polito.ai.mmap.pedibus.repository.RecoverTokenRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
-import it.polito.ai.mmap.pedibus.services.JsonHandlerService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import org.junit.After;
 import org.junit.Test;
@@ -51,8 +50,6 @@ public class Esercitazione3ApplicationTests {
     @Value("${superadmin.password}")
     private String superAdminPass;
 
-    @Autowired
-    JsonHandlerService jsonHandlerService;
     @Autowired
     LineeService lineeService;
     @Autowired

@@ -23,19 +23,11 @@ public class ChildService {
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
     UserService userService;
-
     @Autowired
-    ReservationRepository reservationRepository;
-
+    ChildRepository childRepository;
     @Autowired
-    private ChildRepository childRepository;
-    @Autowired
-    private FermataRepository fermataRepository;
+    LineeService lineeService;
 
 
     public ChildDTO getChildDTOById(String codiceFiscale) {
@@ -73,15 +65,10 @@ public class ChildService {
             if (principal.getChildrenList().contains(cfChild) || principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
                 ChildEntity childEntity = c.get();
 
-                if (fermataRepository.findById(stopRes.getIdFermataAndata()).isPresent())
-                    childEntity.setIdFermataAndata(stopRes.getIdFermataAndata());
-                else
-                    throw new FermataNotFoundException();
-
-                if (fermataRepository.findById(stopRes.getIdFermataRitorno()).isPresent())
-                    childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
-                else
-                    throw new FermataNotFoundException();
+                lineeService.getFermataEntityById(stopRes.getIdFermataAndata());
+                childEntity.setIdFermataAndata(stopRes.getIdFermataAndata());
+                lineeService.getFermataEntityById(stopRes.getIdFermataRitorno());
+                childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
 
                 childRepository.save(childEntity);
 
