@@ -174,13 +174,14 @@ public class DataCreationService {
      * - 1 reservation/figlio per oggi, domani e dopo domani (andata e ritorno)
      */
     public void makeChildUserReservations() throws IOException {
-        reservationRepository.deleteAll();
-        userRepository.deleteAll();
-        childRepository.deleteAll();
-        int count = 0;
         RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
         RoleEntity roleAdmin = userService.getRoleEntityById("ROLE_ADMIN");
         RoleEntity roleGuide = userService.getRoleEntityById("ROLE_GUIDE");
+        reservationRepository.deleteAll();
+        userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleAdmin)).collect(Collectors.toList()));
+        childRepository.deleteAll();
+        int count = 0;
+
         List<LineaEntity> lineaEntityList = lineaRepository.findAll();
 
 

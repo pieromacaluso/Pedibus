@@ -65,12 +65,7 @@ public class LineeService {
      * @return LineaEntity
      */
     public LineaDTO getLineaDTOById(String idLinea) {
-        Optional<LineaEntity> linea = lineaRepository.findById(idLinea);
-        if (linea.isPresent()) {
-            return new LineaDTO(linea.get(), fermataRepository);
-        } else {
-            throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLinea);
-        }
+        return new LineaDTO(getLineaEntityById(idLinea), fermataRepository);
     }
 
     /**

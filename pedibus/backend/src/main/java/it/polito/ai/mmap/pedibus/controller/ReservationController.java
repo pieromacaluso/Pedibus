@@ -22,7 +22,6 @@ import java.util.List;
 
 @RestController
 public class ReservationController {
-
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
