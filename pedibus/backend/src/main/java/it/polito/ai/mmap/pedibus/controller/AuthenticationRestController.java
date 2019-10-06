@@ -96,9 +96,21 @@ public class AuthenticationRestController {
         userService.registerUser(userDTO);
     }
 
+    /**
+     * TODO controllare da chi è usato questo metodo
+     * @param email
+     * @return
+     */
     @GetMapping("/register/checkMail/{email}")
     public boolean checkUserMailDuplicate(@PathVariable String email) {
-        return userService.checkMailIsPresent(email);
+        try {
+            userService.loadUserByUsername(email);
+            return true;
+        }
+        catch (UsernameNotFoundException e)
+        {
+            return false;
+        }
     }
 
     /**

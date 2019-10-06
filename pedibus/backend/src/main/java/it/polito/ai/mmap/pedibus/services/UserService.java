@@ -73,10 +73,6 @@ public class UserService implements UserDetailsService {
         return check.get();
     }
 
-    public boolean checkMailIsPresent(String email) throws UsernameNotFoundException {
-        Optional<UserEntity> check = userRepository.findByUsername(email);
-        return check.isPresent();
-    }
 
     /**
      * Metodo che gestisce la registrazione
@@ -211,11 +207,9 @@ public class UserService implements UserDetailsService {
     }
 
     public String getJwtToken(String username) {
-
         List<String> roles = new ArrayList<>();
-        Optional<UserEntity> userEntity = userRepository.findByUsername(username);
-        userEntity.ifPresent(entity -> roles.addAll(entity.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList())));
-        /*userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());*/
+        UserEntity userEntity = (UserEntity) loadUserByUsername(username);
+        roles.addAll(userEntity.getRoleList().stream().map(RoleEntity::getRole).collect(Collectors.toList()));
         return jwtTokenService.createToken(username, roles);
     }
 
@@ -239,12 +233,14 @@ public class UserService implements UserDetailsService {
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
 
-        check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
-        if (check.isPresent()) {
-            userEntity = check.get();
-            userRepository.save(userEntity);
-            logger.info("SuperAdmin configurato ed abilitato.");
-        }
+// TODO dovrebbe essere una rimanenza di qualcosa che non serve più (marcof)
+
+//        check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
+//        if (check.isPresent()) {
+//            userEntity = check.get();
+//            userRepository.save(userEntity);
+//            logger.info("SuperAdmin configurato ed abilitato.");
+//        }
     }
 
     public List<UserEntity> getAllUsers() {
@@ -252,10 +248,8 @@ public class UserService implements UserDetailsService {
     }
 
 
-
     /**
      * Se la mail dell'admin non corrisponde a nessun account ne creo uno vuoto con tali privilegi che poi l'utente quando si registra riempirà,
-     * se no lo creo da zero
      *
      * @param userID
      */
@@ -263,7 +257,6 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> check = userRepository.findByUsername(userID);
         UserEntity userEntity;
         if (!check.isPresent()) {
-//            RoleEntity[] roleArr = {roleRepository.findByRole("ROLE_USER"), roleRepository.findByRole("ROLE_ADMIN")};
             userEntity = new UserEntity(userID, new HashSet<>(Arrays.asList(roleRepository.findByRole("ROLE_ADMIN"))));
         } else {
             userEntity = check.get();
@@ -273,14 +266,9 @@ public class UserService implements UserDetailsService {
     }
 
     public void delAdmin(String userID) {
-        Optional<UserEntity> check = userRepository.findByUsername(userID);
-        UserEntity userEntity;
-        if (check.isPresent()) {
-            userEntity = check.get();
-            userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
-
-            userRepository.save(userEntity);
-        }
+        UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
+        userEntity.getRoleList().remove(roleRepository.findByRole("ROLE_ADMIN"));
+        userRepository.save(userEntity);
     }
 
     public void createRoles() {
