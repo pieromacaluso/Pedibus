@@ -145,4 +145,9 @@ public class LineeService {
         lineaEntity.setAdminList(adminList);
         lineaRepository.save(lineaEntity);
     }
+
+    public Boolean isAdminOrGuideLine(String username, String idLinea) {
+        LineaEntity lineaEntity = getLineaEntityById(idLinea);
+        return lineaEntity.getAdminList().contains(username) || lineaEntity.getGuideList().contains(username);
+    }
 }
