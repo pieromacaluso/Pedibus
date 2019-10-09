@@ -146,6 +146,7 @@ public class LineeService {
         lineaRepository.save(lineaEntity);
     }
 
+    //TODO cancellare nel caso continuasse a venir usato una sola volta
     public Boolean isAdminOrGuideLine(String username, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
         return lineaEntity.getAdminList().contains(username) || lineaEntity.getGuideList().contains(username);

@@ -35,4 +35,7 @@ public class FermataDTO {
         return MongoZonedDateTime.getMongoZonedDateTimeFromTime(orario);
     }
 
+    public static int compareTo(FermataDTO fermataDTO, FermataDTO fermataDTO1) {
+        return fermataDTO.getId().compareTo(fermataDTO1.getId());
+    }
 }

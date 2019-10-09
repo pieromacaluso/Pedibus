@@ -20,14 +20,14 @@ public class TurnoEntity {
     private String idLinea;
     private Date data;
     private Boolean verso;
-    private Boolean isAperto; //true aperto, false chiuso
+    private Boolean isOpen; //true aperto, false chiuso
 
     public TurnoEntity(TurnoDTO turnoDTO)
     {
         this.idLinea = turnoDTO.getIdLinea();
         this.data = turnoDTO.getData();
         this.verso = turnoDTO.getVerso();
-        isAperto = true;
+        isOpen = true;
     }
 
 }
