@@ -3,6 +3,7 @@ package it.polito.ai.mmap.pedibus.services;
 import it.polito.ai.mmap.pedibus.entity.FermataEntity;
 import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
+import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.FermataNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
@@ -17,6 +18,7 @@ import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -152,9 +154,12 @@ public class LineeService {
         LineaDTO lineaDTO = getLineaDTOById(idLinea);
         return verso ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get();
     }
+
     //TODO cancellare nel caso continuasse a venir usato una sola volta
-    public Boolean isAdminOrGuideLine(String username, String idLinea) {
+    public Boolean isAdminOrGuideLine( String idLinea) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
-        return lineaEntity.getAdminList().contains(username) || lineaEntity.getGuideList().contains(username);
+        return lineaEntity.getAdminList().contains(principal.getUsername()) || lineaEntity.getGuideList().contains(principal.getUsername());
     }
 }

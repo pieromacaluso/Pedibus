@@ -20,6 +20,7 @@ public class DispEntity {
     private Integer idFermata;
     private ObjectId turnoId;
     private Boolean isConfirmed;
+    private Boolean isAck;
 
 
     public DispEntity(String guideUsername,Integer idFermata, ObjectId turnoId)

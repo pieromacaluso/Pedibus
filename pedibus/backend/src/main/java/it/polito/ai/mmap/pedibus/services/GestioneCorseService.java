@@ -40,6 +40,7 @@ public class GestioneCorseService {
     /**
      * Restituisce un TurnoEntity a partire dalle 3 "chiavi": idLinea, data e verso
      * Se il turno non è presente sul db per questa terna lo crea
+     * Se il turno ha oltrepassato la sua data di scadenza (pedibus partito) viene chiuso o non viene creato
      *
      * @param turnoDTO
      * @return
@@ -62,6 +63,12 @@ public class GestioneCorseService {
         return turnoRepository.save(turnoEntity);
     }
 
+    /**
+     * Restituisce una dispEntity a partire dal turno e dalla persona indicata
+     * @param turnoDTO
+     * @param guideUsername
+     * @return
+     */
     private DispEntity getDispEntity(TurnoDTO turnoDTO, String guideUsername) {
         Optional<DispEntity> checkDisp = dispRepository.findByGuideUsernameAndTurnoId(guideUsername, getTurnoEntity(turnoDTO).getTurnoId());
         if (checkDisp.isPresent())
@@ -70,6 +77,10 @@ public class GestioneCorseService {
             throw new DispNotFoundException("Disponibilità non trovata");
     }
 
+    /**
+     * Salva la disponibilità, a patto che il turno sia aperto e la persona loggata ne abbia diritto
+     * @param dispDTO
+     */
     public void addDisp(DispDTO dispDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -82,7 +93,7 @@ public class GestioneCorseService {
             if (!turnoEntity.getIsOpen())
                 throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
 
-            if (!lineeService.isAdminOrGuideLine(principal.getUsername(), dispDTO.getTurnoDTO().getIdLinea()))
+            if (!lineeService.isAdminOrGuideLine(dispDTO.getTurnoDTO().getIdLinea()))
                 throw new PermissionDeniedException("La guide/admin non è relativa alla linea indicata");
 
             dispRepository.save(new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId()));
@@ -90,6 +101,10 @@ public class GestioneCorseService {
         }
     }
 
+    /**
+     * Cancella la disponibilità per la persona loggata, a patto che esista
+     * @param turnoDTO
+     */
     public void deleteDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -100,6 +115,11 @@ public class GestioneCorseService {
             throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
     }
 
+    /**
+     * Restituisce tutte le DispAllResource per un turno, sia quelle confirmed che quelle no
+     * @param turnoDTO
+     * @return
+     */
     public List<DispAllResource> getAllTurnoDisp(TurnoDTO turnoDTO) {
         List<DispAllResource> dispResourceList = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId())
                 .stream()
@@ -110,8 +130,13 @@ public class GestioneCorseService {
         return dispResourceList;
     }
 
-    public void setAllTurnoDisp(TurnoDTO turnoDTO, List<DispAllResource> usernameList) {
-        usernameList.forEach(res -> {
+    /**
+     * Aggiorna lo stato isConfirmed per ogni disp e chiude automaticamente il turno
+     * @param turnoDTO
+     * @param resList
+     */
+    public void setAllTurnoDisp(TurnoDTO turnoDTO, List<DispAllResource> resList) {
+        resList.forEach(res -> {
             DispEntity dispEntity = getDispEntity(turnoDTO, res.getGuideUsername());
             dispEntity.setIdFermata(res.getIdFermata());
             dispEntity.setIsConfirmed(res.getIsConfirmed());
@@ -122,6 +147,11 @@ public class GestioneCorseService {
         setTurnoState(turnoDTO, true);
     }
 
+    /**
+     * Permette a un admin di una linea di modificare lo stato del turno
+     * @param turnoDTO
+     * @param isOpen
+     */
     public void setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (lineeService.getLineaEntityById(turnoDTO.getIdLinea()).getAdminList().contains(principal.getUsername())) {
@@ -132,6 +162,19 @@ public class GestioneCorseService {
             throw new PermissionDeniedException("Non possiedi i privilegi necessari");
     }
 
+    /**
+     * Aggiorniamo lo stato della conferma della guida
+     * @param turnoDTO
+     */
+    public void ackDisp(TurnoDTO turnoDTO) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
+        if (dispEntity.getIsConfirmed()) {
+            dispEntity.setIsAck(true);
+            dispRepository.save(dispEntity);
+        }
+        //todo else questa guida non era stata confermata per quel turno, quindi non dovrebbe mandare l'ack: ignoriamo o segnaliamo errore ?
+    }
 
     private Boolean isTurnoPassed(TurnoDTO turnoDTO) {
         LineaDTO lineaDTO = lineeService.getLineaDTOById(turnoDTO.getIdLinea());
@@ -140,4 +183,6 @@ public class GestioneCorseService {
         return MongoZonedDateTime.getMongoZonedDateTimeFromDateTime(turnoDTO.getData(), timeFermata).after(MongoZonedDateTime.getNow());
 
     }
+
+
 }

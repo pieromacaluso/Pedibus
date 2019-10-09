@@ -40,6 +40,7 @@ public class GestioneCorseController {
 
     /**
      * Restituisce una list di disponibilità per quel turno
+     *
      * @param idLinea
      * @param verso
      * @param data
@@ -54,6 +55,7 @@ public class GestioneCorseController {
 
     /**
      * Permette di specificare quali degli accompagnatori è stato confermato e contemporaneamente chiudere il turno
+     *
      * @param idLinea
      * @param verso
      * @param data
@@ -61,13 +63,26 @@ public class GestioneCorseController {
      * @throws Exception
      */
     @PostMapping("/turno/disp/{idLinea}/{verso}/{data}")
-    public void setAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody List<DispAllResource>  dispResourceList) throws Exception {
+    public void setAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody List<DispAllResource> dispResourceList) throws Exception {
         gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), dispResourceList);
 
     }
 
     /**
+     * Permette alle guide confermate di confermare la loro conferma
+     *
+     * @param idLinea
+     * @param verso
+     * @param data
+     */
+    @PostMapping("/turno/disp/ack/{idLinea}/{verso}/{data}")
+    public void confirmDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
+        gestioneCorseService.ackDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+    }
+
+    /**
      * Permette all'admin di una linea di gestire lo stato di un turno
+     *
      * @param idLinea
      * @param verso
      * @param data
@@ -77,7 +92,6 @@ public class GestioneCorseController {
     public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
         gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), isOpen);
     }
-
 
 
 }
