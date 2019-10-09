@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class DispAllResource {
     private String guideUsername;
-    private String fermata;
+    private Integer idFermata;
+    private String nomeFermata;
     private Boolean isConfirmed;
 
 }

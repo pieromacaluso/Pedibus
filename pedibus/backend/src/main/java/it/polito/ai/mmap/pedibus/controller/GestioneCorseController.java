@@ -53,16 +53,16 @@ public class GestioneCorseController {
     }
 
     /**
-     * Permette di specificare quali degli accompagnatori è stato confermato
+     * Permette di specificare quali degli accompagnatori è stato confermato e contemporaneamente chiudere il turno
      * @param idLinea
      * @param verso
      * @param data
-     * @param usernameList
+     * @param dispResourceList
      * @throws Exception
      */
     @PostMapping("/turno/disp/{idLinea}/{verso}/{data}")
-    public void setAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody List<String> usernameList) throws Exception {
-        gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), usernameList);
+    public void setAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody List<DispAllResource>  dispResourceList) throws Exception {
+        gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), dispResourceList);
 
     }
 

@@ -4,7 +4,6 @@ import it.polito.ai.mmap.pedibus.entity.DispEntity;
 import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.DispNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.DispNotValidException;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
@@ -88,22 +87,24 @@ public class GestioneCorseService {
     public List<DispAllResource> getAllTurnoDisp(TurnoDTO turnoDTO) {
         List<DispAllResource> dispResourceList = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId())
                 .stream()
-                .map(dispEntity -> new DispAllResource(dispEntity.getGuideUsername(), lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(), dispEntity.getIsConfirmed()))
+                .map(dispEntity -> new DispAllResource(dispEntity.getGuideUsername(),dispEntity.getIdFermata(), lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(), dispEntity.getIsConfirmed()))
                 .collect(Collectors.toList());
         LineaDTO lineaDTO = lineeService.getLineaDTOById(turnoDTO.getIdLinea());
         String nomeFermata = turnoDTO.getVerso() ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get().getNome() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get().getNome();
-        dispResourceList.stream().filter(res -> res.getFermata() == null).forEach(res -> res.setFermata(nomeFermata));
+        dispResourceList.stream().filter(res -> res.getNomeFermata() == null).forEach(res -> res.setNomeFermata(nomeFermata));
         return dispResourceList;
     }
 
-    public void setAllTurnoDisp(TurnoDTO turnoDTO, List<String> usernameList) {
-        usernameList.forEach(username -> {
-            DispEntity dispEntity = getDispEntity(turnoDTO, username);
-            dispEntity.setIsConfirmed(true);
+    public void setAllTurnoDisp(TurnoDTO turnoDTO, List<DispAllResource> usernameList) {
+        usernameList.forEach(res -> {
+            DispEntity dispEntity = getDispEntity(turnoDTO, res.getGuideUsername());
+            dispEntity.setIdFermata(res.getIdFermata());
+            dispEntity.setIsConfirmed(res.getIsConfirmed());
             dispRepository.save(dispEntity);
             //TODO notifica
 
         });
+        setTurnoState(turnoDTO, true);
     }
 
     public void setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
@@ -112,8 +113,7 @@ public class GestioneCorseService {
             TurnoEntity turnoEntity = getTurnoEntity(turnoDTO);
             turnoEntity.setIsOpen(isOpen);
             turnoRepository.save(turnoEntity);
-        }
-        else
+        } else
             throw new PermissionDeniedException("Non possiedi i privilegi necessari");
     }
 
