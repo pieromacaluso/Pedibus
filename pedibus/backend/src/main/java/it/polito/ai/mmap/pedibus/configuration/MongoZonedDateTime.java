@@ -3,6 +3,8 @@ package it.polito.ai.mmap.pedibus.configuration;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,6 +29,11 @@ public class MongoZonedDateTime extends Date {
     public static Date getMongoZonedDateTimeFromTime(String time) {
 
         return parseData(LocalDate.now() + "T" + time + ":00.001 GMT+00:00");
+    }
+
+    public static Date getMongoZonedDateTimeFromDateTime(Date date, String time) {
+        String strDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS z").format(date);
+        return parseData(strDate.substring(0, 10) + "T" + time + ":00.001 GMT+00:00");
     }
 
     public static Date getNow() {

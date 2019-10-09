@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.services;
 
+import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.DispEntity;
 import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
@@ -36,14 +37,29 @@ public class GestioneCorseService {
     @Autowired
     LineeService lineeService;
 
+    /**
+     * Restituisce un TurnoEntity a partire dalle 3 "chiavi": idLinea, data e verso
+     * Se il turno non è presente sul db per questa terna lo crea
+     *
+     * @param turnoDTO
+     * @return
+     */
     private TurnoEntity getTurnoEntity(TurnoDTO turnoDTO) {
         Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(turnoDTO.getIdLinea(), turnoDTO.getData(), turnoDTO.getVerso());
-        //TODO controllo che non sia un turno da chiudere tramite MongoZonedDateTime -> funzione in lineeService che possono usare anche altri metodi (?)
-        if (checkTurno.isPresent())
-            return checkTurno.get();
-        else {
-            return turnoRepository.save(new TurnoEntity(turnoDTO));
-        }
+        TurnoEntity turnoEntity;
+        Boolean isTurnoOpen = isTurnoPassed(turnoDTO);
+
+        if (checkTurno.isPresent()) {
+            turnoEntity = checkTurno.get();
+            if (!isTurnoOpen)
+                turnoEntity.setIsOpen(false);
+        } else if (isTurnoOpen) {
+            turnoEntity = new TurnoEntity(turnoDTO);
+            turnoEntity.setIsOpen(true);
+        } else
+            throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
+
+        return turnoRepository.save(turnoEntity);
     }
 
     private DispEntity getDispEntity(TurnoDTO turnoDTO, String guideUsername) {
@@ -87,11 +103,10 @@ public class GestioneCorseService {
     public List<DispAllResource> getAllTurnoDisp(TurnoDTO turnoDTO) {
         List<DispAllResource> dispResourceList = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId())
                 .stream()
-                .map(dispEntity -> new DispAllResource(dispEntity.getGuideUsername(),dispEntity.getIdFermata(), lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(), dispEntity.getIsConfirmed()))
+                .map(dispEntity -> new DispAllResource(dispEntity.getGuideUsername(), dispEntity.getIdFermata(), lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(), dispEntity.getIsConfirmed()))
                 .collect(Collectors.toList());
-        LineaDTO lineaDTO = lineeService.getLineaDTOById(turnoDTO.getIdLinea());
-        String nomeFermata = turnoDTO.getVerso() ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get().getNome() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get().getNome();
-        dispResourceList.stream().filter(res -> res.getNomeFermata() == null).forEach(res -> res.setNomeFermata(nomeFermata));
+        FermataDTO fermataDTO = lineeService.getFermataPartenzaOrArrivo(turnoDTO.getIdLinea(), turnoDTO.getVerso());
+        dispResourceList.stream().filter(res -> res.getNomeFermata() == null).forEach(res -> res.setNomeFermata(fermataDTO.getNome()));
         return dispResourceList;
     }
 
@@ -117,4 +132,12 @@ public class GestioneCorseService {
             throw new PermissionDeniedException("Non possiedi i privilegi necessari");
     }
 
+
+    private Boolean isTurnoPassed(TurnoDTO turnoDTO) {
+        LineaDTO lineaDTO = lineeService.getLineaDTOById(turnoDTO.getIdLinea());
+        String timeFermata = turnoDTO.getVerso() ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get().getOrario() : lineeService.getPartenzaScuola();
+
+        return MongoZonedDateTime.getMongoZonedDateTimeFromDateTime(turnoDTO.getData(), timeFermata).after(MongoZonedDateTime.getNow());
+
+    }
 }

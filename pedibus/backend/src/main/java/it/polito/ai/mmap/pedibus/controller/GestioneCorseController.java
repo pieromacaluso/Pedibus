@@ -73,7 +73,7 @@ public class GestioneCorseController {
      * @param data
      * @param isOpen
      */
-    @PostMapping("/turno/state/{idLinea}/{verso}/{data}")
+    @PutMapping("/turno/state/{idLinea}/{verso}/{data}")
     public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
         gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), isOpen);
     }

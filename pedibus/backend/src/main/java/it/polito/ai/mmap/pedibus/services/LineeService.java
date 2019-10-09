@@ -146,6 +146,12 @@ public class LineeService {
         lineaRepository.save(lineaEntity);
     }
 
+
+    public FermataDTO getFermataPartenzaOrArrivo(String idLinea, Boolean verso)
+    {
+        LineaDTO lineaDTO = getLineaDTOById(idLinea);
+        return verso ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get();
+    }
     //TODO cancellare nel caso continuasse a venir usato una sola volta
     public Boolean isAdminOrGuideLine(String username, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
