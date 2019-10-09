@@ -23,7 +23,7 @@ export interface DialogData {
 })
 export class DeleteDialogComponent {
 
-  prenotazioneForm = this.fb.group({
+  deleteForm = this.fb.group({
     fermataSelect: ['', [Validators.required]]
   });
 
@@ -40,7 +40,7 @@ export class DeleteDialogComponent {
 
 
   submit() {
-      this.data.fermataId = this.prenotazioneForm.controls.fermataSelect.value;
+      this.data.fermataId = this.deleteForm.controls.fermataSelect.value;
       this.data.alunno.update = true;
       this.deletePrenotazione(this.data);
   }
