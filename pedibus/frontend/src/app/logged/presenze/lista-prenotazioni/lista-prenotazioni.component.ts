@@ -171,6 +171,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     if (this.authService.isUser()) {
       const isChild = this.children.find((c) => c.codiceFiscale === alunno.codiceFiscale);
       if (isChild) {
+        console.log('Opened delete dialog');
         this.openDeleteDialog(alunno);
       }
     }
