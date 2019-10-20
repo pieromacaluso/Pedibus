@@ -24,9 +24,9 @@ public class GestioneCorseController {
     /**
      * Permette a una guide/admin di una linea di segnalare la propria disponibilità
      */
-    @PostMapping("/disp")
-    public void addDisp(@RequestBody DispDTO dispDTO) throws Exception {
-        gestioneCorseService.addDisp(dispDTO);
+    @PostMapping("/disp/{idLinea}/{verso}/{data}")
+    public void addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
+        gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
     }
 
 
