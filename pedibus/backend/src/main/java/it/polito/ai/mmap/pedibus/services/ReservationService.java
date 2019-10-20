@@ -99,10 +99,8 @@ public class ReservationService {
         LineaEntity lineaEntity = lineeService.getLineaEntityById(reservationDTO.getIdLinea());
 
         return (checkTime(reservationDTO.getData(), fermataEntity)
-                && ((lineaEntity.getAndata().contains(fermataEntity.getId()) && reservationDTO.getVerso())
-                || (lineaEntity.getRitorno().contains(fermataEntity.getId()) && !reservationDTO.getVerso())))
-                && (principal.getChildrenList().contains(reservationDTO.getCfChild())
-                || lineeService.isAdminLine(reservationDTO.getIdLinea()));
+                && ((lineaEntity.getAndata().contains(fermataEntity.getId()) && reservationDTO.getVerso()) || (lineaEntity.getRitorno().contains(fermataEntity.getId()) && !reservationDTO.getVerso()))
+                && (principal.getChildrenList().contains(reservationDTO.getCfChild()) || lineeService.isAdminLine(reservationDTO.getIdLinea()) || userService.isSysAdmin()));
     }
 
     /**
