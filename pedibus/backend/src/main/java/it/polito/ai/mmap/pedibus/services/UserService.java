@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -245,4 +246,11 @@ public class UserService implements UserDetailsService {
         userEntity.getRoleList().remove(getRoleEntityById("ROLE_ADMIN"));
         userRepository.save(userEntity);
     }
+
+    public Boolean isSysAdmin()
+    {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getRoleList().contains(getRoleEntityById("ROLE_SYSTEM-ADMIN"));
+    }
+
 }

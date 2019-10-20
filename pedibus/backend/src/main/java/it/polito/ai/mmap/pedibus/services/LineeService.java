@@ -155,11 +155,16 @@ public class LineeService {
         return verso ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get();
     }
 
-    //TODO cancellare nel caso continuasse a venir usato una sola volta
-    public Boolean isAdminOrGuideLine( String idLinea) {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        LineaEntity lineaEntity = getLineaEntityById(idLinea);
-        return lineaEntity.getAdminList().contains(principal.getUsername()) || lineaEntity.getGuideList().contains(principal.getUsername());
+    public Boolean isAdminLine(String idLinea)
+    {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return getLineaEntityById(idLinea).getAdminList().contains(principal.getUsername());
+    }
+
+    public Boolean isGuideLine(String idLinea)
+    {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return getLineaEntityById(idLinea).getGuideList().contains(principal.getUsername());
     }
 }

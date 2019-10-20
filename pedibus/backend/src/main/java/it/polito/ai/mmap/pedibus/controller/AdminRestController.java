@@ -36,12 +36,12 @@ public class AdminRestController {
     LineeService lineeService;
 
 
-
     /**
      * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti gli utenti registrati.
      * Essendo usato da admin può essere più utile restituire le UserEntity e non UserDTO per poter osservare
      * maggior dettagli quali ruoli e altro.
      * TODO (marcof) non mi convince troppo restituire un entity perchè dovrebbe funzionare solo come oggetto tramite per il db, c'è da capire che dati gli possono servire e metterli nel dto (?)
+     *
      * @return
      */
     @GetMapping("/admin/users")
@@ -55,10 +55,11 @@ public class AdminRestController {
 
     /**
      * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti i bambini
+     *
      * @return
      */
     @GetMapping("/admin/children/")
-    public List<ChildDTO> getChildren(){
+    public List<ChildDTO> getChildren() {
         return childService.getAllChildren();
 //        List<ChildDTO> allChildren=userService.getAllChildren();
 //        Map<Object, Object> model = new HashMap<>();
@@ -72,24 +73,19 @@ public class AdminRestController {
      */
     @PutMapping("/admin/users/{userID}")
     public void setUserAdmin(@RequestBody PermissionResource permissionResource, @PathVariable("userID") String userID) {
-        UserEntity principal;
-        LineaEntity lineaEntity = lineeService.getLineaEntityById(permissionResource.getIdLinea());
-
-        principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (lineaEntity.getAdminList().contains(principal.getUsername()) || principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
-                if(permissionResource.isAddOrDel()){
-                    userService.addAdmin(userID);
-                    lineeService.addAdminLine(userID, permissionResource.getIdLinea());
-                }else{
-                    userService.delAdmin(userID);
-                    lineeService.delAdminLine(userID, permissionResource.getIdLinea());
-                }
+        if (lineeService.isAdminLine(permissionResource.getIdLinea()) || userService.isSysAdmin()) {
+            if (permissionResource.isAddOrDel()) {
+                userService.addAdmin(userID);
+                lineeService.addAdminLine(userID, permissionResource.getIdLinea());
+            } else {
+                userService.delAdmin(userID);
+                lineeService.delAdminLine(userID, permissionResource.getIdLinea());
+            }
         } else {
             throw new PermissionDeniedException("Non hai i privilegi per eseguire questa operazione");
         }
 
     }
-
 
 
 }

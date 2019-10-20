@@ -54,7 +54,7 @@ public class GestioneCorseController {
     }
 
     /**
-     * Permette di specificare quali degli accompagnatori è stato confermato e contemporaneamente chiudere il turno
+     * Permette di specificare quali degli accompagnatori è stato confermato
      *
      * @param idLinea
      * @param verso
@@ -69,14 +69,14 @@ public class GestioneCorseController {
     }
 
     /**
-     * Permette alle guide confermate di confermare la loro conferma
+     * Permette alle guide confermate di ack la loro conferma
      *
      * @param idLinea
      * @param verso
      * @param data
      */
     @PostMapping("/turno/disp/ack/{idLinea}/{verso}/{data}")
-    public void confirmDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
+    public void ackDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
         gestioneCorseService.ackDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
     }
 

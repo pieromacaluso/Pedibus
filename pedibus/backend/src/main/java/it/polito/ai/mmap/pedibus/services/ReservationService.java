@@ -102,9 +102,7 @@ public class ReservationService {
                 && ((lineaEntity.getAndata().contains(fermataEntity.getId()) && reservationDTO.getVerso())
                 || (lineaEntity.getRitorno().contains(fermataEntity.getId()) && !reservationDTO.getVerso())))
                 && (principal.getChildrenList().contains(reservationDTO.getCfChild())
-                || principal.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList())
-                .contains("ROLE_SYSTEM-ADMIN")
-                || lineaEntity.getAdminList().contains(principal.getUsername()));
+                || lineeService.isAdminLine(reservationDTO.getIdLinea()));
     }
 
     /**
@@ -182,14 +180,13 @@ public class ReservationService {
     public void deleteReservation(String idLinea, Date data, ObjectId reservationId) {
         ReservationEntity reservationEntity = getReservationEntityById(reservationId);
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LineaEntity lineaEntity = lineeService.getLineaEntityById(reservationEntity.getIdLinea());
         FermataEntity fermataEntity = lineeService.getFermataEntityById(reservationEntity.getIdFermata());
         if (checkTime(reservationEntity.getData(), fermataEntity)
                 && reservationEntity.getData().equals(data)
                 && idLinea.equals(reservationEntity.getIdLinea())
                 && (principal.getChildrenList().contains(reservationEntity.getCfChild())
-                || principal.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN")
-                || lineaEntity.getAdminList().contains(principal.getUsername()))) {
+                || userService.isSysAdmin()
+                || lineeService.isAdminLine(idLinea))) {
             reservationRepository.delete(reservationEntity);
         } else {
             throw new IllegalArgumentException("Errore in cancellazione reservation");
@@ -201,12 +198,11 @@ public class ReservationService {
         if (checkReservation.isPresent()) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             ReservationEntity reservation = checkReservation.get();
-            LineaEntity lineaEntity = lineeService.getLineaEntityById(idLinea);
             FermataEntity fermataEntity = lineeService.getFermataEntityById(reservation.getIdFermata());
             if (checkTime(reservation.getData(), fermataEntity)
                     && (principal.getChildrenList().contains(reservation.getCfChild())
-                    || principal.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList()).contains("ROLE_SYSTEM-ADMIN")
-                    || lineaEntity.getAdminList().contains(principal.getUsername()))) {
+                    || userService.isSysAdmin()
+                    || lineeService.isAdminLine(idLinea))) {
                 reservationRepository.delete(reservation);
             }
         } else {
@@ -219,7 +215,7 @@ public class ReservationService {
         // fermata o che il ruolo sia ADMIN o SYSTEM_ADMIN
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Boolean isAdmin = principal.getRoleList().contains(userService.getRoleEntityById("ROLE_ADMIN"));
-        if (!principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
+        if (!userService.isSysAdmin()) {
             if (data.before(MongoZonedDateTime.getStartOfTomorrow())) {
                 // reservation per oggi o nel passato
                 if (isAdmin) {
@@ -280,12 +276,10 @@ public class ReservationService {
     }
 
     public boolean canModify(String idLinea, Date date) {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN")))
+        if (userService.isSysAdmin())
             return true;
 
-        return (lineeService.isAdminOrGuideLine(idLinea) && MongoZonedDateTime.isToday(date));
+        return ((lineeService.isAdminLine(idLinea) || lineeService.isGuideLine(idLinea)) && MongoZonedDateTime.isToday(date));
 
     }
 

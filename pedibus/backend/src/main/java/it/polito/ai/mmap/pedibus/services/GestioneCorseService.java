@@ -35,6 +35,9 @@ public class GestioneCorseService {
     TurnoRepository turnoRepository;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     LineeService lineeService;
 
     /**
@@ -65,6 +68,7 @@ public class GestioneCorseService {
 
     /**
      * Restituisce una dispEntity a partire dal turno e dalla persona indicata
+     *
      * @param turnoDTO
      * @param guideUsername
      * @return
@@ -79,6 +83,7 @@ public class GestioneCorseService {
 
     /**
      * Salva la disponibilità, a patto che il turno sia aperto e la persona loggata ne abbia diritto
+     *
      * @param dispDTO
      */
     public void addDisp(DispDTO dispDTO) {
@@ -93,7 +98,7 @@ public class GestioneCorseService {
             if (!turnoEntity.getIsOpen())
                 throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
 
-            if (!lineeService.isAdminOrGuideLine(dispDTO.getTurnoDTO().getIdLinea()))
+            if (!(lineeService.isAdminLine(dispDTO.getTurnoDTO().getIdLinea()) || lineeService.isGuideLine(dispDTO.getTurnoDTO().getIdLinea())))
                 throw new PermissionDeniedException("La guide/admin non è relativa alla linea indicata");
 
             dispRepository.save(new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId()));
@@ -103,6 +108,7 @@ public class GestioneCorseService {
 
     /**
      * Cancella la disponibilità per la persona loggata, a patto che esista
+     *
      * @param turnoDTO
      */
     public void deleteDisp(TurnoDTO turnoDTO) {
@@ -117,6 +123,7 @@ public class GestioneCorseService {
 
     /**
      * Restituisce tutte le DispAllResource per un turno, sia quelle confirmed che quelle no
+     *
      * @param turnoDTO
      * @return
      */
@@ -132,29 +139,32 @@ public class GestioneCorseService {
 
     /**
      * Aggiorna lo stato isConfirmed per ogni disp e chiude automaticamente il turno
+     * Controlla che prima il turno sia stato chiuso tramite PUT /turno/state/{idLinea}/{verso}/{data}
+     *
      * @param turnoDTO
      * @param resList
      */
     public void setAllTurnoDisp(TurnoDTO turnoDTO, List<DispAllResource> resList) {
-        resList.forEach(res -> {
-            DispEntity dispEntity = getDispEntity(turnoDTO, res.getGuideUsername());
-            dispEntity.setIdFermata(res.getIdFermata());
-            dispEntity.setIsConfirmed(res.getIsConfirmed());
-            dispRepository.save(dispEntity);
-            //TODO notifica
-
-        });
-        setTurnoState(turnoDTO, true);
+        if (!getTurnoEntity(turnoDTO).getIsOpen()) {
+            resList.forEach(res -> {
+                DispEntity dispEntity = getDispEntity(turnoDTO, res.getGuideUsername());
+                dispEntity.setIdFermata(res.getIdFermata());
+                dispEntity.setIsConfirmed(res.getIsConfirmed());
+                dispRepository.save(dispEntity);
+                //TODO notifica
+            });
+        } else
+            throw new IllegalArgumentException("Il turno deve essere chiuso"); //TODO eccezione custom (?)
     }
 
     /**
      * Permette a un admin di una linea di modificare lo stato del turno
+     *
      * @param turnoDTO
      * @param isOpen
      */
     public void setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (lineeService.getLineaEntityById(turnoDTO.getIdLinea()).getAdminList().contains(principal.getUsername())) {
+        if (lineeService.isAdminLine(turnoDTO.getIdLinea()) || userService.isSysAdmin()) {
             TurnoEntity turnoEntity = getTurnoEntity(turnoDTO);
             turnoEntity.setIsOpen(isOpen);
             turnoRepository.save(turnoEntity);
@@ -164,6 +174,7 @@ public class GestioneCorseService {
 
     /**
      * Aggiorniamo lo stato della conferma della guida
+     *
      * @param turnoDTO
      */
     public void ackDisp(TurnoDTO turnoDTO) {
