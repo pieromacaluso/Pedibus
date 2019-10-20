@@ -15,7 +15,6 @@ import {RecoverComponent} from './registration/recover/recover.component';
 import {ConfirmComponent} from './registration/confirm/confirm.component';
 import { DisponibilitaComponent } from './logged/disponibilita/disponibilita.component';
 import { ComunicazioniComponent } from './logged/comunicazioni/comunicazioni.component';
-import { AdminBookDialogComponent } from './logged/presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import { TurniComponent } from './logged/turni/turni.component';
 import { AdminGuard } from './admin.guard';
 

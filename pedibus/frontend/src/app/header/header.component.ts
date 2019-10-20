@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import {AuthService} from '../registration/auth.service';
 import {Router} from '@angular/router';
 
@@ -12,9 +12,9 @@ export class HeaderComponent implements OnInit {
   opened: boolean;
   logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
-  loggedIcon = ['', '', ''];
-  loggedLinks = ['', '', ''];
-  loggedTitle = ['', '', ''];
+  loggedIcon = ['people'];
+  loggedLinks = ['presenze'];
+  loggedTitle = ['presenze'];
 
   notLoggedIcon = ['vpn_key', 'person_add'];
   notLoggedLinks = ['sign-in', 'sign-up'];
@@ -26,7 +26,6 @@ export class HeaderComponent implements OnInit {
     this.userLogged = this.auth.isLoggedIn();
     this.activeLoggedLink = this.loggedLinks[0];
     this.activeNotLoggedLink = this.notLoggedLinks[0];
-    this.setLinks();
   }
 
   isLoggedIn() {
@@ -49,6 +48,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setLinks();
   }
 
   setLinks() {
