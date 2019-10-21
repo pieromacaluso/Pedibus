@@ -202,7 +202,7 @@
                                 <snippets>${project.build.directory}/generated-snippets</snippets>
                             </attributes>
                             <sourceDirectory>src/docs/asciidocs</sourceDirectory>
-                            <outputDirectory>target/generated-docs</outputDirectory>
+                            <outputDirectory>src/docs/htmldocs</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
