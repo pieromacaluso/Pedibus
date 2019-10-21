@@ -54,3 +54,12 @@ export interface NuovaPrenotazione {
   idFermata: number;
   verso: number;
 }
+
+export interface StopsByLine {
+  id: string;
+  nome: string;
+  adminMast: string;
+  adminList: string[];
+  guideList: string[];
+  stops: Fermata[];
+}

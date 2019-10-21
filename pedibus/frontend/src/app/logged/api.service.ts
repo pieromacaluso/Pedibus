@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Alunno, AlunnoNotReserved, LineReservationVerso, NuovaPrenotazione, PrenotazioneRequest} from './line-details';
+import {Alunno, AlunnoNotReserved, LineReservationVerso, NuovaPrenotazione, PrenotazioneRequest, StopsByLine} from './line-details';
 import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import {map, publishReplay, share, shareReplay} from 'rxjs/operators';
@@ -23,6 +23,10 @@ export class ApiService {
 
   getLinee(): Observable<string[]> {
     return this.httpClient.get<string[]>(this.baseURL + 'lines');
+  }
+
+  getStopsByLine(idLinea: string): Observable<StopsByLine> {
+    return this.httpClient.get<StopsByLine>(this.baseURL + 'lines/' + idLinea);
   }
 
   getLineeNomi(): Observable<string[]> {
@@ -88,6 +92,6 @@ export class ApiService {
   deletePrenotazioneGenitore(codiceFiscale: string, idLinea: string, data: Date, verso: string) {
     return this.httpClient
       .delete(this.baseURL + 'reservations/' + codiceFiscale + '/' + idLinea + '/'
-      + this.datePipe.transform(data, 'yyyy-MM-dd') + '/' + this.versoToBool(verso));
+        + this.datePipe.transform(data, 'yyyy-MM-dd') + '/' + this.versoToBool(verso));
   }
 }
