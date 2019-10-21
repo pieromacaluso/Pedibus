@@ -61,12 +61,12 @@ export class HeaderComponent implements OnInit {
       if (this.auth.getRoles().includes('ROLE_ADMIN')) {
         this.loggedIcon = ['people', 'schedule', 'notification_important'];
         this.loggedLinks = ['presenze', 'disponibilita', 'comunicazioni'];
-        this.loggedTitle = ['Presenze', 'disponibilita', ''];
+        this.loggedTitle = ['Presenze', 'Disponibilita', 'Comunicazioni'];
       }
       if (this.auth.getRoles().includes('ROLE_SYSTEM-ADMIN')) {
         this.loggedIcon = ['people', 'schedule', 'notification_important', 'verified_user'];
         this.loggedLinks = ['presenze', 'disponibilita', 'comunicazioni', 'turni'];
-        this.loggedTitle = ['Presenze', 'disponibilita', '', ''];
+        this.loggedTitle = ['Presenze', 'Disponibilita', 'Comunicazioni', 'Turni'];
       }
     }
   }
