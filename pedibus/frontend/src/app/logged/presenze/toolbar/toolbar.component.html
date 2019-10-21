@@ -42,7 +42,7 @@
         </mat-select>
       </mat-form-field>
       <!-- SELEZIONA VERSO -->
-      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent" *ngIf="showVerso">
         <mat-label>Seleziona verso</mat-label>
         <mat-select (selectionChange)="emitRequest()" [(ngModel)]="richiesta.verso">
           <mat-option *ngFor="let v of ['Andata', 'Ritorno']" [value]="v">{{v}}

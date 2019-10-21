@@ -11,6 +11,7 @@ import {Observable} from 'rxjs';
 export class ToolbarComponent implements OnChanges {
 
   @Input() linee: string[];
+  @Input() showVerso: boolean;
   richiesta: PrenotazioneRequest;
 
 
@@ -24,7 +25,7 @@ export class ToolbarComponent implements OnChanges {
   }
 
   emitRequest() {
-    if (this.richiesta.linea !== '' && this.richiesta.verso !== '') {
+    if (this.richiesta.linea !== '' && (this.richiesta.verso !== '' || !this.showVerso)) {
       this.syncService.updatePrenotazione(this.richiesta);
     }
   }
