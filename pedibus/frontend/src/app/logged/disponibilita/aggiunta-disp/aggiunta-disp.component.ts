@@ -8,6 +8,7 @@ import {DatePipe} from '@angular/common';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, Observable, timer} from 'rxjs';
 import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, retry, tap} from 'rxjs/operators';
+
 @Component({
   selector: 'app-aggiunta-disp',
   templateUrl: './aggiunta-disp.component.html',
@@ -15,24 +16,26 @@ import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, ret
 })
 export class AggiuntaDispComponent implements OnInit {
 
-  prenotazione: PrenotazioneRequest;
+  prenotazione$: Observable<PrenotazioneRequest>;
   countLoading = 0;
   stops$: Observable<StopsByLine>;
   private loading: boolean;
+  selectedStop: any;
 
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
 
-    this.stops$ = this.syncService.prenotazioneObs$.pipe(
-      flatMap((result) => {
-        return defer(() => {
+    this.prenotazione$ = this.syncService.prenotazioneObs$.pipe(
+      map((result) => {
+        this.stops$ = defer(() => {
           this.loading = true;
           return this.apiService.getStopsByLine(result.linea).pipe(
             finalize(() => this.loading = false)
           );
         });
+        return result;
       }));
   }
 

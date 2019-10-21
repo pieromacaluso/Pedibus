@@ -8,7 +8,7 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule,
+  MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule,
   MatSelectModule
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -52,7 +52,8 @@ import { AggiuntaDispComponent } from './disponibilita/aggiunta-disp/aggiunta-di
     MatProgressBarModule,
     MatDialogModule,
     ReactiveFormsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatRadioModule
   ],
   exports: [],
   entryComponents: [AdminBookDialogComponent, DeleteDialogComponent]

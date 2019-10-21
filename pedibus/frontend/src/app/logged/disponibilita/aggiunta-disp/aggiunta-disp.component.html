@@ -1,11 +1,34 @@
+
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
   <mat-progress-bar
-  class="progress-bar"
-  *ngIf="showLoading()"
-  mode="indeterminate"
-></mat-progress-bar>
+    class="progress-bar-button"
+    *ngIf="showLoading()"
+    mode="indeterminate"
+  ></mat-progress-bar>
 
-<div *ngIf="!showLoading() && stops$ | async as stops">{{ stops | json}}</div>
 
-<div>{{ this.prenotazione | json}}</div>
+  <div *ngIf="!showLoading() && prenotazione$ | async as prenotazione; else loadingDiv">
+    <div *ngIf="!showLoading() && stops$ | async as stops; else loadingDiv">
+
+        <label id="example-radio-group-label">Seleziona la fermata di
+          {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
+        <mat-radio-group
+          aria-labelledby="example-radio-group-label"
+          class="example-radio-group">
+          <mat-radio-button class="example-radio-button"
+                            *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
+                          first as isFirst; last as isLast;"
+                            [value]="stop.id" [checked]="(prenotazione.verso == 'Andata' ? isFirst : isLast)">
+            {{stop.nome}}
+          </mat-radio-button>
+        </mat-radio-group>
+
+
+    </div>
+  </div>
+
+  <ng-template #loadingDiv>
+    <div>Caricamento in corso...</div>
+  </ng-template>
+
 </mat-card>

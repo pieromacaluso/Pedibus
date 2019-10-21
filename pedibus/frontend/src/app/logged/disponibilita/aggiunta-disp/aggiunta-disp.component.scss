@@ -1,1 +1,26 @@
 @import "../disponibilita.component.scss";
+
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 70;
+}
+
+.progress-bar-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
