@@ -1,0 +1,11 @@
+<mat-card ngClass="container" ngClass.lt-md="container-mobile">
+  <mat-progress-bar
+  class="progress-bar"
+  *ngIf="showLoading()"
+  mode="indeterminate"
+></mat-progress-bar>
+
+<div *ngIf="!showLoading() && stops$ | async as stops">{{ stops | json}}</div>
+
+<div>{{ this.prenotazione | json}}</div>
+</mat-card>
