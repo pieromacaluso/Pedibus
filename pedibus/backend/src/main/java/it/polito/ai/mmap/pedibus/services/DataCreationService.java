@@ -142,7 +142,7 @@ public class DataCreationService {
                         lineaDTO.setAdminList(adminList);
 
                     ArrayList<String> guideList = lineeService.getLineaEntityById(lineaDTO.getId()).getGuideList();
-                    if(guideList != null)
+                    if (guideList != null)
                         lineaDTO.setGuideList(guideList);
 
                 } catch (LineaNotFoundException e) {
@@ -152,8 +152,8 @@ public class DataCreationService {
 
                 LineaEntity lineaEntity = new LineaEntity(lineaDTO);
                 lineaRepository.save(lineaEntity);
-                fermataRepository.saveAll(lineaDTO.getAndata().stream().map(FermataEntity::new).collect(Collectors.toList()));
-                fermataRepository.saveAll(lineaDTO.getRitorno().stream().map(FermataEntity::new).collect(Collectors.toList()));
+                fermataRepository.saveAll(lineaDTO.getAndata().stream().map(fermataDTO -> new FermataEntity(fermataDTO, lineaEntity.getId())).collect(Collectors.toList()));
+                fermataRepository.saveAll(lineaDTO.getRitorno().stream().map(fermataDTO -> new FermataEntity(fermataDTO, lineaEntity.getId())).collect(Collectors.toList()));
 
                 logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
             }
@@ -229,7 +229,7 @@ public class DataCreationService {
         }
 
         userRepository.saveAll(listNonni);
-        logger.info(count*i + " nonni caricati");
+        logger.info(count * i + " nonni caricati");
 
         i = 0;
         count = 0;

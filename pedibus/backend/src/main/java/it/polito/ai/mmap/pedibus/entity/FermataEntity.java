@@ -28,10 +28,12 @@ public class FermataEntity {
      * Conversione da DTO ad Entity
      * @param fermataDTO
      */
-    public FermataEntity(FermataDTO fermataDTO) {
+    public FermataEntity(FermataDTO fermataDTO, String idLinea) {
         this.id = fermataDTO.getId();
         this.name = fermataDTO.getNome();
         this.orario = fermataDTO.getOrario();
+
+        this.idLinea = idLinea;
     }
     @JsonIgnore
     public Date getDateOrario()
