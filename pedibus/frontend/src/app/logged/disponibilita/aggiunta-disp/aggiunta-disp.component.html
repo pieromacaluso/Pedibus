@@ -7,8 +7,9 @@
   ></mat-progress-bar>
 
 
-  <div *ngIf="!showLoading() && prenotazione$ | async as prenotazione; else loadingDiv">
-    <div *ngIf="!showLoading() && stops$ | async as stops; else loadingDiv">
+  <div *ngIf="prenotazione$ | async as prenotazione; else loadingDiv">
+    <div *ngIf="stops$ | async as stops; else loadingDiv">
+      <div *ngIf="!showLoading()">
 
         <label id="example-radio-group-label">Seleziona la fermata di
           {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
@@ -22,8 +23,7 @@
             {{stop.nome}}
           </mat-radio-button>
         </mat-radio-group>
-
-
+      </div>
     </div>
   </div>
 
