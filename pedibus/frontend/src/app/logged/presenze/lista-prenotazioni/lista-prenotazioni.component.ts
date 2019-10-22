@@ -8,9 +8,10 @@ import {AdminBookDialogComponent} from './admin-book-dialog/admin-book-dialog.co
 import {MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {Message} from '@stomp/stompjs';
-import {Subscription} from 'rxjs';
+import {concat, defer, Observable, Subject, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
-import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
+import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
+import {finalize, flatMap, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -23,68 +24,60 @@ export class ListaPrenotazioniComponent implements OnInit {
 
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
-  countLoading = 0;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
   deleteDialogRef: MatDialogRef<DeleteDialogComponent>;
   bottomCardTitle: string;
   children: any[] = [];
-  private handledSub: Subscription;
   // private openedDialog: any = 0;
-  private resSub: Subscription;
+  private prenotazione$: Observable<PrenotazioneRequest>;
+  private resource$: Observable<LineReservationVerso>;
+  private handled$: Observable<any>;
+  private reservation$: Observable<any>;
+  private loading: boolean;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
     // this.connect();
-    this.syncService.prenotazioneObs$.subscribe((prenotazione) => {
-      if (prenotazione.linea && prenotazione.verso && prenotazione.data) {
-        this.prenotazione = null;
-        // Disiscrizione dalla Broker handledSub precedente se esiste
-        if (this.handledSub) {
-          this.handledSub.unsubscribe();
-        }
-        // Iscrizione alla nuova Broker
-        this.handledSub = this.rxStompService.watch('/handled' + this.pathSub(prenotazione))
-          .subscribe((message: Message) => {
-            const res = JSON.parse(message.body);
-            console.log(res);
-            // tslint:disable-next-line:max-line-length
-            const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
-            al.presoInCarico = res.isSet;
+    this.prenotazione$ = this.syncService.prenotazioneObs$.pipe(
+      map((result: PrenotazioneRequest) => {
+          this.prenotazione = result;
+          this.handled$ = this.rxStompService.watch('/handled' + this.pathSub(result)).pipe(
+            map((message) => {
+              const res = JSON.parse(message.body);
+              // tslint:disable-next-line:max-line-length
+              const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
+              al.presoInCarico = res.isSet;
+            }));
+          this.reservation$ = this.rxStompService.watch('/reservation' + this.pathSub(result)).pipe(
+            map((message) => {
+              const res = JSON.parse(message.body);
+              const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
+              const newAlunno: Alunno = {
+                codiceFiscale: oldAlunno.codiceFiscale,
+                name: oldAlunno.name,
+                surname: oldAlunno.surname,
+                presoInCarico: false,
+                arrivatoScuola: false,
+                update: false
+              };
+              const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
+              this.deleteNotReserved(oldAlunno);
+              this.togglePresenza(res.idFermata, newAlunno);
+            })
+          );
+          this.resource$ = defer(() => {
+            this.loading = true;
+            return this.apiService.getPrenotazioneByLineaAndDateAndVerso(this.prenotazione).pipe(
+              finalize(() => this.loading = false),
+              tap((rese) => {
+                this.resource = rese;
+              }));
           });
-
-        // Disiscrizione dalla Broker reservationSub precedente se esiste
-        if (this.resSub) {
-          this.resSub.unsubscribe();
+          return result;
         }
-        // Iscrizione alla nuova Broker
-        this.resSub = this.rxStompService.watch('/reservation' + this.pathSub(prenotazione))
-          .subscribe((message: Message) => {
-            const res = JSON.parse(message.body);
-            const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
-            const newAlunno: Alunno = {
-              codiceFiscale: oldAlunno.codiceFiscale,
-              name: oldAlunno.name,
-              surname: oldAlunno.surname,
-              presoInCarico: false,
-              arrivatoScuola: false,
-              update: false
-            };
-            const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
-            this.deleteNotReserved(oldAlunno);
-            this.togglePresenza(res.idFermata, newAlunno);
-          });
-        this.prenotazione = prenotazione;
-        this.countLoading++;
-        this.apiService.getPrenotazioneByLineaAndDateAndVerso(prenotazione).subscribe((rese) => {
-          this.resource = rese;
-          this.countLoading--;
-        }, (error) => console.error(error));
-      }
-    }, (error) => console.error(error));
-
+      ));
     this.setBottoCardTitle();
-
   }
 
   setBottoCardTitle() {
@@ -131,16 +124,16 @@ export class ListaPrenotazioniComponent implements OnInit {
     this.dialog.closeAll();
 
     this.deleteDialogRef = this.dialog.open(DeleteDialogComponent, {
-        hasBackdrop: true,
-        data: {
-          alunno: alu,
-          res: this.resource.alunniPerFermata,
-          data: this.prenotazione.data,
-          verso: this.prenotazione.verso,
-          linea: this.prenotazione.linea,
-          resource: this.resource
-        }
-      });
+      hasBackdrop: true,
+      data: {
+        alunno: alu,
+        res: this.resource.alunniPerFermata,
+        data: this.prenotazione.data,
+        verso: this.prenotazione.verso,
+        linea: this.prenotazione.linea,
+        resource: this.resource
+      }
+    });
   }
 
   canModify() {
@@ -149,7 +142,7 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   showLoading() {
-    return this.countLoading > 0 || !this.rxStompService.connected();
+    return this.loading || !this.rxStompService.connected();
   }
 
   showLoadingButton(alu: any) {
@@ -189,13 +182,13 @@ export class ListaPrenotazioniComponent implements OnInit {
 
   sortedNotReserved(alu: AlunnoNotReserved[]) {
     if (this.authService.getRoles().includes('ROLE_USER')) {
-     // todo: 1. get children, 2. filtra, 3. ordina
+      // todo: 1. get children, 2. filtra, 3. ordina
       return alu.filter((a) => this.children.find((c) => c.codiceFiscale === a.codiceFiscale))
-      .sort((a, b) => {
-        return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
-      });
+        .sort((a, b) => {
+          return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
+        });
 
-  }
+    }
     if (this.authService.getRoles().includes('ROLE_ADMIN')) {
       return alu.sort((a, b) => {
         return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
@@ -212,19 +205,4 @@ export class ListaPrenotazioniComponent implements OnInit {
       this.resource.childrenNotReserved.splice(index, 1);
     }
   }
-
-  /*private isModifiable() {
-    const today = new Date();
-    const preno = this.prenotazione.data;
-    preno.setHours(0);
-    preno.setMinutes(0);
-    preno.setSeconds(0);
-    preno.setMilliseconds(0);
-    today.setHours(0);
-    today.setMinutes(0);
-    today.setSeconds(0);
-    today.setMilliseconds(0);
-    // console.log(today, preno);
-    return preno.getTime() === today.getTime();
-  }*/
 }
