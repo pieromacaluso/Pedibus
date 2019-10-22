@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from './registration/auth.service';
 import {Router} from '@angular/router';
 import {environment} from '../environments/environment';
+import {HeaderService} from './header/header.service';
 
 @Component({
   selector: 'app-root',
@@ -13,18 +14,12 @@ export class AppComponent implements OnInit {
   opened: boolean;
   logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
-  loggedLinksIcon = ['../../assets/svg/logo.svg'];
-  loggedLinks = ['presenze'];
-  notLoggedLinks = ['sign-in', 'sign-up'];
-  activeLoggedLink;
-  activeNotLoggedLink;
 
-  constructor(private auth: AuthService, private router: Router) {
+  constructor(private auth: AuthService, private router: Router, private header: HeaderService) {
     this.userLogged = this.auth.isLoggedIn();
-    this.activeLoggedLink = this.loggedLinks[0];
-    this.activeNotLoggedLink = this.notLoggedLinks[0];
     console.log('Main URL: ' + window.location.origin);
   }
+
   ngOnInit(): void {
     const timer = JSON.parse(localStorage.getItem('expires_at'));
     if (timer && (Date.now() > timer)) {
@@ -49,5 +44,9 @@ export class AppComponent implements OnInit {
     } else {
       return !environment.production ? 'User logged: ' + this.auth.isLoggedIn() + ', expiration: ' + this.auth.getExpiration().toLocaleString() : '';
     }
+  }
+
+  changeOfRoutes() {
+    this.header.update();
   }
 }
