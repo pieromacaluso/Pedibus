@@ -13,7 +13,7 @@
   role="list"
 >
   <div *ngIf="
-    this.resource$|async as prenot
+    this.resource$|async as resource
     else elseBlock
   ">
     <mat-card id="prenotazioni" ngClass="container" ngClass.lt-md="container-mobile">

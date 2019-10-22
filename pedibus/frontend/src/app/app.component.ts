@@ -1,13 +1,20 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from './registration/auth.service';
-import {Router} from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import {environment} from '../environments/environment';
 import {HeaderService} from './header/header.service';
+import {fadeAnimation} from './route-animations';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  animations: [ // <-- add your animations here
+    fadeAnimation
+    // slider,
+    // transformer,
+    // stepper
+  ]
 })
 export class AppComponent implements OnInit {
 
@@ -42,11 +49,17 @@ export class AppComponent implements OnInit {
     if (this.auth.getExpiration() == null) {
       return !environment.production ? 'User logged: ' + this.auth.isLoggedIn() + ', expiration: not defined' : '';
     } else {
-      return !environment.production ? 'User logged: ' + this.auth.isLoggedIn() + ', expiration: ' + this.auth.getExpiration().toLocaleString() : '';
+      return !environment.production ? 'User logged: '
+        + this.auth.isLoggedIn() + ', expiration: ' + this.auth.getExpiration().toLocaleString() : '';
     }
   }
 
   changeOfRoutes() {
     this.header.update();
   }
+
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet && outlet.activatedRouteData;
+  }
+
 }

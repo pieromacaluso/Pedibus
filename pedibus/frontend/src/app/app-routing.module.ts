@@ -19,18 +19,18 @@ import { TurniComponent } from './logged/turni/turni.component';
 import { AdminGuard } from './admin.guard';
 
 const appRoutes: Routes = [
-  {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard]},
-  {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard]},
-  {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard]},
-  {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, AdminGuard]},
-  {path: 'comunicazioni', component: ComunicazioniComponent, canActivate: [AuthGuard, AdminGuard]},
-  {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard]},
-  {path: 'recover', component: ForgotPasswordComponent},
-  {path: 'recover/:token', component: RecoverComponent},
-  {path: 'confirm/:token', component: ConfirmComponent},
-  {path: '', redirectTo: 'presenze', pathMatch: 'full'},
-  {path: '404', component: PageNotFoundComponent},
-  {path: '**', redirectTo: '/404'}
+  {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
+  {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
+  {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
+  {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, AdminGuard], data: { animation: 'yes' }},
+  {path: 'comunicazioni', component: ComunicazioniComponent, canActivate: [AuthGuard, AdminGuard], data: { animation: 'yes' }},
+  {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard], data: { animation: 'yes' }},
+  {path: 'recover', component: ForgotPasswordComponent, data: { animation: 'yes' }},
+  {path: 'recover/:token', component: RecoverComponent, data: { animation: 'yes' }},
+  {path: 'confirm/:token', component: ConfirmComponent, data: { animation: 'yes' }},
+  {path: '', redirectTo: 'presenze', pathMatch: 'full', data: { animation: 'yes' }},
+  {path: '404', component: PageNotFoundComponent, data: { animation: 'yes' }},
+  {path: '**', redirectTo: '/404', data: { animation: 'yes' }}
 ];
 
 @NgModule({

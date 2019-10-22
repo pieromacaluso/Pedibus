@@ -1,9 +1,5 @@
 <app-header>
-  <router-outlet (activate)="changeOfRoutes()"></router-outlet>
-  <div class="mat-h3 debug">
-    {{getAuthData()}}
+  <div [@fadeAnimation]="prepareRoute(outlet)">
+    <router-outlet  (activate)="changeOfRoutes()" #outlet="outlet"></router-outlet>
   </div>
-  <div class="mat-h3 debug">
-  </div>
-
 </app-header>

@@ -68,7 +68,7 @@ export class ListaPrenotazioniComponent implements OnInit {
           );
           this.resource$ = defer(() => {
             this.loading = true;
-            return this.apiService.getPrenotazioneByLineaAndDateAndVerso(this.prenotazione).pipe(
+            return this.apiService.getPrenotazioneByLineaAndDateAndVerso(result).pipe(
               finalize(() => this.loading = false),
               tap((rese) => {
                 this.resource = rese;
