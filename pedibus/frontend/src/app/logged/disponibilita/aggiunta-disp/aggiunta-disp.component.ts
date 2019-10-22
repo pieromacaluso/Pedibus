@@ -9,6 +9,7 @@ import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, Observable, timer} from 'rxjs';
 import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, retry, tap} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
+import {ApiDispService} from '../../api-disp.service';
 
 @Component({
   selector: 'app-aggiunta-disp',
@@ -17,6 +18,7 @@ import {fadeAnimation} from '../../../route-animations';
 })
 export class AggiuntaDispComponent implements OnInit {
 
+  idFermata: string;
   prenotazione$: Observable<PrenotazioneRequest>;
   countLoading = 0;
   stops$: Observable<StopsByLine>;
@@ -25,8 +27,7 @@ export class AggiuntaDispComponent implements OnInit {
   private p: PrenotazioneRequest;
 
 
-
-  constructor(private syncService: SyncService, private apiService: ApiService,
+  constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
 
@@ -49,6 +50,15 @@ export class AggiuntaDispComponent implements OnInit {
 
   showLoading() {
     return this.loading;
+  }
+
+  addDisp(idFermata: string) {
+    console.log(idFermata);
+    this.apiDispService.postDisp(this.p.linea, idFermata, this.p.verso, this.p.data).subscribe(response => {
+      // TODO: disponibilità aggiunta
+    }, (error) => {
+      // TODO: errore aggiunta disponibilità
+    });
   }
 }
 
