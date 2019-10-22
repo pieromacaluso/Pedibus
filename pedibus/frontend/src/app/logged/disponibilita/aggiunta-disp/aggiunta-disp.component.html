@@ -1,34 +1,38 @@
+<div *ngIf="prenotazione$ | async as prenotazione; else loadingDiv">
+  <div *ngIf="stops$ | async as stops; else loadingDiv">
+    <div *ngIf="!showLoading()">
+      <mat-card ngClass="container" ngClass.lt-md="container-mobile">
+        <mat-progress-bar
+          class="progress-bar-button"
+          *ngIf="showLoading()"
+          mode="indeterminate"
+        ></mat-progress-bar>
 
-<mat-card ngClass="container" ngClass.lt-md="container-mobile">
-  <mat-progress-bar
-    class="progress-bar-button"
-    *ngIf="showLoading()"
-    mode="indeterminate"
-  ></mat-progress-bar>
-
-
-  <div *ngIf="prenotazione$ | async as prenotazione; else loadingDiv">
-    <div *ngIf="stops$ | async as stops; else loadingDiv">
-      <div *ngIf="!showLoading()">
-
-        <label id="example-radio-group-label">Seleziona la fermata di
-          {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
-        <mat-radio-group
-          aria-labelledby="example-radio-group-label"
-          class="example-radio-group">
-          <mat-radio-button class="example-radio-button"
-                            *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
+        <mat-card-header><h1>Disponibilità</h1></mat-card-header>
+        <div class="no-stops">
+          <label id="example-radio-group-label">Seleziona la fermata di
+            {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
+          <mat-radio-group
+            aria-labelledby="example-radio-group-label"
+            class="example-radio-group">
+            <mat-radio-button class="example-radio-button"
+                              *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
                           first as isFirst; last as isLast;"
-                            [value]="stop.id" [checked]="(prenotazione.verso == 'Andata' ? isFirst : isLast)">
-            {{stop.nome}}
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
+                              [value]="stop.id" [checked]="(prenotazione.verso == 'Andata' ? isFirst : isLast)">
+              {{stop.nome}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+      </mat-card>
     </div>
   </div>
+</div>
 
-  <ng-template #loadingDiv>
+<ng-template #loadingDiv>
+  <mat-card ngClass="container" ngClass.lt-md="container-mobile">
+
     <div>Caricamento in corso...</div>
-  </ng-template>
+  </mat-card>
 
-</mat-card>
+</ng-template>

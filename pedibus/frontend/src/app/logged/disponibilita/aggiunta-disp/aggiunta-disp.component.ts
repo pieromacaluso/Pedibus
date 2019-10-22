@@ -8,11 +8,12 @@ import {DatePipe} from '@angular/common';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, Observable, timer} from 'rxjs';
 import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, retry, tap} from 'rxjs/operators';
+import {fadeAnimation} from '../../../route-animations';
 
 @Component({
   selector: 'app-aggiunta-disp',
   templateUrl: './aggiunta-disp.component.html',
-  styleUrls: ['./aggiunta-disp.component.scss']
+  styleUrls: ['./aggiunta-disp.component.scss'],
 })
 export class AggiuntaDispComponent implements OnInit {
 
@@ -21,6 +22,8 @@ export class AggiuntaDispComponent implements OnInit {
   stops$: Observable<StopsByLine>;
   private loading: boolean;
   selectedStop: any;
+  private p: PrenotazioneRequest;
+
 
 
   constructor(private syncService: SyncService, private apiService: ApiService,
@@ -28,14 +31,16 @@ export class AggiuntaDispComponent implements OnInit {
               private rxStompService: RxStompService, private datePipe: DatePipe) {
 
     this.prenotazione$ = this.syncService.prenotazioneObs$.pipe(
-      map((result) => {
+      tap((result) => {
+        this.p = result;
+      }),
+      tap(() => {
         this.stops$ = defer(() => {
           this.loading = true;
-          return this.apiService.getStopsByLine(result.linea).pipe(
+          return this.apiService.getStopsByLine(this.p.linea).pipe(
             finalize(() => this.loading = false)
           );
         });
-        return result;
       }));
   }
 

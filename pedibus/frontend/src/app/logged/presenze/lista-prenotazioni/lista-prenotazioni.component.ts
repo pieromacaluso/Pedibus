@@ -12,6 +12,7 @@ import {concat, defer, Observable, Subject, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
 import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
 import {finalize, flatMap, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {fadeAnimation} from '../../../route-animations';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -42,41 +43,47 @@ export class ListaPrenotazioniComponent implements OnInit {
     this.prenotazione$ = this.syncService.prenotazioneObs$.pipe(
       map((result: PrenotazioneRequest) => {
           this.prenotazione = result;
-          this.handled$ = this.rxStompService.watch('/handled' + this.pathSub(result)).pipe(
-            map((message) => {
-              const res = JSON.parse(message.body);
-              // tslint:disable-next-line:max-line-length
-              const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
-              al.presoInCarico = res.isSet;
-            }));
-          this.reservation$ = this.rxStompService.watch('/reservation' + this.pathSub(result)).pipe(
-            map((message) => {
-              const res = JSON.parse(message.body);
-              const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
-              const newAlunno: Alunno = {
-                codiceFiscale: oldAlunno.codiceFiscale,
-                name: oldAlunno.name,
-                surname: oldAlunno.surname,
-                presoInCarico: false,
-                arrivatoScuola: false,
-                update: false
-              };
-              const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
-              this.deleteNotReserved(oldAlunno);
-              this.togglePresenza(res.idFermata, newAlunno);
-            })
-          );
           this.resource$ = defer(() => {
             this.loading = true;
             return this.apiService.getPrenotazioneByLineaAndDateAndVerso(result).pipe(
-              finalize(() => this.loading = false),
+              tap(() => this.loading = false),
               tap((rese) => {
                 this.resource = rese;
               }));
           });
+          this.handled$ = defer(() => {
+            return this.rxStompService.watch('/handled' + this.pathSub(result)).pipe(
+              map((message) => {
+                const res = JSON.parse(message.body);
+                console.log(res);
+                // tslint:disable-next-line:max-line-length
+                const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
+                al.presoInCarico = res.isSet;
+              }));
+          });
+          this.reservation$ = defer(() => {
+            return this.rxStompService.watch('/reservation' + this.pathSub(result)).pipe(
+              map((message) => {
+                const res = JSON.parse(message.body);
+                const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
+                const newAlunno: Alunno = {
+                  codiceFiscale: oldAlunno.codiceFiscale,
+                  name: oldAlunno.name,
+                  surname: oldAlunno.surname,
+                  presoInCarico: false,
+                  arrivatoScuola: false,
+                  update: false
+                };
+                const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
+                this.deleteNotReserved(oldAlunno);
+                this.togglePresenza(res.idFermata, newAlunno);
+              })
+            );
+          });
           return result;
         }
-      ));
+      )
+    );
     this.setBottoCardTitle();
   }
 
@@ -150,8 +157,11 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   togglePresenza(id: number, alunno: Alunno) {
+    console.log(id, alunno);
     if (this.canModify()) {
       const al = this.resource.alunniPerFermata.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
+      console.log(al);
+
       al.update = true;
       this.apiService.postPresenza(al, this.prenotazione, !al.presoInCarico).subscribe((rese) => {
         console.log('presenza subscribe emitted something');
