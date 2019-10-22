@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../registration/auth.service';
 import {Router} from '@angular/router';
+import {HeaderService, MenuItem} from './header.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -12,20 +14,12 @@ export class HeaderComponent implements OnInit {
   opened: boolean;
   logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
-  loggedIcon = ['people'];
-  loggedLinks = ['presenze'];
-  loggedTitle = ['presenze'];
-
-  notLoggedIcon = ['vpn_key', 'person_add'];
-  notLoggedLinks = ['sign-in', 'sign-up'];
-  notLoggedTitle = ['Sign In', 'Sign Up'];
   activeLoggedLink: any;
-  activeNotLoggedLink: any;
+  private headerMenu$: Observable<MenuItem[]>;
 
-  constructor(private auth: AuthService, private router: Router) {
+  constructor(private auth: AuthService, private router: Router, private header: HeaderService) {
     this.userLogged = this.auth.isLoggedIn();
-    this.activeLoggedLink = this.loggedLinks[0];
-    this.activeNotLoggedLink = this.notLoggedLinks[0];
+    this.headerMenu$ = this.header.menuAnnounced$;
   }
 
   isLoggedIn() {
@@ -35,6 +29,7 @@ export class HeaderComponent implements OnInit {
   logOut() {
     this.userLogged = false;
     this.auth.logout();
+    this.header.update();
     this.router.navigate(['sign-in']);
   }
 
@@ -48,43 +43,6 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setLinks();
-  }
-
-  setLinks() {
-    if (this.auth.isLoggedIn()) {
-      if (this.auth.getRoles().includes('ROLE_SYSTEM-ADMIN')) {
-        this.loggedIcon = ['people', 'schedule', 'notification_important', 'verified_user'];
-        this.loggedLinks = ['presenze', 'disponibilita', 'comunicazioni', 'turni'];
-        this.loggedTitle = ['Presenze', 'Disponibilita', 'Comunicazioni', 'Turni'];
-      } else if (this.auth.getRoles().includes('ROLE_ADMIN')) {
-        this.loggedIcon = ['people', 'schedule', 'notification_important'];
-        this.loggedLinks = ['presenze', 'disponibilita', 'comunicazioni'];
-        this.loggedTitle = ['Presenze', 'Disponibilita', 'Comunicazioni'];
-      } else if (this.auth.getRoles().includes('ROLE_USER')) {
-        this.loggedIcon = ['people'];
-        this.loggedLinks = ['presenze'];
-        this.loggedTitle = ['Presenze'];
-      }
-    }
-  }
-
-  getLinks() {
-    if (this.auth.isLoggedIn()) {
-      if (this.auth.getRoles().includes('ROLE_SYSTEM-ADMIN')) {
-        this.loggedIcon = ['people', 'schedule', 'notification_important', 'verified_user'];
-        this.loggedLinks = ['presenze', 'disponibilita', 'comunicazioni', 'turni'];
-        this.loggedTitle = ['Presenze', 'Disponibilita', 'Comunicazioni', 'Turni'];
-      } else if (this.auth.getRoles().includes('ROLE_ADMIN')) {
-        this.loggedIcon = ['people', 'schedule', 'notification_important'];
-        this.loggedLinks = ['presenze', 'disponibilita', 'comunicazioni'];
-        this.loggedTitle = ['Presenze', 'Disponibilita', 'Comunicazioni'];
-      } else if (this.auth.getRoles().includes('ROLE_USER')) {
-        this.loggedIcon = ['people'];
-        this.loggedLinks = ['presenze'];
-        this.loggedTitle = ['Presenze'];
-      }
-    }
   }
 
 }
