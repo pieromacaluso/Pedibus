@@ -11,19 +11,19 @@
         <mat-card-header><h1>Disponibilità</h1></mat-card-header>
         <div class="no-stops">
           <form (ngSubmit)="addDisp(idFermata.value)">
-          <label id="example-radio-group-label">Seleziona la fermata di
-            {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
-          <mat-radio-group #idFermata="matRadioGroup"
-                           aria-labelledby="example-radio-group-label"
-                           class="example-radio-group">
-            <mat-radio-button class="example-radio-button"
-                              *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
+            <label id="example-radio-group-label">Seleziona la fermata di
+              {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
+            <mat-radio-group #idFermata="matRadioGroup"
+                             aria-labelledby="example-radio-group-label"
+                             class="example-radio-group">
+              <mat-radio-button class="example-radio-button"
+                                *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
                           first as isFirst; last as isLast;"
-                              [value]="stop.id" [checked]="(prenotazione.verso == 'Andata' ? isFirst : isLast)">
-              {{stop.nome}}
-            </mat-radio-button>
-          </mat-radio-group>
-          <button type="submit" mat-raised-button color="primary">Invia Disponibilità</button>
+                                [value]="stop.id" [checked]="(prenotazione.verso == 'Andata' ? isFirst : isLast)">
+                {{stop.nome}}
+              </mat-radio-button>
+            </mat-radio-group>
+            <button type="submit" mat-raised-button color="primary">Invia Disponibilità</button>
           </form>
         </div>
       </div>
@@ -33,5 +33,5 @@
 
 
 <ng-template #loadingDiv>
-    <div>Caricamento in corso...</div>
+  <mat-card-header><h1>Caricamento in corso...</h1></mat-card-header>
 </ng-template>

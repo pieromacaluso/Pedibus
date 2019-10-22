@@ -23,6 +23,7 @@ import {ComunicazioniComponent} from './comunicazioni/comunicazioni.component';
 import {NotificheComponent} from './notifiche/notifiche.component';
 import { DeleteDialogComponent } from './presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
 import { AggiuntaDispComponent } from './disponibilita/aggiunta-disp/aggiunta-disp.component';
+import { ElencoDispComponent } from './turni/elenco-disp/elenco-disp.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { AggiuntaDispComponent } from './disponibilita/aggiunta-disp/aggiunta-di
     ComunicazioniComponent,
     NotificheComponent,
     DeleteDialogComponent,
-    AggiuntaDispComponent],
+    AggiuntaDispComponent,
+    ElencoDispComponent],
   imports: [
     CommonModule,
     MatIconModule,

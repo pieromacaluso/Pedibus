@@ -1,0 +1,33 @@
+<mat-card ngClass="container" ngClass.lt-md="container-mobile">
+  <mat-progress-bar
+    class="progress-bar-button"
+    *ngIf="showLoading()"
+    mode="indeterminate"
+  ></mat-progress-bar>
+  <div *ngIf="prenotazione$ | async as prenotazione; else loadingDiv">
+    <div *ngIf="disp$ | async as disps; else loadingDiv">
+      <div *ngIf="!showLoading()">
+
+        <mat-card-header><h1>Gestione Turni</h1></mat-card-header>
+        <div class="no-stops"></div>
+          <div class="no-stops" *ngIf="disps.length > 0 else empty">
+            <div *ngFor="let disp of disps">
+              {{disp | json}}
+            </div>
+          </div>
+          <ng-template #empty>
+            <div class="no-stops">
+              Non sono ancora presenti disponibilità nel turno selezionato.
+            </div>
+          </ng-template>
+      </div>
+    </div>
+  </div>
+</mat-card>
+
+
+<ng-template #loadingDiv>
+  <mat-card-header *ngIf="showLoading()"><h1>Caricamento in corso...</h1></mat-card-header>
+  <mat-card-header *ngIf="!showLoading()"><h1>Il turno è chiuso e non può più essere riaperto</h1></mat-card-header>
+
+</ng-template>

@@ -26,7 +26,6 @@ export class AggiuntaDispComponent implements OnInit {
   selectedStop: any;
   private p: PrenotazioneRequest;
 
-
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
