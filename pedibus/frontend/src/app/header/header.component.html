@@ -7,7 +7,7 @@
          (click)="activeLoggedLink = menu.link;sidenav.close();"
          routerLinkActive="active"
          [routerLink]="menu.link">
-        <mat-icon [innerHtml]="menu.link" aria-hidden="false" aria-label="Example home icon">{{menu.icon}}</mat-icon>
+        <mat-icon aria-hidden="false" aria-label="Example home icon">{{menu.icon}}</mat-icon>
         {{menu.title}} </a>
       <a mat-list-item (click)="logOut();sidenav.close();" *ngIf="isLoggedIn()">
         <mat-icon aria-hidden="false" aria-label="Example home icon">exit_to_app</mat-icon>
@@ -28,8 +28,7 @@
            (click)="activeLoggedLink = menu.link"
            routerLinkActive="mat-flat-button mat-accent"
            [routerLink]="menu.link">
-          <mat-icon aria-hidden="false" aria-label="Example home icon">{{menu.icon}}</mat-icon>
-          {{menu.title}} </a>
+          <mat-icon aria-hidden="false" aria-label="Example home icon">{{menu.icon}}</mat-icon>{{menu.title}}</a>
         <a mat-button (click)="logOut()" *ngIf="isLoggedIn()" >
           <mat-icon aria-hidden="false" aria-label="Example home icon">exit_to_app</mat-icon>Logout</a>
       </div>
