@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface DispRepository extends MongoRepository<DispEntity, ObjectId> {
     Optional<DispEntity> findByGuideUsernameAndTurnoId(String guideUsername, ObjectId turnoId);
     List<DispEntity> findAllByTurnoId(ObjectId turnoId);
+    List<DispEntity> deleteAllByGuideUsername(String guideUsername);
 }
