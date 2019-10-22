@@ -3,9 +3,14 @@ package it.polito.ai.mmap.pedibus;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.entity.LineaEntity;
+import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
-import it.polito.ai.mmap.pedibus.repository.LineaRepository;
+import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.resources.DispAllResource;
+import it.polito.ai.mmap.pedibus.services.LineeService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -27,30 +32,24 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.singletonList;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/*
+ * Le Operazioni fatte devono avvenire sul turno di default per essere in grado di ripristinare lo stato precedente
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -75,20 +74,108 @@ public class DocTest {
     @Autowired
     LineaRepository lineaRepository;
 
-    @Before
-    public void setUp() {
+    @Autowired
+    RoleRepository roleRepository;
 
+    @Autowired
+    ChildRepository childRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    FilterChainProxy springSecurityFilterChain;
+
+    @Autowired
+    ReservationRepository reservationRepository;
+
+    @Autowired
+    DispRepository dispRepository;
+    @Autowired
+    TurnoRepository turnoRepository;
+
+    @Autowired
+    LineeService lineeService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    Map<Integer, ChildEntity> childMap = new HashMap<>();
+    Map<String, UserDTO> userDTOMap = new HashMap<>();
+    Map<String, UserEntity> userEntityMap = new HashMap<>();
+    RoleEntity roleUser;
+    RoleEntity roleAdmin;
+
+
+    // Turno di default su cui lavoriamo, per poterlo riportare allo stato pre test
+    int daysDef = 100;
+    LineaEntity lineaDef;
+    Boolean versoDef = true;
+    Boolean isDefTurnoOpen;
+
+    @PostConstruct
+    public void postInit() {
+        lineaDef = lineaRepository.findAll().get(0);
+        Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(daysDef, ChronoUnit.DAYS).toString()), versoDef);
+        if (checkTurno.isPresent())
+            isDefTurnoOpen = checkTurno.get().getIsOpen();
+        else
+            isDefTurnoOpen = true;
+
+        roleUser = roleRepository.findById("ROLE_USER").get();
+        roleAdmin = roleRepository.findById("ROLE_ADMIN").get();
+        childMap.put(0, new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi"));
+        childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
+        childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
+
+        userDTOMap.put("testGenitore", new UserDTO("testGenitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonGenitore", new UserDTO("testNonGenitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonno", new UserDTO("testNonno@test.it", "321@%$User", "321@%$User"));
+
+        userEntityMap.put("testGenitore", new UserEntity(userDTOMap.get("testGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder, new HashSet<>(Arrays.asList(childMap.get(0).getCodiceFiscale()))));
+        userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
+        userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin)), passwordEncoder));
+
+    }
+
+    @Before
+    public void setUpMethod() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+                .addFilter(springSecurityFilterChain)
                 .apply(documentationConfiguration(this.restDocumentation))
                 .alwaysDo(document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                 .build();
+
+        logger.info("Il nonno sarà admin della linea: " + lineaDef.getId());
+
+        userEntityMap.values().forEach(userEntity -> {
+            userEntity.setEnabled(true);
+            if (userEntity.getRoleList().contains(roleAdmin))
+                lineeService.addAdminLine(userEntity.getUsername(), lineaDef.getId());
+            userRepository.save(userEntity);
+        });
     }
 
-    @Test
-    public void lines() throws Exception {
-        String token = loginAsSystemAdmin();
+    @After
+    public void tearDownMethod() {
+        TurnoEntity turno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(daysDef, ChronoUnit.DAYS).toString()), versoDef).get();
+        turno.setIsOpen(isDefTurnoOpen);
+        turnoRepository.save(turno);
 
-        logger.info(token);
+        userEntityMap.values().forEach(userEntity -> {
+            dispRepository.deleteAllByGuideUsername(userEntity.getUsername());
+            if (userEntity.getRoleList().contains(roleAdmin))
+                lineeService.delAdminLine(userEntity.getUsername(), lineaDef.getId());
+            userRepository.delete(userEntity);
+        });
+    }
+
+
+    @Test
+    public void getLines() throws Exception {
+
+        String token = loginAsNonnoAdmin(lineaDef.getId());
+
         List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
@@ -96,119 +183,108 @@ public class DocTest {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
-                .andDo(document("lines",
+                .andDo(document("get-lines",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
+    }
 
-//        this.mockMvc.perform(get("/lines")
-//                .header("Authorization", "Bearer " + token))
-//                .andExpect(status().isOk())
-//                .andExpect(content().json(expectedJson))
-//                .andDo(document("crud-delete-example", pathParameters(parameterWithName("id").description("The id of the input to delete"))));
+    @Test
+    public void postDisp() throws Exception {
+
+        String token = loginAsNonnoAdmin(lineaDef.getId());
+
+        mockMvc.perform(post("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(lineaDef.getAndata().get(0)))
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(document("post-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    public void deleteDisp() throws Exception {
+        String token = loginAsNonnoAdmin(lineaDef.getId());
+
+        postDisp();
+        mockMvc.perform(delete("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(document("delete-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+
+    @Test
+    public void getTurnoDisp() throws Exception {
+
+        String token = loginAsNonnoAdmin(lineaDef.getId());
+        postDisp();
+        getTurnoDispMethod(lineaDef, token);
 
     }
 
-//    @Test
-//    public void crudGetExample() throws Exception {
-//
-//        Map<String, Object> crud = new HashMap<>();
-//        crud.put("id", 1L);
-//        crud.put("title", "Sample Model");
-//        crud.put("body", "http://www.baeldung.com/");
-//
-//        String tagLocation = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/crud").contentType(MediaTypes.HAL_JSON)
-//                .content(this.objectMapper.writeValueAsString(crud)))
-//                .andExpect(status().isOk())
-//                .andReturn()
-//                .getResponse()
-//                .getHeader("Location");
-//
-//        crud.put("tags", singletonList(tagLocation));
-//
-////        ConstraintDescriptions desc = new ConstraintDescriptions(CrudInput.class);
-////
-////        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/crud").contentType(MediaTypes.HAL_JSON)
-////                .content(this.objectMapper.writeValueAsString(crud)))
-////                .andExpect(status().isOk())
-////                .andDo(document("crud-get-example", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()), requestFields(fieldWithPath("id").description("The id of the input" + collectionToDelimitedString(desc.descriptionsForProperty("id"), ". ")),
-////                        fieldWithPath("title").description("The title of the input"), fieldWithPath("body").description("The body of the input"), fieldWithPath("tags").description("An array of tag resource URIs"))));
-//    }
-//
-//    @Test
-//    public void crudCreateExample() throws Exception {
-//        Map<String, Object> crud = new HashMap<>();
-//        crud.put("id", 2L);
-//        crud.put("title", "Sample Model");
-//        crud.put("body", "http://www.baeldung.com/");
-//
-//        String tagLocation = this.mockMvc.perform(post("/crud").contentType(MediaTypes.HAL_JSON)
-//                .content(this.objectMapper.writeValueAsString(crud)))
-//                .andExpect(status().isCreated())
-//                .andReturn()
-//                .getResponse()
-//                .getHeader("Location");
-//
-//        crud.put("tags", singletonList(tagLocation));
-//
-//        this.mockMvc.perform(post("/crud").contentType(MediaTypes.HAL_JSON)
-//                .content(this.objectMapper.writeValueAsString(crud)))
-//                .andExpect(status().isCreated())
-//                .andDo(document("crud-create-example", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()), requestFields(fieldWithPath("id").description("The id of the input"), fieldWithPath("title").description("The title of the input"),
-//                        fieldWithPath("body").description("The body of the input"), fieldWithPath("tags").description("An array of tag resource URIs"))));
-//    }
-//
-//    @Test
-//    public void crudDeleteExample() throws Exception {
-//        this.mockMvc.perform(delete("/crud/{id}", 10))
-//                .andExpect(status().isOk())
-//                .andDo(document("crud-delete-example", pathParameters(parameterWithName("id").description("The id of the input to delete"))));
-//    }
-//
-//    @Test
-//    public void crudPatchExample() throws Exception {
-//
-//        Map<String, String> tag = new HashMap<>();
-//        tag.put("name", "PATCH");
-//
-//        String tagLocation = this.mockMvc.perform(patch("/crud/{id}", 10).contentType(MediaTypes.HAL_JSON)
-//                .content(this.objectMapper.writeValueAsString(tag)))
-//                .andExpect(status().isOk())
-//                .andReturn()
-//                .getResponse()
-//                .getHeader("Location");
-//
-//        Map<String, Object> crud = new HashMap<>();
-//        crud.put("title", "Sample Model Patch");
-//        crud.put("body", "http://www.baeldung.com/");
-//        crud.put("tags", singletonList(tagLocation));
-//
-//        this.mockMvc.perform(patch("/crud/{id}", 10).contentType(MediaTypes.HAL_JSON)
-//                .content(this.objectMapper.writeValueAsString(crud)))
-//                .andExpect(status().isOk());
-//    }
-//
-//    @Test
-//    public void crudPutExample() throws Exception {
-//        Map<String, String> tag = new HashMap<>();
-//        tag.put("name", "PUT");
-//
-//        String tagLocation = this.mockMvc.perform(put("/crud/{id}", 10).contentType(MediaTypes.HAL_JSON)
-//                .content(this.objectMapper.writeValueAsString(tag)))
-//                .andExpect(status().isAccepted())
-//                .andReturn()
-//                .getResponse()
-//                .getHeader("Location");
-//
-//        Map<String, Object> crud = new HashMap<>();
-//        crud.put("title", "Sample Model");
-//        crud.put("body", "http://www.baeldung.com/");
-//        crud.put("tags", singletonList(tagLocation));
-//
-//        this.mockMvc.perform(put("/crud/{id}", 10).contentType(MediaTypes.HAL_JSON)
-//                .content(this.objectMapper.writeValueAsString(crud)))
-//                .andExpect(status().isAccepted());
-//    }
-//
+    @Test
+    public void putTurno() throws Exception {
+        String token = loginAsNonnoAdmin(lineaDef.getId());
+        mockMvc.perform(put("/turno/state/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(false)))
+                .andExpect(status().isOk())
+                .andDo(document("put-turno",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+
+    @Test
+    public void postTurnoDisp() throws Exception {
+        String token = loginAsNonnoAdmin(lineaDef.getId());
+
+        //crea una disponibilità
+        postDisp();
+
+        //chiudi il turno
+        putTurno();
+
+        //conferma la disponibilità
+        List<DispAllResource> dispList = getTurnoDispMethod(lineaDef, token);
+        dispList.forEach(dispAllResource -> dispAllResource.setIsConfirmed(true));
+
+        mockMvc.perform(post("/turno/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dispList)))
+                .andExpect(status().isOk())
+                .andDo(document("post-turno-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    public List<DispAllResource> getTurnoDispMethod(LineaEntity lineaEntity, String token) throws Exception {
+        MvcResult result = mockMvc.perform(get("/turno/disp/{idLinea}/{verso}/{data}", lineaEntity.getId(), true, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(document("get-turno-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())))
+                .andReturn();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<DispAllResource>>() {
+        });
+
+    }
+
+
+    private String loginAsNonnoAdmin(String idLinea) throws Exception {
+        UserDTO user = userDTOMap.get("testNonno");
+
+        String json = objectMapper.writeValueAsString(user);
+        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
+        return node.get("token").asText();
+    }
+
 
     private String loginAsSystemAdmin() throws Exception {
 

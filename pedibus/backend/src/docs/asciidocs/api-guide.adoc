@@ -1,5 +1,4 @@
 = RESTful Notes API Guide
-Baeldung;
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -9,72 +8,119 @@ Baeldung;
 
 [[overview]]
 = Overview
-
-[[overview-http-verbs]]
-== HTTP verbs
-
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
-use of HTTP verbs.
-
-|===
-| Verb | Usage
-
-| `GET`
-| Used to retrieve a resource
-
-| `POST`
-| Used to create a new resource
-
-| `PATCH`
-| Used to update an existing resource, including partial updates
-
-| `DELETE`
-| Used to delete an existing resource
-|===
-
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
-use of HTTP status codes.
-
-|===
-| Status code | Usage
-
-| `200 OK`
-| The request completed successfully
-
-| `201 Created`
-| A new resource has been created successfully. The resource's URI is available from the response's
-`Location` header
-
-| `204 No Content`
-| An update to an existing resource has been applied successfully
-
-| `400 Bad Request`
-| The request was malformed. The response body will include an error providing further information
-
-| `404 Not Found`
-| The requested resource did not exist
-|===
-
-
-
-
+Intro intro intro
 
 [[resources-lines-access]]
-=== Accessing the lines
+== Linee
 
-A `GET /lines` request is used to retrive the line
+=== Lista id linee
 
-==== Request structure
+`GET /lines` is used to retrive the lines
 
-include::{snippets}/lines/http-request.adoc[]
+==== Example Request
 
-==== Example response
+include::{snippets}/get-lines/http-request.adoc[]
 
-include::{snippets}/lines/http-response.adoc[]
+==== Example Response
+
+include::{snippets}/get-lines/http-response.adoc[]
+
+==== Example Response body
+
+include::{snippets}/get-lines/response-body.adoc[]
 
 ==== CURL request
 
-include::{snippets}/lines/curl-request.adoc[]
+include::{snippets}/get-lines/curl-request.adoc[]
+
+== Gestione disponibilità
+
+=== Aggiunta disponibilità
+
+`POST /disp/{idLinea}/{verso}/{data} @RequestBody Integer idFermata` è usato per aggiungere una disponibilità
+
+==== Example Request
+
+include::{snippets}/post-disp/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/post-disp/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/post-disp/curl-request.adoc[]
+
+=== Cancellazione disponibilità
+
+`DELETE /disp/{idLinea}/{verso}/{data}` è usato per cancellare una disponibilità
+
+==== Example Request 
+
+include::{snippets}/delete-disp/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/delete-disp/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-disp/curl-request.adoc[]
+
+== Gestione turni
+
+=== Stato turno
+
+A `PUT /turno/state/{idLinea}/{verso}/{data} @RequestBody Boolean isOpen` è usata per settare lo stato di un turno
+
+==== Example Request
+
+include::{snippets}/put-turno/http-request.adoc[]
+
+==== Example Response
+
+include::{snippets}/put-turno/http-response.adoc[]
 
 
+==== CURL request
+
+include::{snippets}/put-turno/curl-request.adoc[]
+
+=== Lista disponibilità per turno
+
+`GET /turno/disp/{idLinea}/{verso}/{data}` è usata per recuperare una List<DispAllResource> con tutte le disponibilità per un determinato turno
+
+==== Example Request
+
+include::{snippets}/get-turno-disp/http-request.adoc[]
+
+==== Example Response
+
+include::{snippets}/get-turno-disp/http-response.adoc[]
+
+==== Example Response body
+
+include::{snippets}/get-turno-disp/response-body.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-turno-disp/curl-request.adoc[]
+
+=== Conferma disponibilità per turno
+
+`POST /turno/disp/{idLinea}/{verso}/{data} @RequestBody List<DispAllResource>` è usato per confermare/rifiutare la lista di disponibilità recuperata con la get:
+N.B il turno deve prima essere chiuso con l'apposita PUT
+
+==== Example Request
+
+include::{snippets}/post-turno-disp/http-request.adoc[]
+
+==== Example Response
+
+include::{snippets}/post-turno-disp/http-response.adoc[]
+
+
+==== CURL request
+
+include::{snippets}/post-turno-disp/curl-request.adoc[]
 
