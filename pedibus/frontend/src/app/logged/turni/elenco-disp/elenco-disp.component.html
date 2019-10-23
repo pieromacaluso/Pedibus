@@ -4,22 +4,35 @@
     *ngIf="showLoading()"
     mode="indeterminate"
   ></mat-progress-bar>
-  <div *ngIf="prenotazione$ | async as prenotazione; else loadingDiv">
-    <div *ngIf="disp$ | async as disps; else loadingDiv">
-      <div *ngIf="!showLoading()">
+  <div id ="prenotazione" *ngIf="prenotazione$ | async as prenotazione; else loadingDiv">
+    <div id="stop" *ngIf="stops$ | async as stops; else loadingDiv">
+      <div id="turno" *ngIf="turno$ | async as turno; else loadingDiv">
+        <div *ngIf="!showLoading()">
+          <mat-card-header fxLayout="row" fxLayout.lt-sm="column">
+            <div><h1>Gestione Turni</h1></div>
+            <div class="no-stops header-button" *ngIf="!turno.isExpired">
+              <button (click)="openTurno(turno)" *ngIf="!turno.isOpen" mat-raised-button color="accent">Apri il turno</button>
+              <button (click)="closeTurno(turno)" *ngIf="turno.isOpen" mat-raised-button color="warn">Chiudi il turno</button>
+            </div>
+          </mat-card-header>
+          <div class="no-stops" *ngFor="let stop of (prenotazione.verso ? stops.andata : stops.ritorno)">
+            {{stop.orario}} - {{stop.nome}}
+            <div class="no-stops" *ngIf="turno.listDisp[stop.nome] && turno.listDisp[stop.nome].length > 0 else empty">
+              <div class="no-stops" *ngFor="let disp of turno.listDisp['Monte Grappa']">
+                <div id="guideUsername">{{disp.guideUsername}}</div>
+                <div id="nomeFermata">{{disp.nomeFermata}}</div>
+                <div id="isConfirmed">{{disp.isConfirmed}}</div>
+                <div id="isAck">{{disp.isAck}}</div>
 
-        <mat-card-header><h1>Gestione Turni</h1></mat-card-header>
-        <div class="no-stops"></div>
-          <div class="no-stops" *ngIf="disps.length > 0 else empty">
-            <div *ngFor="let disp of disps">
-              {{disp | json}}
+              </div>
             </div>
           </div>
-          <ng-template #empty>
-            <div class="no-stops">
-              Non sono ancora presenti disponibilità nel turno selezionato.
-            </div>
-          </ng-template>
+        </div>
+        <ng-template #empty>
+          <div class="no-stops">
+            Non sono ancora presenti disponibilità nel turno selezionato.
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>

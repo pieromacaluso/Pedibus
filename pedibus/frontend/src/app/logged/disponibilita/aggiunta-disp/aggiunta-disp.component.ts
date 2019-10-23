@@ -82,7 +82,6 @@ export class AggiuntaDispComponent implements OnInit {
   }
 
   ackDisp() {
-    console.log("WO");
     this.apiDispService.ackDisp(this.p.linea, this.p.verso, this.p.data).subscribe(response => {
       this.disp$ = defer(() => {
         this.loading++;

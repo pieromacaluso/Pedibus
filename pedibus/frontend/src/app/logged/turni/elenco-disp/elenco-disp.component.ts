@@ -9,7 +9,7 @@ import {DatePipe} from '@angular/common';
 import {finalize, tap} from 'rxjs/operators';
 import {defer, Observable} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
-import {ApiTurniService} from '../../api-turni.service';
+import {ApiTurniService, TurnoDispResource} from '../../api-turni.service';
 
 @Component({
   selector: 'app-elenco-disp',
@@ -20,9 +20,10 @@ export class ElencoDispComponent implements OnInit {
 
   idFermata: string;
   prenotazione$: Observable<PrenotazioneRequest>;
-  disp$: Observable<DispAllResource[]>;
+  turno$: Observable<TurnoDispResource>;
   private loading: boolean;
   private p: PrenotazioneRequest;
+  private stops$: Observable<StopsByLine>;
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -30,15 +31,24 @@ export class ElencoDispComponent implements OnInit {
 
     this.prenotazione$ = this.syncService.prenotazioneObs$.pipe(
       tap((result) => {
+        this.loading = true;
         this.p = result;
       }),
       tap(() => {
-        this.disp$ = defer(() => {
-          this.loading = true;
-          return this.apiTurniService.getTurno(this.p.linea, this.p.verso, this.p.data).pipe(
-            finalize(() => this.loading = false),
-          );
-        });
+        this.stops$ = this.apiService.getStopsByLine(this.p.linea).pipe(
+          tap(res => {
+            console.log(res);
+          }),
+        );
+      }),
+      tap(() => {
+        this.turno$ = this.apiTurniService.getTurno(this.p.linea, this.p.verso, this.p.data).pipe(
+          tap(res => {
+            console.log(res);
+          }),
+        finalize(() => this.loading = false),
+      )
+        ;
       }));
   }
 
@@ -49,4 +59,33 @@ export class ElencoDispComponent implements OnInit {
   ngOnInit() {
   }
 
+  openTurno(turno: TurnoDispResource) {
+    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, true).subscribe(response => {
+      this.loading = true;
+      this.turno$ = this.apiTurniService.getTurno(this.p.linea, this.p.verso, this.p.data).pipe(
+        tap(res => {
+          console.log(res);
+        }),
+        finalize(() => this.loading = false),
+      )
+      ;
+    }, (error) => {
+      // TODO: errore
+    });
+  }
+
+  closeTurno(turno: TurnoDispResource) {
+    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, false).subscribe(response => {
+      this.loading = true;
+      this.turno$ = this.apiTurniService.getTurno(this.p.linea, this.p.verso, this.p.data).pipe(
+        tap(res => {
+          console.log(res);
+        }),
+        finalize(() => this.loading = false),
+      )
+      ;
+    }, (error) => {
+      // TODO: errore
+    });
+  }
 }

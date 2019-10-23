@@ -22,13 +22,31 @@ export class ApiTurniService {
     // @PostMapping("/disp/{idLinea}/{verso}/{data}")
     const idVerso = ApiTurniService.versoToInt(verso);
     return this.httpClient
-      .get<DispAllResource[]>(this.baseURL + '/turno/disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
+      .get<TurnoDispResource>(this.baseURL + 'turno/disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd'));
+  }
+
+  setStateTurno(idLinea: string, verso: string, data: Date, b: boolean) {
+    const idVerso = ApiTurniService.versoToInt(verso);
+    return this.httpClient
+      .put(this.baseURL + 'turno/state/' + idLinea + '/' + idVerso + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd'), b ? 1 : 0);
   }
 }
 
 export interface TurnoResource {
   isOpen: boolean;
   isExpired: boolean;
+}
+
+export interface TurnoDispResource {
+  isOpen: boolean;
+  isExpired: boolean;
+  listDisp: Map;
+}
+
+export interface Map {
+  [index: string]: DispAllResource[];
+
 }
 

@@ -1,1 +1,23 @@
 @import "../turni.component.scss";
+
+.header-button {
+  vertical-align: center;
+  flex: 1;
+  flex-direction: column;
+  margin: auto 10px auto 10px;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 70;
+}
+
+.progress-bar-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
