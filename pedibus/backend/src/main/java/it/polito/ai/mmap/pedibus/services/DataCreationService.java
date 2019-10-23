@@ -221,7 +221,10 @@ public class DataCreationService {
                     nonno.getRoleList().add(roleAdmin);
                     if (!lineaEntity.getAdminList().contains(nonno.getUsername()))
                         lineaEntity.getAdminList().add(nonno.getUsername());
-                    // TODO: aggiunto, ma da controllare se va bene o ha senso
+                    lineaRepository.save(lineaEntity);
+                } else if (count < 30){
+                    LineaEntity lineaEntity = lineaEntityList.get(i);
+                    nonno.getRoleList().add(roleGuide);
                     if (!lineaEntity.getGuideList().contains(nonno.getUsername()))
                         lineaEntity.getGuideList().add(nonno.getUsername());
                     lineaRepository.save(lineaEntity);
