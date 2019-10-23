@@ -9,7 +9,7 @@ import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, Observable, timer} from 'rxjs';
 import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, retry, tap} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
-import {ApiDispService} from '../../api-disp.service';
+import {ApiDispService, DispTurnoResource} from '../../api-disp.service';
 
 @Component({
   selector: 'app-aggiunta-disp',
@@ -20,11 +20,11 @@ export class AggiuntaDispComponent implements OnInit {
 
   idFermata: string;
   prenotazione$: Observable<PrenotazioneRequest>;
-  countLoading = 0;
   stops$: Observable<StopsByLine>;
-  private loading: boolean;
+  private loading = 0;
   selectedStop: any;
   private p: PrenotazioneRequest;
+  private disp$: Observable<DispTurnoResource>;
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -32,16 +32,17 @@ export class AggiuntaDispComponent implements OnInit {
 
     this.prenotazione$ = this.syncService.prenotazioneObs$.pipe(
       tap((result) => {
+        this.loading++;
         this.p = result;
       }),
       tap(() => {
-        this.stops$ = defer(() => {
-          this.loading = true;
-          return this.apiService.getStopsByLine(this.p.linea).pipe(
-            finalize(() => this.loading = false)
-          );
-        });
-      }));
+        this.stops$ = this.apiService.getStopsByLine(this.p.linea);
+      }),
+      tap(() => {
+        this.disp$ = this.apiDispService.getDisp(this.p.linea, this.p.verso, this.p.data);
+      }),
+      tap(() => this.loading--)
+    );
   }
 
   ngOnInit() {
@@ -54,10 +55,39 @@ export class AggiuntaDispComponent implements OnInit {
   addDisp(idFermata: string) {
     console.log(idFermata);
     this.apiDispService.postDisp(this.p.linea, idFermata, this.p.verso, this.p.data).subscribe(response => {
-      // TODO: disponibilità aggiunta
+      this.disp$ = defer(() => {
+        this.loading++;
+        return this.apiDispService.getDisp(this.p.linea, this.p.verso, this.p.data).pipe(
+          finalize(() => this.loading--)
+        );
+      });
     }, (error) => {
       // TODO: errore aggiunta disponibilità
     });
+  }
+
+  delDisp(idFermata: any) {
+    console.log(idFermata);
+    this.apiDispService.delDisp(this.p.linea, idFermata, this.p.verso, this.p.data).subscribe(response => {
+      this.disp$ = defer(() => {
+        this.loading++;
+        return this.apiDispService.getDisp(this.p.linea, this.p.verso, this.p.data).pipe(
+          finalize(() => this.loading--)
+        );
+      });
+    }, (error) => {
+      // TODO: errore aggiunta disponibilità
+    });
+
+  }
+
+  isGuide(guideList: string[]) {
+    if (guideList == null) {
+      return false;
+    } else {
+      console.log('OK?', guideList.includes( this.authService.getUsername()));
+      return guideList.includes( this.authService.getUsername());
+    }
   }
 }
 

@@ -60,6 +60,7 @@ export interface StopsByLine {
   nome: string;
   adminMast: string;
   adminList: string[];
+  guideList: string[];
   andata: Fermata[];
   ritorno: Fermata[];
 
