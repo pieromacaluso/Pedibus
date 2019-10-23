@@ -80,14 +80,5 @@ export class AggiuntaDispComponent implements OnInit {
     });
 
   }
-
-  isGuide(guideList: string[]) {
-    if (guideList == null) {
-      return false;
-    } else {
-      console.log('OK?', guideList.includes( this.authService.getUsername()));
-      return guideList.includes( this.authService.getUsername());
-    }
-  }
 }
 
