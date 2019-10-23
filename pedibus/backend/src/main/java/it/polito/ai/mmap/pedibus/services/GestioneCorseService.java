@@ -130,7 +130,7 @@ public class GestioneCorseService {
                 throw new IllegalArgumentException("Il turno è chiuso e scaduto"); //TODO eccezione custom (?)
             if (!turnoEntity.getIsOpen())
                 throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
-            if (this.userService.isGuide())
+            if (!this.userService.isGuide())
                 throw new PermissionDeniedException("Accesso negato, l'utente non è guida");
 
             dispRepository.save(new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId()));
