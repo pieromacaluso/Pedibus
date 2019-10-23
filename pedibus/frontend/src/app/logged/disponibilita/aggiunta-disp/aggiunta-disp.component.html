@@ -7,21 +7,21 @@
         <div *ngIf="disp$|async as disp else loadingDiv">
           <div *ngIf="!showLoading()">
             <mat-card-header><h1>Disponibilità</h1></mat-card-header>
-            <div id="turno-status" class="no-stops">
-              Il turno è attualmente:
-              <span
-                class="status">{{disp.turno.isExpired ? "Scaduto" : (disp.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
+            <div id="turno-status" class="no-stops mat-h2">
+              Stato del turno:
+              <span [class.status-ok]="disp.turno.isOpen && !disp.turno.isExpired" [class.status-warn]="!disp.turno.isOpen && !disp.turno.isExpired"
+                    [class.status-nope]="disp.turno.isExpired">{{disp.turno.isExpired ? "Scaduto" : (disp.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
             </div>
-            <div id="disp-status" class="no-stops">
+            <div id="disp-status" class="no-stops mat-h3">
               <div *ngIf="disp.disp else nodisp">
                 Hai comunicato la tua disponibilità per questo
                 turno {{prenotazione.verso == 'Andata' ? 'a partire d' : 'fino '}}alla fermata
                 <span class="status">{{disp.disp.nomeFermata}}</span>
                 <div>
                   Conferma: <span class="status">{{disp.disp.isConfirmed ? "Confermato" : "In Attesa"}}</span>
-                  <div *ngIf="disp.disp.isConfirmed && disp.disp.isAck">
-                    Comunicazione Confermas: <span
-                    class="status">{{disp.disp.isConfirmed ? "Confermato" : "In Attesa"}}</span>
+                  <div *ngIf="disp.disp.isConfirmed">
+                    Conferma Ricezione: <span
+                    class="status">{{disp.disp.isAck ? "Comunicata" : "In Attesa"}}</span>
                   </div>
                 </div>
               </div>
@@ -36,7 +36,7 @@
 
             <form class="no-stops" [class.invisible]="!disp.turno.isOpen || disp.turno.isExpired"
                   (ngSubmit)="addDisp(idFermata.value)" *ngIf="!disp.disp">
-              <label id="addDisp">Seleziona la fermata di
+              <label id="addDisp" class="mat-h2">Seleziona la fermata di
                 {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
               <mat-radio-group [disabled]="!disp.turno.isOpen || disp.turno.isExpired" #idFermata="matRadioGroup"
                                aria-labelledby="addDisp"
@@ -52,7 +52,7 @@
                       color="primary">Invia Disponibilità
               </button>
             </form>
-            <form class="no-stops" (ngSubmit)="delDisp(idFermata.value)" *ngIf="disp.disp">
+            <form class="no-stops" (ngSubmit)="delDisp(idFermata.value)" *ngIf="disp.disp && !disp.disp.isAck">
               <label id="dellDisp" class="invisible">Seleziona la fermata di
                 {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
               <mat-radio-group disabled #idFermata="matRadioGroup"
@@ -69,6 +69,11 @@
                       color="warn">Cancella Disponibilità
               </button>
             </form>
+            <div class="no-stops" *ngIf="disp.disp && !disp.disp.isAck && disp.disp.isConfirmed">
+            <button (click)="ackDisp()" [disabled]="disp.turno.isExpired" mat-raised-button
+                    color="accent">Comunica Ricezione
+            </button>
+            </div>
           </div>
         </div>
       </div>

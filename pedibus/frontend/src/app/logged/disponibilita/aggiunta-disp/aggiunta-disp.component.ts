@@ -80,5 +80,19 @@ export class AggiuntaDispComponent implements OnInit {
     });
 
   }
+
+  ackDisp() {
+    console.log("WO");
+    this.apiDispService.ackDisp(this.p.linea, this.p.verso, this.p.data).subscribe(response => {
+      this.disp$ = defer(() => {
+        this.loading++;
+        return this.apiDispService.getDisp(this.p.linea, this.p.verso, this.p.data).pipe(
+          finalize(() => this.loading--)
+        );
+      });
+    }, (error) => {
+      // TODO: errore aggiunta disponibilità
+    });
+  }
 }
 

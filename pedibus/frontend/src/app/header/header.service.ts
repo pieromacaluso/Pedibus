@@ -28,7 +28,11 @@ export class HeaderService {
     if (this.auth.isLoggedIn()) {
       if (this.auth.getRoles().includes('ROLE_SYSTEM-ADMIN')) {
         menu.push(this.presenze, this.schedule, this.notification, this.turni);
+      } else if (this.auth.getRoles().includes('ROLE_GUIDE') && this.auth.getRoles().includes('ROLE_ADMIN')) {
+        menu.push(this.presenze, this.turni, this.schedule, this.notification);
       } else if (this.auth.getRoles().includes('ROLE_ADMIN')) {
+        menu.push(this.presenze, this.turni, this.notification);
+      } else if (this.auth.getRoles().includes('ROLE_GUIDE')) {
         menu.push(this.presenze, this.schedule, this.notification);
       } else if (this.auth.getRoles().includes('ROLE_USER')) {
         menu.push(this.presenze);

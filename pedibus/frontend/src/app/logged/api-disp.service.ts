@@ -42,6 +42,13 @@ export class ApiDispService {
       .get<DispTurnoResource>(this.baseURL + 'disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd'));
   }
+
+  ackDisp(idLinea: string, verso: string, data: Date) {
+    const idVerso = ApiDispService.versoToInt(verso);
+    return this.httpClient
+      .post(this.baseURL + 'turno/disp/ack/' + idLinea + '/' + idVerso + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd'), ' ');
+  }
 }
 
 export interface DispAllResource {
