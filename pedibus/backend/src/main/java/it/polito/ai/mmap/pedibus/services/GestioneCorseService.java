@@ -14,6 +14,7 @@ import it.polito.ai.mmap.pedibus.repository.DispRepository;
 import it.polito.ai.mmap.pedibus.repository.TurnoRepository;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
+import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
 import it.polito.ai.mmap.pedibus.resources.TurnoResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
 
 
 @Service
@@ -158,14 +162,18 @@ public class GestioneCorseService {
      * @param turnoDTO
      * @return
      */
-    public List<DispAllResource> getAllTurnoDisp(TurnoDTO turnoDTO) {
-        List<DispAllResource> dispResourceList = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId())
-                .stream()
-                .map(dispEntity -> new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName()))
-                .collect(Collectors.toList());
-        FermataDTO fermataDTO = lineeService.getFermataPartenzaOrArrivo(turnoDTO.getIdLinea(), turnoDTO.getVerso());
-        dispResourceList.stream().filter(res -> res.getNomeFermata() == null).forEach(res -> res.setNomeFermata(fermataDTO.getNome()));
-        return dispResourceList;
+    public TurnoDispResource getAllTurnoDisp(TurnoDTO turnoDTO) {
+        List<DispEntity> dispEntities = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId());
+        List<Integer> fermateIds = turnoDTO.getVerso() ? lineeService.getLineaEntityById(turnoDTO.getIdLinea()).getAndata() : lineeService.getLineaEntityById(turnoDTO.getIdLinea()).getRitorno();
+        List<DispAllResource> dispRes = new ArrayList<>();
+        for (DispEntity d : dispEntities){
+            DispAllResource dR = new DispAllResource(d, lineeService.getFermataEntityById(d.getIdFermata()).getName());
+            dispRes.add(dR);
+        }
+
+        Map<String, List<DispAllResource>> dispResourceMap  = dispRes.stream()
+                .collect(groupingBy(DispAllResource::getNomeFermata));
+        return new TurnoDispResource(getTurnoEntity(turnoDTO), dispResourceMap);
     }
 
     /**
