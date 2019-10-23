@@ -53,7 +53,6 @@ public class GestioneCorseService {
 
         if (checkTurno.isPresent()) {
             turnoEntity = checkTurno.get();
-            turnoEntity.setIsOpen(!turnoExpired);
             turnoEntity.setIsExpired(turnoExpired);
         } else {
             turnoEntity = new TurnoEntity(turnoDTO);
