@@ -17,7 +17,6 @@ public class LineaDTO {
     private String nome;
     private String adminMast;
     private ArrayList<String> adminList;
-    private ArrayList<String> guideList;
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
 
@@ -32,7 +31,6 @@ public class LineaDTO {
         this.nome = lineaEntity.getNome();
         this.adminMast=lineaEntity.getAdminMast();
         this.adminList = lineaEntity.getAdminList();
-        this.guideList = lineaEntity.getGuideList();
         this.andata = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getAndata())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
         this.ritorno = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getRitorno())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
     }

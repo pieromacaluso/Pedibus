@@ -88,8 +88,6 @@ public class GestioneCorseService {
      */
     public DispTurnoResource getDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!(lineeService.isAdminLine(turnoDTO.getIdLinea()) || lineeService.isGuideLine(turnoDTO.getIdLinea())))
-            throw new PermissionDeniedException("La guide/admin non è relativa alla linea indicata");
 
         DispAllResource disp;
         TurnoResource turnoResource;
@@ -132,10 +130,8 @@ public class GestioneCorseService {
                 throw new IllegalArgumentException("Il turno è chiuso e scaduto"); //TODO eccezione custom (?)
             if (!turnoEntity.getIsOpen())
                 throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
-
-
-            if (!(lineeService.isAdminLine(dispDTO.getTurnoDTO().getIdLinea()) || lineeService.isGuideLine(dispDTO.getTurnoDTO().getIdLinea())))
-                throw new PermissionDeniedException("La guide/admin non è relativa alla linea indicata");
+            if (this.userService.isGuide())
+                throw new PermissionDeniedException("Accesso negato, l'utente non è guida");
 
             dispRepository.save(new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId()));
 
