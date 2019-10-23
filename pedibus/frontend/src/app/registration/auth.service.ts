@@ -48,7 +48,7 @@ export class AuthService {
     console.log(JSON.stringify(jwt_decode(authResult.token)));
     const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
     console.log('expires at: ' + expiresAt);
-
+    console.log(JSON.stringify(jwt_decode(authResult.token)));
     localStorage.setItem('id_token', authResult.token);
     localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
@@ -69,6 +69,10 @@ export class AuthService {
       return roles.find(role => role === 'ROLE_SYSTEM-ADMIN') || roles.find(role => role === 'ROLE_ADMIN');
     }
     return false;
+  }
+
+  getUsername() {
+    return jwt_decode(localStorage.getItem('id_token')).sub;
   }
 
   isUser() {
