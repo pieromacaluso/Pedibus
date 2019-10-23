@@ -21,6 +21,7 @@ public class TurnoEntity {
     private Date data;
     private Boolean verso;
     private Boolean isOpen; //true aperto, false chiuso
+    private Boolean isExpired;
 
     public TurnoEntity(TurnoDTO turnoDTO)
     {
@@ -28,6 +29,7 @@ public class TurnoEntity {
         this.data = turnoDTO.getData();
         this.verso = turnoDTO.getVerso();
         isOpen = true;
+        isExpired = false;
     }
 
 }

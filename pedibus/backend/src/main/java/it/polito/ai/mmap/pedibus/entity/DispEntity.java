@@ -28,5 +28,7 @@ public class DispEntity {
         this.guideUsername = guideUsername;
         this.idFermata = idFermata;
         this.turnoId = turnoId;
+        isConfirmed = false;
+        isAck = false;
     }
 }
