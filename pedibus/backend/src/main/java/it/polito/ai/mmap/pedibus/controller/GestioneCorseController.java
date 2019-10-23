@@ -1,9 +1,11 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.entity.DispEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
+import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
 import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,14 @@ public class GestioneCorseController {
 
     @Autowired
     GestioneCorseService gestioneCorseService;
+
+    /**
+     * Permette a una guide/admin di una linea di segnalare la propria disponibilità
+     */
+    @GetMapping("/disp/{idLinea}/{verso}/{data}")
+    public DispTurnoResource getDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
+        return gestioneCorseService.getDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+    }
 
     /**
      * Permette a una guide/admin di una linea di segnalare la propria disponibilità

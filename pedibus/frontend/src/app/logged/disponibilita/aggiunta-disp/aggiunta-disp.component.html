@@ -1,37 +1,98 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
-  <mat-progress-bar
-    class="progress-bar-button"
-    *ngIf="showLoading()"
-    mode="indeterminate"
-  ></mat-progress-bar>
   <div *ngIf="prenotazione$ | async as prenotazione; else loadingDiv">
     <div *ngIf="stops$ | async as stops; else loadingDiv">
-      <div *ngIf="!showLoading()">
+      <!--      <div id="disp" class="no-stops json">-->
+      <!--        DISP: {{stops |json}}-->
+      <!--      </div>-->
+        <div *ngIf="disp$|async as disp else loadingDiv">
+          <div *ngIf="!showLoading()">
+            <mat-card-header><h1>Disponibilità</h1></mat-card-header>
+            <div id="turno-status" class="no-stops mat-h2">
+              Stato del turno:
+              <span [class.status-ok]="disp.turno.isOpen && !disp.turno.isExpired" [class.status-warn]="!disp.turno.isOpen && !disp.turno.isExpired"
+                    [class.status-nope]="disp.turno.isExpired">{{disp.turno.isExpired ? "Scaduto" : (disp.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
+            </div>
+            <div id="disp-status" class="no-stops mat-h3">
+              <div *ngIf="disp.disp else nodisp">
+                Hai comunicato la tua disponibilità per questo
+                turno {{prenotazione.verso == 'Andata' ? 'a partire d' : 'fino '}}alla fermata
+                <span class="status">{{disp.disp.nomeFermata}}</span>
+                <div>
+                  Conferma: <span class="status">{{disp.disp.isConfirmed ? "Confermato" : "In Attesa"}}</span>
+                  <div *ngIf="disp.disp.isConfirmed">
+                    Conferma Ricezione: <span
+                    class="status">{{disp.disp.isAck ? "Comunicata" : "In Attesa"}}</span>
+                  </div>
+                </div>
+              </div>
 
-        <mat-card-header><h1>Disponibilità</h1></mat-card-header>
-        <div class="no-stops">
-          <form (ngSubmit)="addDisp(idFermata.value)">
-            <label id="example-radio-group-label">Seleziona la fermata di
-              {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
-            <mat-radio-group #idFermata="matRadioGroup"
-                             aria-labelledby="example-radio-group-label"
-                             class="example-radio-group">
-              <mat-radio-button class="example-radio-button"
-                                *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
+
+              <ng-template #nodisp>
+                <div>
+                  Non hai comunicato la tua disponibilità per questo turno.
+                </div>
+              </ng-template>
+            </div>
+
+            <form class="no-stops" [class.invisible]="!disp.turno.isOpen || disp.turno.isExpired"
+                  (ngSubmit)="addDisp(idFermata.value)" *ngIf="!disp.disp">
+              <label id="addDisp" class="mat-h2">Seleziona la fermata di
+                {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
+              <mat-radio-group [disabled]="!disp.turno.isOpen || disp.turno.isExpired" #idFermata="matRadioGroup"
+                               aria-labelledby="addDisp"
+                               class="example-radio-group">
+                <mat-radio-button class="example-radio-button"
+                                  *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
                           first as isFirst; last as isLast;"
-                                [value]="stop.id" [checked]="(prenotazione.verso == 'Andata' ? isFirst : isLast)">
-                {{stop.nome}}
-              </mat-radio-button>
-            </mat-radio-group>
-            <button type="submit" mat-raised-button color="primary">Invia Disponibilità</button>
-          </form>
+                                  [value]="stop.id" [checked]="(prenotazione.verso == 'Andata' ? isFirst : isLast)">
+                  {{stop.nome}}
+                </mat-radio-button>
+              </mat-radio-group>
+              <button type="submit" [disabled]="!disp.turno.isOpen || disp.turno.isExpired" mat-raised-button
+                      color="primary">Invia Disponibilità
+              </button>
+            </form>
+            <form class="no-stops" (ngSubmit)="delDisp(idFermata.value)" *ngIf="disp.disp && !disp.disp.isAck">
+              <label id="dellDisp" class="invisible">Seleziona la fermata di
+                {{prenotazione.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
+              <mat-radio-group disabled #idFermata="matRadioGroup"
+                               aria-labelledby="dellDisp"
+                               class="example-radio-group invisible">
+                <mat-radio-button class="example-radio-button"
+                                  *ngFor="let stop of (prenotazione.verso == 'Andata' ? stops.andata : stops.ritorno);
+                          first as isFirst; last as isLast;"
+                                  [value]="stop.id" [checked]="stop.id == disp.disp.idFermata">
+                  {{stop.nome}}
+                </mat-radio-button>
+              </mat-radio-group>
+              <button type="submit" [disabled]="!disp.turno.isOpen || disp.turno.isExpired" mat-raised-button
+                      color="warn">Cancella Disponibilità
+              </button>
+            </form>
+            <div class="no-stops" *ngIf="disp.disp && !disp.disp.isAck && disp.disp.isConfirmed">
+            <button (click)="ackDisp()" [disabled]="disp.turno.isExpired" mat-raised-button
+                    color="accent">Comunica Ricezione
+            </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 </mat-card>
 
 
 <ng-template #loadingDiv>
-  <mat-card-header><h1>Caricamento in corso...</h1></mat-card-header>
+  <div>
+    <mat-progress-bar
+      class="progress-bar-button"
+      mode="indeterminate"
+    ></mat-progress-bar>
+    <mat-card-header><h1>Caricamento in corso...</h1></mat-card-header>
+  </div>
+</ng-template>
+
+<ng-template #notAuthorized>
+  <div>
+    <mat-card-header><h1>Utente non abilitato a questa linea</h1></mat-card-header>
+  </div>
 </ng-template>

@@ -253,4 +253,15 @@ public class UserService implements UserDetailsService {
         return principal.getRoleList().contains(getRoleEntityById("ROLE_SYSTEM-ADMIN"));
     }
 
+    public Boolean isAdmin()
+    {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getRoleList().contains(getRoleEntityById("ROLE_ADMIN"));
+    }
+    public Boolean isGuide()
+    {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getRoleList().contains(getRoleEntityById("ROLE_GUIDE"));
+    }
+
 }

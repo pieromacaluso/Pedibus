@@ -159,12 +159,6 @@ public class LineeService {
     public Boolean isAdminLine(String idLinea)
     {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return getLineaEntityById(idLinea).getAdminList().contains(principal.getUsername());
-    }
-
-    public Boolean isGuideLine(String idLinea)
-    {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return getLineaEntityById(idLinea).getGuideList().contains(principal.getUsername());
+        return getLineaEntityById(idLinea).getAdminList().contains(principal.getUsername()) && this.userService.isAdmin();
     }
 }

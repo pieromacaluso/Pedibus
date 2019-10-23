@@ -23,6 +23,8 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
       .pipe(
         retry(1),
         catchError((error: HttpErrorResponse) => {
+          // Errori Unauthorized fanno logout e navigano verso sign-in
+          if (error.status === 401) {this.auth.logout(); this.router.navigate(['/sign-in']); }
           let errorMessage = '';
           if (error.error instanceof ErrorEvent) {
             // client-side error

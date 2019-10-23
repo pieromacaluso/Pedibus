@@ -48,7 +48,7 @@ export class AuthService {
     console.log(JSON.stringify(jwt_decode(authResult.token)));
     const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
     console.log('expires at: ' + expiresAt);
-
+    console.log(JSON.stringify(jwt_decode(authResult.token)));
     localStorage.setItem('id_token', authResult.token);
     localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
@@ -70,17 +70,28 @@ export class AuthService {
     }
     return false;
   }
+  isGuide() {
+    if (this.isLoggedIn()) {
+      const roles = JSON.parse(localStorage.getItem('roles'));
+      return roles.find(role => role === 'ROLE_GUIDE');
+    }
+    return false;
+  }
+
+  getUsername() {
+    return jwt_decode(localStorage.getItem('id_token')).sub;
+  }
 
   isUser() {
     if (this.isLoggedIn()) {
-      const roles = JSON.parse(localStorage.getItem('roles'));
+      const roles = this.getRoles();
       return roles.find(role => role === 'ROLE_USER') && !roles.find(role => role === 'ROLE_ADMIN');
     }
     return false;
   }
 
   getRoles(): string[] {
-    const roles = JSON.parse(localStorage.getItem('roles'));
+    const roles = jwt_decode(localStorage.getItem('id_token')).roles;
     return roles as string[];
   }
 

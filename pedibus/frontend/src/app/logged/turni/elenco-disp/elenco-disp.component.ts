@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
-import {ApiDispService} from '../../api-disp.service';
+import {ApiDispService, DispAllResource} from '../../api-disp.service';
 import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
@@ -9,7 +9,7 @@ import {DatePipe} from '@angular/common';
 import {finalize, tap} from 'rxjs/operators';
 import {defer, Observable} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
-import {ApiTurniService, DispAllResource} from '../../api-turni.service';
+import {ApiTurniService} from '../../api-turni.service';
 
 @Component({
   selector: 'app-elenco-disp',

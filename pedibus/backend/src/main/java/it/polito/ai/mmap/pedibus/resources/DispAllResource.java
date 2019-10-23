@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.resources;
 
+import it.polito.ai.mmap.pedibus.entity.DispEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,4 +14,13 @@ public class DispAllResource {
     private Integer idFermata;
     private String nomeFermata;
     private Boolean isConfirmed; //non cancellare
+    private Boolean isAck;
+
+    public DispAllResource(DispEntity e, String nomeFermata){
+        guideUsername = e.getGuideUsername();
+        idFermata = e.getIdFermata();
+        this.nomeFermata = nomeFermata;
+        isConfirmed = e.getIsConfirmed();
+        isAck = e.getIsAck();
+    }
 }

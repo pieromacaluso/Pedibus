@@ -141,13 +141,13 @@ public class DataCreationService {
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
 
-                    ArrayList<String> guideList = lineeService.getLineaEntityById(lineaDTO.getId()).getGuideList();
-                    if (guideList != null)
-                        lineaDTO.setGuideList(guideList);
+//                    ArrayList<String> guideList = lineeService.getLineaEntityById(lineaDTO.getId()).getGuideList();
+//                    if (guideList != null)
+//                        lineaDTO.setGuideList(guideList);
 
                 } catch (LineaNotFoundException e) {
                     lineaDTO.setAdminList(new ArrayList<>());
-                    lineaDTO.setGuideList(new ArrayList<>());
+//                    lineaDTO.setGuideList(new ArrayList<>());
                 }
 
                 LineaEntity lineaEntity = new LineaEntity(lineaDTO);
@@ -175,10 +175,14 @@ public class DataCreationService {
      */
     public void makeChildUserReservations() throws IOException {
         RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
+        RoleEntity roleSys = userService.getRoleEntityById("ROLE_SYSTEM-ADMIN");
         RoleEntity roleAdmin = userService.getRoleEntityById("ROLE_ADMIN");
         RoleEntity roleGuide = userService.getRoleEntityById("ROLE_GUIDE");
         reservationRepository.deleteAll();
-        userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleAdmin)).collect(Collectors.toList()));
+        //userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleAdmin)).collect(Collectors.toList()));
+        //userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleGuide)).collect(Collectors.toList()));
+        userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(roleSys)).collect(Collectors.toList()));
+
         childRepository.deleteAll();
         int count = 0;
 
@@ -219,7 +223,10 @@ public class DataCreationService {
                 if (count < 5) {
                     LineaEntity lineaEntity = lineaEntityList.get(i);
                     nonno.getRoleList().add(roleAdmin);
-                    lineaEntity.getAdminList().add(nonno.getUsername());
+                    // Rimuovi questa linea per provare GUIDE e ADMIN together
+                    nonno.getRoleList().remove(roleGuide);
+                    if (!lineaEntity.getAdminList().contains(nonno.getUsername()))
+                        lineaEntity.getAdminList().add(nonno.getUsername());
                     lineaRepository.save(lineaEntity);
                 }
                 listNonni.add(nonno);

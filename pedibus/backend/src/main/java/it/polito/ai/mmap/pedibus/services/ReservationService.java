@@ -276,8 +276,8 @@ public class ReservationService {
     public boolean canModify(String idLinea, Date date) {
         if (userService.isSysAdmin())
             return true;
-
-        return ((lineeService.isAdminLine(idLinea) || lineeService.isGuideLine(idLinea)) && MongoZonedDateTime.isToday(date));
+        // TODO: solo accompagnatore confermato può modificare
+        return ((lineeService.isAdminLine(idLinea) /*|| lineeService.isGuideLine(idLinea)*/) && MongoZonedDateTime.isToday(date));
 
     }
 
