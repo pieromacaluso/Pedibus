@@ -176,7 +176,8 @@ public class GestioneCorseService {
 
         Map<String, List<DispAllResource>> dispResourceMap  = dispRes.stream()
                 .collect(groupingBy(DispAllResource::getNomeFermata));
-        return new TurnoDispResource(getTurnoEntity(turnoDTO), dispResourceMap);
+
+        return new TurnoDispResource(new TurnoResource(getTurnoEntity(turnoDTO)), dispResourceMap);
     }
 
     /**

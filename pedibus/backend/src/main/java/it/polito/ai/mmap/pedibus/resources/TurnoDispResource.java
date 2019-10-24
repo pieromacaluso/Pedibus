@@ -13,13 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Data
 public class TurnoDispResource {
-    private Boolean isOpen; //true aperto, false chiuso
-    private Boolean isExpired;
+    private TurnoResource turno;
     private Map<String, List<DispAllResource>> listDisp;
-
-    public TurnoDispResource(TurnoEntity turno, Map<String, List<DispAllResource>> dispResourceMap){
-        this.isOpen = turno.getIsOpen();
-        this.isExpired = turno.getIsExpired();
-        this.listDisp = dispResourceMap;
-    }
 }
