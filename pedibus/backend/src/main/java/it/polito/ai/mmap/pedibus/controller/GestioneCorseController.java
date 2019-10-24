@@ -24,19 +24,19 @@ public class GestioneCorseController {
     GestioneCorseService gestioneCorseService;
 
     /**
-     * Permette a una guide/admin di una linea di recuperare la propria disponibilità e le info relative al turno
+     * Permette a una guide/admin di una linea di recuperare la propria disponibilità e le info relative ai turni
      */
-    @GetMapping("/disp/{idLinea}/{verso}/{data}")
-    public DispTurnoResource getDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        return gestioneCorseService.getDispTurnoResource(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+    @GetMapping("/disp/{verso}/{data}")
+    public DispTurnoResource getDisp(@PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
+        return gestioneCorseService.getDispTurnoResource(MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso);
     }
 
     /**
      * Permette a una guide/admin di una linea di segnalare la propria disponibilità
      */
     @PostMapping("/disp/{idLinea}/{verso}/{data}")
-    public DispAllResource addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
-        return gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
+    public void addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
+        gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
     }
 
 
