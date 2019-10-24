@@ -9,7 +9,7 @@ import {
   MatIconModule,
   MatInputModule,
   MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule,
-  MatSelectModule
+  MatSelectModule, MatSlideToggleModule
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ToolbarComponent} from './presenze/toolbar/toolbar.component';
@@ -55,7 +55,8 @@ import { ElencoDispComponent } from './turni/elenco-disp/elenco-disp.component';
     MatDialogModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
-    MatRadioModule
+    MatRadioModule,
+    MatSlideToggleModule
   ],
   exports: [],
   entryComponents: [AdminBookDialogComponent, DeleteDialogComponent]

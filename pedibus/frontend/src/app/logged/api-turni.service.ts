@@ -37,15 +37,16 @@ export class ApiTurniService {
 export interface TurnoResource {
   isOpen: boolean;
   isExpired: boolean;
+  opening: boolean;
+  closing: boolean;
 }
 
 export interface TurnoDispResource {
-  isOpen: boolean;
-  isExpired: boolean;
-  listDisp: Map;
+  turno: TurnoResource;
+  listDisp: MapDisp;
 }
 
-export interface Map {
+export interface MapDisp {
   [index: string]: DispAllResource[];
 
 }
