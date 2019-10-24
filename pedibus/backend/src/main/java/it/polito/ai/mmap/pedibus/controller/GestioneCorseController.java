@@ -6,6 +6,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
 import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
+import it.polito.ai.mmap.pedibus.resources.TurnoResource;
 import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,19 @@ public class GestioneCorseController {
     }
 
     /**
+     * Permette all'admin di una linea di recuperare lo stato di un turno
+     *
+     * @param idLinea
+     * @param verso
+     * @param data
+     * @param isOpen
+     */
+    @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
+    public TurnoResource getTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
+        return gestioneCorseService.getTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+    }
+
+    /**
      * Permette all'admin di una linea di gestire lo stato di un turno
      *
      * @param idLinea
@@ -102,6 +116,5 @@ public class GestioneCorseController {
     public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
         gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), isOpen);
     }
-
 
 }

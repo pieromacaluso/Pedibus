@@ -262,5 +262,12 @@ public class GestioneCorseService {
 
     }
 
-
+    /**
+     * Restituisce lo stato di un turno a partire dalla terna contenuta nel dto
+     * @param turnoDTO
+     * @return
+     */
+    public TurnoResource getTurnoState(TurnoDTO turnoDTO) {
+        return new TurnoResource(getTurnoEntity(turnoDTO));
+    }
 }
