@@ -515,7 +515,7 @@ Intro intro intro
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /lines HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjUyLCJleHAiOjE1NzE3NTc4NTJ9.lZRIX5YvNHskfyXQd6rrZPB-LwJfhMPjQB41vd19BrE
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAxMCwiZXhwIjoxNTcxOTU0NjEwfQ.p0JTmZh3MdioQdvWogDybThRli3lKWOB8DPgPaU1mJ8
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -551,7 +551,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/lines' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjUyLCJleHAiOjE1NzE3NTc4NTJ9.lZRIX5YvNHskfyXQd6rrZPB-LwJfhMPjQB41vd19BrE'</code></pre>
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAxMCwiZXhwIjoxNTcxOTU0NjEwfQ.p0JTmZh3MdioQdvWogDybThRli3lKWOB8DPgPaU1mJ8'</code></pre>
 </div>
 </div>
 </div>
@@ -570,9 +570,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 <h4 id="_example_request_2"><a class="link" href="#_example_request_2">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /disp/linea1/true/2020-01-30 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjQ4LCJleHAiOjE1NzE3NTc4NDh9.he-CmhXUUB9upWkw8nTDWcN30ipQEQQnM-xCloGzP2w
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /disp/linea1/true/2020-02-01 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwNiwiZXhwIjoxNTcxOTU0NjA2fQ.lnAKAXZK9ShYIBwLd7QU2cM8BlinM8Nr2SwhhrXtgMM
 Content-Length: 1
 Host: localhost:8080
 
@@ -598,9 +598,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_curl_request_2"><a class="link" href="#_curl_request_2">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2020-01-30' -i -X POST \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjQ4LCJleHAiOjE1NzE3NTc4NDh9.he-CmhXUUB9upWkw8nTDWcN30ipQEQQnM-xCloGzP2w' \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2020-02-01' -i -X POST \
     -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwNiwiZXhwIjoxNTcxOTU0NjA2fQ.lnAKAXZK9ShYIBwLd7QU2cM8BlinM8Nr2SwhhrXtgMM' \
     -d '1'</code></pre>
 </div>
 </div>
@@ -615,8 +615,8 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_example_request_3"><a class="link" href="#_example_request_3">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /disp/linea1/true/2020-01-30 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjQ4LCJleHAiOjE1NzE3NTc4NDh9.he-CmhXUUB9upWkw8nTDWcN30ipQEQQnM-xCloGzP2w
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /disp/linea1/true/2020-02-01 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwNiwiZXhwIjoxNTcxOTU0NjA2fQ.lnAKAXZK9ShYIBwLd7QU2cM8BlinM8Nr2SwhhrXtgMM
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -639,8 +639,8 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_curl_request_3"><a class="link" href="#_curl_request_3">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2020-01-30' -i -X DELETE \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjQ4LCJleHAiOjE1NzE3NTc4NDh9.he-CmhXUUB9upWkw8nTDWcN30ipQEQQnM-xCloGzP2w'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2020-02-01' -i -X DELETE \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwNiwiZXhwIjoxNTcxOTU0NjA2fQ.lnAKAXZK9ShYIBwLd7QU2cM8BlinM8Nr2SwhhrXtgMM'</code></pre>
 </div>
 </div>
 </div>
@@ -659,8 +659,8 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_example_request_4"><a class="link" href="#_example_request_4">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /turno/state/linea1/true/2020-01-30 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjUwLCJleHAiOjE1NzE3NTc4NTB9.U-MexehqwLO6z9aqlx7UavcpbVDFnyVCGUg5EYSfslI
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /turno/state/linea1/true/2020-02-01 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwOSwiZXhwIjoxNTcxOTU0NjA5fQ.8tQ9WdMwPeJkYfk8NisPrVMvJM_Y2VCHU_PErC1R_gk
 Content-Length: 5
 Content-Type: application/json
 Host: localhost:8080
@@ -687,8 +687,8 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_curl_request_4"><a class="link" href="#_curl_request_4">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2020-01-30' -i -X PUT \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjUwLCJleHAiOjE1NzE3NTc4NTB9.U-MexehqwLO6z9aqlx7UavcpbVDFnyVCGUg5EYSfslI' \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2020-02-01' -i -X PUT \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwOSwiZXhwIjoxNTcxOTU0NjA5fQ.8tQ9WdMwPeJkYfk8NisPrVMvJM_Y2VCHU_PErC1R_gk' \
     -H 'Content-Type: application/json' \
     -d 'false'</code></pre>
 </div>
@@ -704,8 +704,8 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_example_request_5"><a class="link" href="#_example_request_5">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/disp/linea1/true/2020-01-30 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjQzLCJleHAiOjE1NzE3NTc4NDN9.zbyeMlyXl5UxqbBQn0bNOAUnnDo_OBcbeKiO0dOIDD4
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/disp/linea1/true/2020-02-01 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwMCwiZXhwIjoxNTcxOTU0NjAwfQ.qCNLBAk5cVfgTzBd0lv-iGStPyxQDVEgBvvHSnMSu08
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -722,14 +722,24 @@ X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 Content-Type: application/json;charset=UTF-8
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Content-Length: 124
+Content-Length: 311
 
-[ {
-  "guideUsername" : "testNonno@test.it",
-  "idFermata" : 1,
-  "nomeFermata" : "Bernini",
-  "isConfirmed" : null
-} ]</code></pre>
+{
+  "turno" : {
+    "isOpen" : true,
+    "isExpired" : false
+  },
+  "listDisp" : {
+    "Bernini" : [ {
+      "guideUsername" : "testNonno@test.it",
+      "idLinea" : "linea1",
+      "idFermata" : 1,
+      "nomeFermata" : "Bernini",
+      "isConfirmed" : false,
+      "isAck" : false
+    } ]
+  }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -737,12 +747,22 @@ Content-Length: 124
 <h4 id="_example_response_body_2"><a class="link" href="#_example_response_body_2">Example Response body</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code>[ {
-  "guideUsername" : "testNonno@test.it",
-  "idFermata" : 1,
-  "nomeFermata" : "Bernini",
-  "isConfirmed" : null
-} ]</code></pre>
+<pre class="highlightjs highlight nowrap"><code>{
+  "turno" : {
+    "isOpen" : true,
+    "isExpired" : false
+  },
+  "listDisp" : {
+    "Bernini" : [ {
+      "guideUsername" : "testNonno@test.it",
+      "idLinea" : "linea1",
+      "idFermata" : 1,
+      "nomeFermata" : "Bernini",
+      "isConfirmed" : false,
+      "isAck" : false
+    } ]
+  }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -750,8 +770,8 @@ Content-Length: 124
 <h4 id="_curl_request_5"><a class="link" href="#_curl_request_5">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2020-01-30' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjQzLCJleHAiOjE1NzE3NTc4NDN9.zbyeMlyXl5UxqbBQn0bNOAUnnDo_OBcbeKiO0dOIDD4'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2020-02-01' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MTAwMCwiZXhwIjoxNTcxOTU0NjAwfQ.qCNLBAk5cVfgTzBd0lv-iGStPyxQDVEgBvvHSnMSu08'</code></pre>
 </div>
 </div>
 </div>
@@ -759,24 +779,26 @@ Content-Length: 124
 <div class="sect2">
 <h3 id="_conferma_disponibilità_per_turno"><a class="link" href="#_conferma_disponibilità_per_turno">Conferma disponibilità per turno</a></h3>
 <div class="paragraph">
-<p><code>POST /turno/disp/{idLinea}/{verso}/{data} @RequestBody List&lt;DispAllResource&gt;</code>  è usato per confermare/rifiutare la lista di disponibilità recuperata con la get:
+<p><code>POST /turno/disp/{idLinea}/{verso}/{data} @RequestBody List&lt;DispAllResource&gt;</code> è usato per confermare/rifiutare la lista di disponibilità recuperata con la get:
 N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 </div>
 <div class="sect3">
 <h4 id="_example_request_6"><a class="link" href="#_example_request_6">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/linea1/true/2020-01-30 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/linea1/true/2020-02-01 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MDk5NSwiZXhwIjoxNTcxOTU0NTk1fQ.KlierVHYmJQP0h38ile-TNm3BSzLLRKHOqoPwxzoXbI
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjM4LCJleHAiOjE1NzE3NTc4Mzh9.V_M2JM2wuwOhHcfIMeqaGMXnnrfBAYkdRcJ2Ppy5sJQ
 Host: localhost:8080
-Content-Length: 124
+Content-Length: 169
 
 [ {
   "guideUsername" : "testNonno@test.it",
+  "idLinea" : "linea1",
   "idFermata" : 1,
   "nomeFermata" : "Bernini",
-  "isConfirmed" : true
+  "isConfirmed" : true,
+  "isAck" : false
 } ]</code></pre>
 </div>
 </div>
@@ -799,14 +821,16 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_curl_request_6"><a class="link" href="#_curl_request_6">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2020-01-30' -i -X POST \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2020-02-01' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MTk1MDk5NSwiZXhwIjoxNTcxOTU0NTk1fQ.KlierVHYmJQP0h38ile-TNm3BSzLLRKHOqoPwxzoXbI' \
     -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNTcxNzU0MjM4LCJleHAiOjE1NzE3NTc4Mzh9.V_M2JM2wuwOhHcfIMeqaGMXnnrfBAYkdRcJ2Ppy5sJQ' \
     -d '[ {
   "guideUsername" : "testNonno@test.it",
+  "idLinea" : "linea1",
   "idFermata" : 1,
   "nomeFermata" : "Bernini",
-  "isConfirmed" : true
+  "isConfirmed" : true,
+  "isAck" : false
 } ]'</code></pre>
 </div>
 </div>
@@ -817,7 +841,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-22 16:22:13 CEST
+Last updated 2019-10-22 16:27:21 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">

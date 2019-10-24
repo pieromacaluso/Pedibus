@@ -8,6 +8,7 @@ import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
+import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.After;
@@ -105,6 +106,7 @@ public class DocTest {
     Map<String, UserEntity> userEntityMap = new HashMap<>();
     RoleEntity roleUser;
     RoleEntity roleAdmin;
+    RoleEntity roleGuide;
 
 
     // Turno di default su cui lavoriamo, per poterlo riportare allo stato pre test
@@ -124,6 +126,7 @@ public class DocTest {
 
         roleUser = roleRepository.findById("ROLE_USER").get();
         roleAdmin = roleRepository.findById("ROLE_ADMIN").get();
+        roleGuide = roleRepository.findById("ROLE_GUIDE").get();
         childMap.put(0, new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi"));
         childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
         childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
@@ -134,7 +137,7 @@ public class DocTest {
 
         userEntityMap.put("testGenitore", new UserEntity(userDTOMap.get("testGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder, new HashSet<>(Arrays.asList(childMap.get(0).getCodiceFiscale()))));
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
-        userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin)), passwordEncoder));
+        userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
     }
 
@@ -249,7 +252,8 @@ public class DocTest {
         putTurno();
 
         //conferma la disponibilità
-        List<DispAllResource> dispList = getTurnoDispMethod(lineaDef, token);
+        TurnoDispResource turnoDispResource = getTurnoDispMethod(lineaDef, token);
+        List<DispAllResource> dispList = turnoDispResource.getListDisp().values().stream().flatMap(List::stream).collect(Collectors.toList());
         dispList.forEach(dispAllResource -> dispAllResource.setIsConfirmed(true));
 
         mockMvc.perform(post("/turno/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
@@ -261,7 +265,7 @@ public class DocTest {
                         preprocessResponse(prettyPrint())));
     }
 
-    public List<DispAllResource> getTurnoDispMethod(LineaEntity lineaEntity, String token) throws Exception {
+    public TurnoDispResource getTurnoDispMethod(LineaEntity lineaEntity, String token) throws Exception {
         MvcResult result = mockMvc.perform(get("/turno/disp/{idLinea}/{verso}/{data}", lineaEntity.getId(), true, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -269,8 +273,7 @@ public class DocTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())))
                 .andReturn();
-        return objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<DispAllResource>>() {
-        });
+        return objectMapper.readValue(result.getResponse().getContentAsString(), TurnoDispResource.class);
 
     }
 
