@@ -58,13 +58,14 @@ public class GestioneCorseService {
         if (checkTurno.isPresent()) {
             turnoEntity = checkTurno.get();
             turnoEntity.setIsExpired(turnoExpired);
+            turnoRepository.save(turnoEntity);
         } else {
             turnoEntity = new TurnoEntity(turnoDTO);
             turnoEntity.setIsOpen(!turnoExpired);
             turnoEntity.setIsExpired(turnoExpired);
+            if (!turnoExpired) turnoRepository.save(turnoEntity);
             //throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
         }
-        turnoRepository.save(turnoEntity);
         return turnoEntity;
     }
 
@@ -120,12 +121,12 @@ public class GestioneCorseService {
      *
      * @param dispDTO
      */
-    public void addDisp(DispDTO dispDTO) {
+    public DispAllResource addDisp(DispDTO dispDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         try {
             getDispEntity(dispDTO.getTurnoDTO(), principal.getUsername());
-            return;
+            throw new IllegalArgumentException("Disponibilità già presente");
         } catch (DispNotFoundException e) {
             TurnoEntity turnoEntity = getTurnoEntity(dispDTO.getTurnoDTO());
 
@@ -136,8 +137,10 @@ public class GestioneCorseService {
             if (!this.userService.isGuide())
                 throw new PermissionDeniedException("Accesso negato, l'utente non è guida");
 
-            dispRepository.save(new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId()));
-
+            DispEntity dispEntity = new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
+            dispRepository.save(dispEntity);
+            DispAllResource res = new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispDTO.getIdFermata()).getName());
+            return res;
         }
     }
 
