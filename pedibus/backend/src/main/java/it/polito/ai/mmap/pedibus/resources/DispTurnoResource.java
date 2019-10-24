@@ -11,7 +11,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class DispTurnoResource {
     DispAllResource dispAllResource;
-    TurnoResource turno; // la chiave è l'idLinea
+    TurnoResource turno;
 
 
 }
