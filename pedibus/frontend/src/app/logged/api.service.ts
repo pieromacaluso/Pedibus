@@ -35,10 +35,8 @@ export class ApiService {
 
   getPrenotazioneByLineaAndDateAndVerso(p: PrenotazioneRequest) {
     const idVerso = this.versoToInt(p.verso);
-    if (p.linea && p.data) {
-      return this.httpClient.get<LineReservationVerso>(this.baseURL + 'reservations/verso/' + p.linea + '/' +
-        this.datePipe.transform(p.data, 'yyyy-MM-dd') + '/' + idVerso);
-    }
+    return this.httpClient.get<LineReservationVerso>(this.baseURL + 'reservations/verso/' + p.linea + '/' +
+      this.datePipe.transform(p.data, 'yyyy-MM-dd') + '/' + idVerso);
   }
 
   /**

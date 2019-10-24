@@ -5,216 +5,210 @@
 <!--  mode="indeterminate"-->
 <!--&gt;</mat-progress-bar>-->
 <div
-  *ngIf="
-    this.prenotazione$|async as prenot
+  *ngIf="this.resource &&
+    this.prenotazione as prenot
     else elseBlock
   "
   role="list"
 >
-  <div *ngIf="
-    this.resource$|async as res
-    else elseBlock
-  " >
-    <mat-card id="prenotazioni" ngClass="container" ngClass.lt-md="container-mobile">
-      <mat-progress-bar
-        class="progress-bar-button"
-        *ngIf="showLoading()"
-        mode="indeterminate"
-      ></mat-progress-bar>
-      <mat-card-header><h1>Prenotazioni Bambini</h1></mat-card-header>
+  <mat-card id="prenotazioni" ngClass="container" ngClass.lt-md="container-mobile">
+    <mat-progress-bar
+      class="progress-bar-button"
+      *ngIf="showLoading()"
+      mode="indeterminate"
+    ></mat-progress-bar>
+    <mat-card-header><h1>Prenotazioni Bambini</h1></mat-card-header>
 
-      <div *ngIf="!showLoading()">
-        <!--Scuola ritorno-->
-        <div class="card-stops" [class.prenotazioni-disabled]="showLoading()">
-          <div *ngIf="prenot.verso === 'Ritorno'">
-            <div fxLayout="row">
-              <mat-card-header>
-                <mat-card-title class="stop-clock">{{
-                  res.orarioScuola
-                  }}</mat-card-title>
-              </mat-card-header>
-              <img class="cross" [src]="cross" alt="Bus Stop"/>
-              <mat-card-header>
-                <mat-card-title class="stop-title">Scuola</mat-card-title>
-              </mat-card-header>
-            </div>
-            <mat-card-content
-              ngClass="prenotazioni"
-              ngClass.lt-sm="prenotazioni-mobile"
-            ></mat-card-content>
+    <div *ngIf="!showLoading()">
+      <!--Scuola ritorno-->
+      <div class="card-stops" [class.prenotazioni-disabled]="showLoading()">
+        <div *ngIf="prenot.verso === 'Ritorno'">
+          <div fxLayout="row">
+            <mat-card-header>
+              <mat-card-title class="stop-clock">{{
+                  this.resource.orarioScuola
+                }}</mat-card-title>
+            </mat-card-header>
+            <img class="cross" [src]="cross" alt="Bus Stop"/>
+            <mat-card-header>
+              <mat-card-title class="stop-title">Scuola</mat-card-title>
+            </mat-card-header>
           </div>
+          <mat-card-content
+            ngClass="prenotazioni"
+            ngClass.lt-sm="prenotazioni-mobile"
+          ></mat-card-content>
         </div>
+      </div>
 
-        <div
-          class="card-stops"
-          [class.prenotazioni-disabled]="showLoading()"
-          *ngFor="
-        let res of res.alunniPerFermata;
+      <div
+        class="card-stops"
+        [class.prenotazioni-disabled]="showLoading()"
+        *ngFor="
+        let res of this.resource?.alunniPerFermata;
         let first = first;
         let last = last
       "
-          [ngClass]="{ first: first, last: last }"
-        >
-          <!--Normali fermate-->
-          <div>
-            <div fxLayout="row">
-              <mat-card-header>
-                <mat-card-title class="stop-clock">{{
-                  res.fermata.orario
-                  }}</mat-card-title>
-              </mat-card-header>
-              <img class="cross" [src]="cross" alt="Bus Stop"/>
-              <mat-card-header>
-                <mat-card-title class="stop-title">{{
-                  res.fermata.nome
-                  }}</mat-card-title>
-              </mat-card-header>
-            </div>
-
-            <mat-card-content
-              ngClass=" prenotazioni"
-              ngClass.lt-sm="prenotazioni-mobile"
-              *ngIf="res.alunni.length > 0; then thenAlunni; else elseAlunni"
-            ></mat-card-content>
-            <ng-template #thenAlunni>
-              <mat-card-content
-                ngClass="prenotazioni"
-                ngClass.lt-sm="prenotazioni-mobile"
-              >
-                <button
-                  mat-stroked-button
-                  class="alunno-presenza mat-background-accent"
-                  [class.presente]="alunno.presoInCarico"
-                  [disableRipple]="!canModify()"
-                  (click)="togglePresenza(res.fermata.id, alunno)"
-                  *ngFor="let alunno of sortedAlunni(res.alunni)"
-                >
-                  <mat-progress-bar
-                    class="progress-bar-button"
-                    *ngIf="showLoadingButton(alunno)"
-                    mode="indeterminate"
-                  ></mat-progress-bar>
-                  {{ alunno.surname + " " + alunno.name }}
-                </button>
-              </mat-card-content>
-            </ng-template>
-            <ng-template #elseAlunni>
-              <mat-card-content
-                ngClass="prenotazioni"
-                ngClass.lt-sm="prenotazioni-mobile"
-              >
-                Nessuna prenotazione
-              </mat-card-content>
-            </ng-template>
-          </div>
-        </div>
-
-        <!--Scuola andata-->
-        <div class="card-stops" [class.prenotazioni-disabled]="showLoading()">
-          <div *ngIf="this.prenotazione.verso === 'Andata'">
-            <!--        <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"></mat-card-content>-->
-            <div fxLayout="row">
-              <mat-card-header>
-                <mat-card-title class="stop-clock">{{
-                  res.orarioScuola
-                  }}</mat-card-title>
-              </mat-card-header>
-              <img class="cross" [src]="cross" alt="Bus Stop"/>
-              <mat-card-header>
-                <mat-card-title class="stop-title">Scuola</mat-card-title>
-              </mat-card-header>
-            </div>
-          </div>
-        </div>
-      </div>
-    </mat-card>
-    <mat-card ngClass="container" ngClass.lt-md="container-mobile">
-      <mat-progress-bar
-        class="progress-bar-button"
-        *ngIf="showLoading()"
-        mode="indeterminate"
-      ></mat-progress-bar>
-      <mat-card-header><h1>Alunni non Prenotati</h1></mat-card-header>
-        <div *ngIf="!showLoading()">
-
-
-          <div [class.prenotazioni-disabled]="showLoading()">
+        [ngClass]="{ first: first, last: last }"
+      >
+        <!--Normali fermate-->
+        <div>
+          <div fxLayout="row">
             <mat-card-header>
-              <mat-card-title>{{ bottomCardTitle }}</mat-card-title>
+              <mat-card-title class="stop-clock">{{
+                  res.fermata.orario
+                }}</mat-card-title>
             </mat-card-header>
+            <img class="cross" [src]="cross" alt="Bus Stop"/>
+            <mat-card-header>
+              <mat-card-title class="stop-title">{{
+                  res.fermata.nome
+                }}</mat-card-title>
+            </mat-card-header>
+          </div>
 
+          <mat-card-content
+            ngClass=" prenotazioni"
+            ngClass.lt-sm="prenotazioni-mobile"
+            *ngIf="res.alunni.length > 0; then thenAlunni; else elseAlunni"
+          ></mat-card-content>
+          <ng-template #thenAlunni>
             <mat-card-content
               ngClass="prenotazioni"
               ngClass.lt-sm="prenotazioni-mobile"
-              *ngIf="
-          res.childrenNotReserved;
+            >
+              <button
+                mat-stroked-button
+                class="alunno-presenza mat-background-accent"
+                [class.presente]="alunno.presoInCarico"
+                [disableRipple]="!canModify()"
+                (click)="togglePresenza(res.fermata.id, alunno)"
+                *ngFor="let alunno of sortedAlunni(res.alunni)"
+              >
+                <mat-progress-bar
+                  class="progress-bar-button"
+                  *ngIf="showLoadingButton(alunno)"
+                  mode="indeterminate"
+                ></mat-progress-bar>
+                {{ alunno.surname + " " + alunno.name }}
+              </button>
+
+            </mat-card-content>
+          </ng-template>
+          <ng-template #elseAlunni>
+            <mat-card-content
+              ngClass="prenotazioni"
+              ngClass.lt-sm="prenotazioni-mobile"
+            >
+              Nessuna prenotazione
+            </mat-card-content>
+          </ng-template>
+        </div>
+      </div>
+
+      <!--Scuola andata-->
+      <div class="card-stops" [class.prenotazioni-disabled]="showLoading()">
+        <div *ngIf="this.prenotazione.verso === 'Andata'">
+          <!--        <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"></mat-card-content>-->
+          <div fxLayout="row">
+            <mat-card-header>
+              <mat-card-title class="stop-clock">{{
+                  this.resource.orarioScuola
+                }}</mat-card-title>
+            </mat-card-header>
+            <img class="cross" [src]="cross" alt="Bus Stop"/>
+            <mat-card-header>
+              <mat-card-title class="stop-title">Scuola</mat-card-title>
+            </mat-card-header>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+  <mat-card ngClass="container" ngClass.lt-md="container-mobile">
+    <mat-progress-bar
+      class="progress-bar-button"
+      *ngIf="showLoading()"
+      mode="indeterminate"
+    ></mat-progress-bar>
+    <mat-card-header><h1>Alunni non Prenotati</h1></mat-card-header>
+    <div *ngIf="!showLoading()">
+
+
+      <div [class.prenotazioni-disabled]="showLoading()">
+        <mat-card-header>
+          <mat-card-title>{{ bottomCardTitle }}</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content
+          ngClass="prenotazioni"
+          ngClass.lt-sm="prenotazioni-mobile"
+          *ngIf="
+          this.resource.childrenNotReserved;
           then thenAlunniNot;
           else elseAlunniNot
         "
-            ></mat-card-content>
-            <ng-template #thenAlunniNot>
-              <mat-card-content
-                ngClass="noprenotazioni"
-                ngClass.lt-sm="noprenotazioni-mobile"
-              >
-                <button
-                  (click)="openDialog(alunno)"
-                  [disableRipple]="!canModify()"
-                  mat-stroked-button
-                  class="alunno-presenza mat-background-accent"
-                  *ngFor="
-              let alunno of sortedNotReserved(res.childrenNotReserved)
+        ></mat-card-content>
+        <ng-template #thenAlunniNot>
+          <mat-card-content
+            ngClass="noprenotazioni"
+            ngClass.lt-sm="noprenotazioni-mobile"
+          >
+            <button
+              (click)="openDialog(alunno)"
+              [disableRipple]="!canModify()"
+              mat-stroked-button
+              class="alunno-presenza mat-background-accent"
+              *ngFor="
+              let alunno of sortedNotReserved(this.resource.childrenNotReserved)
             "
-                >
-                  <mat-progress-bar
-                    class="progress-bar-button"
-                    *ngIf="showLoadingButton(alunno)"
-                    mode="indeterminate"
-                  ></mat-progress-bar>
-                  <mat-icon
-                    aria-hidden="false"
-                    aria-label="Example home icon"
-                    *ngIf="alunno"
-                  >add
-                  </mat-icon
-                  >
-                  {{ alunno.surname + " " + alunno.name }}
-                </button>
-              </mat-card-content>
-            </ng-template>
-            <ng-template #elseAlunniNot>
-              <mat-card-content
-                ngClass="prenotazioni"
-                ngClass.lt-sm="prenotazioni-mobile"
+            >
+              <mat-progress-bar
+                class="progress-bar-button"
+                *ngIf="showLoadingButton(alunno)"
+                mode="indeterminate"
+              ></mat-progress-bar>
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Example home icon"
+                *ngIf="alunno"
+              >add
+              </mat-icon
               >
-                Nessun Bambino Non Prenotato
-              </mat-card-content>
-            </ng-template>
-          </div>
-        </div>
+              {{ alunno.surname + " " + alunno.name }}
+            </button>
+          </mat-card-content>
+        </ng-template>
+        <ng-template #elseAlunniNot>
+          <mat-card-content
+            ngClass="prenotazioni"
+            ngClass.lt-sm="prenotazioni-mobile"
+          >
+            Nessun Bambino Non Prenotato
+          </mat-card-content>
+        </ng-template>
+      </div>
+    </div>
 
-    </mat-card>
-    <div *ngIf="reservation$|async" ngClass="invisible">{{reservation$ |async|json}}</div>
-    <div *ngIf="handled$|async" ngClass="invisible">{{handled$|async|json}}</div>
-  </div>
+  </mat-card>
 </div>
 
 <ng-template #elseBlock>
-  <mat-card ngClass="container" ngClass.lt-md="container-mobile" >
-  <mat-progress-bar
-    class="progress-bar-button"
-    *ngIf="showLoading()"
-    mode="indeterminate"
-  ></mat-progress-bar>
+  <mat-card ngClass="container" ngClass.lt-md="container-mobile">
+    <mat-progress-bar
+      class="progress-bar-button"
+      *ngIf="showLoading()"
+      mode="indeterminate"
+    ></mat-progress-bar>
 
-  <div class="no-stops" *ngIf="!showLoading()">
-    Nessuna corsa disponibile con i parametri selezionati
+    <div class="no-stops" *ngIf="!showLoading()">
+      Nessuna corsa disponibile con i parametri selezionati
 
-  </div>
-  <div class="no-stops" *ngIf="showLoading()">
-    <mat-card-header><h1>Caricamento in corso...</h1></mat-card-header>
+    </div>
+    <div class="no-stops" *ngIf="showLoading()">
+      <mat-card-header><h1>Caricamento in corso...</h1></mat-card-header>
 
-  </div>
+    </div>
   </mat-card>
 </ng-template>
 
