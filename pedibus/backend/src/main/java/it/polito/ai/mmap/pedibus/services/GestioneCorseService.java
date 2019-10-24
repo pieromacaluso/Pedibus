@@ -116,19 +116,23 @@ public class GestioneCorseService {
     public DispTurnoResource getDispTurnoResource(Date date, Boolean verso) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<String> listIdLinee = lineeService.getAllLinesIds();
-        DispAllResource dispAllResource = null;
-        Map<String, TurnoResource> turnoResourceMap = new HashMap<>();
+        DispAllResource dispRes = null;
+        TurnoResource turnoRes = null;
         for (String idLinea : listIdLinee) {
             TurnoDTO turnoDTO = new TurnoDTO(idLinea, date, verso);
             TurnoResource turnoResource = new TurnoResource(getTurnoEntity(turnoDTO));
-            turnoResourceMap.put(idLinea, turnoResource);
             try {
                 DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
-                dispAllResource = new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName());
+                dispRes = new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName());
+                turnoRes = new TurnoResource(getTurnoEntity(turnoDTO));
             } catch (DispNotFoundException e) {
             }
         }
-        return new DispTurnoResource(dispAllResource, turnoResourceMap);
+        if (dispRes != null)
+            return new DispTurnoResource(dispRes, turnoRes);
+        else
+            return null;
+
     }
 
     /**
