@@ -72,6 +72,7 @@ export class ElencoDispComponent implements OnInit {
     // change Turno
     this.changeTurno.asObservable().subscribe(
       res => {
+        console.log(res);
         res.opening = false;
         res.closing = false;
         this.turno = res;
@@ -107,6 +108,7 @@ export class ElencoDispComponent implements OnInit {
   }
 
   statusTurno(checked: boolean) {
+    console.log(this.turno);
     this.turno.opening = true;
     this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, checked).subscribe(response => {
       this.turno.isOpen = checked;

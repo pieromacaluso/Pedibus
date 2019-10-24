@@ -35,11 +35,11 @@ export class ApiDispService {
         .transform(data, 'yyyy-MM-dd'));
   }
 
-  getDisp(idLinea: string, verso: string, data: Date) {
-    // @GetMapping("/disp/{idLinea}/{verso}/{data}")
+  getDisp(verso: string, data: Date) {
+    // @GetMapping("/disp/{verso}/{data}")
     const idVerso = ApiDispService.versoToInt(verso);
     return this.httpClient
-      .get<DispTurnoResource>(this.baseURL + 'disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
+      .get<DispTurnoResource>(this.baseURL + 'disp/' + idVerso + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd'));
   }
 
