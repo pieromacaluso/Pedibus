@@ -85,24 +85,15 @@ public class GestioneCorseService {
     }
 
     /**
-     * Restituisce una dispEntity a partire dal turno e dalla persona indicata
+     * Restituisce una dispTurnoResource a partire dal turno e dalla persona loggata
      *
      * @param turnoDTO
      * @return
      */
-    public DispTurnoResource getDisp(TurnoDTO turnoDTO) {
+    public DispTurnoResource getDispTurnoResource(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        TurnoResource turnoResource = new TurnoResource(getTurnoEntity(turnoDTO));
         DispAllResource disp;
-        TurnoResource turnoResource;
-        try {
-            TurnoEntity turnoEntity = getTurnoEntity(turnoDTO);
-            turnoResource = new TurnoResource(turnoEntity);
-
-        } catch (IllegalArgumentException e) {
-            TurnoEntity turnoEntity = new TurnoEntity(turnoDTO);
-            turnoResource = new TurnoResource(turnoEntity);
-        }
 
         try {
             DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
@@ -110,8 +101,7 @@ public class GestioneCorseService {
         } catch (DispNotFoundException e) {
             disp = null;
         }
-        DispTurnoResource result = new DispTurnoResource(disp, turnoResource);
-        return result;
+        return new DispTurnoResource(disp, turnoResource);
 
 
     }
@@ -139,8 +129,7 @@ public class GestioneCorseService {
 
             DispEntity dispEntity = new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
             dispRepository.save(dispEntity);
-            DispAllResource res = new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispDTO.getIdFermata()).getName());
-            return res;
+            return new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispDTO.getIdFermata()).getName());
         }
     }
 
@@ -167,7 +156,6 @@ public class GestioneCorseService {
      */
     public TurnoDispResource getAllTurnoDisp(TurnoDTO turnoDTO) {
         List<DispEntity> dispEntities = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId());
-        List<Integer> fermateIds = turnoDTO.getVerso() ? lineeService.getLineaEntityById(turnoDTO.getIdLinea()).getAndata() : lineeService.getLineaEntityById(turnoDTO.getIdLinea()).getRitorno();
         List<DispAllResource> dispRes = new ArrayList<>();
         for (DispEntity d : dispEntities){
             DispAllResource dR = new DispAllResource(d, lineeService.getFermataEntityById(d.getIdFermata()).getName());
@@ -181,7 +169,7 @@ public class GestioneCorseService {
     }
 
     /**
-     * Aggiorna lo stato isConfirmed per ogni disp e chiude automaticamente il turno
+     * Aggiorna lo stato isConfirmed per ogni disp
      * Controlla che prima il turno sia stato chiuso tramite PUT /turno/state/{idLinea}/{verso}/{data}
      *
      * @param turnoDTO
@@ -197,7 +185,8 @@ public class GestioneCorseService {
                     dispRepository.save(dispEntity);
                     //TODO notifica
                 });
-            } else throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
+            } else
+                throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
         } else
             throw new IllegalArgumentException("Il turno deve essere chiuso"); //TODO eccezione custom (?)
     }

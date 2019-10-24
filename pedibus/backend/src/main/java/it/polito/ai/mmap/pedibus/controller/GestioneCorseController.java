@@ -1,7 +1,6 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
-import it.polito.ai.mmap.pedibus.entity.DispEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Null;
 import java.util.List;
 
 //TODO implementare la sicurezza degli endpoint
@@ -26,11 +24,11 @@ public class GestioneCorseController {
     GestioneCorseService gestioneCorseService;
 
     /**
-     * Permette a una guide/admin di una linea di segnalare la propria disponibilità
+     * Permette a una guide/admin di una linea di recuperare la propria disponibilità e le info relative al turno
      */
     @GetMapping("/disp/{idLinea}/{verso}/{data}")
     public DispTurnoResource getDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        return gestioneCorseService.getDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+        return gestioneCorseService.getDispTurnoResource(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
     }
 
     /**

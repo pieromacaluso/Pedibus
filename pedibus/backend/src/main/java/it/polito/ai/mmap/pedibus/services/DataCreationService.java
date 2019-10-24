@@ -169,8 +169,8 @@ public class DataCreationService {
      * crea:
      * - 100 Child
      * - 50 genitori con 2 figli        contenuti nel file genitori.json e pw = 1!qwerty1!
-     * - 25 nonni GUIDE della prima linea    contenuti nel file nonni_0.json e pw = 1!qwerty1! i primi 5 sono anche admin
-     * - 25 nonni GUIDE della seconda linea    contenuti nel file nonni_1.json e pw = 1!qwerty1! i primi 5 sono anche admin
+     * - 1 ADMIN (prima linea), 4 ADMIN (prima linea) e GUIDE, 25 GUIDE contenuti nel file nonni_0.json e pw = 1!qwerty1!
+     * - 1 ADMIN (seconda linea), 4 ADMIN (seconda linea) e GUIDE, 25 GUIDE contenuti nel file nonni_1.json e pw = 1!qwerty1!
      * - 1 reservation/figlio per oggi, domani e dopo domani (andata e ritorno)
      */
     public void makeChildUserReservations() throws IOException {
@@ -178,7 +178,7 @@ public class DataCreationService {
         RoleEntity roleSys = userService.getRoleEntityById("ROLE_SYSTEM-ADMIN");
         RoleEntity roleAdmin = userService.getRoleEntityById("ROLE_ADMIN");
         RoleEntity roleGuide = userService.getRoleEntityById("ROLE_GUIDE");
-        reservationRepository.deleteAll();
+        reservationRepository.deleteAll();  //TODO delete (? marcof)
         //userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleAdmin)).collect(Collectors.toList()));
         //userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleGuide)).collect(Collectors.toList()));
         userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(roleSys)).collect(Collectors.toList()));
@@ -223,8 +223,9 @@ public class DataCreationService {
                 if (count < 5) {
                     LineaEntity lineaEntity = lineaEntityList.get(i);
                     nonno.getRoleList().add(roleAdmin);
-                    // Rimuovi questa linea per provare GUIDE e ADMIN together
-                    nonno.getRoleList().remove(roleGuide);
+                    if (count < 1)
+                        nonno.getRoleList().remove(roleGuide);
+
                     if (!lineaEntity.getAdminList().contains(nonno.getUsername()))
                         lineaEntity.getAdminList().add(nonno.getUsername());
                     lineaRepository.save(lineaEntity);
