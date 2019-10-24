@@ -121,12 +121,12 @@ public class GestioneCorseService {
             TurnoDTO turnoDTO = new TurnoDTO(idLinea, date, verso);
             try {
                 DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
-                new DispTurnoResource(new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName()),
+                return new DispTurnoResource(new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName()),
                         new TurnoResource(getTurnoEntity(turnoDTO)));
             } catch (DispNotFoundException e) {
             }
         }
-        throw new DispNotFoundException("Non esiste disponibilità per questo turno");
+        return null;
 
     }
 
@@ -138,7 +138,7 @@ public class GestioneCorseService {
      *
      * @param dispDTO
      */
-    public void addDisp(DispDTO dispDTO) {
+    public DispAllResource addDisp(DispDTO dispDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!idDispDuplicate(dispDTO.getTurnoDTO())) {
@@ -153,7 +153,7 @@ public class GestioneCorseService {
 
             DispEntity dispEntity = new DispEntity(principal.getUsername(), turnoEntity.getIdLinea(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
             dispRepository.save(dispEntity);
-//            return new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispDTO.getIdFermata()).getName());
+            return new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispDTO.getIdFermata()).getName());
         } else
             throw new IllegalArgumentException("Disponibilità già presente");
     }

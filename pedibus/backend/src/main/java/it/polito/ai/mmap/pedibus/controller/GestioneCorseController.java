@@ -36,8 +36,8 @@ public class GestioneCorseController {
      * Permette a una guide/admin di una linea di segnalare la propria disponibilità
      */
     @PostMapping("/disp/{idLinea}/{verso}/{data}")
-    public void addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
-        gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
+    public DispAllResource addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
+        return gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
     }
 
 
@@ -61,7 +61,6 @@ public class GestioneCorseController {
     @GetMapping("/turno/disp/{idLinea}/{verso}/{data}")
     public TurnoDispResource getAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
         return gestioneCorseService.getAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
-
     }
 
     /**
@@ -76,7 +75,6 @@ public class GestioneCorseController {
     @PostMapping("/turno/disp/{idLinea}/{verso}/{data}")
     public void setAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody List<DispAllResource> dispResourceList) throws Exception {
         gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), dispResourceList);
-
     }
 
     /**
@@ -97,10 +95,9 @@ public class GestioneCorseController {
      * @param idLinea
      * @param verso
      * @param data
-     * @param isOpen
      */
     @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
-    public TurnoResource getTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
+    public TurnoResource getTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
         return gestioneCorseService.getTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
     }
 

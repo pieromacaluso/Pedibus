@@ -10,7 +10,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DispTurnoResource {
-    DispAllResource dispAllResource;
+    DispAllResource disp;
     TurnoResource turno;
 
 
