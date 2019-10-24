@@ -23,7 +23,7 @@ export class ApiDispService {
     // @PostMapping("/disp/{idLinea}/{verso}/{data}")
     const idVerso = ApiDispService.versoToInt(verso);
     return this.httpClient
-      .post(this.baseURL + 'disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
+      .post<DispAllResource>(this.baseURL + 'disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd'), idFermata);
   }
 
@@ -57,6 +57,9 @@ export interface DispAllResource {
   nomeFermata: string;
   isConfirmed: boolean;
   isAck: boolean;
+  add: boolean;
+  delete: boolean;
+  ack: boolean;
 }
 
 export interface DispTurnoResource {
