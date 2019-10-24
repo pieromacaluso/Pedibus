@@ -32,6 +32,13 @@ export class ApiTurniService {
       .put(this.baseURL + 'turno/state/' + idLinea + '/' + idVerso + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd'), b ? 1 : 0);
   }
+
+  confirmDisp(idLinea: string, verso: string, data: Date, listDisp: DispAllResource[]) {
+    const idVerso = ApiTurniService.versoToInt(verso);
+    return this.httpClient
+      .post(this.baseURL + 'turno/disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd'), listDisp);
+  }
 }
 
 export interface TurnoResource {
@@ -48,6 +55,5 @@ export interface TurnoDispResource {
 
 export interface MapDisp {
   [index: string]: DispAllResource[];
-
 }
 

@@ -22,11 +22,28 @@
       <div class="no-stops" *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)">
         {{stop.orario}} - {{stop.nome}}
         <div class="no-stops" *ngIf="this.listDisp[stop.nome] && this.listDisp[stop.nome].length > 0 else empty">
-          <div class="no-stops" *ngFor="let disp of this.listDisp['Monte Grappa']">
+          <div class="no-stops" *ngFor="let disp of this.listDisp[stop.nome]">
             <div id="guideUsername">{{disp.guideUsername}}</div>
-            <div id="nomeFermata">{{disp.nomeFermata}}</div>
-            <div id="isConfirmed">{{disp.isConfirmed}}</div>
-            <div id="isAck">{{disp.isAck}}</div>
+            <span *ngIf="turno.isOpen else notOpen">
+              <div id="isConfirmed">Conferma:
+                <span class="status">{{disp.isConfirmed}}</span>
+              </div>
+              <div id="isAck">Conferma Ricevuto:
+                <span class="status">{{disp.isAck}}</span>
+              </div>
+            </span>
+            <ng-template #notOpen>
+              <span>
+                <mat-slide-toggle #toggle
+                                  class="example-margin"
+                                  color="accent"
+                                  [disabled]="this.turno.isExpired"
+                                  (change)="disp.isConfirmed = toggle.checked"
+                                  [checked]="disp.isConfirmed">
+                  {{disp.isConfirmed ? "Confermato" : "Non Confermato"}}
+                </mat-slide-toggle>
+              </span>
+            </ng-template>
 
           </div>
         </div>
@@ -36,8 +53,13 @@
           Non sono ancora presenti disponibilità nel turno selezionato.
         </div>
       </ng-template>
+
+      <button (click)="confermaDisp(this.listDisp)" *ngIf="!turno.isOpen" [disabled]="this.turno.isExpired" mat-raised-button color="primary">Invia conferme</button>
+      <button *ngIf="turno.isOpen" [disabled]="this.turno.isExpired" mat-raised-button color="primary">Chiudi turno e invia conferme a tutti</button>
     </div>
+
   </div>
+
 </mat-card>
 
 

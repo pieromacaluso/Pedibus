@@ -66,6 +66,7 @@ export class ElencoDispComponent implements OnInit {
     this.changeDisp.asObservable().subscribe(
       res => {
         this.listDisp = res;
+        this.loading = false;
       }
     );
 
@@ -114,5 +115,23 @@ export class ElencoDispComponent implements OnInit {
     }, (error) => {
       // TODO: errore
     });
+  }
+
+  confermaDisp(listDisp: MapDisp) {
+    this.loading = true;
+    const resArray: DispAllResource[] = [];
+    for (const stop of (this.p.verso === 'Andata' ? this.linea.andata : this.linea.ritorno)) {
+      if (this.listDisp[stop.nome]) {
+        for (const disp of this.listDisp[stop.nome]) {
+          resArray.push(disp);
+        }
+      }
+    }
+    this.apiTurniService.confirmDisp(this.p.linea, this.p.verso, this.p.data, resArray).subscribe(response => {
+      this.changeDisp.next(this.listDisp);
+    }, (error) => {
+      // TODO: errore
+    });
+
   }
 }
