@@ -92,17 +92,8 @@ public class GestioneCorseService {
      */
     public DispTurnoResource getDispTurnoResource(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        TurnoResource turnoResource = new TurnoResource(getTurnoEntity(turnoDTO));
         DispAllResource disp;
-        TurnoResource turnoResource;
-        try {
-            TurnoEntity turnoEntity = getTurnoEntity(turnoDTO);
-            turnoResource = new TurnoResource(turnoEntity);
-
-        } catch (IllegalArgumentException e) {
-            TurnoEntity turnoEntity = new TurnoEntity(turnoDTO);
-            turnoResource = new TurnoResource(turnoEntity);
-        }
 
         try {
             DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
