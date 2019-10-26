@@ -14,17 +14,17 @@ import {ForgotPasswordComponent} from './registration/forgot-password/forgot-pas
 import {RecoverComponent} from './registration/recover/recover.component';
 import {ConfirmComponent} from './registration/confirm/confirm.component';
 import { DisponibilitaComponent } from './logged/disponibilita/disponibilita.component';
-import { ComunicazioniComponent } from './logged/comunicazioni/comunicazioni.component';
 import { TurniComponent } from './logged/turni/turni.component';
 import { AdminGuard } from './admin.guard';
 import {GuideGuard} from './guide.guard';
+import { NotificheComponent } from './logged/notifiche/notifiche.component';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},
-  {path: 'comunicazioni', component: ComunicazioniComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
+  {path: 'comunicazioni', component: NotificheComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard], data: { animation: 'yes' }},
   {path: 'recover', component: ForgotPasswordComponent, data: { animation: 'yes' }},
   {path: 'recover/:token', component: RecoverComponent, data: { animation: 'yes' }},

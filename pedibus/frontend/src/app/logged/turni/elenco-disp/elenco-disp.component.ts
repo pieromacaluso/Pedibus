@@ -28,7 +28,7 @@ export class ElencoDispComponent implements OnInit {
   private changeDisp = new Subject<MapDisp>();
   private changeTurno = new Subject<TurnoResource>();
 
-  private linea: StopsByLine;
+  linea: StopsByLine;
   private turno: TurnoResource;
   private listDisp: MapDisp;
 

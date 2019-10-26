@@ -15,7 +15,7 @@ export class HeaderComponent implements OnInit {
   logo: any = '../../assets/svg/logo.svg';
   userLogged: boolean;
   activeLoggedLink: any;
-  private headerMenu$: Observable<MenuItem[]>;
+  headerMenu$: Observable<MenuItem[]>;
 
   constructor(private auth: AuthService, private router: Router, private header: HeaderService) {
     this.userLogged = this.auth.isLoggedIn();

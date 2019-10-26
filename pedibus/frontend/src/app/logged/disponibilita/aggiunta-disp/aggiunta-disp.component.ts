@@ -25,7 +25,7 @@ export class AggiuntaDispComponent implements OnInit {
   private all$: Observable<any[]>;
   private all: any;
   private linea: StopsByLine;
-  private disp: DispAllResource;
+  disp: DispAllResource;
   private turno: TurnoResource;
   private changeDisp = new Subject<DispAllResource>();
   private changeTurno = new Subject<TurnoResource>();

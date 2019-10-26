@@ -30,11 +30,11 @@ export class ListaPrenotazioniComponent implements OnInit {
   bottomCardTitle: string;
   children: any[] = [];
   // private openedDialog: any = 0;
-  private prenotazione$: Observable<PrenotazioneRequest>;
-  private resource$: Observable<LineReservationVerso>;
-  private handled$: Observable<any>;
-  private reservation$: Observable<any>;
-  private loading: boolean;
+  prenotazione$: Observable<PrenotazioneRequest>;
+  resource$: Observable<LineReservationVerso>;
+  handled$: Observable<any>;
+  reservation$: Observable<any>;
+  loading: boolean;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
