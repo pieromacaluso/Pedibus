@@ -4,8 +4,8 @@ import {HttpClient} from '@angular/common/http';
 import {Alunno, AlunnoNotReserved, LineReservationVerso, NuovaPrenotazione, PrenotazioneRequest, StopsByLine} from './line-details';
 import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
-import {map, publishReplay, share, shareReplay} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import { Notifica } from './notifiche/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,14 @@ export class ApiService {
   baseURL = environment.baseURL;
 
   constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
+  }
+
+  getNotificheNonLette(username: string): Observable<Notifica[]> {
+    return this.httpClient.get<Notifica[]>(this.baseURL + 'notifiche/' + username);
+  }
+
+  deleteNotifica(idNotifica: string): Observable<any[]> {
+    return this.httpClient.delete<any[]>(this.baseURL + 'notifiche/' + idNotifica);
   }
 
   getChildren(): Observable<any[]> {
