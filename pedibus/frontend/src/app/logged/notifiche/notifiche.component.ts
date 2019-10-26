@@ -18,7 +18,12 @@ export class NotificheComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.notificheService.getNotifiche(this.comunicazioni, this.countNonLette);
     this.notificheService.watchNotifiche(this.comunicazioni, this.countNonLette);
+  }
+
+  readNotifica(idNotifica: string) {
+    this.notificheService.deleteNotifica(this.comunicazioni, idNotifica);
   }
 
 }

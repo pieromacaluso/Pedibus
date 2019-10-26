@@ -7,7 +7,6 @@ import { DataShareService } from 'src/app/data-share.service';
 import { Subscription } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { ApiService } from '../api.service';
-import { concatMap } from 'rxjs/operators';
 import { Notifica } from './dtos';
 
 const mapRoleNotifiche = [
@@ -25,7 +24,7 @@ export class NotificheService {
   baseURL = environment.baseURL;
   subs: Subscription[];
 
-  constructor(private httpClient: HttpClient, private rxStompService: RxStompService, private authService: AuthService,
+  constructor(private rxStompService: RxStompService, private authService: AuthService,
     private dataService: DataShareService, private apiService: ApiService) {
   }
 
@@ -54,7 +53,11 @@ export class NotificheService {
     }
   }
 
-
+  deleteNotifica(comunicazioni: Notifica[], idNotifica: string) {
+    this.apiService.deleteNotifica(idNotifica);
+    const indexNotifica = comunicazioni.findIndex(n => n.id === idNotifica);
+    comunicazioni.splice(indexNotifica, 1);
+  }
 
   
 }

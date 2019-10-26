@@ -1,5 +1,8 @@
 <div>
-  {{comunicazioni | json}}
+  <div *ngFor="let notifica of comunicazioni">
+      <p>{{notifica | json}}</p>
+      <button (click)="readNotifica(notifica.id)">Notifica Letta</button>
+  </div>
 </div>
 
 
