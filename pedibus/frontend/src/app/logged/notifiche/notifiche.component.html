@@ -1,8 +1,12 @@
-<div>
+<div *ngIf="comunicazioni; else nessunaNotifica">
   <div *ngFor="let notifica of comunicazioni">
       <p>{{notifica | json}}</p>
       <button (click)="readNotifica(notifica.id)">Notifica Letta</button>
   </div>
 </div>
+
+<ng-template #nessunaNotifica>
+  <p>Nessuna notifica da leggere</p>
+</ng-template>
 
 
