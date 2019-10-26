@@ -24,7 +24,7 @@ const appRoutes: Routes = [
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},
-  {path: 'comunicazioni', component: NotificheComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
+  {path: 'notifiche', component: NotificheComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard], data: { animation: 'yes' }},
   {path: 'recover', component: ForgotPasswordComponent, data: { animation: 'yes' }},
   {path: 'recover/:token', component: RecoverComponent, data: { animation: 'yes' }},
