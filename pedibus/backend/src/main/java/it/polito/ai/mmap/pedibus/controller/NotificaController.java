@@ -1,29 +1,31 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.resources.NotificaResource;
+import it.polito.ai.mmap.pedibus.services.NotificheService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 
 
-
+@RestController
 public class NotificaController {
 
+    @Autowired
+    NotificheService notificheService;
+
     /**
-     * Restituisce le notifiche non lette di un determinato utente
+     * Restituisce le notifiche base non lette di un determinato utente
      */
     @GetMapping("/notifiche/{username}")
-    ArrayList<NotificaResource> getNotifiche(){
-
-        return new ArrayList<NotificaResource>();
-    }
+    public ArrayList<NotificaResource> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotificheBase(username);}
 
     /**
-     * Elimina la notifica selezionata per un determinato utente
+     * Elimina la notifica selezionata da un determinato id
      */
     @DeleteMapping("/notifiche/{idNotifica}")
-     void deleteNotifiche(){
-
-    }
+     public void deleteNotifiche(@PathVariable("idNotifica") String idNotifica){ notificheService.deleteNotifica(idNotifica);}
 }

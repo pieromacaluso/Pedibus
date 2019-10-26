@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "notificabase")
 public class NotificaBaseEntity {
     @Id
-    private ObjectId idNotifica;
+    private String idNotifica;
     private String usernameDestinatario;
     private String msg;
     private Boolean isTouched;

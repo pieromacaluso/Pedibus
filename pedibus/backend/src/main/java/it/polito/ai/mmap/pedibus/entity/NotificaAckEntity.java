@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "notificack")
 public class NotificaAckEntity {
     @Id
-    private ObjectId idNotifica;
+    private String idNotifica;
     private ObjectId dispID;
     private String usernameDestinatario;
     private String msg;
