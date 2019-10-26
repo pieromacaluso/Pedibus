@@ -15,4 +15,11 @@ public class NotificaBaseEntity {
     private String usernameDestinatario;
     private String msg;
     private Boolean isTouched;
+
+    public NotificaBaseEntity(String user,String msg,Boolean isTouched){
+        idNotifica= new ObjectId().toString();
+        this.usernameDestinatario=user;
+        this.msg=msg;
+        this.isTouched=isTouched;
+    }
 }

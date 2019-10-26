@@ -38,7 +38,7 @@ public class NotificheService {
         Optional<UserEntity> user=userRepository.findByUsername(username);
         if(user.isPresent()){
             //todo verifica se bisogna filtrare per ogni utente solo le notifiche corrispondenti (Es. solo per la linea di cui fa parte l'utente, in teoria non dovrebbero esserci notifiche per linee diverse dalla sua, pero magari qualcosa del passato se poi ha cambiato linea, e altri casi da vedere bene)
-            List<NotificaBaseEntity> notifiche = notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario()==username).collect(Collectors.toList());
+            List<NotificaBaseEntity> notifiche = notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario()==username).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).collect(Collectors.toList());
             ArrayList<NotificaResource> notificheResources = new ArrayList<>();
 
             for(NotificaBaseEntity n:notifiche){

@@ -80,6 +80,9 @@ public class NotificheTest {
     TurnoRepository turnoRepository;
 
     @Autowired
+    NotificaBaseRepository notificaBaseRepository;
+
+    @Autowired
     LineeService lineeService;
 
     @Autowired
@@ -155,6 +158,12 @@ public class NotificheTest {
             userRepository.save(userEntity);
         });
         //todo salvataggio diverse notifiche per ogni utente in userDTOMap
+        //Notifiche Base
+            //user1
+        /*notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg1",false));
+        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg2",true));
+        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg3",false));*/
+
     }
 
     @After
@@ -165,6 +174,7 @@ public class NotificheTest {
             userRepository.delete(userEntity);
         });
         //todo eliminare notifiche salvate precedentemente
+
     }
 
     @Test

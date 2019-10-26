@@ -17,4 +17,13 @@ public class NotificaAckEntity {
     private String msg;
     private Boolean isTouched;
     private Boolean isAck;
+
+    public NotificaAckEntity(ObjectId dispID,String user,String msg,Boolean isTouched, Boolean isAck){
+        idNotifica= new ObjectId().toString();
+        this.dispID=dispID;
+        this.usernameDestinatario=user;
+        this.msg=msg;
+        this.isTouched=isTouched;
+        this.isAck=isAck;
+    }
 }
