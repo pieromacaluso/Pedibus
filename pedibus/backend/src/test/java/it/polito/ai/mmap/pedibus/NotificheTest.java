@@ -31,6 +31,7 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -157,12 +158,20 @@ public class NotificheTest {
                 lineeService.addAdminLine(userEntity.getUsername(), lineaDef.getId());
             userRepository.save(userEntity);
         });
-        //todo salvataggio diverse notifiche per ogni utente in userDTOMap
         //Notifiche Base
             //user1
-        /*notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg1",false));
+        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg1",false));
         notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg2",true));
-        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg3",false));*/
+        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg3",false));
+            //user2
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg1",false));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg2",true));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg3",false));
+            //user3
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg1",false));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg2",true));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg3",false));
+
 
     }
 
@@ -173,13 +182,34 @@ public class NotificheTest {
                 lineeService.delAdminLine(userEntity.getUsername(), lineaDef.getId());
             userRepository.delete(userEntity);
         });
-        //todo eliminare notifiche salvate precedentemente
 
+        List<NotificaBaseEntity> notificaBaseEntities;
+        //user1
+        notificaBaseEntities=getAllNotificationBase("testGenitore@test.it");
+        for(NotificaBaseEntity n:notificaBaseEntities){
+            notificaBaseRepository.delete(n);
+        }
+
+        //user2
+        notificaBaseEntities=getAllNotificationBase("testNonGenitore@test.it");
+        for(NotificaBaseEntity n:notificaBaseEntities){
+            notificaBaseRepository.delete(n);
+        }
+        //user3
+        notificaBaseEntities=getAllNotificationBase("testNonno@test.it");
+        for(NotificaBaseEntity n:notificaBaseEntities){
+            notificaBaseRepository.delete(n);
+        }
+    }
+
+    private List<NotificaBaseEntity> getAllNotificationBase(String user) {
+        return notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).collect(Collectors.toList());
     }
 
     @Test
     public void getNotifiche(){
         logger.info("test1...");
+
     }
 
     @Test
