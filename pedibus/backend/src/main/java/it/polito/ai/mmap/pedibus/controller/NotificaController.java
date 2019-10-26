@@ -14,6 +14,8 @@ import java.util.ArrayList;
 @RestController
 public class NotificaController {
 
+    //todo gestire permessi ruoli notifiche varie
+
     @Autowired
     NotificheService notificheService;
 
@@ -27,5 +29,5 @@ public class NotificaController {
      * Elimina la notifica selezionata da un determinato id
      */
     @DeleteMapping("/notifiche/{idNotifica}")
-     public void deleteNotifiche(@PathVariable("idNotifica") String idNotifica){ notificheService.deleteNotifica(idNotifica);}
+     public void deleteNotifica(@PathVariable("idNotifica") String idNotifica){ notificheService.deleteNotifica(idNotifica);}
 }
