@@ -7,12 +7,10 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig} from '@angula
 import {AdminBookDialogComponent} from './admin-book-dialog/admin-book-dialog.component';
 import {MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
-import {Message} from '@stomp/stompjs';
-import {concat, defer, Observable, Subject, Subscription} from 'rxjs';
+import {defer, Observable} from 'rxjs';
 import {DatePipe} from '@angular/common';
 import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
-import {finalize, flatMap, map, switchMap, takeUntil, tap} from 'rxjs/operators';
-import {fadeAnimation} from '../../../route-animations';
+import {map, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-lista-prenotazioni',

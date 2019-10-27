@@ -9,10 +9,10 @@ import { ApiService } from '../api.service';
 import { Notifica } from './dtos';
 
 const mapRoleNotifiche = [
-  { role: "ROLE_SYSTEM-ADMIN", notifiche: ["disponibilita", "reminder-turno"]},
-  { role: "ROLE_ADMIN", notifiche: ["turno-confermato", "turno-chiuso", "turno-aperto"] },
-  { role: "ROLE_GUIDE", notifiche: ["turno-confermato", "turno-chiuso", "turno-aperto"] },
-  { role: "ROLE_USER", notifiche: ["handled"] }
+  { role: "ROLE_SYSTEM-ADMIN", notifiche: ["/disponibilita", "/reminder-turno"]},
+  { role: "ROLE_ADMIN", notifiche: ["/turno-confermato", "/turno-chiuso", "/turno-aperto"] },
+  { role: "ROLE_GUIDE", notifiche: ["/turno-confermato", "/turno-chiuso", "/turno-aperto"] },
+  { role: "ROLE_USER", notifiche: ["/handled"] }
 ]
 
 @Injectable({

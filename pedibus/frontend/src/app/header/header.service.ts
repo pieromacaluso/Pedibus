@@ -35,7 +35,7 @@ export class HeaderService {
       } else if (this.auth.getRoles().includes('ROLE_GUIDE')) {
         menu.push(this.presenze, this.schedule, this.notification);
       } else if (this.auth.getRoles().includes('ROLE_USER')) {
-        menu.push(this.presenze);
+        menu.push(this.presenze, this.notification);
       }
     } else {
       menu.push(this.signIn, this.signUp);

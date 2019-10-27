@@ -7,7 +7,7 @@ import { DataShareService } from 'src/app/data-share.service';
 @Component({
   selector: 'app-notifiche',
   templateUrl: './notifiche.component.html',
-  styleUrls: ['./notifiche.component.css']
+  styleUrls: ['./notifiche.component.scss']
 })
 export class NotificheComponent implements OnInit {
 
