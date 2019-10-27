@@ -1,12 +1,12 @@
 package it.polito.ai.mmap.pedibus;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaAckDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.NotificaBaseDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.resources.NotificaResource;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import org.junit.After;
 import org.junit.Before;
@@ -19,17 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +37,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -92,7 +95,7 @@ public class NotificheTest {
     Map<Integer, ChildEntity> childMap = new HashMap<>();
     Map<String, UserDTO> userDTOMap = new HashMap<>();
     Map<String, UserEntity> userEntityMap = new HashMap<>();
-    Map<String,ArrayList<NotificaBaseDTO>> notificheBaseDTOMap= new HashMap<>();        //Per ogni email(Utente), una lista delle sue notifiche Base
+    Map<String,ArrayList<NotificaBaseEntity>> notificheBaseEntityMap = new HashMap<>();        //Per ogni email(Utente), una lista delle sue notifiche Base
     Map<String,ArrayList<NotificaAckDTO>> notificheAckDTOMap= new HashMap<>();          //Per ogni email(Utente), una lista delle sue notifiche Ack
     RoleEntity roleUser;
     RoleEntity roleAdmin;
@@ -102,6 +105,7 @@ public class NotificheTest {
 
     @PostConstruct
     public void postInit() {
+        //logger.info("PostInit init...");
         lineaDef = lineaRepository.findAll().get(0);
 
         roleUser = roleRepository.findById("ROLE_USER").get();
@@ -120,30 +124,16 @@ public class NotificheTest {
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
         userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
-        logger.info("postInit finito.");
-        /*ArrayList<NotificaBaseDTO> notificaBaseDTOs=new ArrayList<>();
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase1","testGenitore@test.it","msg",false));
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase2","testGenitore@test.it","msg",false));
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase3","testGenitore@test.it","msg",false));
-        notificheBaseDTOMap.put("testGenitore@test.it",notificaBaseDTOs);
+        //logger.info("PostInit done");
 
-        notificaBaseDTOs.clear();
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase4","testNonGenitore@test.it","msg",false));
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase5","testNonGenitore@test.it","msg",false));
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase6","testNonGenitore@test.it","msg",false));
-        notificheBaseDTOMap.put("testNonGenitore@test.it",notificaBaseDTOs);
 
-        notificaBaseDTOs.clear();
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase7","testNonno@test.it","msg",false));
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase8","testNonno@test.it","msg",false));
-        notificaBaseDTOs.add(new NotificaBaseDTO("notificaBase9","testNonno@test.it","msg",false));
-        notificheBaseDTOMap.put("testNonno@test.it",notificaBaseDTOs);*/
 
 
     }
 
     @Before
     public void setUpMethod() {
+        //logger.info("setUpMethod init...");
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -159,7 +149,7 @@ public class NotificheTest {
             userRepository.save(userEntity);
         });
         //Notifiche Base
-            //user1
+            //user1 //todo cxonvertire salvataggio mappa come per user
         notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg1",false));
         notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg2",true));
         notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg3",false));
@@ -172,34 +162,23 @@ public class NotificheTest {
         notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg2",true));
         notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg3",false));
 
-
+        //logger.info("setUpMethod done.");
     }
 
     @After
     public void tearDownMethod() {
+        //logger.info("tearDownMethod init...");
         userEntityMap.values().forEach(userEntity -> {
             if (userEntity.getRoleList().contains(roleAdmin))
                 lineeService.delAdminLine(userEntity.getUsername(), lineaDef.getId());
+            List<NotificaBaseEntity> notificaBaseEntities=getAllNotificationBase(userEntity.getUsername());
+            for(NotificaBaseEntity n:notificaBaseEntities){
+                notificaBaseRepository.delete(n);
+            }
             userRepository.delete(userEntity);
         });
 
-        List<NotificaBaseEntity> notificaBaseEntities;
-        //user1
-        notificaBaseEntities=getAllNotificationBase("testGenitore@test.it");
-        for(NotificaBaseEntity n:notificaBaseEntities){
-            notificaBaseRepository.delete(n);
-        }
-
-        //user2
-        notificaBaseEntities=getAllNotificationBase("testNonGenitore@test.it");
-        for(NotificaBaseEntity n:notificaBaseEntities){
-            notificaBaseRepository.delete(n);
-        }
-        //user3
-        notificaBaseEntities=getAllNotificationBase("testNonno@test.it");
-        for(NotificaBaseEntity n:notificaBaseEntities){
-            notificaBaseRepository.delete(n);
-        }
+        //logger.info("tearDownMethod done.");
     }
 
     private List<NotificaBaseEntity> getAllNotificationBase(String user) {
@@ -207,14 +186,81 @@ public class NotificheTest {
     }
 
     @Test
-    public void getNotifiche(){
-        logger.info("test1...");
+    public void deleteNotifica() throws Exception {
+        logger.info("Test deleteNotifica Base...");
+        String user="testGenitore@test.it";
+        //autenticazione
+        String token=loginAsGenitore();
+        //ricerca idnotifica della notifica da eliminare, la prima non letta
+        String idNotificaToDel=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).map(NotificaBaseEntity::getIdNotifica).findFirst().get();
 
+        //legge dal db tutte le notifiche non lette di quell utente e le mappa come notificaResource
+        List<NotificaResource> expectedResult=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).filter(notificaBaseEntity -> !notificaBaseEntity.getIdNotifica().equals(idNotificaToDel)).map(notificaBaseEntity -> {
+            NotificaResource notificaResource=new NotificaResource(notificaBaseEntity.getIdNotifica(),notificaBaseEntity.getMsg());
+            return notificaResource;
+        }).collect(Collectors.toList());
+
+        String expectedJson = objectMapper.writeValueAsString(expectedResult);
+
+        mockMvc.perform(delete("/notifiche/{idNotifica}",idNotificaToDel)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/notifiche/{username}",user)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson))
+                .andDo(document("delete-notifiche-base",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+
+        logger.info("deleteNotifica Base done.");
+        //todo test notificaAck
     }
 
     @Test
-    public void deleteNotifica(){
-        logger.info("test2...");
+    public void getNotifiche() throws Exception {
+        String user="testGenitore@test.it";
+        logger.info("Test getNotifiche base user: "+user+" ...");
+        //autenticazione
+        String token=loginAsGenitore();
+        //legge dal db tutte le notifiche non lette di quell utente e le mappa come notificaResource
+        List<NotificaResource> expectedResult=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).map(notificaBaseEntity -> {
+                NotificaResource notificaResource=new NotificaResource(notificaBaseEntity.getIdNotifica(),notificaBaseEntity.getMsg());
+                return notificaResource;
+        }).collect(Collectors.toList());
+        String expectedJson = objectMapper.writeValueAsString(expectedResult);
+
+        mockMvc.perform(get("/notifiche/{username}",user)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson))
+                .andDo(document("get-notifiche-base",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+        logger.info("test1 done.");
     }
 
+
+
+
+    private String loginAsGenitore() throws Exception {
+        UserDTO user = userDTOMap.get("testGenitore");
+
+        String json = objectMapper.writeValueAsString(user);
+        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
+        return node.get("token").asText();
+    }
+
+    private String loginAsNonnoAdmin(String idLinea) throws Exception {
+        UserDTO user = userDTOMap.get("testNonno");
+
+        String json = objectMapper.writeValueAsString(user);
+        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
+        return node.get("token").asText();
+    }
 }
