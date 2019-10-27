@@ -1,7 +1,7 @@
-<div *ngIf="comunicazioni.length; else nessunaNotifica">
-  <div *ngFor="let notifica of comunicazioni">
+<div *ngIf="(notifiche | async)?.length; else nessunaNotifica">
+  <div *ngFor="let notifica of notifiche | async">
       <p>{{notifica | json}}</p>
-      <button (click)="readNotifica(notifica.id)">Notifica Letta</button>
+      <button (click)="readNotifica(notifica.idNotifica)">Notifica Letta</button>
   </div>
 </div>
 

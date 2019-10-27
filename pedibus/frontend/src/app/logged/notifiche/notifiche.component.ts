@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { NotificheService } from './notifiche.service';
 import { Notifica } from './dtos';
+import { Observable } from 'rxjs';
+import { DataShareService } from 'src/app/data-share.service';
 
 @Component({
   selector: 'app-notifiche',
@@ -10,20 +11,20 @@ import { Notifica } from './dtos';
 })
 export class NotificheComponent implements OnInit {
 
-  subs: Subscription[] = [];
-  comunicazioni: Notifica[] = [];
+  notifiche: Observable<Notifica[]>;
   countNonLette = 0;
 
-  constructor(private notificheService: NotificheService) {
+  constructor(private notificheService: NotificheService, private dataService: DataShareService) {
+    this.notifiche = this.dataService.comunicazioni;
   }
 
   ngOnInit() {
-    this.notificheService.getNotifiche(this.comunicazioni, this.countNonLette);
-    this.notificheService.watchNotifiche(this.comunicazioni, this.countNonLette);
+    this.notificheService.getNotifiche(this.countNonLette);
+    this.notificheService.watchNotifiche(this.countNonLette);
   }
 
   readNotifica(idNotifica: string) {
-    this.notificheService.deleteNotifica(this.comunicazioni, idNotifica);
+    this.notificheService.deleteNotifica(idNotifica);
   }
 
 }
