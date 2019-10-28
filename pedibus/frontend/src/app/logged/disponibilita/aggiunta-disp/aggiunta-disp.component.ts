@@ -49,6 +49,8 @@ export class AggiuntaDispComponent implements OnInit {
         if (!res) {
           const variable: DispAllResource = {
             guideUsername: null,
+            idLinea: null,
+            nomeLinea: null,
             idFermata: null,
             isAck: null,
             isConfirmed: null,
@@ -57,6 +59,7 @@ export class AggiuntaDispComponent implements OnInit {
             delete: false,
             ack: false
           };
+
           this.changeDisp.next(variable);
           this.changeTurno.next(null);
         } else {
@@ -106,24 +109,26 @@ export class AggiuntaDispComponent implements OnInit {
     });
   }
 
-  delDisp(idFermata: any) {
+  delDisp() {
     this.disp.delete = true;
-    this.apiDispService.delDisp(this.p.linea, idFermata, this.p.verso, this.p.data).subscribe(response => {
+    this.apiDispService.delDisp(this.p.linea, this.disp.idFermata.toString(), this.p.verso, this.p.data).subscribe(response => {
       const variable: DispAllResource = {
         guideUsername: null,
+        idLinea: null,
+        nomeLinea: null,
         idFermata: null,
+        nomeFermata: null,
         isAck: null,
         isConfirmed: null,
-        nomeFermata: null,
         add: true,
         delete: true,
         ack: true
       };
+
       this.changeDisp.next(variable);
     }, (error) => {
       // TODO: errore aggiunta disponibilità
     });
-
   }
 
   ackDisp() {

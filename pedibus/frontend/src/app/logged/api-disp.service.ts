@@ -53,6 +53,8 @@ export class ApiDispService {
 
 export interface DispAllResource {
   guideUsername: string;
+  idLinea: string;
+  nomeLinea: string;
   idFermata: number;
   nomeFermata: string;
   isConfirmed: boolean;
