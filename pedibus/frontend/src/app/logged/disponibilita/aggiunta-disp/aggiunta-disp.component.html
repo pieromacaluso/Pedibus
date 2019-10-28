@@ -2,7 +2,6 @@
   <div *ngIf="this.disp else loadingDiv">
     <div *ngIf="!showLoading() else loadingDiv">
       <mat-card-header><h1>Disponibilità</h1></mat-card-header>
-
       <div id="disp-status" class="no-stops mat-h3">
         <div *ngIf="this.disp.guideUsername else nodisp">
           <div id="turno-status" class="no-stops mat-h2">
@@ -18,6 +17,10 @@
           <div>
             Fermata di {{this.p.verso == 'Andata' ? 'Partenza' : 'Arrivo'}}:
             <span class="status">{{this.disp.nomeFermata}}</span>
+          </div>
+          <div>
+            Orario:
+            <span class="status">{{this.disp.orario}}</span>
           </div>
           <div>
             Conferma: <span class="status">{{this.disp.isConfirmed ? "Confermato" : "In Attesa"}}</span>

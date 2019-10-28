@@ -54,6 +54,7 @@ export class ApiDispService {
 export interface DispAllResource {
   guideUsername: string;
   idLinea: string;
+  orario: string;
   nomeLinea: string;
   idFermata: number;
   nomeFermata: string;

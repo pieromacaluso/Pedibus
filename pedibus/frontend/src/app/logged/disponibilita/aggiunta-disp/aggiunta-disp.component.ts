@@ -49,6 +49,7 @@ export class AggiuntaDispComponent implements OnInit {
         if (!res) {
           const variable: DispAllResource = {
             guideUsername: null,
+            orario: null,
             idLinea: null,
             nomeLinea: null,
             idFermata: null,
@@ -115,6 +116,7 @@ export class AggiuntaDispComponent implements OnInit {
       const variable: DispAllResource = {
         guideUsername: null,
         idLinea: null,
+        orario: null,
         nomeLinea: null,
         idFermata: null,
         nomeFermata: null,
@@ -124,8 +126,8 @@ export class AggiuntaDispComponent implements OnInit {
         delete: true,
         ack: true
       };
-
       this.changeDisp.next(variable);
+      this.changeTurno.next(null);
     }, (error) => {
       // TODO: errore aggiunta disponibilità
     });
