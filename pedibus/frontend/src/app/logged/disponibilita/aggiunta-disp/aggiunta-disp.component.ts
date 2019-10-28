@@ -5,9 +5,9 @@ import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
-import {PrenotazioneRequest, StopsByLine} from '../../line-details';
+import {Alunno, PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, timer} from 'rxjs';
-import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, mergeMap, retry, tap} from 'rxjs/operators';
+import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, mergeMap, retry, switchMap, tap} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
 import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
 import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
@@ -92,8 +92,32 @@ export class AggiuntaDispComponent implements OnInit {
         this.turno = res;
       }
     );
-  }
+    // WebSocket Disponibilità
+    this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      mergeMap(pren => {
+        this.p = pren;
+        return this.rxStompService.watch('/dispws' + this.authService.getUsername() + this.pathSub(pren));
+      }),
+      tap(() => this.loading = false),
+    ).subscribe(res =>
+      console.log('DISP', res)
+    );
 
+    // WebSocket Turno
+    this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      switchMap(
+        pren => {
+          return this.rxStompService.watch('/turnows' + this.pathSub(pren));
+        }
+      ),
+      tap(() => this.loading = false)
+    ).subscribe(message => {
+      const res = JSON.parse(message.body);
+      this.changeTurno.next(res);
+    });
+  }
   ngOnInit() {
   }
 
@@ -154,6 +178,11 @@ export class AggiuntaDispComponent implements OnInit {
         this.changeTurno.next(res);
       }
     );
+  }
+
+  private pathSub(prenotazione: PrenotazioneRequest) {
+    return '/' + this.datePipe.transform(
+      prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 }
 

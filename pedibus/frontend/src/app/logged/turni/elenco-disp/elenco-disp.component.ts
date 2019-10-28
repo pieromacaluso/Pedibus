@@ -6,7 +6,7 @@ import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
-import {finalize, mergeMap, tap} from 'rxjs/operators';
+import {finalize, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {defer, forkJoin, Observable, Subject} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../../api-turni.service';
@@ -79,6 +79,20 @@ export class ElencoDispComponent implements OnInit {
         this.turno = res;
       }
     );
+
+    // WebSocket Turno
+    this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      switchMap(
+        pren => {
+          return this.rxStompService.watch('/turnows' + this.pathSub(pren));
+        }
+      ),
+      tap(() => this.loading = false)
+    ).subscribe(message => {
+      const res = JSON.parse(message.body);
+      this.changeTurno.next(res);
+    });
   }
 
   showLoading() {
@@ -135,5 +149,11 @@ export class ElencoDispComponent implements OnInit {
       // TODO: errore
     });
 
+  }
+
+
+  private pathSub(prenotazione: PrenotazioneRequest) {
+    return '/' + this.datePipe.transform(
+      prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 }
