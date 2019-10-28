@@ -140,7 +140,7 @@ public class GestioneCorseService {
      *
      * @param dispDTO
      */
-    public DispAllResource addDisp(DispDTO dispDTO) {
+    public DispTurnoResource addDisp(DispDTO dispDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!idDispDuplicate(dispDTO.getTurnoDTO())) {
@@ -155,9 +155,11 @@ public class GestioneCorseService {
 
             DispEntity dispEntity = new DispEntity(principal.getUsername(), turnoEntity.getIdLinea(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
             dispRepository.save(dispEntity);
-            return new DispAllResource(dispEntity,
+            DispAllResource d = new DispAllResource(dispEntity,
                     lineeService.getFermataEntityById(dispEntity.getIdFermata()),
                     lineeService.getLineaEntityById(dispEntity.getIdLinea()));
+            TurnoResource t = new TurnoResource(turnoEntity);
+            return new DispTurnoResource(d, t);
         } else
             throw new IllegalArgumentException("Disponibilità già presente");
     }
@@ -248,14 +250,17 @@ public class GestioneCorseService {
      *
      * @param turnoDTO
      */
-    public void ackDisp(TurnoDTO turnoDTO) {
+    public DispEntity ackDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
         if (dispEntity.getIsConfirmed()) {
             dispEntity.setIsAck(true);
             dispRepository.save(dispEntity);
+            return dispEntity;
+        } else {
+            //todo else questa guida non era stata confermata per quel turno, quindi non dovrebbe mandare l'ack: ignoriamo o segnaliamo errore ?
+            throw new IllegalArgumentException("La guida non ha la facoltà di confermare la ricezione.");
         }
-        //todo else questa guida non era stata confermata per quel turno, quindi non dovrebbe mandare l'ack: ignoriamo o segnaliamo errore ?
     }
 
     private Boolean isTurnoExpired(TurnoDTO turnoDTO) {
