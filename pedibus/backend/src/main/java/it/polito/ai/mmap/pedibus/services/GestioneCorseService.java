@@ -167,12 +167,14 @@ public class GestioneCorseService {
      *
      * @param turnoDTO
      */
-    public void deleteDisp(TurnoDTO turnoDTO) {
+    public DispEntity deleteDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
-        if (getTurnoEntity(turnoDTO).getIsOpen() && !getTurnoEntity(turnoDTO).getIsExpired())
+        if (getTurnoEntity(turnoDTO).getIsOpen() && !getTurnoEntity(turnoDTO).getIsExpired()) {
             dispRepository.delete(dispEntity);
+            return dispEntity;
+        }
         else
             throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
     }
@@ -228,12 +230,13 @@ public class GestioneCorseService {
      * @param turnoDTO
      * @param isOpen
      */
-    public void setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
+    public TurnoEntity setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
         if (lineeService.isAdminLine(turnoDTO.getIdLinea()) || userService.isSysAdmin()) {
             TurnoEntity turnoEntity = getTurnoEntity(turnoDTO);
             if (!turnoEntity.getIsExpired()) {
                 turnoEntity.setIsOpen(isOpen);
                 turnoRepository.save(turnoEntity);
+                return turnoEntity;
             } else
                 throw new PermissionDeniedException("Il turno è scaduto");
         } else

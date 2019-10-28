@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
@@ -11,6 +12,8 @@ import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.core.AbstractDestinationResolvingMessagingTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,9 @@ public class GestioneCorseController {
 
     @Autowired
     GestioneCorseService gestioneCorseService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     /**
      * Permette a una guide/admin di una linea di recuperare la propria disponibilità e le info relative ai turni
@@ -37,7 +43,9 @@ public class GestioneCorseController {
      */
     @PostMapping("/disp/{idLinea}/{verso}/{data}")
     public DispAllResource addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
-        return gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
+        DispAllResource disp =  gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
+        simpMessagingTemplate.convertAndSend("/dispws-add/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), disp);
+        return disp;
     }
 
 
@@ -111,7 +119,9 @@ public class GestioneCorseController {
      */
     @PutMapping("/turno/state/{idLinea}/{verso}/{data}")
     public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
-        gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), isOpen);
+        TurnoEntity turno = gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), isOpen);
+        TurnoResource tr = new TurnoResource(turno);
+        simpMessagingTemplate.convertAndSend("/turnows/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), tr);
     }
 
 }
