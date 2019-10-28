@@ -29,6 +29,19 @@ export class AggiuntaDispComponent implements OnInit {
   private turno: TurnoResource;
   private changeDisp = new Subject<DispAllResource>();
   private changeTurno = new Subject<TurnoResource>();
+  emptyDisp: DispAllResource = {
+    guideUsername: null,
+    orario: null,
+    idLinea: null,
+    nomeLinea: null,
+    idFermata: null,
+    isAck: null,
+    isConfirmed: null,
+    nomeFermata: null,
+    add: false,
+    delete: false,
+    ack: false
+  };
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private apiTurniService: ApiTurniService,
@@ -47,21 +60,7 @@ export class AggiuntaDispComponent implements OnInit {
       res => {
         console.log(res);
         if (!res) {
-          const variable: DispAllResource = {
-            guideUsername: null,
-            orario: null,
-            idLinea: null,
-            nomeLinea: null,
-            idFermata: null,
-            isAck: null,
-            isConfirmed: null,
-            nomeFermata: null,
-            add: false,
-            delete: false,
-            ack: false
-          };
-
-          this.changeDisp.next(variable);
+          this.changeDisp.next(this.emptyDisp);
           this.changeTurno.next(null);
         } else {
           this.changeDisp.next(res.disp);
@@ -92,19 +91,45 @@ export class AggiuntaDispComponent implements OnInit {
         this.turno = res;
       }
     );
-    // WebSocket Disponibilità
+    // WebSocket Disponibilità creazione/eliminazione
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       mergeMap(pren => {
         this.p = pren;
-        return this.rxStompService.watch('/dispws' + this.authService.getUsername() + this.pathSub(pren));
+        return this.rxStompService.watch('/dispws' + '/' + this.authService.getUsername() + '/' + this.pathSub(pren));
       }),
       tap(() => this.loading = false),
-    ).subscribe(res =>
-      console.log('DISP', res)
+    ).subscribe(message => {
+        const res = JSON.parse(message.body);
+        console.log('DISP', res);
+        if (res.disp) {
+          this.changeDisp.next(res.disp);
+          this.changeTurno.next(res.turno);
+        } else {
+          this.changeDisp.next(this.emptyDisp);
+          this.changeTurno.next(null);
+        }
+      }
     );
 
-    // WebSocket Turno
+    // WebSocket Disponibilità status
+    this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      mergeMap(pren => {
+        this.p = pren;
+        return this.rxStompService.watch('/dispws-status' + '/' + this.authService.getUsername() + '/' + this.pathSub(pren));
+      }),
+      tap(() => this.loading = false),
+    ).subscribe(message => {
+        const res = JSON.parse(message.body);
+        console.log('DISP', res);
+        this.disp.isConfirmed = res.isConfirmed;
+        this.disp.isAck = res.isAck;
+        this.changeDisp.next(this.disp);
+      }
+    );
+
+    // WebSocket Turno cambio stato
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
@@ -118,6 +143,7 @@ export class AggiuntaDispComponent implements OnInit {
       this.changeTurno.next(res);
     });
   }
+
   ngOnInit() {
   }
 
@@ -137,20 +163,7 @@ export class AggiuntaDispComponent implements OnInit {
   delDisp() {
     this.disp.delete = true;
     this.apiDispService.delDisp(this.p.linea, this.disp.idFermata.toString(), this.p.verso, this.p.data).subscribe(response => {
-      const variable: DispAllResource = {
-        guideUsername: null,
-        idLinea: null,
-        orario: null,
-        nomeLinea: null,
-        idFermata: null,
-        nomeFermata: null,
-        isAck: null,
-        isConfirmed: null,
-        add: true,
-        delete: true,
-        ack: true
-      };
-      this.changeDisp.next(variable);
+      this.changeDisp.next(this.emptyDisp);
       this.changeTurno.next(null);
     }, (error) => {
       // TODO: errore aggiunta disponibilità
