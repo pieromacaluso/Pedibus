@@ -122,8 +122,8 @@ public class GestioneCorseService {
             try {
                 DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
                 return new DispTurnoResource(new DispAllResource(dispEntity,
-                        lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(),
-                        lineeService.getLineaEntityById(dispEntity.getIdLinea()).getNome()),
+                        lineeService.getFermataEntityById(dispEntity.getIdFermata()),
+                        lineeService.getLineaEntityById(dispEntity.getIdLinea())),
                         new TurnoResource(getTurnoEntity(turnoDTO)));
             } catch (DispNotFoundException e) {
             }
@@ -156,8 +156,8 @@ public class GestioneCorseService {
             DispEntity dispEntity = new DispEntity(principal.getUsername(), turnoEntity.getIdLinea(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
             dispRepository.save(dispEntity);
             return new DispAllResource(dispEntity,
-                    lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(),
-                    lineeService.getLineaEntityById(dispEntity.getIdLinea()).getNome());
+                    lineeService.getFermataEntityById(dispEntity.getIdFermata()),
+                    lineeService.getLineaEntityById(dispEntity.getIdLinea()));
         } else
             throw new IllegalArgumentException("Disponibilità già presente");
     }
@@ -188,8 +188,8 @@ public class GestioneCorseService {
         List<DispAllResource> dispRes = new ArrayList<>();
         for (DispEntity d : dispEntities) {
             DispAllResource dR = new DispAllResource(d,
-                    lineeService.getFermataEntityById(d.getIdFermata()).getName(),
-                    lineeService.getLineaEntityById(d.getIdLinea()).getNome());
+                    lineeService.getFermataEntityById(d.getIdFermata()),
+                    lineeService.getLineaEntityById(d.getIdLinea()));
             dispRes.add(dR);
         }
 
