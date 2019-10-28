@@ -121,7 +121,9 @@ public class GestioneCorseService {
             TurnoDTO turnoDTO = new TurnoDTO(idLinea, date, verso);
             try {
                 DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
-                return new DispTurnoResource(new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName()),
+                return new DispTurnoResource(new DispAllResource(dispEntity,
+                        lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(),
+                        lineeService.getLineaEntityById(dispEntity.getIdLinea()).getNome()),
                         new TurnoResource(getTurnoEntity(turnoDTO)));
             } catch (DispNotFoundException e) {
             }
@@ -153,7 +155,9 @@ public class GestioneCorseService {
 
             DispEntity dispEntity = new DispEntity(principal.getUsername(), turnoEntity.getIdLinea(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
             dispRepository.save(dispEntity);
-            return new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispDTO.getIdFermata()).getName());
+            return new DispAllResource(dispEntity,
+                    lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName(),
+                    lineeService.getLineaEntityById(dispEntity.getIdLinea()).getNome());
         } else
             throw new IllegalArgumentException("Disponibilità già presente");
     }
@@ -183,7 +187,9 @@ public class GestioneCorseService {
         List<DispEntity> dispEntities = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId());
         List<DispAllResource> dispRes = new ArrayList<>();
         for (DispEntity d : dispEntities) {
-            DispAllResource dR = new DispAllResource(d, lineeService.getFermataEntityById(d.getIdFermata()).getName());
+            DispAllResource dR = new DispAllResource(d,
+                    lineeService.getFermataEntityById(d.getIdFermata()).getName(),
+                    lineeService.getLineaEntityById(d.getIdLinea()).getNome());
             dispRes.add(dR);
         }
 
