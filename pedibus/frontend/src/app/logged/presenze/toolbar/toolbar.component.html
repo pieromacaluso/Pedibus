@@ -33,7 +33,7 @@
                      fxLayoutGap="3%"
                      fxLayoutAlign="center" fxLayoutAlign.xs="center">
       <!-- SELEZIONA LINEA -->
-      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
+      <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent" *ngIf="showLinea">
         <mat-label>Seleziona linea</mat-label>
         <mat-select *ngIf="linee" (selectionChange)="emitRequest()" [(ngModel)]="richiesta.linea">
           <mat-option *ngFor="let linea of linee" [value]="linea">

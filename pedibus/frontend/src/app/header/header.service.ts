@@ -14,7 +14,7 @@ export class HeaderService {
   menuAnnounced$ = this.menuSource.asObservable();
   private presenze = {icon: 'people', link: 'presenze', title: 'Presenze'};
   private schedule = {icon: 'schedule', link: 'disponibilita', title: 'Disponibilità'};
-  private notification = {icon: 'notification_important', link: 'comunicazioni', title: 'Comunicazioni'};
+  private notification = {icon: 'notification_important', link: 'notifiche', title: 'Comunicazioni'};
   private turni = {icon: 'verified_user', link: 'turni', title: 'Turni'};
   private signIn = {icon: 'vpn_key', link: 'sign-in', title: 'Sign In'};
   private signUp = {icon: 'person_add', link: 'sign-up', title: 'Sign Up'};
@@ -35,7 +35,7 @@ export class HeaderService {
       } else if (this.auth.getRoles().includes('ROLE_GUIDE')) {
         menu.push(this.presenze, this.schedule, this.notification);
       } else if (this.auth.getRoles().includes('ROLE_USER')) {
-        menu.push(this.presenze);
+        menu.push(this.presenze, this.notification);
       }
     } else {
       menu.push(this.signIn, this.signUp);

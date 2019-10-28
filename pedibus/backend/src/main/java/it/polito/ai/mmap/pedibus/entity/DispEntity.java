@@ -17,15 +17,16 @@ public class DispEntity {
     private ObjectId dispId;
 
     private String guideUsername;
+    private String idLinea;
     private Integer idFermata;
     private ObjectId turnoId;
     private Boolean isConfirmed;
     private Boolean isAck;
 
 
-    public DispEntity(String guideUsername,Integer idFermata, ObjectId turnoId)
-    {
+    public DispEntity(String guideUsername, String idLinea, Integer idFermata, ObjectId turnoId) {
         this.guideUsername = guideUsername;
+        this.idLinea = idLinea;
         this.idFermata = idFermata;
         this.turnoId = turnoId;
         isConfirmed = false;

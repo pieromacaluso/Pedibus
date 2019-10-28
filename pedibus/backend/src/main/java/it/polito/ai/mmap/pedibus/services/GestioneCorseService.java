@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.DispEntity;
+import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.DispNotFoundException;
@@ -76,7 +77,7 @@ public class GestioneCorseService {
      * @param guideUsername
      * @return
      */
-    private DispEntity getDispEntity(TurnoDTO turnoDTO, String guideUsername) {
+    private DispEntity getDispEntity(TurnoDTO turnoDTO, String guideUsername) throws DispNotFoundException {
         Optional<DispEntity> checkDisp = dispRepository.findByGuideUsernameAndTurnoId(guideUsername, getTurnoEntity(turnoDTO).getTurnoId());
         if (checkDisp.isPresent())
             return checkDisp.get();
@@ -85,39 +86,62 @@ public class GestioneCorseService {
     }
 
     /**
-     * Restituisce una dispTurnoResource a partire dal turno e dalla persona loggata
+     * Controlla che una GUIDE non debba essere in due posti in contemporanea e che quindi abbia una sola prenotazione per verso/data
      *
      * @param turnoDTO
      * @return
      */
-    public DispTurnoResource getDispTurnoResource(TurnoDTO turnoDTO) {
+    private Boolean idDispDuplicate(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        TurnoResource turnoResource = new TurnoResource(getTurnoEntity(turnoDTO));
-        DispAllResource disp;
 
-        try {
-            DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
-            disp = new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName());
-        } catch (DispNotFoundException e) {
-            disp = null;
+        List<String> listIdLinee = lineeService.getAllLinesIds();
+        for (String idLinea : listIdLinee) {
+            try {
+                getDispEntity(new TurnoDTO(idLinea, turnoDTO.getData(), turnoDTO.getVerso()), principal.getUsername());
+                return true;
+            } catch (DispNotFoundException e) {
+            }
         }
-        return new DispTurnoResource(disp, turnoResource);
+        return false;
+    }
 
+    /**
+     * Restituisce una dispTurnoResource a partire dal turno e dalla persona loggata
+     * Questa risorsa contiene lo stato di tutti i turni per quei parametri ed eventualmente la disponibilità
+     *
+     * @param date
+     * @param verso
+     * @return
+     */
+    public DispTurnoResource getDispTurnoResource(Date date, Boolean verso) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<String> listIdLinee = lineeService.getAllLinesIds();
+
+        for (String idLinea : listIdLinee) {
+            TurnoDTO turnoDTO = new TurnoDTO(idLinea, date, verso);
+            try {
+                DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
+                return new DispTurnoResource(new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispEntity.getIdFermata()).getName()),
+                        new TurnoResource(getTurnoEntity(turnoDTO)));
+            } catch (DispNotFoundException e) {
+            }
+        }
+        return null;
 
     }
 
     /**
-     * Salva la disponibilità, a patto che il turno sia aperto e la persona loggata ne abbia diritto
+     * Salva la disponibilità, a patto che:
+     * - il turno sia aperto
+     * - ruolo GUIDE //TODO
+     * - non si già presente una disp per lo stesso verso/data
      *
      * @param dispDTO
      */
     public DispAllResource addDisp(DispDTO dispDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        try {
-            getDispEntity(dispDTO.getTurnoDTO(), principal.getUsername());
-            throw new IllegalArgumentException("Disponibilità già presente");
-        } catch (DispNotFoundException e) {
+        if (!idDispDuplicate(dispDTO.getTurnoDTO())) {
             TurnoEntity turnoEntity = getTurnoEntity(dispDTO.getTurnoDTO());
 
             if (turnoEntity.getIsExpired())
@@ -127,10 +151,11 @@ public class GestioneCorseService {
             if (!this.userService.isGuide())
                 throw new PermissionDeniedException("Accesso negato, l'utente non è guida");
 
-            DispEntity dispEntity = new DispEntity(principal.getUsername(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
+            DispEntity dispEntity = new DispEntity(principal.getUsername(), turnoEntity.getIdLinea(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
             dispRepository.save(dispEntity);
             return new DispAllResource(dispEntity, lineeService.getFermataEntityById(dispDTO.getIdFermata()).getName());
-        }
+        } else
+            throw new IllegalArgumentException("Disponibilità già presente");
     }
 
     /**
@@ -157,12 +182,12 @@ public class GestioneCorseService {
     public TurnoDispResource getAllTurnoDisp(TurnoDTO turnoDTO) {
         List<DispEntity> dispEntities = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId());
         List<DispAllResource> dispRes = new ArrayList<>();
-        for (DispEntity d : dispEntities){
+        for (DispEntity d : dispEntities) {
             DispAllResource dR = new DispAllResource(d, lineeService.getFermataEntityById(d.getIdFermata()).getName());
             dispRes.add(dR);
         }
 
-        Map<String, List<DispAllResource>> dispResourceMap  = dispRes.stream()
+        Map<String, List<DispAllResource>> dispResourceMap = dispRes.stream()
                 .collect(groupingBy(DispAllResource::getNomeFermata));
 
         return new TurnoDispResource(new TurnoResource(getTurnoEntity(turnoDTO)), dispResourceMap);
@@ -232,5 +257,13 @@ public class GestioneCorseService {
 
     }
 
-
+    /**
+     * Restituisce lo stato di un turno a partire dalla terna contenuta nel dto
+     *
+     * @param turnoDTO
+     * @return
+     */
+    public TurnoResource getTurnoState(TurnoDTO turnoDTO) {
+        return new TurnoResource(getTurnoEntity(turnoDTO));
+    }
 }

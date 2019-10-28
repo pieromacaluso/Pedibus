@@ -19,10 +19,18 @@ export class ApiTurniService {
   }
 
   getTurno(idLinea: string, verso: string, data: Date) {
-    // @PostMapping("/disp/{idLinea}/{verso}/{data}")
+    // @GetMapping("/turno/disp/{idLinea}/{verso}/{data}")
     const idVerso = ApiTurniService.versoToInt(verso);
     return this.httpClient
       .get<TurnoDispResource>(this.baseURL + 'turno/disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd'));
+  }
+
+  getTurnoState(idLinea: string, verso: string, data: Date) {
+    // @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
+    const idVerso = ApiTurniService.versoToInt(verso);
+    return this.httpClient
+      .get<TurnoResource>(this.baseURL + 'turno/state/' + idLinea + '/' + idVerso + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd'));
   }
 

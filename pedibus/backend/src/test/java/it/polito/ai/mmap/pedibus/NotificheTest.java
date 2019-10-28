@@ -1,16 +1,13 @@
 package it.polito.ai.mmap.pedibus;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.*;
+import it.polito.ai.mmap.pedibus.objectDTO.NotificaAckDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
-import it.polito.ai.mmap.pedibus.resources.DispAllResource;
-import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
+import it.polito.ai.mmap.pedibus.resources.NotificaResource;
 import it.polito.ai.mmap.pedibus.services.LineeService;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,8 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,28 +30,21 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/*
- * Le Operazioni fatte devono avvenire sul turno di default per essere in grado di ripristinare lo stato precedente
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class DocTest {
+public class NotificheTest {
     private Logger logger = LoggerFactory.getLogger(Esercitazione2ApplicationTests.class);
 
     @Value("${superadmin.email}")
@@ -96,6 +84,9 @@ public class DocTest {
     TurnoRepository turnoRepository;
 
     @Autowired
+    NotificaBaseRepository notificaBaseRepository;
+
+    @Autowired
     LineeService lineeService;
 
     @Autowired
@@ -104,29 +95,23 @@ public class DocTest {
     Map<Integer, ChildEntity> childMap = new HashMap<>();
     Map<String, UserDTO> userDTOMap = new HashMap<>();
     Map<String, UserEntity> userEntityMap = new HashMap<>();
+    Map<String,ArrayList<NotificaBaseEntity>> notificheBaseEntityMap = new HashMap<>();        //Per ogni email(Utente), una lista delle sue notifiche Base
+    Map<String,ArrayList<NotificaAckDTO>> notificheAckDTOMap= new HashMap<>();          //Per ogni email(Utente), una lista delle sue notifiche Ack
     RoleEntity roleUser;
     RoleEntity roleAdmin;
     RoleEntity roleGuide;
 
-
-    // Turno di default su cui lavoriamo, per poterlo riportare allo stato pre test
-    int daysDef = 100;
     LineaEntity lineaDef;
-    Boolean versoDef = true;
-    Boolean isDefTurnoOpen;
 
     @PostConstruct
     public void postInit() {
+        //logger.info("PostInit init...");
         lineaDef = lineaRepository.findAll().get(0);
-        Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(daysDef, ChronoUnit.DAYS).toString()), versoDef);
-        if (checkTurno.isPresent())
-            isDefTurnoOpen = checkTurno.get().getIsOpen();
-        else
-            isDefTurnoOpen = true;
 
         roleUser = roleRepository.findById("ROLE_USER").get();
         roleAdmin = roleRepository.findById("ROLE_ADMIN").get();
         roleGuide = roleRepository.findById("ROLE_GUIDE").get();
+
         childMap.put(0, new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi"));
         childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
         childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
@@ -139,10 +124,16 @@ public class DocTest {
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
         userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
+        //logger.info("PostInit done");
+
+
+
+
     }
 
     @Before
     public void setUpMethod() {
+        //logger.info("setUpMethod init...");
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -157,126 +148,111 @@ public class DocTest {
                 lineeService.addAdminLine(userEntity.getUsername(), lineaDef.getId());
             userRepository.save(userEntity);
         });
+        //Notifiche Base
+            //user1 //todo cxonvertire salvataggio mappa come per user
+        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg1",false));
+        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg2",true));
+        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg3",false));
+            //user2
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg1",false));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg2",true));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg3",false));
+            //user3
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg1",false));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg2",true));
+        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg3",false));
+
+        //logger.info("setUpMethod done.");
     }
 
     @After
     public void tearDownMethod() {
-        TurnoEntity turno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(daysDef, ChronoUnit.DAYS).toString()), versoDef).get();
-        turno.setIsOpen(isDefTurnoOpen);
-        turnoRepository.save(turno);
-
+        //logger.info("tearDownMethod init...");
         userEntityMap.values().forEach(userEntity -> {
-            dispRepository.deleteAllByGuideUsername(userEntity.getUsername());
             if (userEntity.getRoleList().contains(roleAdmin))
                 lineeService.delAdminLine(userEntity.getUsername(), lineaDef.getId());
+            List<NotificaBaseEntity> notificaBaseEntities=getAllNotificationBase(userEntity.getUsername());
+            for(NotificaBaseEntity n:notificaBaseEntities){
+                notificaBaseRepository.delete(n);
+            }
             userRepository.delete(userEntity);
         });
+
+        //logger.info("tearDownMethod done.");
     }
 
+    private List<NotificaBaseEntity> getAllNotificationBase(String user) {
+        return notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).collect(Collectors.toList());
+    }
 
     @Test
-    public void getLines() throws Exception {
+    public void deleteNotifica() throws Exception {
+        logger.info("Test deleteNotifica Base...");
+        String user="testGenitore@test.it";
+        //autenticazione
+        String token=loginAsGenitore();
+        //ricerca idnotifica della notifica da eliminare, la prima non letta
+        String idNotificaToDel=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).map(NotificaBaseEntity::getIdNotifica).findFirst().get();
 
-        String token = loginAsNonnoAdmin(lineaDef.getId());
+        //legge dal db tutte le notifiche non lette di quell utente e le mappa come notificaResource
+        List<NotificaResource> expectedResult=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).filter(notificaBaseEntity -> !notificaBaseEntity.getIdNotifica().equals(idNotificaToDel)).map(notificaBaseEntity -> {
+            NotificaResource notificaResource=new NotificaResource(notificaBaseEntity.getIdNotifica(),notificaBaseEntity.getMsg());
+            return notificaResource;
+        }).collect(Collectors.toList());
 
-        List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/lines")
+        mockMvc.perform(delete("/notifiche/{idNotifica}",idNotificaToDel)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/notifiche/{username}",user)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
-                .andDo(document("get-lines",
+                .andDo(document("delete-notifiche-base",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
+
+        logger.info("deleteNotifica Base done.");
+        //todo test notificaAck
     }
 
     @Test
-    public void postDisp() throws Exception {
+    public void getNotifiche() throws Exception {
+        String user="testGenitore@test.it";
+        logger.info("Test getNotifiche base user: "+user+" ...");
+        //autenticazione
+        String token=loginAsGenitore();
+        //legge dal db tutte le notifiche non lette di quell utente e le mappa come notificaResource
+        List<NotificaResource> expectedResult=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).map(notificaBaseEntity -> {
+                NotificaResource notificaResource=new NotificaResource(notificaBaseEntity.getIdNotifica(),notificaBaseEntity.getMsg());
+                return notificaResource;
+        }).collect(Collectors.toList());
+        String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        String token = loginAsNonnoAdmin(lineaDef.getId());
-
-        mockMvc.perform(post("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
-                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(lineaDef.getAndata().get(0)))
+        mockMvc.perform(get("/notifiche/{username}",user)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andDo(document("post-disp",
+                .andExpect(content().json(expectedJson))
+                .andDo(document("get-notifiche-base",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
-    }
-
-    @Test
-    public void deleteDisp() throws Exception {
-        String token = loginAsNonnoAdmin(lineaDef.getId());
-
-        postDisp();
-        mockMvc.perform(delete("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andDo(document("delete-disp",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
+        logger.info("test1 done.");
     }
 
 
-    @Test
-    public void getTurnoDisp() throws Exception {
 
-        String token = loginAsNonnoAdmin(lineaDef.getId());
-        postDisp();
-        getTurnoDispMethod(lineaDef, token);
 
+    private String loginAsGenitore() throws Exception {
+        UserDTO user = userDTOMap.get("testGenitore");
+
+        String json = objectMapper.writeValueAsString(user);
+        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
+        return node.get("token").asText();
     }
-
-    @Test
-    public void putTurno() throws Exception {
-        String token = loginAsNonnoAdmin(lineaDef.getId());
-        mockMvc.perform(put("/turno/state/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(false)))
-                .andExpect(status().isOk())
-                .andDo(document("put-turno",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
-    }
-
-
-    @Test
-    public void postTurnoDisp() throws Exception {
-        String token = loginAsNonnoAdmin(lineaDef.getId());
-
-        //crea una disponibilità
-        postDisp();
-
-        //chiudi il turno
-        putTurno();
-
-        //conferma la disponibilità
-        TurnoDispResource turnoDispResource = getTurnoDispMethod(lineaDef, token);
-        List<DispAllResource> dispList = turnoDispResource.getListDisp().values().stream().flatMap(List::stream).collect(Collectors.toList());
-        dispList.forEach(dispAllResource -> dispAllResource.setIsConfirmed(true));
-
-        mockMvc.perform(post("/turno/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dispList)))
-                .andExpect(status().isOk())
-                .andDo(document("post-turno-disp",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
-    }
-
-    public TurnoDispResource getTurnoDispMethod(LineaEntity lineaEntity, String token) throws Exception {
-        MvcResult result = mockMvc.perform(get("/turno/disp/{idLinea}/{verso}/{data}", lineaEntity.getId(), true, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andDo(document("get-turno-disp",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())))
-                .andReturn();
-        return objectMapper.readValue(result.getResponse().getContentAsString(), TurnoDispResource.class);
-
-    }
-
 
     private String loginAsNonnoAdmin(String idLinea) throws Exception {
         UserDTO user = userDTOMap.get("testNonno");
@@ -287,20 +263,4 @@ public class DocTest {
         JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
         return node.get("token").asText();
     }
-
-
-    private String loginAsSystemAdmin() throws Exception {
-
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        return node.get("token").asText();
-    }
-
-
-
 }

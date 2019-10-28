@@ -40,7 +40,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             ChildNotFoundException.class,
             UsernameNotFoundException.class,
             DispNotFoundException.class,
-            DispNotValidException.class})
+            DispNotValidException.class,
+            NotificaNotFoundException.class,
+            UserNotFoundException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())

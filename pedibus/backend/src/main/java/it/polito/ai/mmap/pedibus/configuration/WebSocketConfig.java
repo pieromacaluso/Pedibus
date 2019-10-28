@@ -35,6 +35,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/handled","/reservation");
+        config.enableSimpleBroker("/handled","/reservation","/disponibilta","/turno-aperto","/turno-chiuso","/turno confermato","/reminder-turno");
     }
 }

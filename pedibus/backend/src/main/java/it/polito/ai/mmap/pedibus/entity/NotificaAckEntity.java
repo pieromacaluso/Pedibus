@@ -11,10 +11,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "notificack")
 public class NotificaAckEntity {
     @Id
-    private ObjectId idNotifica;
+    private String idNotifica;
     private ObjectId dispID;
     private String usernameDestinatario;
     private String msg;
     private Boolean isTouched;
     private Boolean isAck;
+
+    public NotificaAckEntity(ObjectId dispID,String user,String msg,Boolean isTouched, Boolean isAck){
+        idNotifica= new ObjectId().toString();
+        this.dispID=dispID;
+        this.usernameDestinatario=user;
+        this.msg=msg;
+        this.isTouched=isTouched;
+        this.isAck=isAck;
+    }
 }

@@ -6,6 +6,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
 import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
+import it.polito.ai.mmap.pedibus.resources.TurnoResource;
 import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +25,11 @@ public class GestioneCorseController {
     GestioneCorseService gestioneCorseService;
 
     /**
-     * Permette a una guide/admin di una linea di recuperare la propria disponibilità e le info relative al turno
+     * Permette a una guide/admin di una linea di recuperare la propria disponibilità e le info relative ai turni
      */
-    @GetMapping("/disp/{idLinea}/{verso}/{data}")
-    public DispTurnoResource getDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        return gestioneCorseService.getDispTurnoResource(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+    @GetMapping("/disp/{verso}/{data}")
+    public DispTurnoResource getDisp(@PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
+        return gestioneCorseService.getDispTurnoResource(MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso);
     }
 
     /**
@@ -60,7 +61,6 @@ public class GestioneCorseController {
     @GetMapping("/turno/disp/{idLinea}/{verso}/{data}")
     public TurnoDispResource getAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
         return gestioneCorseService.getAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
-
     }
 
     /**
@@ -75,7 +75,6 @@ public class GestioneCorseController {
     @PostMapping("/turno/disp/{idLinea}/{verso}/{data}")
     public void setAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody List<DispAllResource> dispResourceList) throws Exception {
         gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), dispResourceList);
-
     }
 
     /**
@@ -91,6 +90,18 @@ public class GestioneCorseController {
     }
 
     /**
+     * Permette all'admin di una linea di recuperare lo stato di un turno
+     *
+     * @param idLinea
+     * @param verso
+     * @param data
+     */
+    @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
+    public TurnoResource getTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
+        return gestioneCorseService.getTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+    }
+
+    /**
      * Permette all'admin di una linea di gestire lo stato di un turno
      *
      * @param idLinea
@@ -102,6 +113,5 @@ public class GestioneCorseController {
     public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
         gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), isOpen);
     }
-
 
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
@@ -10,7 +10,7 @@ import {concat, defer, EMPTY, forkJoin, Observable, Subject, timer} from 'rxjs';
 import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, mergeMap, retry, tap} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
 import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
-import {TurnoDispResource, TurnoResource} from '../../api-turni.service';
+import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
 
 @Component({
   selector: 'app-aggiunta-disp',
@@ -19,18 +19,19 @@ import {TurnoDispResource, TurnoResource} from '../../api-turni.service';
 })
 export class AggiuntaDispComponent implements OnInit {
 
-  idFermata: string;
+  @Input() linee: string[];
   private loading;
   private p: PrenotazioneRequest;
   private all$: Observable<any[]>;
   private all: any;
   private linea: StopsByLine;
-  private disp: DispAllResource;
+  disp: DispAllResource;
   private turno: TurnoResource;
   private changeDisp = new Subject<DispAllResource>();
   private changeTurno = new Subject<TurnoResource>();
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
+              private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
 
@@ -39,15 +40,13 @@ export class AggiuntaDispComponent implements OnInit {
       tap(() => this.loading = true),
       mergeMap(pren => {
         this.p = pren;
-        const stops = this.apiService.getStopsByLine(pren.linea);
-        const disp = this.apiDispService.getDisp(pren.linea, pren.verso, pren.data);
-        return forkJoin([stops, disp]);
+        return this.apiDispService.getDisp(pren.verso, pren.data);
       }),
       tap(() => this.loading = false),
     ).subscribe(
       res => {
-        this.linea = res[0];
-        if (!res[1].disp) {
+        console.log(res);
+        if (!res) {
           const variable: DispAllResource = {
             guideUsername: null,
             idFermata: null,
@@ -59,11 +58,11 @@ export class AggiuntaDispComponent implements OnInit {
             ack: false
           };
           this.changeDisp.next(variable);
+          this.changeTurno.next(null);
         } else {
-          this.changeDisp.next(res[1].disp);
+          this.changeDisp.next(res.disp);
+          this.changeTurno.next(res.turno);
         }
-        this.changeTurno.next(res[1].turno);
-
       },
       err => {
         // TODO: errore
@@ -73,11 +72,13 @@ export class AggiuntaDispComponent implements OnInit {
     // change Disp
     this.changeDisp.asObservable().subscribe(
       res => {
-        console.log('disp', res);
-        this.disp = res;
-        this.disp.add = false;
-        this.disp.ack = false;
-        this.disp.delete = false;
+        if (res) {
+          console.log('disp', res);
+          this.disp = res;
+          this.disp.add = false;
+          this.disp.ack = false;
+          this.disp.delete = false;
+        }
       }
     );
 
@@ -133,6 +134,19 @@ export class AggiuntaDispComponent implements OnInit {
     }, (error) => {
       // TODO: errore aggiunta disponibilità
     });
+  }
+
+  getTurno(value: any) {
+    this.apiService.getStopsByLine(value).subscribe(
+      res => {
+        this.linea = res;
+      }
+    );
+    this.apiTurniService.getTurnoState(value, this.p.verso, this.p.data).subscribe(
+      res => {
+        this.changeTurno.next(res);
+      }
+    );
   }
 }
 
