@@ -93,6 +93,62 @@ export class ElencoDispComponent implements OnInit {
       const res = JSON.parse(message.body);
       this.changeTurno.next(res);
     });
+
+    // WebSocket Disponibilità add
+    this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      mergeMap(pren => {
+        return this.rxStompService.watch('/dispws-add' + '/' + this.pathSub(pren));
+      }),
+      tap(() => this.loading = false),
+    ).subscribe(message => {
+        const res = JSON.parse(message.body);
+        if (!this.listDisp[res.nomeFermata]) {
+          this.listDisp[res.nomeFermata] = [];
+        }
+        this.listDisp[res.nomeFermata].push(res);
+      }
+    );
+
+    // WebSocket Disponibilità deleted
+    this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      mergeMap(pren => {
+        return this.rxStompService.watch('/dispws-del' + '/' + this.pathSub(pren));
+      }),
+      tap(() => this.loading = false),
+    ).subscribe(message => {
+        const res = JSON.parse(message.body);
+        this.listDisp[res.nomeFermata].forEach(
+          (disp, iDisp, disps) => {
+            if (disp.guideUsername === res.guideUsername && iDisp > -1) {
+              this.listDisp[res.nomeFermata].splice(iDisp, 1);
+            }
+          }
+        );
+      }
+    );
+
+    // WebSocket Disponibilità status
+    this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      mergeMap(pren => {
+        this.p = pren;
+        return this.rxStompService.watch('/dispws-status' + '/' + this.pathSub(pren));
+      }),
+      tap(() => this.loading = false),
+    ).subscribe(message => {
+        const res = JSON.parse(message.body);
+        this.listDisp[res.nomeFermata].forEach(
+          (disp, iDisp, disps) => {
+            if (disp.guideUsername === res.guideUsername) {
+              console.log('change', this.listDisp[res.nomeFermata][iDisp], res);
+              this.listDisp[res.nomeFermata][iDisp] = res;
+            }
+          }
+        );
+      }
+    );
   }
 
   showLoading() {
