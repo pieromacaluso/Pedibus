@@ -53,9 +53,10 @@ public class GestioneCorseController {
      */
     @DeleteMapping("/disp/{idLinea}/{verso}/{data}")
     public void deleteDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        DispEntity deleted = gestioneCorseService.deleteDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
-
+        DispAllResource deleted = gestioneCorseService.deleteDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
         simpMessagingTemplate.convertAndSend("/dispws/" + deleted.getGuideUsername() + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
+        simpMessagingTemplate.convertAndSend("/dispws-del/"  +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), deleted);
+
     }
 
     /**
@@ -87,6 +88,7 @@ public class GestioneCorseController {
         for (DispAllResource d : dispResourceList){
             DispStateResource state = new DispStateResource(d);
             simpMessagingTemplate.convertAndSend("/dispws-status/" + d.getGuideUsername() + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
+            simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), d);
         }
     }
 
@@ -99,9 +101,11 @@ public class GestioneCorseController {
      */
     @PostMapping("/turno/disp/ack/{idLinea}/{verso}/{data}")
     public void ackDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
-        DispEntity d = gestioneCorseService.ackDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
+        DispAllResource d = gestioneCorseService.ackDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
         DispStateResource state = new DispStateResource(d);
         simpMessagingTemplate.convertAndSend("/dispws-status/" + d.getGuideUsername() + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
+        simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), d);
+
 
     }
 

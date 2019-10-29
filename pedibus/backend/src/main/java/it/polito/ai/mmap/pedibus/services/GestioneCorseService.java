@@ -169,13 +169,16 @@ public class GestioneCorseService {
      *
      * @param turnoDTO
      */
-    public DispEntity deleteDisp(TurnoDTO turnoDTO) {
+    public DispAllResource deleteDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
+        DispAllResource d = new DispAllResource(dispEntity,
+                lineeService.getFermataEntityById(dispEntity.getIdFermata()),
+                lineeService.getLineaEntityById(dispEntity.getIdLinea()));
         if (getTurnoEntity(turnoDTO).getIsOpen() && !getTurnoEntity(turnoDTO).getIsExpired()) {
             dispRepository.delete(dispEntity);
-            return dispEntity;
+            return d;
         }
         else
             throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
@@ -250,13 +253,15 @@ public class GestioneCorseService {
      *
      * @param turnoDTO
      */
-    public DispEntity ackDisp(TurnoDTO turnoDTO) {
+    public DispAllResource ackDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
         if (dispEntity.getIsConfirmed()) {
             dispEntity.setIsAck(true);
             dispRepository.save(dispEntity);
-            return dispEntity;
+            return new DispAllResource(dispEntity,
+                    lineeService.getFermataEntityById(dispEntity.getIdFermata()),
+                    lineeService.getLineaEntityById(dispEntity.getIdLinea()));
         } else {
             //todo else questa guida non era stata confermata per quel turno, quindi non dovrebbe mandare l'ack: ignoriamo o segnaliamo errore ?
             throw new IllegalArgumentException("La guida non ha la facoltà di confermare la ricezione.");
