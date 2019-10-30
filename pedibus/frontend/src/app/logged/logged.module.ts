@@ -7,7 +7,7 @@ import {
   MatDatepickerModule, MatDialogModule,
   MatFormFieldModule,
   MatIconModule,
-  MatInputModule,
+  MatInputModule, MatListModule,
   MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule,
   MatSelectModule, MatSlideToggleModule
 } from '@angular/material';
@@ -58,7 +58,8 @@ import { NotificaComponent } from './notifiche/notifica/notifica.component';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
     MatRadioModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatListModule
   ],
   exports: [],
   entryComponents: [AdminBookDialogComponent, DeleteDialogComponent]

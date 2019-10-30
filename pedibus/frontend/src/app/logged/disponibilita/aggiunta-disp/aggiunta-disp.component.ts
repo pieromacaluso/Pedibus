@@ -7,7 +7,7 @@ import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {Alunno, PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, timer} from 'rxjs';
-import {defaultIfEmpty, delay, distinctUntilChanged, finalize, flatMap, map, mergeMap, retry, switchMap, tap} from 'rxjs/operators';
+import {defaultIfEmpty, delay, distinctUntilChanged, finalize, first, flatMap, map, mergeMap, retry, switchMap, tap} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
 import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
 import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
@@ -29,6 +29,8 @@ export class AggiuntaDispComponent implements OnInit {
   private turno: TurnoResource;
   private changeDisp = new Subject<DispAllResource>();
   private changeTurno = new Subject<TurnoResource>();
+  private changeLinea = new Subject<string>();
+
   emptyDisp: DispAllResource = {
     guideUsername: null,
     orario: null,
@@ -51,9 +53,10 @@ export class AggiuntaDispComponent implements OnInit {
     // Main Observable
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
-      mergeMap(pren => {
+      switchMap(pren => {
         this.p = pren;
         return this.apiDispService.getDisp(pren.verso, pren.data);
+
       }),
       tap(() => this.loading = false),
     ).subscribe(
@@ -65,6 +68,8 @@ export class AggiuntaDispComponent implements OnInit {
         } else {
           this.changeDisp.next(res.disp);
           this.changeTurno.next(res.turno);
+          this.p.linea = res.disp.idLinea;
+          this.changeLinea.next(res.disp.idLinea);
         }
       },
       err => {
@@ -92,13 +97,10 @@ export class AggiuntaDispComponent implements OnInit {
       }
     );
     // WebSocket Disponibilità creazione/eliminazione
-    this.syncService.prenotazioneObs$.pipe(
-      tap(() => this.loading = true),
-      mergeMap(pren => {
-        this.p = pren;
-        return this.rxStompService.watch('/dispws' + '/' + this.authService.getUsername() + '/' + this.pathSub(pren));
+    this.changeLinea.asObservable().pipe(
+      switchMap(linea => {
+        return this.rxStompService.watch('/dispws' + '/' + this.authService.getUsername() + this.pathSub(this.p));
       }),
-      tap(() => this.loading = false),
     ).subscribe(message => {
         const res = JSON.parse(message.body);
         console.log('DISP', res);
@@ -113,13 +115,10 @@ export class AggiuntaDispComponent implements OnInit {
     );
 
     // WebSocket Disponibilità status
-    this.syncService.prenotazioneObs$.pipe(
-      tap(() => this.loading = true),
-      mergeMap(pren => {
-        this.p = pren;
-        return this.rxStompService.watch('/dispws-status' + '/' + this.authService.getUsername() + '/' + this.pathSub(pren));
+    this.changeLinea.asObservable().pipe(
+      switchMap(linea => {
+        return this.rxStompService.watch('/dispws-status' + '/' + this.authService.getUsername() + this.pathSub(this.p));
       }),
-      tap(() => this.loading = false),
     ).subscribe(message => {
         const res = JSON.parse(message.body);
         console.log('DISP', res);
@@ -130,18 +129,41 @@ export class AggiuntaDispComponent implements OnInit {
     );
 
     // WebSocket Turno cambio stato
-    this.syncService.prenotazioneObs$.pipe(
-      tap(() => this.loading = true),
+    this.changeLinea.asObservable().pipe(
       switchMap(
-        pren => {
-          return this.rxStompService.watch('/turnows' + this.pathSub(pren));
+        linea => {
+          return this.rxStompService.watch('/turnows' + this.pathSub(this.p));
         }
       ),
-      tap(() => this.loading = false)
     ).subscribe(message => {
       const res = JSON.parse(message.body);
       this.changeTurno.next(res);
     });
+
+    this.changeLinea.asObservable().pipe(
+      mergeMap( linea => {
+          return this.apiService.getStopsByLine(linea).pipe(first());
+        }
+      )
+    ).subscribe(
+      res => {
+        this.linea = res;
+        console.log('linea', this.linea);
+      }
+    );
+
+    this.changeLinea.asObservable().pipe(
+      mergeMap( linea => {
+          return this.apiTurniService.getTurnoState(linea, this.p.verso, this.p.data).pipe(first())
+        }
+      )
+    ).subscribe(
+      res => {
+        console.log('turno', res);
+        this.changeTurno.next(res);
+
+      }
+    );
   }
 
   ngOnInit() {
@@ -181,16 +203,9 @@ export class AggiuntaDispComponent implements OnInit {
   }
 
   getTurno(value: any) {
-    this.apiService.getStopsByLine(value).subscribe(
-      res => {
-        this.linea = res;
-      }
-    );
-    this.apiTurniService.getTurnoState(value, this.p.verso, this.p.data).subscribe(
-      res => {
-        this.changeTurno.next(res);
-      }
-    );
+
+    this.p.linea = value;
+    this.changeLinea.next(value);
   }
 
   private pathSub(prenotazione: PrenotazioneRequest) {

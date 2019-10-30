@@ -52,15 +52,14 @@ export class AuthService {
     localStorage.setItem('id_token', authResult.token);
     localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
-    myRxStompConfig.connectHeaders = {
-      Auth: authResult.token
-    };
+    myRxStompConfig.connectHeaders.Authentication = localStorage.getItem('id_token');
   }
 
   logout() {
     localStorage.removeItem('id_token');
     localStorage.removeItem('roles');
     localStorage.removeItem('expires_at');
+    myRxStompConfig.connectHeaders.Authentication = '';
   }
 
   isAdmin() {

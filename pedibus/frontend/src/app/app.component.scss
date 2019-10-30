@@ -217,3 +217,21 @@ h1 {
   font-weight: bolder;
   color: mat-color($pedibus-theme-primary)
 }
+
+.status {
+  font-weight: bolder;
+}
+.status-ok {
+  font-weight: bolder;
+  color: green !important;
+}
+
+.status-warn {
+  font-weight: bolder;
+  color: orange !important;
+}
+
+.status-nope {
+  font-weight: bolder;
+  color: darkred !important;
+}

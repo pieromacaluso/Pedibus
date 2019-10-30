@@ -3,10 +3,10 @@ import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
 import {ApiDispService, DispAllResource} from '../../api-disp.service';
 import {AuthService} from '../../../registration/auth.service';
-import {MatDialog, MatSnackBar} from '@angular/material';
+import {MatDialog, MatListOption, MatSelectionList, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
-import {finalize, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {debounceTime, finalize, first, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {defer, forkJoin, Observable, Subject} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../../api-turni.service';
@@ -31,6 +31,8 @@ export class ElencoDispComponent implements OnInit {
   linea: StopsByLine;
   private turno: TurnoResource;
   private listDisp: MapDisp;
+  selectedDisp: any;
+  cross: any = '../assets/svg/cross.svg';
 
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
@@ -38,8 +40,9 @@ export class ElencoDispComponent implements OnInit {
               private rxStompService: RxStompService, private datePipe: DatePipe) {
 
     this.syncService.prenotazioneObs$.pipe(
+      debounceTime(1000),
       tap(() => this.loading = true),
-      mergeMap(
+      switchMap(
         pren => {
           this.p = pren;
           const stops = this.apiService.getStopsByLine(pren.linea);
@@ -97,7 +100,7 @@ export class ElencoDispComponent implements OnInit {
     // WebSocket Disponibilità add
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
-      mergeMap(pren => {
+      switchMap(pren => {
         return this.rxStompService.watch('/dispws-add' + '/' + this.pathSub(pren));
       }),
       tap(() => this.loading = false),
@@ -113,7 +116,7 @@ export class ElencoDispComponent implements OnInit {
     // WebSocket Disponibilità deleted
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
-      mergeMap(pren => {
+      switchMap(pren => {
         return this.rxStompService.watch('/dispws-del' + '/' + this.pathSub(pren));
       }),
       tap(() => this.loading = false),
@@ -132,7 +135,7 @@ export class ElencoDispComponent implements OnInit {
     // WebSocket Disponibilità status
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
-      mergeMap(pren => {
+      switchMap(pren => {
         this.p = pren;
         return this.rxStompService.watch('/dispws-status' + '/' + this.pathSub(pren));
       }),
@@ -160,7 +163,7 @@ export class ElencoDispComponent implements OnInit {
 
   openTurno(turno: TurnoResource) {
     this.turno.opening = true;
-    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, true).subscribe(response => {
+    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, true).pipe(first()).subscribe(response => {
       turno.isOpen = true;
       this.changeTurno.next(turno);
     }, (error) => {
@@ -170,7 +173,7 @@ export class ElencoDispComponent implements OnInit {
 
   closeTurno(turno: TurnoResource) {
     this.turno.closing = true;
-    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, false).subscribe(response => {
+    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, false).pipe(first()).subscribe(response => {
       turno.isOpen = false;
       this.changeTurno.next(this.turno);
     }, (error) => {
@@ -181,7 +184,7 @@ export class ElencoDispComponent implements OnInit {
   statusTurno(checked: boolean) {
     console.log(this.turno);
     this.turno.opening = true;
-    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, checked).subscribe(response => {
+    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, checked).pipe(first()).subscribe(response => {
       this.turno.isOpen = checked;
       this.changeTurno.next(this.turno);
     }, (error) => {
@@ -189,17 +192,12 @@ export class ElencoDispComponent implements OnInit {
     });
   }
 
-  confermaDisp(listDisp: MapDisp) {
-    this.loading = true;
-    const resArray: DispAllResource[] = [];
-    for (const stop of (this.p.verso === 'Andata' ? this.linea.andata : this.linea.ritorno)) {
-      if (this.listDisp[stop.nome]) {
-        for (const disp of this.listDisp[stop.nome]) {
-          resArray.push(disp);
-        }
-      }
-    }
-    this.apiTurniService.confirmDisp(this.p.linea, this.p.verso, this.p.data, resArray).subscribe(response => {
+  confermaDisp(l: DispAllResource) {
+    l.isConfirmed = true;
+    const res = [];
+    res.push(l);
+    console.log(l);
+    this.apiTurniService.confirmDisp(this.p.linea, this.p.verso, this.p.data, res).pipe(first()).subscribe(response => {
       this.changeDisp.next(this.listDisp);
     }, (error) => {
       // TODO: errore

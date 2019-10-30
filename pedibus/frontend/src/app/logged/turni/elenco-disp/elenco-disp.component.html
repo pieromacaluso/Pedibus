@@ -5,7 +5,7 @@
     mode="indeterminate"
   ></mat-progress-bar>
   <div id="prenotazione" *ngIf="this.linea else loadingDiv">
-    <div *ngIf="!showLoading()">
+    <div *ngIf="!showLoading() else loadingDiv">
       <mat-card-header fxLayout="row" fxLayout.lt-sm="column">
         <div><h1>Gestione Turni</h1></div>
         <div class="no-stops header-button">
@@ -19,43 +19,74 @@
           </mat-slide-toggle>
         </div>
       </mat-card-header>
-      <div class="no-stops" *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)">
-        {{stop.orario}} - {{stop.nome}}
-        <div class="no-stops" *ngIf="this.listDisp[stop.nome] && this.listDisp[stop.nome].length > 0 else empty">
-          <div class="no-stops" *ngFor="let disp of this.listDisp[stop.nome]">
-            <div id="guideUsername">{{disp.guideUsername}}</div>
-            <span *ngIf="turno.isOpen else notOpen">
-              <div id="isConfirmed">Conferma:
-                <span class="status">{{disp.isConfirmed}}</span>
-              </div>
-              <div id="isAck">Conferma Ricevuto:
-                <span class="status">{{disp.isAck}}</span>
-              </div>
-            </span>
-            <ng-template #notOpen>
-              <span>
-                <mat-slide-toggle #toggle
-                                  class="example-margin"
-                                  color="accent"
-                                  [disabled]="this.turno.isExpired"
-                                  (change)="disp.isConfirmed = toggle.checked"
-                                  [checked]="disp.isConfirmed">
-                  {{disp.isConfirmed ? "Confermato" : "Non Confermato"}}
-                </mat-slide-toggle>
-              </span>
-            </ng-template>
 
+      <div *ngIf="turno.isOpen else notOpen">
+        <div class="no-stops" *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)">
+          <div fxLayout="row">
+            <mat-card-header>
+              <mat-card-title class="stop-clock">{{stop.orario}}</mat-card-title>
+            </mat-card-header>
+            <img class="cross" [src]="cross" alt="Bus Stop"/>
+            <mat-card-header>
+              <mat-card-title class="stop-title">{{stop.nome}}</mat-card-title>
+            </mat-card-header>
           </div>
+          <div ngClass=" prenotazioni no-stops" ngClass.lt-sm="prenotazioni-mobile" *ngIf="this.listDisp[stop.nome] && this.listDisp[stop.nome].length > 0 else empty">
+            <mat-list>
+              <mat-list-item class="status" *ngFor="let disp of this.listDisp[stop.nome]">
+                {{disp.guideUsername}}
+              </mat-list-item>
+            </mat-list>
+          </div>
+          <ng-template #empty>
+            <div ngClass=" prenotazioni no-stops" ngClass.lt-sm="prenotazioni-mobile">
+              Non sono ancora presenti disponibilità nel turno selezionato.
+            </div>
+          </ng-template>
         </div>
       </div>
-      <ng-template #empty>
-        <div class="no-stops">
-          Non sono ancora presenti disponibilità nel turno selezionato.
+
+      <ng-template #notOpen>
+        <div class="no-stops" *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)">
+          <div fxLayout="row">
+            <mat-card-header>
+              <mat-card-title class="stop-clock">{{stop.orario}}</mat-card-title>
+            </mat-card-header>
+            <img class="cross" [src]="cross" alt="Bus Stop"/>
+            <mat-card-header>
+              <mat-card-title class="stop-title">{{stop.nome}}</mat-card-title>
+            </mat-card-header>
+          </div>
+          <div ngClass=" prenotazioni no-stops" ngClass.lt-sm="prenotazioni-mobile" *ngIf="this.listDisp[stop.nome] && this.listDisp[stop.nome].length > 0 else empty">
+            <mat-list #disps>
+              <mat-list-item *ngFor="let disp of this.listDisp[stop.nome]">
+                <mat-icon matListIcon>perm_identity</mat-icon>
+                <div class="status">{{disp.guideUsername}}
+                  <button (click)="confermaDisp(disp)" *ngIf="!turno.isOpen && !disp.isConfirmed"
+                          [disabled]="this.turno.isExpired"
+                          mat-raised-button color="accent">Approva
+                  </button>
+                  <div class="status-warn mat-caption " *ngIf="disp.isConfirmed && !disp.isAck">In attesa di conferma...
+                  </div>
+                  <div class="mat-caption status-ok" *ngIf="disp.isConfirmed && disp.isAck">Confermato
+                  </div>
+
+                </div>
+
+              </mat-list-item>
+            </mat-list>
+          </div>
+          <ng-template #empty>
+            <div ngClass=" prenotazioni no-stops" ngClass.lt-sm="prenotazioni-mobile">
+              Nessuna disponibilità
+            </div>
+          </ng-template>
+
         </div>
+
+
       </ng-template>
 
-      <button (click)="confermaDisp(this.listDisp)" *ngIf="!turno.isOpen" [disabled]="this.turno.isExpired" mat-raised-button color="primary">Invia conferme</button>
-      <button *ngIf="turno.isOpen" [disabled]="this.turno.isExpired" mat-raised-button color="primary">Chiudi turno e invia conferme a tutti</button>
     </div>
 
   </div>

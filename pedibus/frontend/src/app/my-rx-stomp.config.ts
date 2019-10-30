@@ -16,7 +16,7 @@ export const myRxStompConfig: InjectableRxStompConfig = {
   // Headers
   // Typical keys: login, passcode, host
   connectHeaders: {
-    Auth: localStorage.getItem('id_token')
+    Authentication: localStorage.getItem('id_token')
   },
 
   // How often to heartbeat?

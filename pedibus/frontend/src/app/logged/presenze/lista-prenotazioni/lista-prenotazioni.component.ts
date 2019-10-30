@@ -42,7 +42,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     // First Observable
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
-      mergeMap(
+      switchMap(
         pren => {
           console.log('ciao', pren);
           this.prenotazione = pren;
