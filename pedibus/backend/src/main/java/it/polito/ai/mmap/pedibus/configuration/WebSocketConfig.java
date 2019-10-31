@@ -38,12 +38,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/messages").setAllowedOrigins("*");
+
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/handled", "/reservation", "/dispws", "dispws-add", "dispws-status",
-                "/turnows", "/turno-aperto", "/turno-chiuso", "/turno confermato", "/reminder-turno");
+                "/turnows");
     }
 
     @Override

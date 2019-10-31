@@ -43,7 +43,7 @@ public class GestioneCorseController {
     public DispAllResource addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
         DispTurnoResource dispTurnoResource =  gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso)));
         simpMessagingTemplate.convertAndSend("/dispws-add/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource.getDisp());
-        simpMessagingTemplate.convertAndSend("/dispws/" + dispTurnoResource.getDisp().getGuideUsername() + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource);
+        simpMessagingTemplate.convertAndSendToUser(dispTurnoResource.getDisp().getGuideUsername(), "/dispws/" + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource);
         return dispTurnoResource.getDisp();
     }
 
@@ -55,6 +55,7 @@ public class GestioneCorseController {
     public void deleteDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
         DispAllResource deleted = gestioneCorseService.deleteDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
         simpMessagingTemplate.convertAndSend("/dispws/" + deleted.getGuideUsername() + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
+        simpMessagingTemplate.convertAndSendToUser(deleted.getGuideUsername(), "/dispws/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
         simpMessagingTemplate.convertAndSend("/dispws-del/"  +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), deleted);
 
     }
@@ -87,8 +88,8 @@ public class GestioneCorseController {
         gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso), dispResourceList);
         for (DispAllResource d : dispResourceList){
             DispStateResource state = new DispStateResource(d);
-            simpMessagingTemplate.convertAndSend("/dispws-status/" + d.getGuideUsername() + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
-            simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), d);
+            simpMessagingTemplate.convertAndSendToUser(d.getGuideUsername(), "/dispws-status/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
+            simpMessagingTemplate.convertAndSend("/dispws-status/"  +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), d);
         }
     }
 
@@ -103,7 +104,7 @@ public class GestioneCorseController {
     public void ackDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
         DispAllResource d = gestioneCorseService.ackDisp(new TurnoDTO(idLinea, MongoZonedDateTime.getMongoZonedDateTimeFromDate(data), verso));
         DispStateResource state = new DispStateResource(d);
-        simpMessagingTemplate.convertAndSend("/dispws-status/" + d.getGuideUsername() + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
+        simpMessagingTemplate.convertAndSendToUser(d.getGuideUsername(), "/dispws-status/" + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
         simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" +data + "/" + idLinea + "/" + ((verso) ? 1 : 0), d);
 
 
