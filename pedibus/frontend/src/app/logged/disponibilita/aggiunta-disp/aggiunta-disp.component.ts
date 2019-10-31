@@ -99,7 +99,7 @@ export class AggiuntaDispComponent implements OnInit {
     // WebSocket Disponibilità creazione/eliminazione
     this.changeLinea.asObservable().pipe(
       switchMap(linea => {
-        return this.rxStompService.watch('/dispws' + '/' + this.authService.getUsername() + this.pathSub(this.p));
+        return this.rxStompService.watch('/user/dispws' +  this.pathSub(this.p));
       }),
     ).subscribe(message => {
         const res = JSON.parse(message.body);
@@ -117,7 +117,7 @@ export class AggiuntaDispComponent implements OnInit {
     // WebSocket Disponibilità status
     this.changeLinea.asObservable().pipe(
       switchMap(linea => {
-        return this.rxStompService.watch('/dispws-status' + '/' + this.authService.getUsername() + this.pathSub(this.p));
+        return this.rxStompService.watch('/user/dispws-status' + this.pathSub(this.p));
       }),
     ).subscribe(message => {
         const res = JSON.parse(message.body);
@@ -154,7 +154,7 @@ export class AggiuntaDispComponent implements OnInit {
 
     this.changeLinea.asObservable().pipe(
       mergeMap( linea => {
-          return this.apiTurniService.getTurnoState(linea, this.p.verso, this.p.data).pipe(first())
+          return this.apiTurniService.getTurnoState(linea, this.p.verso, this.p.data).pipe(first());
         }
       )
     ).subscribe(
