@@ -175,8 +175,7 @@ public class GestioneCorseService {
         if (getTurnoEntity(turnoDTO).getIsOpen() && !getTurnoEntity(turnoDTO).getIsExpired()) {
             dispRepository.delete(dispEntity);
             return d;
-        }
-        else
+        } else
             throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
     }
 
@@ -207,18 +206,16 @@ public class GestioneCorseService {
      * Controlla che prima il turno sia stato chiuso tramite PUT /turno/state/{idLinea}/{verso}/{data}
      *
      * @param turnoDTO
-     * @param resList
+     * @param dispAllResource
      */
-    public void setAllTurnoDisp(TurnoDTO turnoDTO, List<DispAllResource> resList) {
+    public void setAllTurnoDisp(TurnoDTO turnoDTO, DispAllResource dispAllResource) {
         if (!getTurnoEntity(turnoDTO).getIsOpen()) {
             if (!getTurnoEntity(turnoDTO).getIsExpired()) {
-                resList.forEach(res -> {
-                    DispEntity dispEntity = getDispEntity(turnoDTO, res.getGuideUsername());
-                    dispEntity.setIdFermata(res.getIdFermata());
-                    dispEntity.setIsConfirmed(res.getIsConfirmed());
-                    dispRepository.save(dispEntity);
-                    //TODO notifica
-                });
+                DispEntity dispEntity = getDispEntity(turnoDTO, dispAllResource.getGuideUsername());
+                dispEntity.setIdFermata(dispAllResource.getIdFermata());
+                dispEntity.setIsConfirmed(dispAllResource.getIsConfirmed());
+                dispRepository.save(dispEntity);
+                //TODO notifica
             } else
                 throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
         } else

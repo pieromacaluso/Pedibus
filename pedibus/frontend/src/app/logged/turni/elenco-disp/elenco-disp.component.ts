@@ -192,12 +192,10 @@ export class ElencoDispComponent implements OnInit {
     });
   }
 
-  confermaDisp(l: DispAllResource) {
-    l.isConfirmed = true;
-    const res = [];
-    res.push(l);
-    console.log(l);
-    this.apiTurniService.confirmDisp(this.p.linea, this.p.verso, this.p.data, res).pipe(first()).subscribe(response => {
+  confermaDisp(disp: DispAllResource) {
+    disp.isConfirmed = true;
+    console.log(disp);
+    this.apiTurniService.confirmDisp(this.p.linea, this.p.verso, this.p.data, disp).pipe(first()).subscribe(response => {
       this.changeDisp.next(this.listDisp);
     }, (error) => {
       // TODO: errore

@@ -41,11 +41,11 @@ export class ApiTurniService {
         .transform(data, 'yyyy-MM-dd'), b ? 1 : 0);
   }
 
-  confirmDisp(idLinea: string, verso: string, data: Date, listDisp: DispAllResource[]) {
+  confirmDisp(idLinea: string, verso: string, data: Date, disp: DispAllResource) {
     const idVerso = ApiTurniService.versoToInt(verso);
     return this.httpClient
       .post(this.baseURL + 'turno/disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
-        .transform(data, 'yyyy-MM-dd'), listDisp);
+        .transform(data, 'yyyy-MM-dd'), disp);
   }
 }
 
