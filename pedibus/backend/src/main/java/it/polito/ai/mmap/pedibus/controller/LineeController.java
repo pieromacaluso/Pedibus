@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.pedibus.controller;
 
-import it.polito.ai.mmap.pedibus.services.DataCreationService;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import org.slf4j.Logger;
@@ -32,7 +31,7 @@ public class LineeController {
      *
      * @return Lista nomi Linee nel DB
      */
-    @GetMapping("/lines")
+    @GetMapping("/building_data/lines")
     public List<String> getLines() {
         return lineeService.getAllLinesIds();
     }
@@ -41,7 +40,7 @@ public class LineeController {
      *
      * @return Lista nomi Linee nel DB
      */
-    @GetMapping("/lines/name")
+    @GetMapping("/building_data/lines/name")
     public List<String> getLinesNames() {
         return lineeService.getAllLinesNames();
     }
@@ -52,7 +51,7 @@ public class LineeController {
      * @param idLinea id della Linea
      * @return LineaDTO
      */
-    @GetMapping("/lines/{id_linea}")
+    @GetMapping("/building_data/lines/{id_linea}")
     public LineaDTO getStopsLine(@PathVariable("id_linea") String idLinea) {
         return lineeService.getLineaDTOById(idLinea);
     }

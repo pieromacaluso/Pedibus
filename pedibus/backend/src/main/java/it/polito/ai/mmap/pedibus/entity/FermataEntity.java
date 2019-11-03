@@ -2,7 +2,7 @@ package it.polito.ai.mmap.pedibus.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -38,7 +38,7 @@ public class FermataEntity {
     @JsonIgnore
     public Date getDateOrario()
     {
-        return MongoZonedDateTime.getMongoZonedDateTimeFromTime(orario);
+        return MongoTimeService.getMongoZonedDateTimeFromTime(orario);
     }
 
 }

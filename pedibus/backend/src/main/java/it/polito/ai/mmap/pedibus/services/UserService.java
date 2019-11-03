@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.pedibus.services;
 
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
@@ -104,11 +103,11 @@ public class UserService implements UserDetailsService {
                 //Se la mail è già stata registrata come relativa a un account admin e l'account è inattivo
                 userEntity = checkAdmin.get();
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-                userEntity.setCreationDate(MongoZonedDateTime.getNow());
+                userEntity.setCreationDate(MongoTimeService.getNow());
             } else if (!userEntity.isEnabled() && !checkToken.isPresent()) {
                 //Mail già associata a un account che non è stato abilitato in tempo
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-                userEntity.setCreationDate(MongoZonedDateTime.getNow());
+                userEntity.setCreationDate(MongoTimeService.getNow());
             } else {
                 throw new UserAlreadyPresentException("Utente già registrato");
 

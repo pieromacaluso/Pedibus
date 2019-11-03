@@ -42,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *         - inserimentoReservationGenitore
  */
 
+//TODO controllare di non andare a specificare una data che è in vacanza che causa una IllegalArgumentException
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -155,7 +156,7 @@ public class Esercitazione2ApplicationTests {
         List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/lines")
+        mockMvc.perform(get("/building_data/lines")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson));
@@ -175,7 +176,7 @@ public class Esercitazione2ApplicationTests {
         String lineaID = lineaRepository.findAll().get(0).getId();
         logger.info("Test GET /lines/" + lineaID + " ...");
 
-        mockMvc.perform(get("/lines/" + lineaID)
+        mockMvc.perform(get("/building_data/lines/" + lineaID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())

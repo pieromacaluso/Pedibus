@@ -2,14 +2,11 @@ package it.polito.ai.mmap.pedibus.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
-import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +48,8 @@ public class DataCreationService {
     LineeService lineeService;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    MongoTimeService mongoTimeService;
 
     @Autowired
     private Environment environment;
@@ -132,7 +131,7 @@ public class DataCreationService {
      */
     public void readPiedibusLines() {
         try {
-            Iterator<File> fileIterator = Arrays.asList(Objects.requireNonNull(ResourceUtils.getFile("classpath:lines//").listFiles())).iterator();
+            Iterator<File> fileIterator = Arrays.asList(Objects.requireNonNull(ResourceUtils.getFile("classpath:building_data/lines//").listFiles())).iterator();
             while (fileIterator.hasNext()) {
                 LineaDTO lineaDTO = objectMapper.readValue(fileIterator.next(), LineaDTO.class);
                 try {
@@ -189,7 +188,7 @@ public class DataCreationService {
         List<LineaEntity> lineaEntityList = lineaRepository.findAll();
 
 
-        List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/childEntity.json"), new TypeReference<List<ChildEntity>>() {
+        List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/childEntity.json"), new TypeReference<List<ChildEntity>>() {
         });
 
         List<UserEntity> userList = userEntityListConverter("genitori.json", roleUser);
@@ -243,37 +242,44 @@ public class DataCreationService {
         count = 0;
         List<ReservationEntity> reservationsList = new LinkedList<>();
         ReservationEntity reservationEntity;
-        int randLinea;
-        for (int day = 0; day < 3; day++) {
-            childEntityIterable = childList.iterator();
-            while (childEntityIterable.hasNext()) {
-                ChildEntity childEntity = childEntityIterable.next();
+        LocalDate dateChecked;
+        int dayCount = 0;
+        for (int day = 0; day < 120 && dayCount < 3; day++) {
+            try {
+                dateChecked = mongoTimeService.dateCheckConstraint(LocalDate.now().plus(day, ChronoUnit.DAYS));
+                dayCount++;
+                childEntityIterable = childList.iterator();
+                while (childEntityIterable.hasNext()) {
+                    ChildEntity childEntity = childEntityIterable.next();
 
-                //andata
-                reservationEntity = new ReservationEntity();
-                reservationEntity.setCfChild(childEntity.getCodiceFiscale());
-                reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
-                reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea());
-                reservationEntity.setVerso(true);
-                reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
-                if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
-                    reservationsList.add(reservationEntity);
-                    count++;
+                    //andata
+                    reservationEntity = new ReservationEntity();
+                    reservationEntity.setCfChild(childEntity.getCodiceFiscale());
+                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked.toString()));
+                    reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea());
+                    reservationEntity.setVerso(true);
+                    reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
+                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
+                        reservationsList.add(reservationEntity);
+                        count++;
+                    }
+
+                    //ritorno
+                    reservationEntity = new ReservationEntity();
+                    reservationEntity.setCfChild(childEntity.getCodiceFiscale());
+                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked.toString()));
+                    reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataRitorno()).getIdLinea());
+                    reservationEntity.setVerso(false);
+                    reservationEntity.setIdFermata(childEntity.getIdFermataRitorno());
+
+                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
+                        reservationsList.add(reservationEntity);
+                        count++;
+                    }
+                    i++;
                 }
 
-                //ritorno
-                reservationEntity = new ReservationEntity();
-                reservationEntity.setCfChild(childEntity.getCodiceFiscale());
-                reservationEntity.setData(MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(day, ChronoUnit.DAYS).toString()));
-                reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataRitorno()).getIdLinea());
-                reservationEntity.setVerso(false);
-                reservationEntity.setIdFermata(childEntity.getIdFermataRitorno());
-
-                if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
-                    reservationsList.add(reservationEntity);
-                    count++;
-                }
-                i++;
+            } catch (IllegalArgumentException ignored) {
             }
         }
 
@@ -284,7 +290,7 @@ public class DataCreationService {
 
     private List<UserEntity> userEntityListConverter(String fileName, RoleEntity roleEntity) throws IOException {
 
-        List<UserDTO> userList = objectMapper.readValue(ResourceUtils.getFile("classpath:debug_container/" + fileName), new TypeReference<List<UserDTO>>() {
+        List<UserDTO> userList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/" + fileName), new TypeReference<List<UserDTO>>() {
         });
 
         return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Arrays.asList(roleEntity)), passwordEncoder)).collect(Collectors.toList());

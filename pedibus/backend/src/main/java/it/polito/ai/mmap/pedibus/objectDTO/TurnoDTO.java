@@ -1,23 +1,17 @@
 package it.polito.ai.mmap.pedibus.objectDTO;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.mongodb.Mongo;
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -33,6 +27,8 @@ public class TurnoDTO {
 
 
     static class CustomDateDeserializer extends StdDeserializer<Date> {
+        @Autowired
+        MongoTimeService mongoTimeService;
 
         public CustomDateDeserializer() {
             this(null);
@@ -40,7 +36,7 @@ public class TurnoDTO {
 
         @Override
         public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            return MongoZonedDateTime.getMongoZonedDateTimeFromDate(jsonParser.getText());
+            return mongoTimeService.getMongoZonedDateTimeFromDate(jsonParser.getText());
         }
 
         public CustomDateDeserializer(Class<?> vc) {

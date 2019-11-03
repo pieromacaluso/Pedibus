@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.pedibus.services;
 
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.DispEntity;
 import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
@@ -265,7 +264,7 @@ public class GestioneCorseService {
         LineaDTO lineaDTO = lineeService.getLineaDTOById(turnoDTO.getIdLinea());
         String timeFermata = turnoDTO.getVerso() ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get().getOrario() : lineeService.getPartenzaScuola();
 
-        return MongoZonedDateTime.getMongoZonedDateTimeFromDateTime(turnoDTO.getData(), timeFermata).before(MongoZonedDateTime.getNow());
+        return MongoTimeService.getMongoZonedDateTimeFromDateTime(turnoDTO.getData(), timeFermata).before(MongoTimeService.getNow());
 
     }
 

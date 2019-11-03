@@ -1,6 +1,5 @@
 package it.polito.ai.mmap.pedibus.services;
 
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
@@ -214,10 +213,10 @@ public class ReservationService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Boolean isAdmin = principal.getRoleList().contains(userService.getRoleEntityById("ROLE_ADMIN"));
         if (!userService.isSysAdmin()) {
-            if (data.before(MongoZonedDateTime.getStartOfTomorrow())) {
+            if (data.before(MongoTimeService.getStartOfTomorrow())) {
                 // reservation per oggi o nel passato
                 if (isAdmin) {
-                    return data.after(MongoZonedDateTime.getStartOfToday());
+                    return data.after(MongoTimeService.getStartOfToday());
                 } else {
                     return data.before(fermataEntity.getDateOrario());
                 }
@@ -277,7 +276,7 @@ public class ReservationService {
         if (userService.isSysAdmin())
             return true;
         // TODO: solo accompagnatore confermato può modificare
-        return ((lineeService.isAdminLine(idLinea) /*|| lineeService.isGuideLine(idLinea)*/) && MongoZonedDateTime.isToday(date));
+        return ((lineeService.isAdminLine(idLinea) /*|| lineeService.isGuideLine(idLinea)*/) && MongoTimeService.isToday(date));
 
     }
 

@@ -3,14 +3,13 @@ package it.polito.ai.mmap.pedibus;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
 import it.polito.ai.mmap.pedibus.services.LineeService;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,8 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -101,6 +98,9 @@ public class DocTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    MongoTimeService mongoTimeService;
+
     Map<Integer, ChildEntity> childMap = new HashMap<>();
     Map<String, UserDTO> userDTOMap = new HashMap<>();
     Map<String, UserEntity> userEntityMap = new HashMap<>();
@@ -110,15 +110,25 @@ public class DocTest {
 
 
     // Turno di default su cui lavoriamo, per poterlo riportare allo stato pre test
-    int daysDef = 100;
+    String daysDef;
     LineaEntity lineaDef;
     Boolean versoDef = true;
     Boolean isDefTurnoOpen;
 
     @PostConstruct
     public void postInit() {
+        // necessario per trovare un turno che sia valido (vacanza,weekend ecc)
+        LocalDate dateSupp;
+        for (int i = 1; i < 120; i++) {
+            try {
+                dateSupp =LocalDate.now().plus(i, ChronoUnit.DAYS);
+                mongoTimeService.dateCheckConstraint(dateSupp);
+                break;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
         lineaDef = lineaRepository.findAll().get(0);
-        Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(daysDef, ChronoUnit.DAYS).toString()), versoDef);
+        Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef), versoDef);
         if (checkTurno.isPresent())
             isDefTurnoOpen = checkTurno.get().getIsOpen();
         else
@@ -161,7 +171,7 @@ public class DocTest {
 
     @After
     public void tearDownMethod() {
-        TurnoEntity turno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), MongoZonedDateTime.getMongoZonedDateTimeFromDate(LocalDate.now().plus(daysDef, ChronoUnit.DAYS).toString()), versoDef).get();
+        TurnoEntity turno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef), versoDef).get();
         turno.setIsOpen(isDefTurnoOpen);
         turnoRepository.save(turno);
 
@@ -182,7 +192,7 @@ public class DocTest {
         List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/lines")
+        mockMvc.perform(get("/building_data/lines")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
@@ -196,7 +206,7 @@ public class DocTest {
 
         String token = loginAsNonnoAdmin(lineaDef.getId());
 
-        mockMvc.perform(post("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+        mockMvc.perform(post("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(lineaDef.getAndata().get(0)))
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -210,7 +220,7 @@ public class DocTest {
         String token = loginAsNonnoAdmin(lineaDef.getId());
 
         postDisp();
-        mockMvc.perform(delete("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+        mockMvc.perform(delete("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andDo(document("delete-disp",
@@ -231,7 +241,7 @@ public class DocTest {
     @Test
     public void putTurno() throws Exception {
         String token = loginAsNonnoAdmin(lineaDef.getId());
-        mockMvc.perform(put("/turno/state/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+        mockMvc.perform(put("/turno/state/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(false)))
                 .andExpect(status().isOk())
@@ -256,7 +266,7 @@ public class DocTest {
         List<DispAllResource> dispList = turnoDispResource.getListDisp().values().stream().flatMap(List::stream).collect(Collectors.toList());
         dispList.forEach(dispAllResource -> dispAllResource.setIsConfirmed(true));
 
-        mockMvc.perform(post("/turno/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+        mockMvc.perform(post("/turno/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dispList)))
                 .andExpect(status().isOk())
@@ -266,7 +276,7 @@ public class DocTest {
     }
 
     public TurnoDispResource getTurnoDispMethod(LineaEntity lineaEntity, String token) throws Exception {
-        MvcResult result = mockMvc.perform(get("/turno/disp/{idLinea}/{verso}/{data}", lineaEntity.getId(), true, LocalDate.now().plus(daysDef, ChronoUnit.DAYS))
+        MvcResult result = mockMvc.perform(get("/turno/disp/{idLinea}/{verso}/{data}", lineaEntity.getId(), true, daysDef)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andDo(document("get-turno-disp",
@@ -300,7 +310,6 @@ public class DocTest {
         JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
         return node.get("token").asText();
     }
-
 
 
 }

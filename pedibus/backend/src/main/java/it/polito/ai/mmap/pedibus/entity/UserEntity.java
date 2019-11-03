@@ -1,6 +1,6 @@
 package it.polito.ai.mmap.pedibus.entity;
 
-import it.polito.ai.mmap.pedibus.configuration.MongoZonedDateTime;
+import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,7 +48,7 @@ public class UserEntity implements UserDetails {
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
         childrenList = new HashSet<>();
-        creationDate = MongoZonedDateTime.getNow();
+        creationDate = MongoTimeService.getNow();
     }
 
 
@@ -62,7 +62,7 @@ public class UserEntity implements UserDetails {
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
         this.childrenList = childrenList;
-        creationDate = MongoZonedDateTime.getNow();
+        creationDate = MongoTimeService.getNow();
     }
 
     public UserEntity(String email, HashSet<RoleEntity> userRoles) {
