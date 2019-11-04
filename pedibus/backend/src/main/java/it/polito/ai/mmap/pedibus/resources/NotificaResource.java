@@ -4,6 +4,7 @@ package it.polito.ai.mmap.pedibus.resources;
 import lombok.Data;
 import org.bson.types.ObjectId;
 
+//deprecata dopo aver unificato le due notifiche
 /**
  * Resource usata per inviare la notifica al frontend senza inviare l'intero oggetto NotificaEntity
  */

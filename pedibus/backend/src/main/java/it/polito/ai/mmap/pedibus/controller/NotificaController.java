@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
 import it.polito.ai.mmap.pedibus.resources.NotificaResource;
 import it.polito.ai.mmap.pedibus.services.NotificheService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class NotificaController {
      * Restituisce le notifiche base non lette di un determinato utente
      */
     @GetMapping("/notifiche/{username}")
-    public ArrayList<NotificaResource> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotificheBase(username);}
+    public ArrayList<NotificaDTO> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotificheBase(username);}
 
     /**
      * Elimina la notifica selezionata da un determinato id
