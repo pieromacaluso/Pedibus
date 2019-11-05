@@ -79,7 +79,7 @@ public class NotificaEntity {
             msg=notificaDTO.getMsg();
             isTouched=notificaDTO.getIsTouched();
             dispID=null;
-            isAck=notificaDTO.getIsAck();
+            isAck=false;
 
         }else if(notificaDTO.getType().compareTo(NotDISPONIBILITA)==0){
             if(notificaDTO.getDispID()==null)

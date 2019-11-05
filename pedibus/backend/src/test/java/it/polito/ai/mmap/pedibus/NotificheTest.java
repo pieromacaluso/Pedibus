@@ -321,6 +321,10 @@ public class NotificheTest {
         logger.info("Test done.");
     }
 
+    /**
+     * Verifica che in caso di utente non autenticato le risorse notifiche non sono disponibili
+     * @throws Exception
+     */
     @Test
     public void getNotificheNotAccess() throws Exception {
         String user="testGenitore@test.it";
@@ -334,7 +338,6 @@ public class NotificheTest {
 
         logger.info("Test done.");
     }
-
 
 
 
