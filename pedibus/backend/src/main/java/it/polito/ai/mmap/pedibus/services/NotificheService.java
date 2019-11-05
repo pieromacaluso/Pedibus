@@ -40,6 +40,7 @@ public class NotificheService {
     @Autowired
     UserRepository userRepository;
 
+
     /**
      * Restituisce le notifiche non lette con type 'base' dell'utente
      * @param username

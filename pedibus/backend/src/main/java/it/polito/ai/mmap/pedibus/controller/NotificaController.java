@@ -21,10 +21,24 @@ public class NotificaController {
     NotificheService notificheService;
 
     /**
-     * Restituisce le notifiche base non lette di un determinato utente
+     * Restituisce le notifiche non lette di un determinato utente
      */
     @GetMapping("/notifiche/{username}")
-    public ArrayList<NotificaDTO> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotificheBase(username);}
+    public ArrayList<NotificaDTO> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotifiche(username);}
+
+    /**
+     * Restituisce le notifiche base non lette di un determinato utente
+     */
+    @GetMapping("/notificheBase/{username}")
+    public ArrayList<NotificaDTO> getNotificheBase(@PathVariable("username") String username){ return notificheService.getNotificheBase(username);}
+
+    /**
+     * Restituisce le notifiche disponibilita non lette di un determinato utente
+     */
+    @GetMapping("/notificheDisp/{username}")
+    public ArrayList<NotificaDTO> getNotificheDisp(@PathVariable("username") String username){ return notificheService.getNotificheDisponibilita(username);}
+
+
 
     /**
      * Elimina la notifica selezionata da un determinato id

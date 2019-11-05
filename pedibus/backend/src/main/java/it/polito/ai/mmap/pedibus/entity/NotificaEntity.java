@@ -4,19 +4,23 @@ import it.polito.ai.mmap.pedibus.exception.NotificaWrongTypeException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 
 @Data
 @NoArgsConstructor
 @Document(collection = "notifica")
 public class NotificaEntity {
 
-    @Value("${notifiche.type.Base}")
-    String NotBASE;
+    //todo non funziona nei costruttori, vedere se possibile trovare una soluzione cosi da aver le stringhe solo nelle application properties
+    /*@Value("${notifiche.type.Base}")
+    private String NotBASE;
     @Value("${notifiche.type.Disponibilita}")
-    String NotDISPONIBILITA;
+    private String NotDISPONIBILITA;*/
+
+    String NotBASE="base";
+    String NotDISPONIBILITA="disponibilita";
 
 
     @Id

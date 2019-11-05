@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaAckDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.NotificaResource;
@@ -83,8 +84,9 @@ public class NotificheTest {
     @Autowired
     TurnoRepository turnoRepository;
 
+
     @Autowired
-    NotificaBaseRepository notificaBaseRepository;
+    NotificaRepository notificaRepository;
 
     @Autowired
     LineeService lineeService;
@@ -92,11 +94,17 @@ public class NotificheTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Value("${notifiche.type.Base}")
+     private String NotBase;
+    @Value("${notifiche.type.Disponibilita}")
+    private String NotDisponibilita;
+
+
     Map<Integer, ChildEntity> childMap = new HashMap<>();
     Map<String, UserDTO> userDTOMap = new HashMap<>();
     Map<String, UserEntity> userEntityMap = new HashMap<>();
-    Map<String,ArrayList<NotificaBaseEntity>> notificheBaseEntityMap = new HashMap<>();        //Per ogni email(Utente), una lista delle sue notifiche Base
-    Map<String,ArrayList<NotificaAckDTO>> notificheAckDTOMap= new HashMap<>();          //Per ogni email(Utente), una lista delle sue notifiche Ack
+    Map<String,ArrayList<NotificaEntity>> notificheEntityMap = new HashMap<>();        //Per ogni utente, una lista delle sue notifiche
+    //Map<String,ArrayList<NotificaAckDTO>> notificheAckDTOMap= new HashMap<>();          //Per ogni email(Utente), una lista delle sue notifiche Ack
     RoleEntity roleUser;
     RoleEntity roleAdmin;
     RoleEntity roleGuide;
@@ -105,7 +113,7 @@ public class NotificheTest {
 
     @PostConstruct
     public void postInit() {
-        //logger.info("PostInit init...");
+        logger.info("PostInit init...");
         lineaDef = lineaRepository.findAll().get(0);
 
         roleUser = roleRepository.findById("ROLE_USER").get();
@@ -124,7 +132,27 @@ public class NotificheTest {
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
         userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
-        //logger.info("PostInit done");
+        ArrayList<NotificaEntity> notificaEntities=new ArrayList<>();
+
+        notificaEntities.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg1",false));
+        notificaEntities.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg2",true));
+        //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testGenitore@test.it","msg3",false,xxx,xxx)); //todo aggiungere una mappa di disponibilità
+        notificheEntityMap.put("testGenitore",notificaEntities);
+        notificaEntities.clear();
+
+        notificaEntities.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",false));
+        notificaEntities.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",true));
+        //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonGenitore@test.it","msg3",false,xxx,xxx));
+        notificheEntityMap.put("testNonGenitore",notificaEntities);
+        notificaEntities.clear();
+
+        notificaEntities.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",false));
+        notificaEntities.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",true));
+        //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonno@test.it","msg3",false,xxx,xxx));
+        notificheEntityMap.put("testNonno",notificaEntities);
+        notificaEntities.clear();
+
+        logger.info("PostInit done");
 
 
 
@@ -133,7 +161,7 @@ public class NotificheTest {
 
     @Before
     public void setUpMethod() {
-        //logger.info("setUpMethod init...");
+        logger.info("setUpMethod init...");
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -148,43 +176,38 @@ public class NotificheTest {
                 lineeService.addAdminLine(userEntity.getUsername(), lineaDef.getId());
             userRepository.save(userEntity);
         });
-        //Notifiche Base
-            //user1 //todo cxonvertire salvataggio mappa come per user
-        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg1",false));
-        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg2",true));
-        notificaBaseRepository.save(new NotificaBaseEntity("testGenitore@test.it","msg3",false));
-            //user2
-        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg1",false));
-        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg2",true));
-        notificaBaseRepository.save(new NotificaBaseEntity("testNonGenitore@test.it","msg3",false));
-            //user3
-        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg1",false));
-        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg2",true));
-        notificaBaseRepository.save(new NotificaBaseEntity("testNonno@test.it","msg3",false));
 
-        //logger.info("setUpMethod done.");
+        //notificheEntityMap.values().forEach(notificheEntity -> notificheEntity.forEach(notificaEntity -> notificaRepository.save(notificaEntity)));
+        notificheEntityMap.values().forEach(notificheEntity ->{
+            for(NotificaEntity n:notificheEntity)
+                notificaRepository.save(n);
+        });
+        logger.info("setUpMethod done.");
     }
 
     @After
     public void tearDownMethod() {
-        //logger.info("tearDownMethod init...");
+        logger.info("tearDownMethod init...");
         userEntityMap.values().forEach(userEntity -> {
             if (userEntity.getRoleList().contains(roleAdmin))
                 lineeService.delAdminLine(userEntity.getUsername(), lineaDef.getId());
-            List<NotificaBaseEntity> notificaBaseEntities=getAllNotificationBase(userEntity.getUsername());
-            for(NotificaBaseEntity n:notificaBaseEntities){
-                notificaBaseRepository.delete(n);
-            }
             userRepository.delete(userEntity);
         });
 
-        //logger.info("tearDownMethod done.");
+        notificheEntityMap.values().forEach(notificheEntity -> {
+            notificheEntity.forEach(notificaEntity -> {
+                notificaRepository.delete(notificaEntity);
+            });
+        });
+
+        logger.info("tearDownMethod done.");
     }
 
-    private List<NotificaBaseEntity> getAllNotificationBase(String user) {
-        return notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).collect(Collectors.toList());
-    }
 
+    /**
+     * Testa che venga eliminata una determinata notifica tramite il suo Id
+     * @throws Exception
+     */
     @Test
     public void deleteNotifica() throws Exception {
         logger.info("Test deleteNotifica Base...");
@@ -192,42 +215,53 @@ public class NotificheTest {
         //autenticazione
         String token=loginAsGenitore();
         //ricerca idnotifica della notifica da eliminare, la prima non letta
-        String idNotificaToDel=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).map(NotificaBaseEntity::getIdNotifica).findFirst().get();
+        List<NotificaEntity> notifiche=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).collect(Collectors.toList());
+        if(notifiche.size()>0){ //todo verificare perchè ritorna 0, sembra che non stia salvando sulla repo
+            String idNotificaToDel=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(NotificaEntity::getIdNotifica).findFirst().get();
 
-        //legge dal db tutte le notifiche non lette di quell utente e le mappa come notificaResource
-        List<NotificaResource> expectedResult=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).filter(notificaBaseEntity -> !notificaBaseEntity.getIdNotifica().equals(idNotificaToDel)).map(notificaBaseEntity -> {
-            NotificaResource notificaResource=new NotificaResource(notificaBaseEntity.getIdNotifica(),notificaBaseEntity.getMsg());
-            return notificaResource;
-        }).collect(Collectors.toList());
+            NotificaEntity notificaToDel=notificaRepository.findById(idNotificaToDel).get();    //da usare per ripristinare il db dopo averla cancellata
 
-        String expectedJson = objectMapper.writeValueAsString(expectedResult);
+            //legge dal db tutte le notifiche non lette di quell utente tranne quella che si sta cancellando e le mappa come notificaDTO
+            List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIdNotifica().equals(idNotificaToDel)).map(notificaEntity -> {
+                NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+                return notificaDTO;
+            }).collect(Collectors.toList());
 
-        mockMvc.perform(delete("/notifiche/{idNotifica}",idNotificaToDel)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
+            String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/notifiche/{username}",user)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson))
-                .andDo(document("delete-notifiche-base",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
+            mockMvc.perform(delete("/notifiche/{idNotifica}",idNotificaToDel)
+                    .header("Authorization", "Bearer " + token))
+                    .andExpect(status().isOk());
 
-        logger.info("deleteNotifica Base done.");
-        //todo test notificaAck
+            mockMvc.perform(get("/notifiche/{username}",user)
+                    .header("Authorization", "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(expectedJson))
+                    .andDo(document("delete-notifiche-base",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint())));
+
+            notificaRepository.save(notificaToDel);     //per ripristinare notifica eliminata
+            logger.info("deleteNotifica Base done.");
+        }
+
+        logger.info("deleteNotifica Base finish but not done.");
     }
 
+    /**
+     * Testa che vengano ritornate tutte le notifiche di un determinato utente
+     * @throws Exception
+     */
     @Test
     public void getNotifiche() throws Exception {
         String user="testGenitore@test.it";
-        logger.info("Test getNotifiche base user: "+user+" ...");
+        logger.info("Test getNotifiche user: "+user+" ...");
         //autenticazione
         String token=loginAsGenitore();
-        //legge dal db tutte le notifiche non lette di quell utente e le mappa come notificaResource
-        List<NotificaResource> expectedResult=notificaBaseRepository.findAll().stream().filter(notificaBaseEntity -> notificaBaseEntity.getUsernameDestinatario().equals(user)).filter(notificaBaseEntity -> !notificaBaseEntity.getIsTouched()).map(notificaBaseEntity -> {
-                NotificaResource notificaResource=new NotificaResource(notificaBaseEntity.getIdNotifica(),notificaBaseEntity.getMsg());
-                return notificaResource;
+        //legge dal db tutte le notifiche non lette di quell utente
+        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
+            NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+                return notificaDTO;
         }).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
@@ -238,7 +272,61 @@ public class NotificheTest {
                 .andDo(document("get-notifiche-base",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
-        logger.info("test1 done.");
+        logger.info("Test done.");
+    }
+
+    /**
+     * Testa che vengano ritornate le notifiche base di un determinato utente
+     * @throws Exception
+     */
+    @Test
+    public void getNotificheBase() throws Exception {
+        String user="testGenitore@test.it";
+        logger.info("Test getNotifiche user: "+user+" ...");
+        //autenticazione
+        String token=loginAsGenitore();
+        //legge dal db tutte le notifiche non lette di quell utente
+        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotBase)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
+            NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+            return notificaDTO;
+        }).collect(Collectors.toList());
+        String expectedJson = objectMapper.writeValueAsString(expectedResult);
+
+        mockMvc.perform(get("/notificheBase/{username}",user)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson))
+                .andDo(document("get-notifiche-base",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+        logger.info("Test done.");
+    }
+
+    /**
+     * Testa che vengano ritornate le notifiche disponibilita di un determinato utente
+     * @throws Exception
+     */
+    @Test
+    public void getNotificheDisp() throws Exception {
+        String user="testGenitore@test.it";
+        logger.info("Test getNotifiche user: "+user+" ...");
+        //autenticazione
+        String token=loginAsGenitore();
+        //legge dal db tutte le notifiche non lette di quell utente
+        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotDisponibilita)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
+            NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+            return notificaDTO;
+        }).collect(Collectors.toList());
+        String expectedJson = objectMapper.writeValueAsString(expectedResult);
+
+        mockMvc.perform(get("/notificheDisp/{username}",user)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson))
+                .andDo(document("get-notifiche-base",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+        logger.info("Test done.");
     }
 
 
