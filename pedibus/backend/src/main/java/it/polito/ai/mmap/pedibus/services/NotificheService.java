@@ -15,6 +15,8 @@ import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.resources.NotificaResource;
 import lombok.Data;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @Data
 
 public class NotificheService {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     NotificaRepository notificaRepository;
@@ -39,6 +42,7 @@ public class NotificheService {
 
     @Autowired
     UserRepository userRepository;
+
 
 
     /**
@@ -154,4 +158,14 @@ public class NotificheService {
 
         notificaRepository.save(notificaEntity);
     }
+
+    /**
+     * Salva nel db una nuova notifica passata come parametro
+     */
+    public void addNotifica(NotificaDTO notificaDTO){
+        NotificaEntity notificaEntity=new NotificaEntity(notificaDTO);
+        notificaRepository.save(notificaEntity);
+        logger.info("Notifica salvata.");
+    }
+
 }

@@ -132,29 +132,25 @@ public class NotificheTest {
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
         userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
-        ArrayList<NotificaEntity> notificaEntities=new ArrayList<>();
-
-        notificaEntities.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg1",false));
-        notificaEntities.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg2",true));
+        ArrayList<NotificaEntity> notificaEntitiesGenitore=new ArrayList<>();
+        notificaEntitiesGenitore.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg1",false));
+        notificaEntitiesGenitore.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg2",true));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testGenitore@test.it","msg3",false,xxx,xxx)); //todo aggiungere una mappa di disponibilità
-        notificheEntityMap.put("testGenitore",notificaEntities);
-        notificaEntities.clear();
+        notificheEntityMap.put("testGenitore",notificaEntitiesGenitore);
 
-        notificaEntities.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",false));
-        notificaEntities.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",true));
+        ArrayList<NotificaEntity> notificaEntitiesNonGenitore=new ArrayList<>();
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",false));
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",true));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonGenitore@test.it","msg3",false,xxx,xxx));
-        notificheEntityMap.put("testNonGenitore",notificaEntities);
-        notificaEntities.clear();
+        notificheEntityMap.put("testNonGenitore",notificaEntitiesNonGenitore);
 
-        notificaEntities.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",false));
-        notificaEntities.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",true));
+        ArrayList<NotificaEntity> notificaEntitiesNonno=new ArrayList<>();
+        notificaEntitiesNonno.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",false));
+        notificaEntitiesNonno.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",true));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonno@test.it","msg3",false,xxx,xxx));
-        notificheEntityMap.put("testNonno",notificaEntities);
-        notificaEntities.clear();
+        notificheEntityMap.put("testNonno",notificaEntitiesNonno);
 
         logger.info("PostInit done");
-
-
 
 
     }
@@ -177,11 +173,20 @@ public class NotificheTest {
             userRepository.save(userEntity);
         });
 
-        //notificheEntityMap.values().forEach(notificheEntity -> notificheEntity.forEach(notificaEntity -> notificaRepository.save(notificaEntity)));
-        notificheEntityMap.values().forEach(notificheEntity ->{
-            for(NotificaEntity n:notificheEntity)
-                notificaRepository.save(n);
-        });
+        notificheEntityMap.values().forEach(notificheEntity -> notificheEntity.forEach(notificaEntity -> notificaRepository.save(notificaEntity)));
+        /*ArrayList<NotificaEntity> notificaEntities=notificheEntityMap.get("testGenitore");
+        for(NotificaEntity n:notificaEntities){
+            notificaRepository.save(n);
+        }
+        notificaEntities=notificheEntityMap.get("testNonGenitore");
+        for(NotificaEntity n:notificaEntities){
+            notificaRepository.save(n);
+        }
+        notificaEntities=notificheEntityMap.get("testNonno");
+        for(NotificaEntity n:notificaEntities){
+            notificaRepository.save(n);
+        }*/
+
         logger.info("setUpMethod done.");
     }
 
@@ -199,6 +204,18 @@ public class NotificheTest {
                 notificaRepository.delete(notificaEntity);
             });
         });
+        /*ArrayList<NotificaEntity> notificaEntities=notificheEntityMap.get("testGenitore");
+        for(NotificaEntity n:notificaEntities){
+            notificaRepository.delete(n);
+        }
+        notificaEntities=notificheEntityMap.get("testNonGenitore");
+        for(NotificaEntity n:notificaEntities){
+            notificaRepository.delete(n);
+        }
+        notificaEntities=notificheEntityMap.get("testNonno");
+        for(NotificaEntity n:notificaEntities){
+            notificaRepository.delete(n);
+        }*/
 
         logger.info("tearDownMethod done.");
     }
@@ -233,7 +250,7 @@ public class NotificheTest {
                     .header("Authorization", "Bearer " + token))
                     .andExpect(status().isOk());
 
-            mockMvc.perform(get("/notifiche/{username}",user)
+            mockMvc.perform(get("/notifiche/all/{username}",user)
                     .header("Authorization", "Bearer " + token))
                     .andExpect(status().isOk())
                     .andExpect(content().json(expectedJson))
@@ -243,9 +260,11 @@ public class NotificheTest {
 
             notificaRepository.save(notificaToDel);     //per ripristinare notifica eliminata
             logger.info("deleteNotifica Base done.");
+        }else{
+            logger.info("deleteNotifica Base finish but not done.");
         }
 
-        logger.info("deleteNotifica Base finish but not done.");
+
     }
 
     /**
@@ -265,7 +284,7 @@ public class NotificheTest {
         }).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/notifiche/{username}",user)
+        mockMvc.perform(get("/notifiche/all/{username}",user)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
@@ -292,7 +311,7 @@ public class NotificheTest {
         }).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/notificheBase/{username}",user)
+        mockMvc.perform(get("/notifiche/base/{username}",user)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
@@ -319,7 +338,7 @@ public class NotificheTest {
         }).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/notificheDisp/{username}",user)
+        mockMvc.perform(get("/notifiche/disp/{username}",user)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
