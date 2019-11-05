@@ -82,7 +82,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/disp/**").access("hasAnyRole('GUIDE','ADMIN','SYSTEM-ADMIN')")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/notifiche/**").permitAll()
+                .antMatchers("/notifiche/**").authenticated()
                 .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()

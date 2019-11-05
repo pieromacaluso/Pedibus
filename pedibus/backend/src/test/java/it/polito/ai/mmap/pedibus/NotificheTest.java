@@ -332,6 +332,7 @@ public class NotificheTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
 
+        logger.info("Test done.");
     }
 
 
