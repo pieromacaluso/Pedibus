@@ -104,7 +104,6 @@ public class NotificheTest {
     Map<String, UserDTO> userDTOMap = new HashMap<>();
     Map<String, UserEntity> userEntityMap = new HashMap<>();
     Map<String,ArrayList<NotificaEntity>> notificheEntityMap = new HashMap<>();        //Per ogni utente, una lista delle sue notifiche
-    //Map<String,ArrayList<NotificaAckDTO>> notificheAckDTOMap= new HashMap<>();          //Per ogni email(Utente), una lista delle sue notifiche Ack
     RoleEntity roleUser;
     RoleEntity roleAdmin;
     RoleEntity roleGuide;
@@ -113,7 +112,7 @@ public class NotificheTest {
 
     @PostConstruct
     public void postInit() {
-        logger.info("PostInit init...");
+        //logger.info("PostInit init...");
         lineaDef = lineaRepository.findAll().get(0);
 
         roleUser = roleRepository.findById("ROLE_USER").get();
@@ -150,14 +149,14 @@ public class NotificheTest {
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonno@test.it","msg3",false,xxx,xxx));
         notificheEntityMap.put("testNonno",notificaEntitiesNonno);
 
-        logger.info("PostInit done");
+        //logger.info("PostInit done");
 
 
     }
 
     @Before
     public void setUpMethod() {
-        logger.info("setUpMethod init...");
+        //logger.info("setUpMethod init...");
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -174,25 +173,13 @@ public class NotificheTest {
         });
 
         notificheEntityMap.values().forEach(notificheEntity -> notificheEntity.forEach(notificaEntity -> notificaRepository.save(notificaEntity)));
-        /*ArrayList<NotificaEntity> notificaEntities=notificheEntityMap.get("testGenitore");
-        for(NotificaEntity n:notificaEntities){
-            notificaRepository.save(n);
-        }
-        notificaEntities=notificheEntityMap.get("testNonGenitore");
-        for(NotificaEntity n:notificaEntities){
-            notificaRepository.save(n);
-        }
-        notificaEntities=notificheEntityMap.get("testNonno");
-        for(NotificaEntity n:notificaEntities){
-            notificaRepository.save(n);
-        }*/
 
-        logger.info("setUpMethod done.");
+        //logger.info("setUpMethod done.");
     }
 
     @After
     public void tearDownMethod() {
-        logger.info("tearDownMethod init...");
+        //logger.info("tearDownMethod init...");
         userEntityMap.values().forEach(userEntity -> {
             if (userEntity.getRoleList().contains(roleAdmin))
                 lineeService.delAdminLine(userEntity.getUsername(), lineaDef.getId());
@@ -204,20 +191,8 @@ public class NotificheTest {
                 notificaRepository.delete(notificaEntity);
             });
         });
-        /*ArrayList<NotificaEntity> notificaEntities=notificheEntityMap.get("testGenitore");
-        for(NotificaEntity n:notificaEntities){
-            notificaRepository.delete(n);
-        }
-        notificaEntities=notificheEntityMap.get("testNonGenitore");
-        for(NotificaEntity n:notificaEntities){
-            notificaRepository.delete(n);
-        }
-        notificaEntities=notificheEntityMap.get("testNonno");
-        for(NotificaEntity n:notificaEntities){
-            notificaRepository.delete(n);
-        }*/
 
-        logger.info("tearDownMethod done.");
+        //logger.info("tearDownMethod done.");
     }
 
 
@@ -233,7 +208,7 @@ public class NotificheTest {
         String token=loginAsGenitore();
         //ricerca idnotifica della notifica da eliminare, la prima non letta
         List<NotificaEntity> notifiche=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).collect(Collectors.toList());
-        if(notifiche.size()>0){ //todo verificare perchè ritorna 0, sembra che non stia salvando sulla repo
+        if(notifiche.size()>0){
             String idNotificaToDel=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(NotificaEntity::getIdNotifica).findFirst().get();
 
             NotificaEntity notificaToDel=notificaRepository.findById(idNotificaToDel).get();    //da usare per ripristinare il db dopo averla cancellata
@@ -288,7 +263,7 @@ public class NotificheTest {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
-                .andDo(document("get-notifiche-base",
+                .andDo(document("get-notifiche",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
         logger.info("Test done.");
@@ -301,7 +276,7 @@ public class NotificheTest {
     @Test
     public void getNotificheBase() throws Exception {
         String user="testGenitore@test.it";
-        logger.info("Test getNotifiche user: "+user+" ...");
+        logger.info("Test getNotificheBase user: "+user+" ...");
         //autenticazione
         String token=loginAsGenitore();
         //legge dal db tutte le notifiche non lette di quell utente
@@ -328,7 +303,7 @@ public class NotificheTest {
     @Test
     public void getNotificheDisp() throws Exception {
         String user="testGenitore@test.it";
-        logger.info("Test getNotifiche user: "+user+" ...");
+        logger.info("Test getNotificheDisp user: "+user+" ...");
         //autenticazione
         String token=loginAsGenitore();
         //legge dal db tutte le notifiche non lette di quell utente
@@ -342,10 +317,23 @@ public class NotificheTest {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
-                .andDo(document("get-notifiche-base",
+                .andDo(document("get-notifiche-disp",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
         logger.info("Test done.");
+    }
+
+    @Test
+    public void getNotificheNotAccess() throws Exception {
+        String user="testGenitore@test.it";
+        logger.info("Test getNotificheNotAccess user: "+user+" ...");
+
+        mockMvc.perform(get("/notifiche/all/{username}",user))
+                .andExpect(status().isUnauthorized())
+                .andDo(document("get-notifiche-notAccess",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+
     }
 
 

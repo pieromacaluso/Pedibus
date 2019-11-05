@@ -12,7 +12,6 @@ import java.util.ArrayList;
 @RestController
 public class NotificaController {
 
-    //todo gestire permessi ruoli notifiche varie
 
     @Autowired
     NotificheService notificheService;

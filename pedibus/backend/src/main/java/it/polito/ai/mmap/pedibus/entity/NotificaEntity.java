@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "notifica")
 public class NotificaEntity {
 
-    //todo verificare che i vari campi passati corrispondono ad utenti o disponobilità esistenti
     //todo non funziona nei costruttori, vedere se possibile trovare una soluzione cosi da aver le stringhe solo nelle application properties
     /*@Value("${notifiche.type.Base}")
     private String NotBASE;

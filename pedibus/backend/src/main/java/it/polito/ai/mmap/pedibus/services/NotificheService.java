@@ -133,8 +133,14 @@ public class NotificheService {
      * @param isTouched
      */
     public void addNotificaBase(String user,String msg,Boolean isTouched){
-        NotificaEntity notificaEntity=new NotificaEntity(NotBASE,user,msg,isTouched,null,false);
-        notificaRepository.save(notificaEntity);
+
+        Optional<UserEntity> checkuser=userRepository.findByUsername(user);
+        if(checkuser.isPresent()){
+            NotificaEntity notificaEntity=new NotificaEntity(NotBASE,user,msg,isTouched,null,false);
+            notificaRepository.save(notificaEntity);
+        }else{
+            throw new UserNotFoundException();
+        }
     }
 
     /**
@@ -147,16 +153,22 @@ public class NotificheService {
      * @param isAck
      */
     public void addNotifica(String type, String user, String msg, Boolean isTouched, ObjectId dispID, Boolean isAck){
-        NotificaEntity notificaEntity;
-        if(type.compareTo(NotBASE)==0){
-            notificaEntity=new NotificaEntity(NotBASE,user,msg,isTouched,null,false);
-        }else if(type.compareTo(NotDISPONIBILITA)==0){
-            notificaEntity=new NotificaEntity(NotDISPONIBILITA,user,msg,isTouched,dispID,isAck);
-        }else{
-            throw new NotificaWrongTypeException();
-        }
+        //todo check dispId
+        Optional<UserEntity> checkuser=userRepository.findByUsername(user);
+        if(checkuser.isPresent()){
+            NotificaEntity notificaEntity;
+            if(type.compareTo(NotBASE)==0){
+                notificaEntity=new NotificaEntity(NotBASE,user,msg,isTouched,null,false);
+            }else if(type.compareTo(NotDISPONIBILITA)==0){
+                notificaEntity=new NotificaEntity(NotDISPONIBILITA,user,msg,isTouched,dispID,isAck);
+            }else{
+                throw new NotificaWrongTypeException();
+            }
 
-        notificaRepository.save(notificaEntity);
+            notificaRepository.save(notificaEntity);
+        }else{
+            throw new UserNotFoundException();
+        }
     }
 
     /**
