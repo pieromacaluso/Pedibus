@@ -1,7 +1,6 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
-import it.polito.ai.mmap.pedibus.resources.NotificaResource;
 import it.polito.ai.mmap.pedibus.services.NotificheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -1,18 +1,13 @@
 package it.polito.ai.mmap.pedibus.services;
 
-import it.polito.ai.mmap.pedibus.entity.NotificaAckEntity;
-import it.polito.ai.mmap.pedibus.entity.NotificaBaseEntity;
 import it.polito.ai.mmap.pedibus.entity.NotificaEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.NotificaNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.NotificaWrongTypeException;
 import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
-import it.polito.ai.mmap.pedibus.repository.NotificaAckRepository;
-import it.polito.ai.mmap.pedibus.repository.NotificaBaseRepository;
 import it.polito.ai.mmap.pedibus.repository.NotificaRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
-import it.polito.ai.mmap.pedibus.resources.NotificaResource;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
