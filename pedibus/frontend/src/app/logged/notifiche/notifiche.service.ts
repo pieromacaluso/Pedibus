@@ -6,13 +6,12 @@ import { DataShareService } from 'src/app/data-share.service';
 import { Subscription } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { ApiService } from '../api.service';
-import { Notifica } from './dtos';
 
 const mapRoleNotifiche = [
-  { role: "ROLE_SYSTEM-ADMIN", notifiche: ["/disponibilita", "/reminder-turno"]},
-  { role: "ROLE_ADMIN", notifiche: ["/turno-confermato", "/turno-chiuso", "/turno-aperto"] },
-  { role: "ROLE_GUIDE", notifiche: ["/turno-confermato", "/turno-chiuso", "/turno-aperto"] },
-  { role: "ROLE_USER", notifiche: ["/handled"] }
+  { role: "ROLE_SYSTEM-ADMIN", notifiche: ["/user/dispws", "/user/reminder-turno"]},
+  { role: "ROLE_ADMIN", notifiche: ["/user/dispws", "/user/dispws-status", "/user/dispws-add"] },
+  { role: "ROLE_GUIDE", notifiche: ["/user/dispws-status"] },
+  { role: "ROLE_USER", notifiche: ["/user/handled"] }
 ]
 
 @Injectable({
