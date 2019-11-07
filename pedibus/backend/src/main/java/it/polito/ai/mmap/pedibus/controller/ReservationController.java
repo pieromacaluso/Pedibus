@@ -134,12 +134,7 @@ public class ReservationController {
     @PostMapping("/reservations/handled/{idLinea}/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
         Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data);
-
-        Integer idFermata = reservationService.manageHandled(verso, date, cfChild, isSet, idLinea);
-        if (idFermata != -1) {
-            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, idFermata));
-            logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
-        }
+        reservationService.manageHandled(verso, date, cfChild, isSet, idLinea);
 
     }
 

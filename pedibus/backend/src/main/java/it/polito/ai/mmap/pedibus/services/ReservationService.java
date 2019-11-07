@@ -3,19 +3,15 @@ package it.polito.ai.mmap.pedibus.services;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
-import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.*;
 import it.polito.ai.mmap.pedibus.repository.*;
-import it.polito.ai.mmap.pedibus.resources.FermataAlunniResource;
-import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
-import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
-import it.polito.ai.mmap.pedibus.resources.ReservationChildResource;
+import it.polito.ai.mmap.pedibus.resources.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +36,19 @@ public class ReservationService {
 
     @Autowired
     ChildService childService;
+
+    @Autowired
+    NotificheService notificheService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+
+
+    @Value("${notifiche.type.Base}")
+    String NotBASE;
+    @Value("${notifiche.type.Disponibilita}")
+    String NotDISPONIBILITA;
 
     public ReservationEntity getReservationEntityById(ObjectId idReservation) {
         Optional<ReservationEntity> checkReservation = reservationRepository.findById(idReservation);
@@ -156,6 +165,7 @@ public class ReservationService {
      * @param verso
      * @return
      */
+    //todo sostituire con metodo in ChildService
     public List<ChildDTO> getChildrenNotReserved(Date data, boolean verso) {
         List<String> childrenDataVerso = reservationRepository.findByDataAndVerso(data, verso).stream().map(ReservationEntity::getCfChild).collect(Collectors.toList());
         List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
@@ -261,15 +271,20 @@ public class ReservationService {
      * @param idLinea
      * @throws Exception
      */
-    public Integer manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
+    public void manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
         if (canModify(idLinea, data)) {
+            ChildEntity childEntity=childService.getChildrenEntity(cfChild);
+            UserEntity userEntity= userService.getUserEntity(childEntity.getIdParent());
+
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             pre.setPresoInCarico(isSet);
             updateReservation(pre, reservationEntity.getId());
-            return reservationEntity.getIdFermata();
+            notificheService.addNotifica(new NotificaDTO(NotBASE,userEntity.getUsername(),"Suo figlio è sul pedibus in direzione scuola.",false));      //salvataggio notifica
+            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
+            logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         }
-        return -1;
+        throw new Exception();
     }
 
     public boolean canModify(String idLinea, Date date) {

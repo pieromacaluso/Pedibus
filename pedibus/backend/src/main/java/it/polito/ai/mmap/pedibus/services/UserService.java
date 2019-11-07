@@ -263,4 +263,16 @@ public class UserService implements UserDetailsService {
         return principal.getRoleList().contains(getRoleEntityById("ROLE_GUIDE"));
     }
 
+    /**
+     * Metodo da usare in altri service in modo da non dover fare sempre i controlli
+     * @param idParent
+     * @return
+     */
+    public UserEntity getUserEntity(ObjectId idParent) {
+        Optional<UserEntity> checkUser=userRepository.findById(idParent);
+        if(checkUser.isPresent()){
+            return checkUser.get();
+        }else
+            throw new UserNotFoundException();
+    }
 }

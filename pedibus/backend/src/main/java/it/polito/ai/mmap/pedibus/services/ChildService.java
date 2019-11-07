@@ -77,4 +77,33 @@ public class ChildService {
         } else
             throw new ChildNotFoundException("Bambino non trovato");
     }
+
+    /**
+     * Metodo da usare in altri service in modo da non dover fare sempre i controlli
+     * @param cfChild
+     * @return
+     */
+    public ChildEntity getChildrenEntity(String cfChild) {
+        Optional<ChildEntity> checkChild= childRepository.findById(cfChild);
+        if(checkChild.isPresent()){
+            return checkChild.get();
+        } else {
+            throw new ChildNotFoundException("Codice Fiscale non valido.");
+        }
+    }
+
+    /**
+     * Restituisce i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
+     *
+     * @param data
+     * @param verso
+     * @return
+     */
+    public List<ChildDTO> getChildrenNotReserved(List<String> childrenDataVerso,Date data, boolean verso) {
+        //List<String> childrenDataVerso = reservationRepository.findByDataAndVerso(data, verso).stream().map(ReservationEntity::getCfChild).collect(Collectors.toList());
+        List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
+        List<String> childrenNotReserved = childrenAll.stream().filter(bambino -> !childrenDataVerso.contains(bambino)).collect(Collectors.toList());
+
+        return childrenNotReserved.stream().map(codiceFiscale -> getChildDTOById(codiceFiscale)).collect(Collectors.toList());
+    }
 }
