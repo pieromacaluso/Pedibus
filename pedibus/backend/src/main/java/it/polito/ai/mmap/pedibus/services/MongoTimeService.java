@@ -102,7 +102,7 @@ public class MongoTimeService {
         return result;
     }
 
-    public LocalDate dateCheckConstraint(LocalDate date) {
+    public String dateCheckConstraint(LocalDate date) {
         String day = Integer.toString(date.getDayOfMonth());
         if (day.length() == 1)
             day = "0" + day;
@@ -111,6 +111,6 @@ public class MongoTimeService {
         if (month.length() == 1)
             month = "0" + month;
         getDateCheckConstraints(date.getYear() + "-" + month + "-" + day);
-        return date;
+        return date.getYear() + "-" + month + "-" + day;
     }
 }

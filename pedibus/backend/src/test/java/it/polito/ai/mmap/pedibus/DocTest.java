@@ -118,11 +118,9 @@ public class DocTest {
     @PostConstruct
     public void postInit() {
         // necessario per trovare un turno che sia valido (vacanza,weekend ecc)
-        LocalDate dateSupp;
         for (int i = 1; i < 120; i++) {
             try {
-                dateSupp =LocalDate.now().plus(i, ChronoUnit.DAYS);
-                mongoTimeService.dateCheckConstraint(dateSupp);
+                daysDef = mongoTimeService.dateCheckConstraint(LocalDate.now().plus(i, ChronoUnit.DAYS));
                 break;
             } catch (IllegalArgumentException ignored) {
             }

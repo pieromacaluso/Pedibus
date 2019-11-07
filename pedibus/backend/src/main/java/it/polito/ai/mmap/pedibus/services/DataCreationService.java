@@ -242,7 +242,7 @@ public class DataCreationService {
         count = 0;
         List<ReservationEntity> reservationsList = new LinkedList<>();
         ReservationEntity reservationEntity;
-        LocalDate dateChecked;
+        String dateChecked;
         int dayCount = 0;
         for (int day = 0; day < 120 && dayCount < 3; day++) {
             try {
@@ -255,7 +255,7 @@ public class DataCreationService {
                     //andata
                     reservationEntity = new ReservationEntity();
                     reservationEntity.setCfChild(childEntity.getCodiceFiscale());
-                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked.toString()));
+                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked));
                     reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea());
                     reservationEntity.setVerso(true);
                     reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
