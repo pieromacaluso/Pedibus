@@ -31,7 +31,7 @@ public class LineeController {
      *
      * @return Lista nomi Linee nel DB
      */
-    @GetMapping("/building_data/lines")
+    @GetMapping("/lines")
     public List<String> getLines() {
         return lineeService.getAllLinesIds();
     }
@@ -40,7 +40,7 @@ public class LineeController {
      *
      * @return Lista nomi Linee nel DB
      */
-    @GetMapping("/building_data/lines/name")
+    @GetMapping("/lines/name")
     public List<String> getLinesNames() {
         return lineeService.getAllLinesNames();
     }
@@ -51,7 +51,7 @@ public class LineeController {
      * @param idLinea id della Linea
      * @return LineaDTO
      */
-    @GetMapping("/building_data/lines/{id_linea}")
+    @GetMapping("/lines/{id_linea}")
     public LineaDTO getStopsLine(@PathVariable("id_linea") String idLinea) {
         return lineeService.getLineaDTOById(idLinea);
     }

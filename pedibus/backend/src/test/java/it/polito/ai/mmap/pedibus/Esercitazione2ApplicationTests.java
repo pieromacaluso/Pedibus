@@ -30,6 +30,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -157,10 +160,13 @@ public class Esercitazione2ApplicationTests {
         List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        mockMvc.perform(get("/building_data/lines")
+        mockMvc.perform(get("/lines")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson));
+                .andExpect(content().json(expectedJson))
+                .andDo(document("get-lines",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
 
         logger.info("PASSED");
     }
@@ -177,7 +183,7 @@ public class Esercitazione2ApplicationTests {
         String lineaID = lineaRepository.findAll().get(0).getId();
         logger.info("Test GET /lines/" + lineaID + " ...");
 
-        mockMvc.perform(get("/building_data/lines/" + lineaID)
+        mockMvc.perform(get("/lines/" + lineaID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
