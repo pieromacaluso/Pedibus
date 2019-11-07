@@ -1,3 +1,9 @@
+//todo poi cancellare
+//tradurre tutto in ita
+//Come struttura generale terrei:
+//-example request
+//-CURL request
+//-Example response-body e se il non c'è http-response
 = RESTful Notes API Guide
 :doctype: book
 :icons: font
@@ -21,55 +27,88 @@ Intro intro intro
 
 include::{snippets}/get-lines/http-request.adoc[]
 
-==== Example Response
+==== CURL request
 
-include::{snippets}/get-lines/http-response.adoc[]
+include::{snippets}/get-lines/curl-request.adoc[]
 
 ==== Example Response body
 
 include::{snippets}/get-lines/response-body.adoc[]
 
+== Gestione disponibilità
+
+=== Recupero disponibilità
+
+`GET /disp/{verso}/{data}` permette a una guide/admin di una linea di recuperare la propria disponibilità e lo stato del relativo turno
+
+
+==== Example Request
+
+include::{snippets}/get-disp/http-request.adoc[]
+
 ==== CURL request
 
-include::{snippets}/get-lines/curl-request.adoc[]
+include::{snippets}/get-disp/curl-request.adoc[]
 
-== Gestione disponibilità
+==== Example Response body
+
+include::{snippets}/get-disp/response-body.adoc[]
+
 
 === Aggiunta disponibilità
 
-`POST /disp/{idLinea}/{verso}/{data} @RequestBody Integer idFermata` è usato per aggiungere una disponibilità
+`POST /disp/{idLinea}/{verso}/{data} @RequestBody Integer idFermata` permette a una GUIDE di aggiungere una disponibilità
 
 ==== Example Request
 
 include::{snippets}/post-disp/http-request.adoc[]
 
-==== Example response
-
-include::{snippets}/post-disp/http-response.adoc[]
-
 ==== CURL request
 
 include::{snippets}/post-disp/curl-request.adoc[]
 
+==== Example response body
+
+include::{snippets}/post-disp/response-body.adoc[]
+
+
 === Cancellazione disponibilità
 
-`DELETE /disp/{idLinea}/{verso}/{data}` è usato per cancellare una disponibilità
+`DELETE /disp/{idLinea}/{verso}/{data}` permette a una GUIDE di cancellare una disponibilità
 
 ==== Example Request 
 
 include::{snippets}/delete-disp/http-request.adoc[]
 
-==== Example response
-
-include::{snippets}/delete-disp/http-response.adoc[]
-
 ==== CURL request
 
 include::{snippets}/delete-disp/curl-request.adoc[]
 
+==== Example response
+
+include::{snippets}/delete-disp/http-response.adoc[]
+
+
 == Gestione turni
 
-=== Stato turno
+=== Recupero stato turno
+
+`GET /turno/state/{idLinea}/{verso}/{data}` permette all'admin di una linea di recuperare lo stato di un turno
+
+==== Example Request
+
+include::{snippets}/get-turno/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-turno/curl-request.adoc[]
+
+==== Example Response body
+
+include::{snippets}/get-turno/response-body.adoc[]
+
+
+=== Modifica stato turno
 
 A `PUT /turno/state/{idLinea}/{verso}/{data} @RequestBody Boolean isOpen` è usata per settare lo stato di un turno
 
@@ -77,14 +116,14 @@ A `PUT /turno/state/{idLinea}/{verso}/{data} @RequestBody Boolean isOpen` è usa
 
 include::{snippets}/put-turno/http-request.adoc[]
 
+==== CURL request
+
+include::{snippets}/put-turno/curl-request.adoc[]
+
 ==== Example Response
 
 include::{snippets}/put-turno/http-response.adoc[]
 
-
-==== CURL request
-
-include::{snippets}/put-turno/curl-request.adoc[]
 
 === Lista disponibilità per turno
 
@@ -94,21 +133,18 @@ include::{snippets}/put-turno/curl-request.adoc[]
 
 include::{snippets}/get-turno-disp/http-request.adoc[]
 
-==== Example Response
+==== CURL request
 
-include::{snippets}/get-turno-disp/http-response.adoc[]
+include::{snippets}/get-turno-disp/curl-request.adoc[]
 
 ==== Example Response body
 
 include::{snippets}/get-turno-disp/response-body.adoc[]
 
-==== CURL request
-
-include::{snippets}/get-turno-disp/curl-request.adoc[]
 
 === Conferma disponibilità per turno
 
-`POST /turno/disp/{idLinea}/{verso}/{data} @RequestBody List<DispAllResource>` è usato per confermare/rifiutare la lista di disponibilità recuperata con la get:
+`POST /turno/disp/{idLinea}/{verso}/{data} @RequestBody DispAllResource` è usato per confermare/rifiutare una disponibilità.
 N.B il turno deve prima essere chiuso con l'apposita PUT
 
 ==== Example Request
@@ -124,6 +160,22 @@ include::{snippets}/post-turno-disp/http-response.adoc[]
 
 include::{snippets}/post-turno-disp/curl-request.adoc[]
 
+=== Ack della conferma della disponibilità
+
+`POST /turno/disp/ack/{idLinea}/{verso}/{data}` Permette alle guide confermate di ack la loro conferma.
+N.B il turno deve prima essere chiuso con l'apposita PUT
+
+==== Example Request
+
+include::{snippets}/post-disp-ack/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/post-disp-ack/curl-request.adoc[]
+
+==== Example Response
+
+include::{snippets}/post-disp-ack/http-response.adoc[]
 
 == Notifiche
 
@@ -135,17 +187,14 @@ include::{snippets}/post-turno-disp/curl-request.adoc[]
 
 include::{snippets}/get-notifiche/http-request.adoc[]
 
-==== Example Response
+==== CURL request
 
-include::{snippets}/get-notifiche/http-response.adoc[]
+include::{snippets}/get-notifiche/curl-request.adoc[]
 
 ==== Example Response body
 
 include::{snippets}/get-notifiche/response-body.adoc[]
 
-==== CURL request
-
-include::{snippets}/get-notifiche/curl-request.adoc[]
 
 === Lista notifiche Base non lette
 
@@ -155,17 +204,14 @@ include::{snippets}/get-notifiche/curl-request.adoc[]
 
 include::{snippets}/get-notifiche-base/http-request.adoc[]
 
-==== Example Response
+==== CURL request
 
-include::{snippets}/get-notifiche-base/http-response.adoc[]
+include::{snippets}/get-notifiche-base/curl-request.adoc[]
 
 ==== Example Response body
 
 include::{snippets}/get-notifiche-base/response-body.adoc[]
 
-==== CURL request
-
-include::{snippets}/get-notifiche-base/curl-request.adoc[]
 
 === Lista notifiche Disponibilità non lette
 
@@ -175,37 +221,31 @@ include::{snippets}/get-notifiche-base/curl-request.adoc[]
 
 include::{snippets}/get-notifiche-disp/http-request.adoc[]
 
-==== Example Response
+==== CURL request
 
-include::{snippets}/get-notifiche-disp/http-response.adoc[]
+include::{snippets}/get-notifiche-disp/curl-request.adoc[]
 
 ==== Example Response body
 
 include::{snippets}/get-notifiche-disp/response-body.adoc[]
 
-==== CURL request
-
-include::{snippets}/get-notifiche-disp/curl-request.adoc[]
 
 === Elimina una notifica
 
 `DELETE /notifiche/{idNotifica}` is used to remove the notification
 
-==== Example Request
+//==== Example Request
+//
+//include::{snippets}/delete-notifiche/http-request.adoc[]
+//
+//==== CURL request
+//
+//include::{snippets}/delete-notifiche/curl-request.adoc[]
+//
+//==== Example Response body
+//
+//include::{snippets}/delete-notifiche/response-body.adoc[]
 
-include::{snippets}/delete-notifiche/http-request.adoc[]
-
-==== Example Response
-
-include::{snippets}/delete-notifiche/http-response.adoc[]
-
-==== Example Response body
-
-include::{snippets}/delete-notifiche/response-body.adoc[]
-
-==== CURL request
-
-include::{snippets}/delete-notifiche/curl-request.adoc[]
 
 
 

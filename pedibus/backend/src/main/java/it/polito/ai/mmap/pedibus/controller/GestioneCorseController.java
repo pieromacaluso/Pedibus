@@ -27,7 +27,7 @@ public class GestioneCorseController {
     @Autowired
     MongoTimeService mongoTimeService;
     /**
-     * Permette a una guide/admin di una linea di recuperare la propria disponibilità e le info relative ai turni
+     * Permette a una guide/admin di una linea di recuperare la propria disponibilità e e lo stato del relativo turno
      */
     @GetMapping("/disp/{verso}/{data}")
     public DispTurnoResource getDisp(@PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
@@ -35,7 +35,7 @@ public class GestioneCorseController {
     }
 
     /**
-     * Permette a una guide/admin di una linea di segnalare la propria disponibilità
+     * Permette a una guide di segnalare la propria disponibilità
      */
     @PostMapping("/disp/{idLinea}/{verso}/{data}")
     public DispAllResource addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
@@ -47,7 +47,7 @@ public class GestioneCorseController {
 
 
     /**
-     * Permette a una guide/admin di una linea di annullare la propria disponibilità
+     * Permette a una guide di annullare la propria disponibilità
      */
     @DeleteMapping("/disp/{idLinea}/{verso}/{data}")
     public void deleteDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
@@ -56,6 +56,33 @@ public class GestioneCorseController {
         simpMessagingTemplate.convertAndSendToUser(deleted.getGuideUsername(), "/dispws/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
         simpMessagingTemplate.convertAndSend("/dispws-del/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), deleted);
 
+    }
+
+    /**
+     * Permette all'admin di una linea di recuperare lo stato di un turno
+     *
+     * @param idLinea
+     * @param verso
+     * @param data
+     */
+    @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
+    public TurnoResource getTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
+        return gestioneCorseService.getTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso));
+    }
+
+    /**
+     * Permette all'admin di una linea di gestire lo stato di un turno
+     *
+     * @param idLinea
+     * @param verso
+     * @param data
+     * @param isOpen
+     */
+    @PutMapping("/turno/state/{idLinea}/{verso}/{data}")
+    public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
+        TurnoEntity turno = gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso), isOpen);
+        TurnoResource tr = new TurnoResource(turno);
+        simpMessagingTemplate.convertAndSend("/turnows/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), tr);
     }
 
     /**
@@ -106,31 +133,6 @@ public class GestioneCorseController {
 
     }
 
-    /**
-     * Permette all'admin di una linea di recuperare lo stato di un turno
-     *
-     * @param idLinea
-     * @param verso
-     * @param data
-     */
-    @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
-    public TurnoResource getTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
-        return gestioneCorseService.getTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso));
-    }
 
-    /**
-     * Permette all'admin di una linea di gestire lo stato di un turno
-     *
-     * @param idLinea
-     * @param verso
-     * @param data
-     * @param isOpen
-     */
-    @PutMapping("/turno/state/{idLinea}/{verso}/{data}")
-    public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
-        TurnoEntity turno = gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso), isOpen);
-        TurnoResource tr = new TurnoResource(turno);
-        simpMessagingTemplate.convertAndSend("/turnows/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), tr);
-    }
 
 }

@@ -42,8 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *         - inserimentoReservationGenitore
  */
 
-//TODO controllare di non andare a specificare una data che è in vacanza che causa una IllegalArgumentException
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc

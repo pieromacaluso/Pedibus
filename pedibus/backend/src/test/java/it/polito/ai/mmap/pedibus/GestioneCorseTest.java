@@ -32,8 +32,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class DocTest {
+public class GestioneCorseTest {
     private Logger logger = LoggerFactory.getLogger(Esercitazione2ApplicationTests.class);
 
     @Value("${superadmin.email}")
@@ -179,7 +177,7 @@ public class DocTest {
     @Test
     public void getLines() throws Exception {
 
-        String token = loginAsNonnoAdmin(lineaDef.getId());
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
 
         List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
@@ -194,9 +192,23 @@ public class DocTest {
     }
 
     @Test
+    public void getDisp() throws Exception {
+
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
+        postDisp();
+
+        mockMvc.perform(get("/disp/{verso}/{data}", versoDef, daysDef)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(document("get-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
     public void postDisp() throws Exception {
 
-        String token = loginAsNonnoAdmin(lineaDef.getId());
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
 
         mockMvc.perform(post("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(lineaDef.getAndata().get(0)))
@@ -209,7 +221,7 @@ public class DocTest {
 
     @Test
     public void deleteDisp() throws Exception {
-        String token = loginAsNonnoAdmin(lineaDef.getId());
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
 
         postDisp();
         mockMvc.perform(delete("/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
@@ -221,18 +233,23 @@ public class DocTest {
     }
 
 
+
+
     @Test
-    public void getTurnoDisp() throws Exception {
+    public void getTurno() throws Exception {
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
 
-        String token = loginAsNonnoAdmin(lineaDef.getId());
-        postDisp();
-        getTurnoDispMethod(lineaDef, token);
-
+        mockMvc.perform(get("/turno/state/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(document("get-turno",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
     }
 
     @Test
     public void putTurno() throws Exception {
-        String token = loginAsNonnoAdmin(lineaDef.getId());
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
         mockMvc.perform(put("/turno/state/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(false)))
@@ -242,10 +259,18 @@ public class DocTest {
                         preprocessResponse(prettyPrint())));
     }
 
+    @Test
+    public void getTurnoDisp() throws Exception {
+
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
+        postDisp();
+        getTurnoDispMethod(lineaDef, token);
+
+    }
 
     @Test
     public void postTurnoDisp() throws Exception {
-        String token = loginAsNonnoAdmin(lineaDef.getId());
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
 
         //crea una disponibilità
         postDisp();
@@ -255,14 +280,29 @@ public class DocTest {
 
         //conferma la disponibilità
         TurnoDispResource turnoDispResource = getTurnoDispMethod(lineaDef, token);
-        List<DispAllResource> dispList = turnoDispResource.getListDisp().values().stream().flatMap(List::stream).collect(Collectors.toList());
-        dispList.forEach(dispAllResource -> dispAllResource.setIsConfirmed(true));
+        DispAllResource dispAllResource = turnoDispResource.getListDisp().values().stream().flatMap(List::stream).collect(Collectors.toList()).get(0);
+        dispAllResource.setIsConfirmed(true);
 
         mockMvc.perform(post("/turno/disp/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
                 .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dispList)))
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dispAllResource)))
                 .andExpect(status().isOk())
                 .andDo(document("post-turno-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    public void postDispAck() throws Exception {
+        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
+
+        //crea e conferma la disponibilità
+        postTurnoDisp();
+
+        mockMvc.perform(post("/turno/disp/ack/{idLinea}/{verso}/{data}", lineaDef.getId(), versoDef, daysDef)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andDo(document("post-disp-ack",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
     }
@@ -280,7 +320,7 @@ public class DocTest {
     }
 
 
-    private String loginAsNonnoAdmin(String idLinea) throws Exception {
+    private String loginAsNonnoGuideAdmin(String idLinea) throws Exception {
         UserDTO user = userDTOMap.get("testNonno");
 
         String json = objectMapper.writeValueAsString(user);
@@ -289,19 +329,4 @@ public class DocTest {
         JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
         return node.get("token").asText();
     }
-
-
-    private String loginAsSystemAdmin() throws Exception {
-
-        UserDTO user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        return node.get("token").asText();
-    }
-
-
 }
