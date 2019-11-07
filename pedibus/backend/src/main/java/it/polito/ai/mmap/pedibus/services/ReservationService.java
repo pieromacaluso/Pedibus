@@ -25,8 +25,8 @@ public class ReservationService {
     @Autowired
     ReservationRepository reservationRepository;
 
-    @Autowired
-    ChildRepository childRepository;
+    /*@Autowired
+    ChildRepository childRepository;*/
 
     @Autowired
     LineeService lineeService;
@@ -165,13 +165,13 @@ public class ReservationService {
      * @param verso
      * @return
      */
-    //todo sostituire con metodo in ChildService
     public List<ChildDTO> getChildrenNotReserved(Date data, boolean verso) {
         List<String> childrenDataVerso = reservationRepository.findByDataAndVerso(data, verso).stream().map(ReservationEntity::getCfChild).collect(Collectors.toList());
-        List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
+        return childService.getChildrenNotReserved(childrenDataVerso,data,verso);
+       /* List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
         List<String> childrenNotReserved = childrenAll.stream().filter(bambino -> !childrenDataVerso.contains(bambino)).collect(Collectors.toList());
 
-        return childrenNotReserved.stream().map(codiceFiscale -> childService.getChildDTOById(codiceFiscale)).collect(Collectors.toList());
+        return childrenNotReserved.stream().map(codiceFiscale -> childService.getChildDTOById(codiceFiscale)).collect(Collectors.toList());*/
     }
 
     /**
@@ -251,8 +251,7 @@ public class ReservationService {
                 .findAllByDataAndIdFermataAndVerso(data, id, verso).stream()
                 .collect(Collectors.toMap(ReservationEntity::getCfChild, p -> p));
         Set<String> cfList = reservations.keySet();
-        HashMap<String, ChildEntity> children = (HashMap<String, ChildEntity>) ((List<ChildEntity>) childRepository
-                .findAllById(cfList)).stream().collect(Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
+        HashMap<String, ChildEntity> children = childService.getChildrenEntityByCfList(cfList);
         List<ReservationChildResource> result = new ArrayList<>();
         for (String cf : cfList) {
             ReservationEntity p = reservations.get(cf);

@@ -100,10 +100,14 @@ public class ChildService {
      * @return
      */
     public List<ChildDTO> getChildrenNotReserved(List<String> childrenDataVerso,Date data, boolean verso) {
-        //List<String> childrenDataVerso = reservationRepository.findByDataAndVerso(data, verso).stream().map(ReservationEntity::getCfChild).collect(Collectors.toList());
         List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
         List<String> childrenNotReserved = childrenAll.stream().filter(bambino -> !childrenDataVerso.contains(bambino)).collect(Collectors.toList());
 
         return childrenNotReserved.stream().map(codiceFiscale -> getChildDTOById(codiceFiscale)).collect(Collectors.toList());
+    }
+
+    public HashMap<String, ChildEntity> getChildrenEntityByCfList(Set<String> cfList) {
+        return (HashMap<String, ChildEntity>) ((List<ChildEntity>) childRepository
+                .findAllById(cfList)).stream().collect(Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
     }
 }
