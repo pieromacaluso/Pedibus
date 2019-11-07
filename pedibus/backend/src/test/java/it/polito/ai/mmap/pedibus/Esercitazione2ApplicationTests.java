@@ -19,10 +19,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
@@ -31,6 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -64,7 +69,12 @@ public class Esercitazione2ApplicationTests {
     UserService userService;
 
     private Logger logger = LoggerFactory.getLogger(Esercitazione2ApplicationTests.class);
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
+
     @Autowired
+    private WebApplicationContext context;
+
     private MockMvc mockMvc;
 
     @Autowired
@@ -119,6 +129,12 @@ public class Esercitazione2ApplicationTests {
 
     @Before
     public void setUpMethod() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
+                .apply(documentationConfiguration(this.restDocumentation))
+                .alwaysDo(document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
+                .build();
+
         LineaEntity lineaEntity = lineaRepository.findAll().get(0);
         logger.info("Il nonno sarà admin della linea: " + lineaEntity.getId());
 
@@ -507,6 +523,9 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON).content(resCorrectJson)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
+                .andDo(document("delete-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())))
                 .andReturn();
 
 
@@ -514,7 +533,10 @@ public class Esercitazione2ApplicationTests {
         mockMvc.perform(delete("/reservations/" + lineaEntity.getId() + "/" + mongoTimeService.getOneValidDate(0) + "/" + idRes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("delete-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
 
 
     }
@@ -620,7 +642,11 @@ public class Esercitazione2ApplicationTests {
         MvcResult result1 = mockMvc.perform(post("/reservations/" + lineaEntity.getId() + "/" + mongoTimeService.getOneValidDate(0) + "/")
                 .contentType(MediaType.APPLICATION_JSON).content(resJson)
                 .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk())
+                .andDo(document("delete-disp",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())))
+                .andReturn();
         return objectMapper.readValue(result1.getResponse().getContentAsString(), String.class);
 
     }

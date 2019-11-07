@@ -173,24 +173,6 @@ public class GestioneCorseTest {
         });
     }
 
-
-    @Test
-    public void getLines() throws Exception {
-
-        String token = loginAsNonnoGuideAdmin(lineaDef.getId());
-
-        List<String> expectedResult = lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
-        String expectedJson = objectMapper.writeValueAsString(expectedResult);
-
-        mockMvc.perform(get("/building_data/lines")
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson))
-                .andDo(document("get-lines",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
-    }
-
     @Test
     public void getDisp() throws Exception {
 

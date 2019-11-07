@@ -3,7 +3,7 @@
 //Come struttura generale terrei:
 //-example request
 //-CURL request
-//-Example response-body e se il non c'è http-response
+//-Example response-body e se il body non c'è http-response
 = RESTful Notes API Guide
 :doctype: book
 :icons: font
