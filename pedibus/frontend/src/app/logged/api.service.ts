@@ -18,7 +18,7 @@ export class ApiService {
   }
 
   getNotificheNonLette(username: string): Observable<Notifica[]> {
-    return this.httpClient.get<Notifica[]>(this.baseURL + 'notifiche/' + username);
+    return this.httpClient.get<Notifica[]>(this.baseURL + 'notifiche/all/' + username);
   }
 
   deleteNotifica(idNotifica: string): Observable<any[]> {
