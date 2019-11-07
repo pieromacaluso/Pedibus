@@ -102,7 +102,7 @@ public class MongoTimeService {
         return result;
     }
 
-    public String dateCheckConstraint(LocalDate date) {
+    public String isValidDate(LocalDate date) {
         String day = Integer.toString(date.getDayOfMonth());
         if (day.length() == 1)
             day = "0" + day;
@@ -112,5 +112,17 @@ public class MongoTimeService {
             month = "0" + month;
         getDateCheckConstraints(date.getYear() + "-" + month + "-" + day);
         return date.getYear() + "-" + month + "-" + day;
+    }
+
+
+    public String getOneValidDate(int shifAmount) {
+        for (int i = 2; i < 120; i++) {
+            try {
+                return isValidDate(LocalDate.now().plus(i+shifAmount, ChronoUnit.DAYS));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        //restituisce null se con shiftAmount sforiamo la schoolEnd
+        return null;
     }
 }

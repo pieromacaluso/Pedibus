@@ -118,13 +118,7 @@ public class DocTest {
     @PostConstruct
     public void postInit() {
         // necessario per trovare un turno che sia valido (vacanza,weekend ecc)
-        for (int i = 1; i < 120; i++) {
-            try {
-                daysDef = mongoTimeService.dateCheckConstraint(LocalDate.now().plus(i, ChronoUnit.DAYS));
-                break;
-            } catch (IllegalArgumentException ignored) {
-            }
-        }
+        daysDef = mongoTimeService.getOneValidDate(0);
         lineaDef = lineaRepository.findAll().get(0);
         Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef), versoDef);
         if (checkTurno.isPresent())

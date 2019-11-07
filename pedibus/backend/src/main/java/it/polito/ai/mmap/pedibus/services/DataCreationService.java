@@ -246,7 +246,7 @@ public class DataCreationService {
         int dayCount = 0;
         for (int day = 0; day < 120 && dayCount < 3; day++) {
             try {
-                dateChecked = mongoTimeService.dateCheckConstraint(LocalDate.now().plus(day, ChronoUnit.DAYS));
+                dateChecked = mongoTimeService.isValidDate(LocalDate.now().plus(day, ChronoUnit.DAYS));
                 dayCount++;
                 childEntityIterable = childList.iterator();
                 while (childEntityIterable.hasNext()) {
