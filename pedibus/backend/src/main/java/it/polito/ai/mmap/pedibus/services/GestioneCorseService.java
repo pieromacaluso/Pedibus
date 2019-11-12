@@ -223,7 +223,7 @@ public class GestioneCorseService {
                 NotificaEntity notificaEntity = new NotificaEntity(NotDISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
                 simpMessagingTemplate.convertAndSendToUser(dispAllResource.getGuideUsername(), "/notifiche", notificaEntity);
-                //todo messaggio per aggiornare l'interfaccia admin
+                //todo messaggio per aggiornare l'interfaccia admin, quando arrivato a scuola friz tutti gli utenti
             } else
                 throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
         } else

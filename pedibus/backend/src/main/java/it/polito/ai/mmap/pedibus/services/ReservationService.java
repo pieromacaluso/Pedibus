@@ -267,6 +267,7 @@ public class ReservationService {
      * @param verso
      * @param data
      * @param cfChild
+     * @param isSet
      * @param idLinea
      * @throws Exception
      */
@@ -278,11 +279,16 @@ public class ReservationService {
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             pre.setPresoInCarico(isSet);
             updateReservation(pre, reservationEntity.getId());
-
-            NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
-            notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+            if(isSet){
+                NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
+                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche", notificaEntity);
+            }else{
+                NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "No scherzavo XD.", null);
+                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche", notificaEntity);
+            }
             simpMessagingTemplate.convertAndSend("/admin/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
-            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche/", notificaEntity);
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
