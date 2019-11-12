@@ -40,7 +40,7 @@ public class NotificaEntity {
         this.msg = msg;
 
         if (type.compareTo(NotBASE) == 0) {
-            if (dispID.compareTo(null) != 0) {
+            if (dispID!=null) {
                 throw new NotificaWrongTypeException();             //Specificato type base ma anche un dispID
             }
             this.type = NotBASE;

@@ -42,52 +42,34 @@ public class NotificheService {
 
 
     /**
-     * Restituisce le notifiche non lette con type 'base' dell'utente
+     * Restituisce le notifiche non lette con type
      *
      * @param username
      * @return
      */
-    public ArrayList<NotificaDTO> getNotificheBase(String username) {
+    public ArrayList<NotificaDTO> getNotificheType(String username,String type) {
+        if(type.equals(NotBASE) || type.equals(NotDISPONIBILITA)){
+            UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(principal.getUsername()==username){
+                List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouchedAndAndType(username,false,false,type);
+                ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
 
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal.getUsername()==username){
-            //todo filtro base
-            List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouched(username,false,false);
-            ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
+                for (NotificaEntity n : notifiche) {
+                    notificheDTO.add(new NotificaDTO(n));
+                }
 
-            for (NotificaEntity n : notifiche) {
-                notificheDTO.add(new NotificaDTO(n));
+                return notificheDTO;
+            }else{
+                throw new UnauthorizedUserException("Operazione non autorizzata");
             }
-
-            return notificheDTO;
         }else{
-            throw new UnauthorizedUserException("Operazione non autorizzata");
-        }
-    }
-
-    /**
-     * Restituisce le notifiche non lette e non ack con type 'disponibilita' dell'utente
-     *
-     * @param username
-     * @return
-     */
-    public ArrayList<NotificaDTO> getNotificheDisponibilita(String username) {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal.getUsername()==username){
-            //todo cambiare come prima
-            List<NotificaEntity> notifiche = notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(username)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotDISPONIBILITA) == 0).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIsAck()).collect(Collectors.toList());
-            ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
-
-            for (NotificaEntity n : notifiche) {
-                notificheDTO.add(new NotificaDTO(n));
-            }
-
-            return notificheDTO;
-        }else{
-            throw new UnauthorizedUserException("Operazione non autorizzata");
+            throw new NotificaWrongTypeException();
         }
 
     }
+
+
+
 
     /**
      * Restituisce tutte le notifiche non lette dell'utente
@@ -100,11 +82,7 @@ public class NotificheService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(principal.getUsername()==username){
             List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouched(username,false,false);
-            if(notifiche.size()>0){
-                notifiche.stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(username)).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIsAck()).collect(Collectors.toList());
-            }
             ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
-
             for (NotificaEntity n : notifiche) {
                 notificheDTO.add(new NotificaDTO(n));
             }

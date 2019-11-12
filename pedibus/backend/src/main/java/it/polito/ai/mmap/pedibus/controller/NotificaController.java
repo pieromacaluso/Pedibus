@@ -21,19 +21,7 @@ public class NotificaController {
      */
     @GetMapping("/notifiche/all/{username}")
     public ArrayList<NotificaDTO> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotifiche(username);}
-
-    /**
-     * Restituisce le notifiche base non lette di un determinato utente
-     */
-    @GetMapping("/notifiche/base/{username}")
-    public ArrayList<NotificaDTO> getNotificheBase(@PathVariable("username") String username){ return notificheService.getNotificheBase(username);}
-
-    /**
-     * Restituisce le notifiche disponibilita non lette di un determinato utente
-     */
-    @GetMapping("/notifiche/disp/{username}")
-    public ArrayList<NotificaDTO> getNotificheDisp(@PathVariable("username") String username){ return notificheService.getNotificheDisponibilita(username);}
-
+    
 
 //TODO delete
 
