@@ -29,6 +29,7 @@ public class NotificaEntity {
     private String usernameDestinatario;
     private String msg;
     private Boolean isTouched;
+    //todo aggiunta data
 
     //Per type = notifiche.type.Disponibilita, altrimenti impostati a null e false
     private ObjectId dispID;

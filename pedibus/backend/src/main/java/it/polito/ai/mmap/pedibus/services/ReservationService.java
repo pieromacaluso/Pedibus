@@ -282,7 +282,7 @@ public class ReservationService {
             NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
             notificheService.addNotifica(notificaEntity);      //salvataggio notifica
             simpMessagingTemplate.convertAndSend("/admin/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
-            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), notificaEntity);
+            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche/", notificaEntity);
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
@@ -306,16 +306,19 @@ public class ReservationService {
      * @param idLinea
      * @throws Exception
      */
+
     public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
         if (canModify(idLinea, data)) {
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             reservationEntity.setArrivatoScuola(isSet);
+            //todo da eliminare prima
             reservationRepository.save(reservationEntity);
 
             UserEntity userEntity = childService.getChildParent(cfChild);
             NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è arrivato a scuola.", null);
             notificheService.addNotifica(notificaEntity);
-            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/arrived/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), notificaEntity);
+            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche/", notificaEntity);
+            //todo messaggio topic per atri admin
             return true;
         }
         return false;
