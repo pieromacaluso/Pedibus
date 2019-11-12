@@ -532,7 +532,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_example_response_body_8">Example Response body</a></li>
 </ul>
 </li>
-<li><a href="#_elimina_una_notifica">Elimina una notifica</a></li>
+<li><a href="#_elimina_una_notifica">Elimina una notifica</a>
+<ul class="sectlevel3">
+<li><a href="#_example_request_13">Example Request</a></li>
+<li><a href="#_curl_request_13">CURL request</a></li>
+<li><a href="#_example_response_body_9">Example Response body</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -559,8 +565,8 @@ Intro intro intro
 <h4 id="_example_request"><a class="link" href="#_example_request">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /building_data/lines HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3OSwiZXhwIjoxNTczMTUzODc5fQ.anKE3-_ZuffxFbdjYi7tN3GsMW5Y14uuN-fHHlti6x8
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /lines HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcHBsaWNhemlvbmkuaW50ZXJuZXQubW1hcEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1NZU1RFTS1BRE1JTiJdLCJpYXQiOjE1NzM1NjgyOTgsImV4cCI6MTU3MzU3MTg5OH0.JtTB2pXCH3OW6fy-JUCi1SknGPf9A2oWO1BdiYuAYKI
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -569,8 +575,8 @@ Host: localhost:8080</code></pre>
 <h4 id="_curl_request"><a class="link" href="#_curl_request">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/building_data/lines' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3OSwiZXhwIjoxNTczMTUzODc5fQ.anKE3-_ZuffxFbdjYi7tN3GsMW5Y14uuN-fHHlti6x8'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/lines' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcHBsaWNhemlvbmkuaW50ZXJuZXQubW1hcEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1NZU1RFTS1BRE1JTiJdLCJpYXQiOjE1NzM1NjgyOTgsImV4cCI6MTU3MzU3MTg5OH0.JtTB2pXCH3OW6fy-JUCi1SknGPf9A2oWO1BdiYuAYKI'</code></pre>
 </div>
 </div>
 </div>
@@ -597,8 +603,8 @@ Host: localhost:8080</code></pre>
 <h4 id="_example_request_2"><a class="link" href="#_example_request_2">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /disp/true/2019-11-11 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI2OSwiZXhwIjoxNTczMTUzODY5fQ.4kXsbknh47P72n1fS4jw0opsHmqSI5NwabP79ZtLWAk
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /disp/true/2019-11-14 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM2OCwiZXhwIjoxNTczNTcxOTY4fQ.bMczy5Rd97eZjUqjOTa1RLNueDHJ81HdkpkqDDwwKPU
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -607,8 +613,8 @@ Host: localhost:8080</code></pre>
 <h4 id="_curl_request_2"><a class="link" href="#_curl_request_2">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/true/2019-11-11' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI2OSwiZXhwIjoxNTczMTUzODY5fQ.4kXsbknh47P72n1fS4jw0opsHmqSI5NwabP79ZtLWAk'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/true/2019-11-14' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM2OCwiZXhwIjoxNTczNTcxOTY4fQ.bMczy5Rd97eZjUqjOTa1RLNueDHJ81HdkpkqDDwwKPU'</code></pre>
 </div>
 </div>
 </div>
@@ -645,8 +651,8 @@ Host: localhost:8080</code></pre>
 <h4 id="_example_request_3"><a class="link" href="#_example_request_3">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /disp/linea1/true/2019-11-11 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3NSwiZXhwIjoxNTczMTUzODc1fQ.yvsf0ozzgwM3X2Nz0OGUYJLb1lJBz4oUyX4Q7kRNGEM
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /disp/linea1/true/2019-11-14 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM4MiwiZXhwIjoxNTczNTcxOTgyfQ.vaY0sUP7o_yhoEtJqCN-NPLxbG-5LMYkdFbgKdYNB00
 Content-Type: application/json
 Content-Length: 1
 Host: localhost:8080
@@ -659,8 +665,8 @@ Host: localhost:8080
 <h4 id="_curl_request_3"><a class="link" href="#_curl_request_3">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2019-11-11' -i -X POST \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3NSwiZXhwIjoxNTczMTUzODc1fQ.yvsf0ozzgwM3X2Nz0OGUYJLb1lJBz4oUyX4Q7kRNGEM' \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2019-11-14' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM4MiwiZXhwIjoxNTczNTcxOTgyfQ.vaY0sUP7o_yhoEtJqCN-NPLxbG-5LMYkdFbgKdYNB00' \
     -H 'Content-Type: application/json' \
     -d '1'</code></pre>
 </div>
@@ -693,8 +699,8 @@ Host: localhost:8080
 <h4 id="_example_request_4"><a class="link" href="#_example_request_4">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /disp/linea1/true/2019-11-11 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3NCwiZXhwIjoxNTczMTUzODc0fQ.r5P-JgKoofUmBiXcTHl1ZgaFequdooDYKXZbMVA5GF0
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /disp/linea1/true/2019-11-14 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM4MiwiZXhwIjoxNTczNTcxOTgyfQ.vaY0sUP7o_yhoEtJqCN-NPLxbG-5LMYkdFbgKdYNB00
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -703,8 +709,8 @@ Host: localhost:8080</code></pre>
 <h4 id="_curl_request_4"><a class="link" href="#_curl_request_4">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2019-11-11' -i -X DELETE \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3NCwiZXhwIjoxNTczMTUzODc0fQ.r5P-JgKoofUmBiXcTHl1ZgaFequdooDYKXZbMVA5GF0'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2019-11-14' -i -X DELETE \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM4MiwiZXhwIjoxNTczNTcxOTgyfQ.vaY0sUP7o_yhoEtJqCN-NPLxbG-5LMYkdFbgKdYNB00'</code></pre>
 </div>
 </div>
 </div>
@@ -737,8 +743,8 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_example_request_5"><a class="link" href="#_example_request_5">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/state/linea1/true/2019-11-11 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI4MSwiZXhwIjoxNTczMTUzODgxfQ.3JrxP7FEWDgP_R2-MFlxZq9qCZ3VVKlCg02lANtxB0s
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/state/linea1/true/2019-11-14 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM5NCwiZXhwIjoxNTczNTcxOTk0fQ.se3_7o1g2faenDBozv6q5-78uHxcDQx0QT9dmso7BYs
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -747,8 +753,8 @@ Host: localhost:8080</code></pre>
 <h4 id="_curl_request_5"><a class="link" href="#_curl_request_5">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2019-11-11' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI4MSwiZXhwIjoxNTczMTUzODgxfQ.3JrxP7FEWDgP_R2-MFlxZq9qCZ3VVKlCg02lANtxB0s'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2019-11-14' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM5NCwiZXhwIjoxNTczNTcxOTk0fQ.se3_7o1g2faenDBozv6q5-78uHxcDQx0QT9dmso7BYs'</code></pre>
 </div>
 </div>
 </div>
@@ -773,10 +779,10 @@ Host: localhost:8080</code></pre>
 <h4 id="_example_request_6"><a class="link" href="#_example_request_6">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /turno/state/linea1/true/2019-11-11 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3OCwiZXhwIjoxNTczMTUzODc4fQ.37b4PVQ2g4GU1uo6h00vwPgbfMjdbWEZEXIfTVPKU6Y
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /turno/state/linea1/true/2019-11-14 HTTP/1.1
 Content-Length: 5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM5MCwiZXhwIjoxNTczNTcxOTkwfQ.v1LbhwIX8nDuB5DQML3i5OF9tCzWhLgJDS3Mk9oazjk
 Host: localhost:8080
 
 false</code></pre>
@@ -787,9 +793,9 @@ false</code></pre>
 <h4 id="_curl_request_6"><a class="link" href="#_curl_request_6">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2019-11-11' -i -X PUT \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI3OCwiZXhwIjoxNTczMTUzODc4fQ.37b4PVQ2g4GU1uo6h00vwPgbfMjdbWEZEXIfTVPKU6Y' \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2019-11-14' -i -X PUT \
     -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM5MCwiZXhwIjoxNTczNTcxOTkwfQ.v1LbhwIX8nDuB5DQML3i5OF9tCzWhLgJDS3Mk9oazjk' \
     -d 'false'</code></pre>
 </div>
 </div>
@@ -818,9 +824,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_example_request_7"><a class="link" href="#_example_request_7">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/disp/linea1/true/2019-11-11 HTTP/1.1
-Host: localhost:8080
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI2NiwiZXhwIjoxNTczMTUzODY2fQ.OMWd-PR_zhaF9CE9DTIsLCZH9BNbzHVNvPdWUozkwQc</code></pre>
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/disp/linea1/true/2019-11-14 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM1OCwiZXhwIjoxNTczNTcxOTU4fQ.RxZXldVhd25Bs4iKz33NyNXKTHYRbFbBPX-1ZdWoPIU
+Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
@@ -828,8 +834,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsI
 <h4 id="_curl_request_7"><a class="link" href="#_curl_request_7">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2019-11-11' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI2NiwiZXhwIjoxNTczMTUzODY2fQ.OMWd-PR_zhaF9CE9DTIsLCZH9BNbzHVNvPdWUozkwQc'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2019-11-14' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM1OCwiZXhwIjoxNTczNTcxOTU4fQ.RxZXldVhd25Bs4iKz33NyNXKTHYRbFbBPX-1ZdWoPIU'</code></pre>
 </div>
 </div>
 </div>
@@ -869,11 +875,11 @@ N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 <h4 id="_example_request_8"><a class="link" href="#_example_request_8">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/linea1/true/2019-11-11 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/linea1/true/2019-11-14 HTTP/1.1
 Content-Type: application/json
 Content-Length: 216
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM0MiwiZXhwIjoxNTczNTcxOTQyfQ.u98UWmENyympuqVV9vSxgo_UgBkyw30FBxtv5V07abM
 Host: localhost:8080
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI2MSwiZXhwIjoxNTczMTUzODYxfQ.sKUA1Q2C-O5PUipXJ-E66mrAnaCtTviD3UIdECyRBZI
 
 {
   "guideUsername" : "testNonno@test.it",
@@ -906,9 +912,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <h4 id="_curl_request_8"><a class="link" href="#_curl_request_8">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2019-11-11' -i -X POST \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2019-11-14' -i -X POST \
     -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI2MSwiZXhwIjoxNTczMTUzODYxfQ.sKUA1Q2C-O5PUipXJ-E66mrAnaCtTviD3UIdECyRBZI' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODM0MiwiZXhwIjoxNTczNTcxOTQyfQ.u98UWmENyympuqVV9vSxgo_UgBkyw30FBxtv5V07abM' \
     -d '{
   "guideUsername" : "testNonno@test.it",
   "idLinea" : "linea1",
@@ -933,8 +939,8 @@ N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 <h4 id="_example_request_9"><a class="link" href="#_example_request_9">Example Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/ack/linea1/true/2019-11-11 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI1NCwiZXhwIjoxNTczMTUzODU0fQ.LOwu-Lry4GE3m_OH0J6mJqDGy3IBYl36Bk0cTY6UGPk
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/ack/linea1/true/2019-11-14 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODMyOCwiZXhwIjoxNTczNTcxOTI4fQ.Jqs0F45UyVGBZHnEsZ7c_yoAxJyt3HDlLAeAKloaJyg
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -943,8 +949,8 @@ Host: localhost:8080</code></pre>
 <h4 id="_curl_request_9"><a class="link" href="#_curl_request_9">CURL request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/ack/linea1/true/2019-11-11' -i -X POST \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzE1MDI1NCwiZXhwIjoxNTczMTUzODU0fQ.LOwu-Lry4GE3m_OH0J6mJqDGy3IBYl36Bk0cTY6UGPk'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/ack/linea1/true/2019-11-14' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Tm9ubm9AdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfR1VJREUiLCJST0xFX0FETUlOIl0sImlhdCI6MTU3MzU2ODMyOCwiZXhwIjoxNTczNTcxOTI4fQ.Jqs0F45UyVGBZHnEsZ7c_yoAxJyt3HDlLAeAKloaJyg'</code></pre>
 </div>
 </div>
 </div>
@@ -978,7 +984,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /notifiche/all/testGenitore@test.it HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzMxNTAzMjgsImV4cCI6MTU3MzE1MzkyOH0.OJugvA4r4KGkHrF27O6TAw8ZQmCtk0xl5iNLiorbjrk
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MTQsImV4cCI6MTU3MzU3MjAxNH0.cFHvBcriD0l3g_3ISkjFqoT9koy8YTzK4eabcZIpp8o
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -988,7 +994,7 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/notifiche/all/testGenitore@test.it' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzMxNTAzMjgsImV4cCI6MTU3MzE1MzkyOH0.OJugvA4r4KGkHrF27O6TAw8ZQmCtk0xl5iNLiorbjrk'</code></pre>
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MTQsImV4cCI6MTU3MzU3MjAxNH0.cFHvBcriD0l3g_3ISkjFqoT9koy8YTzK4eabcZIpp8o'</code></pre>
 </div>
 </div>
 </div>
@@ -997,15 +1003,15 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code>[ {
-  "idNotifica" : "5dc45e77e217a32e80aa4120",
+  "idNotifica" : "5dcabf9dc7bf441fecb6e237",
   "type" : "base",
   "dispID" : null,
   "usernameDestinatario" : "testGenitore@test.it",
   "msg" : "msg1",
   "isTouched" : false,
   "isAck" : false,
-  "notDISPONIBILITA" : "disponibilita",
-  "notBASE" : "base"
+  "notBASE" : "base",
+  "notDISPONIBILITA" : "disponibilita"
 } ]</code></pre>
 </div>
 </div>
@@ -1021,7 +1027,7 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /notifiche/base/testGenitore@test.it HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzMxNTAzMjQsImV4cCI6MTU3MzE1MzkyNH0.sUN5_EPi_mHc5SkGsbn_ABBWnx4aJQMotO4INYAPu-4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MDcsImV4cCI6MTU3MzU3MjAwN30.0T5MH33o1kzBADWrZilpmj839Euj4Vnr-5MiZtKGEU8
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1031,7 +1037,7 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/notifiche/base/testGenitore@test.it' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzMxNTAzMjQsImV4cCI6MTU3MzE1MzkyNH0.sUN5_EPi_mHc5SkGsbn_ABBWnx4aJQMotO4INYAPu-4'</code></pre>
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MDcsImV4cCI6MTU3MzU3MjAwN30.0T5MH33o1kzBADWrZilpmj839Euj4Vnr-5MiZtKGEU8'</code></pre>
 </div>
 </div>
 </div>
@@ -1040,15 +1046,15 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code>[ {
-  "idNotifica" : "5dc45e74e217a32e80aa410e",
+  "idNotifica" : "5dcabf96c7bf441fecb6e225",
   "type" : "base",
   "dispID" : null,
   "usernameDestinatario" : "testGenitore@test.it",
   "msg" : "msg1",
   "isTouched" : false,
   "isAck" : false,
-  "notDISPONIBILITA" : "disponibilita",
-  "notBASE" : "base"
+  "notBASE" : "base",
+  "notDISPONIBILITA" : "disponibilita"
 } ]</code></pre>
 </div>
 </div>
@@ -1064,7 +1070,7 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /notifiche/disp/testGenitore@test.it HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzMxNTAzMjYsImV4cCI6MTU3MzE1MzkyNn0.hAgQNl98ff9UKNG4lxeXCf5ezXIVf0xtEXMkEW1YqlY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MTAsImV4cCI6MTU3MzU3MjAxMH0.c28IB_EUHclqA1EcJz9zJwfABUxRx4IDls3Qgr5gDEc
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -1074,7 +1080,7 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/notifiche/disp/testGenitore@test.it' -i -X GET \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzMxNTAzMjYsImV4cCI6MTU3MzE1MzkyNn0.hAgQNl98ff9UKNG4lxeXCf5ezXIVf0xtEXMkEW1YqlY'</code></pre>
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MTAsImV4cCI6MTU3MzU3MjAxMH0.c28IB_EUHclqA1EcJz9zJwfABUxRx4IDls3Qgr5gDEc'</code></pre>
 </div>
 </div>
 </div>
@@ -1092,13 +1098,40 @@ Host: localhost:8080</code></pre>
 <div class="paragraph">
 <p><code>DELETE /notifiche/{idNotifica}</code> is used to remove the notification</p>
 </div>
+<div class="sect3">
+<h4 id="_example_request_13"><a class="link" href="#_example_request_13">Example Request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /notifiche/all/testGenitore@test.it HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MDEsImV4cCI6MTU3MzU3MjAwMX0.E_bXdl_HYVYjWVbbSOIjBLEq5wDp7Q5HM1NCrpAfs1M
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_curl_request_13"><a class="link" href="#_curl_request_13">CURL request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/notifiche/all/testGenitore@test.it' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0R2VuaXRvcmVAdGVzdC5pdCIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE1NzM1Njg0MDEsImV4cCI6MTU3MzU3MjAwMX0.E_bXdl_HYVYjWVbbSOIjBLEq5wDp7Q5HM1NCrpAfs1M'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_example_response_body_9"><a class="link" href="#_example_response_body_9">Example Response body</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>[ ]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-11-07 19:09:44 CET
+Last updated 2019-11-12 15:13:50 CET
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
