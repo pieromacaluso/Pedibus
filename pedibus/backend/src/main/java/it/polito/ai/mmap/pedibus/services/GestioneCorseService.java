@@ -219,11 +219,9 @@ public class GestioneCorseService {
                 dispEntity.setIdFermata(dispAllResource.getIdFermata());
                 dispEntity.setIsConfirmed(dispAllResource.getIsConfirmed());
                 dispEntity = dispRepository.save(dispEntity);
-                NotificaEntity notificaEntity =new NotificaEntity(NotDISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
+                NotificaEntity notificaEntity = new NotificaEntity(NotDISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                simpMessagingTemplate.convertAndSendToUser(dispAllResource.getGuideUsername(),"/dispws-confirmed", notificaEntity);
-
-
+                simpMessagingTemplate.convertAndSendToUser(dispAllResource.getGuideUsername(), "/dispws-confirmed", notificaEntity);
             } else
                 throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
         } else

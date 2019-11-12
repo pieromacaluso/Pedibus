@@ -80,12 +80,13 @@ public class ChildService {
 
     /**
      * Metodo da usare in altri service in modo da non dover fare sempre i controlli
+     *
      * @param cfChild
      * @return
      */
     public ChildEntity getChildrenEntity(String cfChild) {
-        Optional<ChildEntity> checkChild= childRepository.findById(cfChild);
-        if(checkChild.isPresent()){
+        Optional<ChildEntity> checkChild = childRepository.findById(cfChild);
+        if (checkChild.isPresent()) {
             return checkChild.get();
         } else {
             throw new ChildNotFoundException("Codice Fiscale non valido.");
@@ -99,7 +100,7 @@ public class ChildService {
      * @param verso
      * @return
      */
-    public List<ChildDTO> getChildrenNotReserved(List<String> childrenDataVerso,Date data, boolean verso) {
+    public List<ChildDTO> getChildrenNotReserved(List<String> childrenDataVerso, Date data, boolean verso) {
         List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
         List<String> childrenNotReserved = childrenAll.stream().filter(bambino -> !childrenDataVerso.contains(bambino)).collect(Collectors.toList());
 
@@ -109,5 +110,11 @@ public class ChildService {
     public HashMap<String, ChildEntity> getChildrenEntityByCfList(Set<String> cfList) {
         return (HashMap<String, ChildEntity>) ((List<ChildEntity>) childRepository
                 .findAllById(cfList)).stream().collect(Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
+    }
+
+
+    public UserEntity getChildParent(String cfChild) {
+        ChildEntity childEntity = getChildrenEntity(cfChild);
+        return userService.getUserEntity(childEntity.getIdParent());
     }
 }

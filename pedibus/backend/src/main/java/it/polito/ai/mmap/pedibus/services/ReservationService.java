@@ -44,7 +44,6 @@ public class ReservationService {
     private SimpMessagingTemplate simpMessagingTemplate;
 
 
-
     @Value("${notifiche.type.Base}")
     String NotBASE;
     @Value("${notifiche.type.Disponibilita}")
@@ -167,7 +166,7 @@ public class ReservationService {
      */
     public List<ChildDTO> getChildrenNotReserved(Date data, boolean verso) {
         List<String> childrenDataVerso = reservationRepository.findByDataAndVerso(data, verso).stream().map(ReservationEntity::getCfChild).collect(Collectors.toList());
-        return childService.getChildrenNotReserved(childrenDataVerso,data,verso);
+        return childService.getChildrenNotReserved(childrenDataVerso, data, verso);
        /* List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
         List<String> childrenNotReserved = childrenAll.stream().filter(bambino -> !childrenDataVerso.contains(bambino)).collect(Collectors.toList());
 
@@ -272,16 +271,17 @@ public class ReservationService {
      */
     public void manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
         if (canModify(idLinea, data)) {
-            ChildEntity childEntity=childService.getChildrenEntity(cfChild);
-            UserEntity userEntity= userService.getUserEntity(childEntity.getIdParent());
+            UserEntity userEntity = childService.getChildParent(cfChild);
 
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             pre.setPresoInCarico(isSet);
             updateReservation(pre, reservationEntity.getId());
-            notificheService.addNotifica(new NotificaEntity(NotBASE,userEntity.getUsername(),"Suo figlio è sul pedibus in direzione scuola.",null));      //salvataggio notifica
+
+            NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
+            notificheService.addNotifica(notificaEntity);      //salvataggio notifica
             simpMessagingTemplate.convertAndSend("/admin/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
-            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(),"/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
+            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), notificaEntity);
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
@@ -310,6 +310,11 @@ public class ReservationService {
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             reservationEntity.setArrivatoScuola(isSet);
             reservationRepository.save(reservationEntity);
+
+            UserEntity userEntity = childService.getChildParent(cfChild);
+            NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è arrivato a scuola.", null);
+            notificheService.addNotifica(notificaEntity);
+            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/arrived/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), notificaEntity);
             return true;
         }
         return false;
