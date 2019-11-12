@@ -61,7 +61,7 @@ export class ListaPrenotazioniComponent implements OnInit {
       tap(() => this.loading = true),
       switchMap(
         pren => {
-          return this.rxStompService.watch('/handled' + this.pathSub(pren));
+          return this.rxStompService.watch('/user/admin/handled' + this.pathSub(pren));
         }
       ),
       tap(() => this.loading = false)

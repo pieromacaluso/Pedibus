@@ -12,6 +12,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
 
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
+        // TODO: modifiche per autenticazione
         messages
 //                .nullDestMatcher().authenticated()
 //                .simpSubscribeDestMatchers("/*").permitAll()
