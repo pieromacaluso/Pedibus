@@ -271,7 +271,7 @@ public class ReservationService {
      * @throws Exception
      */
     public void manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
-        if (/*canModify(idLinea, data)*/ true) {
+        if (canModify(idLinea, data)) {
             ChildEntity childEntity=childService.getChildrenEntity(cfChild);
             UserEntity userEntity= userService.getUserEntity(childEntity.getIdParent());
 
@@ -285,8 +285,7 @@ public class ReservationService {
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
-            //TODO: Eccezione personalizzata
-            throw new Exception();
+            throw new IllegalStateException();
     }
 
     public boolean canModify(String idLinea, Date date) {
