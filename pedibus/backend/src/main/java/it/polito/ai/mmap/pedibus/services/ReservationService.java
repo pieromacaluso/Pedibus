@@ -271,7 +271,7 @@ public class ReservationService {
      * @throws Exception
      */
     public void manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
-        if (canModify(idLinea, data)) {
+        if (/*canModify(idLinea, data)*/ true) {
             ChildEntity childEntity=childService.getChildrenEntity(cfChild);
             UserEntity userEntity= userService.getUserEntity(childEntity.getIdParent());
 
@@ -284,8 +284,9 @@ public class ReservationService {
             simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(),"/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
-        }
-        throw new Exception();
+        } else
+            //TODO: Eccezione personalizzata
+            throw new Exception();
     }
 
     public boolean canModify(String idLinea, Date date) {
