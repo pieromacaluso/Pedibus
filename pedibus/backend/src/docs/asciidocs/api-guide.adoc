@@ -234,17 +234,17 @@ include::{snippets}/get-notifiche-disp/response-body.adoc[]
 
 `DELETE /notifiche/{idNotifica}` is used to remove the notification
 
-//==== Example Request
-//
-//include::{snippets}/delete-notifiche/http-request.adoc[]
-//
-//==== CURL request
-//
-//include::{snippets}/delete-notifiche/curl-request.adoc[]
-//
-//==== Example Response body
-//
-//include::{snippets}/delete-notifiche/response-body.adoc[]
+==== Example Request
+
+include::{snippets}/delete-notifica/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-notifica/curl-request.adoc[]
+
+==== Example Response body
+
+include::{snippets}/delete-notifica/response-body.adoc[]
 
 
 
