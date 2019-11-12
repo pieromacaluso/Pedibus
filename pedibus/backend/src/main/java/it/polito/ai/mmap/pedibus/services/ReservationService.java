@@ -279,6 +279,8 @@ public class ReservationService {
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             pre.setPresoInCarico(isSet);
             updateReservation(pre, reservationEntity.getId());
+            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
+
             if(isSet){
                 NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
@@ -289,7 +291,6 @@ public class ReservationService {
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
                 simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche", notificaEntity);
             }
-            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
