@@ -1,23 +1,20 @@
 package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.entity.DispEntity;
+import it.polito.ai.mmap.pedibus.entity.NotificaEntity;
 import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.DispNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
-import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.*;
 import it.polito.ai.mmap.pedibus.repository.DispRepository;
 import it.polito.ai.mmap.pedibus.repository.TurnoRepository;
-import it.polito.ai.mmap.pedibus.resources.DispAllResource;
-import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
-import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
-import it.polito.ai.mmap.pedibus.resources.TurnoResource;
+import it.polito.ai.mmap.pedibus.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +33,14 @@ public class GestioneCorseService {
     UserService userService;
     @Autowired
     LineeService lineeService;
+    @Autowired
+    NotificheService notificheService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+    @Value("${notifiche.type.Base}")
+    String NotBASE;
+    @Value("${notifiche.type.Disponibilita}")
+    String NotDISPONIBILITA;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -213,8 +218,12 @@ public class GestioneCorseService {
                 DispEntity dispEntity = getDispEntity(turnoDTO, dispAllResource.getGuideUsername());
                 dispEntity.setIdFermata(dispAllResource.getIdFermata());
                 dispEntity.setIsConfirmed(dispAllResource.getIsConfirmed());
-                dispRepository.save(dispEntity);
-                //TODO notifica
+                dispEntity = dispRepository.save(dispEntity);
+                NotificaEntity notificaEntity =new NotificaEntity(NotDISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
+                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                simpMessagingTemplate.convertAndSendToUser(dispAllResource.getGuideUsername(),"/dispws-confirmed", notificaEntity);
+
+
             } else
                 throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
         } else
