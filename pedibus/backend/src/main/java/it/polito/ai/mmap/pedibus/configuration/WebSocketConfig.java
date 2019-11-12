@@ -44,7 +44,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/handled", "/reservation", "/dispws", "dispws-add", "dispws-status",
-                "/turnows", "/dispws-confirmed");
+                "/turnows", "/admin", "/dispws-confirmed");
     }
 
     @Override
@@ -56,10 +56,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    MultiValueMap<String, String> multiValueMap = headers.get(StompHeaderAccessor.NATIVE_HEADERS,MultiValueMap.class);
-                    for(Map.Entry<String, List<String>> head : multiValueMap.entrySet())
-                    {
-                        if (head.getKey().equals("Authentication") && head.getValue() != null){
+                    MultiValueMap<String, String> multiValueMap = headers.get(StompHeaderAccessor.NATIVE_HEADERS, MultiValueMap.class);
+                    for (Map.Entry<String, List<String>> head : multiValueMap.entrySet()) {
+                        if (head.getKey().equals("Authentication") && head.getValue() != null) {
                             String token = head.getValue().get(0);
                             Authentication auth = jwtTokenService.getAuthentication(token); // access authentication header(s)
                             accessor.setUser(auth);

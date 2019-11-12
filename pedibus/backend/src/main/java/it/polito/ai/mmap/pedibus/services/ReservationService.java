@@ -44,6 +44,7 @@ public class ReservationService {
     private SimpMessagingTemplate simpMessagingTemplate;
 
 
+
     @Value("${notifiche.type.Base}")
     String NotBASE;
     @Value("${notifiche.type.Disponibilita}")

@@ -61,13 +61,13 @@ export class ListaPrenotazioniComponent implements OnInit {
       tap(() => this.loading = true),
       switchMap(
         pren => {
-          return this.rxStompService.watch('/user/admin/handled' + this.pathSub(pren));
+          return this.rxStompService.watch('/admin/handled' + this.pathSub(pren));
         }
       ),
       tap(() => this.loading = false)
     ).subscribe(message => {
       const res = JSON.parse(message.body);
-      console.log(res);
+      console.log('ws', res);
       // tslint:disable-next-line:max-line-length
       const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
       al.presoInCarico = res.isSet;
