@@ -58,6 +58,7 @@ public class GestioneCorseService {
 
         if (checkTurno.isPresent()) {
             turnoEntity = checkTurno.get();
+            turnoRepository.delete(turnoEntity);
             turnoEntity.setIsExpired(turnoExpired);
             turnoRepository.save(turnoEntity);
         } else {

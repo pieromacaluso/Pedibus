@@ -30,7 +30,7 @@ export class NotificheService {
     const username = this.authService.getUsername();
     console.log('username:', username);
     this.apiService.getNotificheNonLette(username).subscribe((notifiche) => {
-      this.dataService.updateNotifiche(notifiche); 
+      this.dataService.updateNotifiche(notifiche);
       console.log('nuove notifiche:', notifiche);
     }, (err) => console.log(err));
   }
@@ -62,5 +62,5 @@ export class NotificheService {
     }, (err) => console.log(err));
   }
 
-  
+
 }

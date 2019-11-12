@@ -1,5 +1,5 @@
 export interface Notifica {
-    idNotifica: string; 
+    idNotifica: string;
     type: string;
     dispID: string;
     usernameDestinatario: string;
