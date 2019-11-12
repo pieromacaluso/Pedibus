@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,9 +48,11 @@ public class NotificheService {
      * @return
      */
     public ArrayList<NotificaDTO> getNotificheBase(String username) {
-        Optional<UserEntity> user = userRepository.findByUsername(username);
-        if (user.isPresent()) {
-            List<NotificaEntity> notifiche = notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(username)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotBASE) == 0).filter(notificaEntity -> !notificaEntity.getIsTouched()).collect(Collectors.toList());
+
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.getUsername()==username){
+            //todo filtro base
+            List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouched(username,false,false);
             ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
 
             for (NotificaEntity n : notifiche) {
@@ -56,8 +60,8 @@ public class NotificheService {
             }
 
             return notificheDTO;
-        } else {
-            throw new UserNotFoundException();
+        }else{
+            throw new UnauthorizedUserException("Operazione non autorizzata");
         }
     }
 
@@ -68,8 +72,9 @@ public class NotificheService {
      * @return
      */
     public ArrayList<NotificaDTO> getNotificheDisponibilita(String username) {
-        Optional<UserEntity> user = userRepository.findByUsername(username);
-        if (user.isPresent()) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.getUsername()==username){
+            //todo cambiare come prima
             List<NotificaEntity> notifiche = notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(username)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotDISPONIBILITA) == 0).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIsAck()).collect(Collectors.toList());
             ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
 
@@ -78,9 +83,10 @@ public class NotificheService {
             }
 
             return notificheDTO;
-        } else {
-            throw new UserNotFoundException();
+        }else{
+            throw new UnauthorizedUserException("Operazione non autorizzata");
         }
+
     }
 
     /**
@@ -90,9 +96,13 @@ public class NotificheService {
      * @return
      */
     public ArrayList<NotificaDTO> getNotifiche(String username) {
-        Optional<UserEntity> user = userRepository.findByUsername(username);
-        if (user.isPresent()) {
-            List<NotificaEntity> notifiche = notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(username)).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIsAck()).collect(Collectors.toList());
+
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.getUsername()==username){
+            List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouched(username,false,false);
+            if(notifiche.size()>0){
+                notifiche.stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(username)).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIsAck()).collect(Collectors.toList());
+            }
             ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
 
             for (NotificaEntity n : notifiche) {
@@ -100,9 +110,13 @@ public class NotificheService {
             }
 
             return notificheDTO;
-        } else {
-            throw new UserNotFoundException();
+
+        }else{
+            throw new UnauthorizedUserException("Operazione non autorizzata");
         }
+
+
+
     }
 
 
