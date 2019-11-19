@@ -1,7 +1,6 @@
 {
   "id": "linea1",
   "nome": "Linea 1",
-  "adminMast": "applicazioni.internet.mmap@gmail.com",
   "andata": [
     {
       "id": 1,

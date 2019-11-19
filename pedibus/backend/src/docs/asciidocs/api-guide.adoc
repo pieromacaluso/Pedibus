@@ -35,6 +35,22 @@ include::{snippets}/get-lines/curl-request.adoc[]
 
 include::{snippets}/get-lines/response-body.adoc[]
 
+=== Dettagli linea
+
+`GET /lines/{id_linea}` restituisce un oggetto contenente tutti i dettagli di quella linea
+
+==== Example Request
+
+include::{snippets}/get-line-id/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-line-id/curl-request.adoc[]
+
+==== Example Response body
+
+include::{snippets}/get-line-id/response-body.adoc[]
+
 == Gestione disponibilità
 
 === Recupero disponibilità

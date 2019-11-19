@@ -18,7 +18,6 @@ public class LineaEntity {
     @Id
     private String id;
     private String nome;
-    private String adminMast;
     private ArrayList<String> adminList;
     private ArrayList<Integer> andata;
     private ArrayList<Integer> ritorno;
@@ -31,7 +30,6 @@ public class LineaEntity {
     public LineaEntity(LineaDTO lineaDTO) {
         this.id = lineaDTO.getId();
         this.nome = lineaDTO.getNome();
-        this.adminMast=lineaDTO.getAdminMast();
         this.adminList = lineaDTO.getAdminList();
         this.andata = lineaDTO.getAndata().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toCollection(ArrayList::new));
         this.ritorno = lineaDTO.getRitorno().stream().mapToInt(FermataDTO::getId).boxed().collect(Collectors.toCollection(ArrayList::new));
