@@ -286,4 +286,13 @@ public class GestioneCorseService {
     public TurnoResource getTurnoState(TurnoDTO turnoDTO) {
         return new TurnoResource(getTurnoEntity(turnoDTO));
     }
+
+
+    public Boolean isGuideConfirmed(String idLinea, Date date, Boolean verso) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        //todo basta controllare isConfirmed ? oppure anche isAck ?
+        return  getDispEntity(new TurnoDTO(idLinea, date, verso), principal.getUsername()).getIsConfirmed();
+
+    }
 }

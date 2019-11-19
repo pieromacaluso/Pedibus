@@ -25,8 +25,8 @@ public class ReservationService {
     @Autowired
     ReservationRepository reservationRepository;
 
-    /*@Autowired
-    ChildRepository childRepository;*/
+    @Autowired
+    GestioneCorseService gestioneCorseService;
 
     @Autowired
     LineeService lineeService;
@@ -272,7 +272,7 @@ public class ReservationService {
      * @throws Exception
      */
     public void manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
-        if (canModify(idLinea, data)) {
+        if (canModify(idLinea, data, verso)) {
             UserEntity userEntity = childService.getChildParent(cfChild);
 
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
@@ -297,11 +297,12 @@ public class ReservationService {
             throw new IllegalStateException();
     }
 
-    public boolean canModify(String idLinea, Date date) {
+    public boolean canModify(String idLinea, Date date, Boolean verso) {
         if (userService.isSysAdmin())
             return true;
-        // TODO: solo accompagnatore confermato può modificare
-        return ((lineeService.isAdminLine(idLinea) /*|| lineeService.isGuideLine(idLinea)*/) && MongoTimeService.isToday(date));
+
+        //todo (marcof) io terrei solo il ruolo di guida per gestire la manage e la handle, quello di admin invece concerne la gestione delle disp, turni ecc
+        return ((lineeService.isAdminLine(idLinea) || gestioneCorseService.isGuideConfirmed(idLinea,date,verso)) && MongoTimeService.isToday(date));
 
     }
 
@@ -316,7 +317,7 @@ public class ReservationService {
      */
 
     public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
-        if (canModify(idLinea, data)) {
+        if (canModify(idLinea, data, verso)) {
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             reservationEntity.setArrivatoScuola(isSet);
             //todo da eliminare prima
@@ -359,7 +360,7 @@ public class ReservationService {
                 .forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), verso)));
 
         res.setChildrenNotReserved(getChildrenNotReserved(dataFormatted, verso));
-        res.setCanModify(canModify(idLinea, dataFormatted));
+        res.setCanModify(canModify(idLinea, dataFormatted,verso));
 
         return res;
     }
@@ -380,7 +381,8 @@ public class ReservationService {
         res.getAlunniPerFermataRitorno()
                 .forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), false)));
 
-        res.setCanModify(canModify(idLinea, dataFormatted));
+        //todo provvisorio, per richiedere sia andata che ritorno dovresti essere stato confermato per entrambi o essere admin, ho bypassato con un or (marcof)
+        res.setCanModify(canModify(idLinea, dataFormatted, true) || canModify(idLinea, dataFormatted, false));
         res.setArrivoScuola(lineeService.getArrivoScuola());
         res.setPartenzaScuola(lineeService.getPartenzaScuola());
 

@@ -51,6 +51,137 @@ include::{snippets}/get-line-id/curl-request.adoc[]
 
 include::{snippets}/get-line-id/response-body.adoc[]
 
+== Gestione prenotazioni
+
+=== Aggiunta prenotazione
+
+`POST /reservations/{id_linea}/{data} @RequestBody ReservationResource reservationResource` Aggiunge una prenotazione e ne restituisce l'identificatore univoco
+
+==== Example Request
+
+include::{snippets}/post-res/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/post-res/curl-request.adoc[]
+
+==== Example Response body
+
+include::{snippets}/post-res/response-body.adoc[]
+
+=== Modifica prenotazione
+
+`PUT /reservations/{id_linea}/{data}/{reservation_id} @RequestBody ReservationResource reservationResource` Modifica la prenotazione indicata con le nuove informazioni fornite
+
+==== Example Request
+
+include::{snippets}/put-res/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/put-res/curl-request.adoc[]
+
+=== Eliminazione prenotazione
+
+==== Alt 1
+
+`DELETE /reservations/{id_linea}/{data}/{reservation_id}`
+
+==== Example Request
+
+include::{snippets}/delete-res/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-res/curl-request.adoc[]
+
+==== Alt 2
+
+`DELETE /reservations/{codiceFiscale}/{id_linea}/{data}/{verso}`
+
+==== Example Request
+
+include::{snippets}/delete-res-alt/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-res-alt/curl-request.adoc[]
+
+=== Prenotazioni per linea&data
+
+`GET /reservations/{id_linea}/{data}` Restituisce due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
+
+==== Example Request
+
+include::{snippets}/get-res/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-res/curl-request.adoc[]
+
+==== Example Response body
+
+include::{snippets}/get-res/response-body.adoc[]
+
+=== Prenotazioni per linea&data&verso
+
+`GET /reservations/verso/{id_linea}/{data}/{verso}` Restituisce una lista, riportante, per ogni fermata, l’elenco delle persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
+
+==== Example Request
+
+include::{snippets}/get-res-verso/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-res-verso/curl-request.adoc[]
+
+==== Example Response body
+
+include::{snippets}/get-res-verso/response-body.adoc[]
+
+=== Non prenotati per data&verso
+
+`GET /notreservations/{data}/{verso}` Restituisce la lista dei bambini non prenotati per data e verso.
+
+==== Example Request
+
+include::{snippets}/get-notres/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-notres/curl-request.adoc[]
+
+==== Example Response body
+
+include::{snippets}/get-notres/response-body.adoc[]
+
+== Gestione presa in carico e arrivo a scuola
+
+=== Presa in carico
+
+`POST reservations/handled/{idLinea}/{verso}/{data}/{isSet}` Usato da una guida per confermare che ha preso un bambino alla fermata.
+
+==== Example Request
+
+include::{snippets}/post-handled/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/post-handled/curl-request.adoc[]
+
+=== Arrivo a scuola
+
+`POST reservations/arrived/{idLinea}/{verso}/{data}/{isSet}` Usato da una guida per confermare che ha lasciato il bambino a scuola.
+
+==== Example Request
+
+include::{snippets}/post-arrived/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/post-arrived/curl-request.adoc[]
+
+
 == Gestione disponibilità
 
 === Recupero disponibilità

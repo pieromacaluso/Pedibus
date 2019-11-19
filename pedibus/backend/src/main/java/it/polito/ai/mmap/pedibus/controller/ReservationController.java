@@ -124,7 +124,7 @@ public class ReservationController {
 
 
     /**
-     * Usato da admin linea per indicare che ha preso il bambino dalla fermata
+     * Usato da guide linea per indicare che ha preso il bambino dalla fermata
      *
      * @param idLinea
      * @param verso
@@ -140,7 +140,7 @@ public class ReservationController {
 
 
     /**
-     * Usato da admin linea per indicare che ha lasciato il bambino a scuola
+     * Usato da guide linea per indicare che ha lasciato il bambino a scuola
      *
      * @param verso
      * @param data
