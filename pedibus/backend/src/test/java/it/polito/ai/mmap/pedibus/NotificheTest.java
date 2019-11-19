@@ -351,13 +351,10 @@ public class NotificheTest {
         return node.get("token").asText();
     }
 
-    private String loginAsNonnoAdmin(String idLinea) throws Exception {
-        UserDTO user = userDTOMap.get("testNonno");
-
-        String json = objectMapper.writeValueAsString(user);
+    private String loginAsNonnoAdmin() throws Exception {
+        String json = objectMapper.writeValueAsString(userDTOMap.get("testNonno"));
         MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        return node.get("token").asText();
+        return objectMapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
     }
 }

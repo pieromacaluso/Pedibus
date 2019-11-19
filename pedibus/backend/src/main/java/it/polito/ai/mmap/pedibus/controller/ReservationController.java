@@ -188,8 +188,11 @@ public class ReservationController {
 
     /**
      * Versione alternativa al metodo precedente
+     * @param codiceFiscale
+     * @param idLinea
+     * @param data
+     * @param verso
      */
-
     @DeleteMapping("/reservations/{codiceFiscale}/{id_linea}/{data}/{verso}")
     public void deletePrenotazione(@PathVariable("codiceFiscale") String codiceFiscale, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("Elininazione prenotazione -> codice fiscale: " + codiceFiscale + ", data: " + data + ", verso: " + verso);
