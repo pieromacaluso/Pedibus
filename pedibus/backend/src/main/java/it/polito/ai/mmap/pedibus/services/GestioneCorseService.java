@@ -290,9 +290,15 @@ public class GestioneCorseService {
 
     public Boolean isGuideConfirmed(String idLinea, Date date, Boolean verso) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        DispEntity dispEntity;
+        try {
+            dispEntity = getDispEntity(new TurnoDTO(idLinea, date, verso), principal.getUsername());
+        } catch (DispNotFoundException ignored) {
+            return false;
+        }
         //todo basta controllare isConfirmed ? oppure anche isAck ?
-        return  getDispEntity(new TurnoDTO(idLinea, date, verso), principal.getUsername()).getIsConfirmed();
+        return dispEntity.getIsConfirmed();
+
 
     }
 }
