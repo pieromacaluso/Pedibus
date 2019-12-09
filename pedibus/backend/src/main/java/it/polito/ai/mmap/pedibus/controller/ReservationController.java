@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
-import it.polito.ai.mmap.pedibus.resources.*;
+import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
+import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
+import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import it.polito.ai.mmap.pedibus.services.ReservationService;
@@ -22,8 +24,6 @@ import java.util.List;
 
 @RestController
 public class ReservationController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     LineeService lineeService;
     @Autowired
@@ -34,6 +34,7 @@ public class ReservationController {
     ObjectMapper objectMapper;
     @Autowired
     MongoTimeService mongoTimeService;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -43,7 +44,7 @@ public class ReservationController {
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
      * @param idLinea id della linea
-     * @param data      data in esame
+     * @param data    data in esame
      * @return GetReservationsIdLineaDataResource
      */
 
@@ -59,7 +60,7 @@ public class ReservationController {
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
      * @param idLinea id della linea
-     * @param data      data in esame
+     * @param data    data in esame
      * @return GetReservationsidLineaDataVersoResource
      */
 
@@ -86,12 +87,10 @@ public class ReservationController {
     }
 
 
-
-
     /**
      * Restituisce la reservation controllando che idLinea e Data corrispondano a quelli del reservation_id
      *
-     * @param idLinea     id linea
+     * @param idLinea       id linea
      * @param data          data in esame
      * @param reservationId id reservation
      * @return ReservationDTO
@@ -108,8 +107,8 @@ public class ReservationController {
      * restituisce un identificatore univoco della reservation creata
      *
      * @param reservationResource JSON Body Reservation
-     * @param idLinea            id linea
-     * @param data                 data in esame
+     * @param idLinea             id linea
+     * @param data                data in esame
      * @return identificatore univoco reservation
      */
     @PostMapping("/reservations/{id_linea}/{data}")
@@ -129,13 +128,12 @@ public class ReservationController {
      * @param idLinea
      * @param verso
      * @param data
-     * @param cfChild   true per indicare che è stato preso, false per annullare
+     * @param cfChild true per indicare che è stato preso, false per annullare
      */
     @PostMapping("/reservations/handled/{idLinea}/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
-        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data);
-        reservationService.manageHandled(verso, date, cfChild, isSet, idLinea);
-
+        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data);
+        reservationService.manageHandled(verso, data, datef, isSet, idLinea, cfChild);
     }
 
 
@@ -160,7 +158,7 @@ public class ReservationController {
      * Il reservation_id ci permette di identificare la reservation da modificare, il body contiene i dati aggiornati.
      *
      * @param reservationResource JSON Body Reservation
-     * @param idLinea           id linea
+     * @param idLinea             id linea
      * @param data                data in esame
      * @param reservationId       id Reservation da aggiornare
      */
@@ -175,7 +173,7 @@ public class ReservationController {
     /**
      * Elimina la reservation indicata
      *
-     * @param idLinea     id linea
+     * @param idLinea       id linea
      * @param data          data in esame
      * @param reservationId id reservation
      */
@@ -188,6 +186,7 @@ public class ReservationController {
 
     /**
      * Versione alternativa al metodo precedente
+     *
      * @param codiceFiscale
      * @param idLinea
      * @param data

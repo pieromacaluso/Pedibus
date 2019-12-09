@@ -266,16 +266,17 @@ public class ReservationService {
      *
      * @param verso
      * @param data
-     * @param cfChild
+     * @param datef
      * @param isSet
      * @param idLinea
+     * @param cfChild
      * @throws Exception
      */
-    public void manageHandled(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
-        if (canModify(idLinea, data, verso)) {
+    public void manageHandled(Boolean verso, String data, Date datef, Boolean isSet, String idLinea, String cfChild) throws Exception {
+        if (canModify(idLinea, datef, verso)) {
             UserEntity userEntity = childService.getChildParent(cfChild);
 
-            ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
+            ReservationEntity reservationEntity = getChildReservation(verso, datef, cfChild);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             pre.setPresoInCarico(isSet);
             updateReservation(pre, reservationEntity.getId());
