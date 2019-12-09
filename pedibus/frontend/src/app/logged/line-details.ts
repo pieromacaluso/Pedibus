@@ -18,7 +18,8 @@ export interface AlunnoNotReserved {
   codiceFiscale: string;
   name: string;
   surname: string;
-  idFermataDefault: number;
+  idFermataAndata: number;
+  idFermataRitorno: number;
   idParent: string;
   update: boolean;
 }

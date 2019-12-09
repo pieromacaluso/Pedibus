@@ -133,22 +133,8 @@
     ></mat-progress-bar>
     <mat-card-header><h1>Alunni non Prenotati</h1></mat-card-header>
     <div *ngIf="!showLoading()">
-
-
-      <div [class.prenotazioni-disabled]="showLoading()">
-        <mat-card-header>
-          <mat-card-title>{{ bottomCardTitle }}</mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content
-          ngClass="prenotazioni"
-          ngClass.lt-sm="prenotazioni-mobile"
-          *ngIf="
-          this.resource.childrenNotReserved;
-          then thenAlunniNot;
-          else elseAlunniNot
-        "
-        ></mat-card-content>
+        <div *ngIf="this.resource.childrenNotReserved.length != 0;then thenAlunniNot; else elseAlunniNot"
+        ></div>
         <ng-template #thenAlunniNot>
           <mat-card-content
             ngClass="noprenotazioni"
@@ -160,7 +146,7 @@
               mat-stroked-button
               class="alunno-presenza mat-background-accent"
               *ngFor="
-              let alunno of sortedNotReserved(this.resource.childrenNotReserved)
+              let alunno of sortedNotReserved(this.resource?.childrenNotReserved)
             "
             >
               <mat-progress-bar
@@ -184,10 +170,9 @@
             ngClass="prenotazioni"
             ngClass.lt-sm="prenotazioni-mobile"
           >
-            Nessun Bambino Non Prenotato
+            Tutti i bambini hanno una prenotazione
           </mat-card-content>
         </ng-template>
-      </div>
     </div>
 
   </mat-card>

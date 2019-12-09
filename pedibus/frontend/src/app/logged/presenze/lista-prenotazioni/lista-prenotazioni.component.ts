@@ -61,7 +61,7 @@ export class ListaPrenotazioniComponent implements OnInit {
       tap(() => this.loading = true),
       switchMap(
         pren => {
-          return this.rxStompService.watch('/admin/handled' + this.pathSub(pren));
+          return this.rxStompService.watch('/handled' + this.pathSub(pren));
         }
       ),
       tap(() => this.loading = false)
@@ -212,8 +212,7 @@ export class ListaPrenotazioniComponent implements OnInit {
           return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
         });
 
-    }
-    if (this.authService.getRoles().includes('ROLE_ADMIN')) {
+    } else {
       return alu.sort((a, b) => {
         return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
       });
