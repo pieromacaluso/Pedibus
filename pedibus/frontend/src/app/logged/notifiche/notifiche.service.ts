@@ -8,11 +8,11 @@ import { Message } from '@stomp/stompjs';
 import { ApiService } from '../api.service';
 
 const mapRoleNotifiche = [
-  { role: "ROLE_SYSTEM-ADMIN", notifiche: ["/user/dispws", "/user/reminder-turno"]},
-  { role: "ROLE_ADMIN", notifiche: ["/user/dispws", "/user/dispws-status", "/user/dispws-add"] },
-  { role: "ROLE_GUIDE", notifiche: ["/user/dispws-status"] },
-  { role: "ROLE_USER", notifiche: ["/user/handled"] }
-]
+  { role: 'ROLE_SYSTEM-ADMIN', notifiche: ['/user/notifiche', '/user/notifiche']},
+  { role: 'ROLE_ADMIN', notifiche: ['/user/notifiche', '/user/notifiche', '/user/notifiche'] },
+  { role: 'ROLE_GUIDE', notifiche: ['/user/notifiche', '/user/notifiche'] },
+  { role: 'ROLE_USER', notifiche: ['/user/notifiche'] }
+];
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class NotificheService {
   subs: Subscription[] = [];
 
   constructor(private rxStompService: RxStompService, private authService: AuthService,
-    private dataService: DataShareService, private apiService: ApiService) {
+              private dataService: DataShareService, private apiService: ApiService) {
   }
 
   getNotifiche(countNonLette: number) {
@@ -36,19 +36,19 @@ export class NotificheService {
   }
 
   watchNotifiche(countNonLette: number) {
-    for (let role of this.authService.getRoles()) {
+    for (const role of this.authService.getRoles()) {
       const element = mapRoleNotifiche.find(el => el.role === role);
       if (element) {
         element.notifiche.forEach(notifica => {
           let sub = new Subscription();
           this.subs.push(sub);
-          if (sub) sub.unsubscribe();
+          if (sub) { sub.unsubscribe(); }
           sub = this.rxStompService.watch(notifica)
             .subscribe((message: Message) => {
               countNonLette++;
               const nuoveNotifiche = JSON.parse(message.body);
               this.dataService.updateNotifiche(nuoveNotifiche);
-              console.log("nuove notifiche da broker:", nuoveNotifiche);
+              console.log('nuove notifiche da broker:', nuoveNotifiche);
             });
         });
       }
@@ -56,7 +56,7 @@ export class NotificheService {
   }
 
   deleteNotifica(idNotifica: string) {
-    this.apiService.deleteNotifica(idNotifica).subscribe((el) =>{
+    this.apiService.deleteNotifica(idNotifica).subscribe((el) => {
        console.log(el);
        this.dataService.removeNotifica(idNotifica);
     }, (err) => console.log(err));
