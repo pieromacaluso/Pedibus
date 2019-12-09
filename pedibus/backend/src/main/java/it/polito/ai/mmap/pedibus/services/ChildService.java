@@ -104,7 +104,7 @@ public class ChildService {
         List<String> childrenAll = childRepository.findAll().stream().map(ChildEntity::getCodiceFiscale).collect(Collectors.toList());
         List<String> childrenNotReserved = childrenAll.stream().filter(bambino -> !childrenDataVerso.contains(bambino)).collect(Collectors.toList());
 
-        return childrenNotReserved.stream().map(codiceFiscale -> getChildDTOById(codiceFiscale)).collect(Collectors.toList());
+        return childrenNotReserved.stream().map(this::getChildDTOById).collect(Collectors.toList());
     }
 
     public HashMap<String, ChildEntity> getChildrenEntityByCfList(Set<String> cfList) {
