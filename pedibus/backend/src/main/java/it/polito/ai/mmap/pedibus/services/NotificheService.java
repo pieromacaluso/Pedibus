@@ -80,7 +80,7 @@ public class NotificheService {
     public ArrayList<NotificaDTO> getNotifiche(String username) {
 
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal.getUsername()==username){
+        if(principal.getUsername().equals(username)){
             List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouched(username,false,false);
             ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
             for (NotificaEntity n : notifiche) {
