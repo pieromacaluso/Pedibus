@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,10 @@ public class NotificheService {
 
     @Autowired
     NotificaRepository notificaRepository;
+
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Value("${notifiche.type.Base}")
     String NotBASE;
@@ -120,7 +125,8 @@ public class NotificheService {
      */
     public void addNotifica(NotificaEntity notificaEntity) {
         notificaRepository.save(notificaEntity);
-        logger.info("Notifica salvata.");
+        simpMessagingTemplate.convertAndSendToUser(notificaEntity.getUsernameDestinatario(), "/notifiche", notificaEntity);
+        logger.info("Notifica salvata e inviata.");
     }
 
 }

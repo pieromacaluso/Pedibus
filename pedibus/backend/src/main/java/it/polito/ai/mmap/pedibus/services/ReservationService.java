@@ -285,12 +285,10 @@ public class ReservationService {
             if(isSet){
                 NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche", notificaEntity);
             }else{
                 //todo vedere se cancellarla ma in modo corretto, bisogna trovare il modo di identificare la notifica da cancellare
                 NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "No scherzavo XD.", null);
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche", notificaEntity);
             }
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
@@ -327,7 +325,6 @@ public class ReservationService {
             UserEntity userEntity = childService.getChildParent(cfChild);
             NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è arrivato a scuola.", null);
             notificheService.addNotifica(notificaEntity);
-            simpMessagingTemplate.convertAndSendToUser(userEntity.getUsername(), "/notifiche", notificaEntity);
             //todo messaggio topic per atri admin
             return true;
         }

@@ -58,7 +58,6 @@ public class GestioneCorseService {
 
         if (checkTurno.isPresent()) {
             turnoEntity = checkTurno.get();
-            turnoRepository.deleteById(turnoEntity.getTurnoId());
             turnoEntity.setIsExpired(turnoExpired);
             turnoRepository.save(turnoEntity);
         } else {
@@ -221,8 +220,7 @@ public class GestioneCorseService {
                 dispEntity.setIsConfirmed(dispAllResource.getIsConfirmed());
                 dispEntity = dispRepository.save(dispEntity);
                 NotificaEntity notificaEntity = new NotificaEntity(NotDISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
-                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                simpMessagingTemplate.convertAndSendToUser(dispAllResource.getGuideUsername(), "/notifiche", notificaEntity);
+                notificheService.addNotifica(notificaEntity);      //salvataggio e invio notifica
                 //todo messaggio per aggiornare l'interfaccia admin, quando arrivato a scuola friz tutti gli utenti
             } else
                 throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
