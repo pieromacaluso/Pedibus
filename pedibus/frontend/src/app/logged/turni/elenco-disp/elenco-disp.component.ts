@@ -38,6 +38,7 @@ export class ElencoDispComponent implements OnInit {
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
+    authService.setupWebSocket(rxStompService);
 
     this.syncService.prenotazioneObs$.pipe(
       debounceTime(1000),

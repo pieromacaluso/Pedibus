@@ -24,6 +24,7 @@ export class NotificheService {
 
   constructor(private rxStompService: RxStompService, private authService: AuthService,
               private dataService: DataShareService, private apiService: ApiService) {
+    authService.setupWebSocket(rxStompService);
   }
 
   getNotifiche(countNonLette: number) {

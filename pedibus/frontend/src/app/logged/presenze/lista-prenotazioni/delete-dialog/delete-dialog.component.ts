@@ -64,7 +64,8 @@ export class DeleteDialogComponent {
           codiceFiscale: data.alunno.codiceFiscale,
           name: data.alunno.name,
           surname: data.alunno.surname,
-          idFermataDefault: 0,
+          idFermataAndata: 0,
+          idFermataRitorno: 0,
           idParent: '',
           update: false
         });

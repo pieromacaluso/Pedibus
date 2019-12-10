@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { RxStompService } from '@stomp/ng2-stompjs';
 import { Notifica } from '../dtos';
 import { NotificheService } from '../notifiche.service';
+import {AuthService} from '../../../registration/auth.service';
 
 @Component({
   selector: 'app-notifica',
@@ -14,8 +15,8 @@ export class NotificaComponent implements OnInit {
   @Input() messageNumber: number;
   @Input() notifica: Notifica;
 
-  constructor(private rxStompService: RxStompService, private notificheService: NotificheService) { 
-
+  constructor(private rxStompService: RxStompService, private notificheService: NotificheService, private authService: AuthService) {
+    authService.setupWebSocket(rxStompService);
   }
 
   ngOnInit() {

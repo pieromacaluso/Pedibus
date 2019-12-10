@@ -6,6 +6,7 @@ import {shareReplay, tap} from 'rxjs/operators';
 import * as moment from 'moment';
 import * as jwt_decode from 'jwt-decode';
 import {myRxStompConfig} from '../my-rx-stomp.config';
+import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +54,18 @@ export class AuthService {
     localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
     myRxStompConfig.connectHeaders.Authentication = localStorage.getItem('id_token');
+  }
+
+  public setupWebSocket(rxStompService) {
+    const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
+      connectHeaders: {
+        Authentication: localStorage.getItem('id_token')
+      },
+      beforeConnect: () => {
+        console.log('%c called before connect', 'color: blue');
+      }
+    });
+    rxStompService.configure(stompConfig);
   }
 
   logout() {

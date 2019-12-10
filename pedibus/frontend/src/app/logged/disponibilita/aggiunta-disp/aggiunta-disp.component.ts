@@ -3,7 +3,7 @@ import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatSnackBar} from '@angular/material';
-import {RxStompService} from '@stomp/ng2-stompjs';
+import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {Alunno, PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, timer} from 'rxjs';
@@ -11,6 +11,7 @@ import {defaultIfEmpty, delay, distinctUntilChanged, finalize, first, flatMap, m
 import {fadeAnimation} from '../../../route-animations';
 import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
 import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
+import {myRxStompConfig} from '../../../my-rx-stomp.config';
 
 @Component({
   selector: 'app-aggiunta-disp',
@@ -49,7 +50,7 @@ export class AggiuntaDispComponent implements OnInit {
               private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
-
+    authService.setupWebSocket(rxStompService);
     // Main Observable
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
