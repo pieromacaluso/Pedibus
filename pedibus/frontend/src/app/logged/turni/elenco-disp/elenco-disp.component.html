@@ -60,7 +60,11 @@
           <div ngClass=" prenotazioni no-stops" ngClass.lt-sm="prenotazioni-mobile" *ngIf="this.listDisp[stop.nome] && this.listDisp[stop.nome].length > 0 else empty">
             <mat-list #disps>
               <mat-list-item *ngFor="let disp of this.listDisp[stop.nome]">
+                <div class="user-icon">
                 <mat-icon matListIcon>perm_identity</mat-icon>
+                  <img *ngIf="disp.isConfirmed && !disp.isAck" class="user-icon-tick" [src]="tick" alt="Bus Stop"/>
+                  <img *ngIf="disp.isConfirmed && disp.isAck" class="user-icon-tick" [src]="doubletick" alt="Bus Stop"/>
+                </div>
                 <div class="status">{{disp.guideUsername}}
                   <button (click)="confermaDisp(disp)" *ngIf="!turno.isOpen && !disp.isConfirmed"
                           [disabled]="this.turno.isExpired"

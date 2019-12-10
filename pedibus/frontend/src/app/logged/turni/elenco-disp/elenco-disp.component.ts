@@ -33,6 +33,9 @@ export class ElencoDispComponent implements OnInit {
   private listDisp: MapDisp;
   selectedDisp: any;
   cross: any = '../assets/svg/cross.svg';
+  tick: any = '../assets/svg/tick.svg';
+  doubletick: any = '../assets/svg/double_tick.svg';
+
 
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
