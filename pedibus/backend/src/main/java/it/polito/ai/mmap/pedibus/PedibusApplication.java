@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus;
 
 
 
+import javafx.application.Application;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,7 @@ public class PedibusApplication {
         executor.setThreadNamePrefix("Async-");
         return executor;
     }
+
 
     public static void main(String[] args) {
         SpringApplication.run(PedibusApplication.class, args);
