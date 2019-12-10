@@ -21,7 +21,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
 //                .simpTypeMatchers(MESSAGE, SUBSCRIBE).denyAll()
                 //.simpSubscribeDestMatchers("/admin/**").hasRole("ADMIN")
 //                .anyMessage().authenticated();
-        .anyMessage().permitAll();
+        .anyMessage().authenticated();
 
     }
     @Override

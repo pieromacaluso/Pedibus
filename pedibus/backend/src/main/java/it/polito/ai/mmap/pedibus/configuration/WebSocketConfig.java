@@ -58,7 +58,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     MultiValueMap<String, String> multiValueMap = headers.get(StompHeaderAccessor.NATIVE_HEADERS, MultiValueMap.class);
                     for (Map.Entry<String, List<String>> head : multiValueMap.entrySet()) {
-                        if (head.getKey().equals("Authentication") && head.getValue() != null) {
+                        if (head.getKey().equals("Authentication") && head.getValue() != null && !head.getValue().get(0).equals("null")) {
                             String token = head.getValue().get(0);
                             Authentication auth = jwtTokenService.getAuthentication(token); // access authentication header(s)
                             accessor.setUser(auth);
