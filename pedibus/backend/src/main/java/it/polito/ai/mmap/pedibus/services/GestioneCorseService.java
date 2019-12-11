@@ -219,7 +219,7 @@ public class GestioneCorseService {
                 dispEntity.setIdFermata(dispAllResource.getIdFermata());
                 dispEntity.setIsConfirmed(dispAllResource.getIsConfirmed());
                 dispEntity = dispRepository.save(dispEntity);
-                NotificaEntity notificaEntity = new NotificaEntity(NotDISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
+                NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.DISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
                 notificheService.addNotifica(notificaEntity);      //salvataggio e invio notifica
                 //todo messaggio per aggiornare l'interfaccia admin, quando arrivato a scuola friz tutti gli utenti
             } else

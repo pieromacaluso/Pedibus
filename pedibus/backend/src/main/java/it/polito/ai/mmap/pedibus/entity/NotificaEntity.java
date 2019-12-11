@@ -8,6 +8,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.management.Notification;
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @Document(collection = "notifica")
@@ -19,37 +22,40 @@ public class NotificaEntity {
     @Value("${notifiche.type.Disponibilita}")
     private String NotDISPONIBILITA;*/
 
-    String NotBASE = "base";
-    String NotDISPONIBILITA = "disponibilita";
-
+    public enum NotificationType {
+        BASE, DISPONIBILITA
+    }
 
     @Id
     private String idNotifica;
-    private String type;
+    private NotificationType type;
     private String usernameDestinatario;
     private String msg;
     private Boolean isTouched;
+    private Date data;
     //todo aggiunta data
+
 
     //Per type = notifiche.type.Disponibilita, altrimenti impostati a null e false
     private ObjectId dispID;
     private Boolean isAck;
 
-    public NotificaEntity(String type, String user, String msg, ObjectId dispID) {
+    public NotificaEntity(NotificationType type, String user, String msg, ObjectId dispID) {
         //idNotifica= new ObjectId().toString();
         this.usernameDestinatario = user;
         this.msg = msg;
 
-        if (type.compareTo(NotBASE) == 0) {
+        if (type == NotificationType.BASE) {
             if (dispID!=null) {
                 throw new NotificaWrongTypeException();             //Specificato type base ma anche un dispID
             }
-            this.type = NotBASE;
+            this.type = NotificationType.BASE;
             this.dispID = null;
-        } else if (type.compareTo(NotDISPONIBILITA) == 0) {
-            this.type = NotDISPONIBILITA;
+        } else if (type == NotificationType.DISPONIBILITA) {
+            this.type = NotificationType.DISPONIBILITA;
             this.dispID = dispID;
         }
+        this.data = new Date();
 
     }
 

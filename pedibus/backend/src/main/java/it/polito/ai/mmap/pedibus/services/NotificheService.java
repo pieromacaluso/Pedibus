@@ -4,16 +4,13 @@ import it.polito.ai.mmap.pedibus.entity.NotificaEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.NotificaNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.NotificaWrongTypeException;
-import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
 import it.polito.ai.mmap.pedibus.repository.NotificaRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import lombok.Data;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
@@ -22,29 +19,18 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Data
 
 public class NotificheService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     NotificaRepository notificaRepository;
-
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-
-    @Value("${notifiche.type.Base}")
-    String NotBASE;
-    @Value("${notifiche.type.Disponibilita}")
-    String NotDISPONIBILITA;
-
     @Autowired
     UserRepository userRepository;
-
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     /**
      * Restituisce le notifiche non lette con type
@@ -52,11 +38,11 @@ public class NotificheService {
      * @param username
      * @return
      */
-    public ArrayList<NotificaDTO> getNotificheType(String username,String type) {
-        if(type.equals(NotBASE) || type.equals(NotDISPONIBILITA)){
+    public ArrayList<NotificaDTO> getNotificheType(String username, NotificaEntity.NotificationType type) {
+        if (type.compareTo(NotificaEntity.NotificationType.BASE) == 0 || type.compareTo(NotificaEntity.NotificationType.DISPONIBILITA) == 0) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if(principal.getUsername()==username){
-                List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouchedAndAndType(username,false,false,type);
+            if (principal.getUsername().equals(username)) {
+                List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioAndIsAckAndIsTouchedAndAndType(username, false, false, type);
                 ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
 
                 for (NotificaEntity n : notifiche) {
@@ -64,16 +50,14 @@ public class NotificheService {
                 }
 
                 return notificheDTO;
-            }else{
+            } else {
                 throw new UnauthorizedUserException("Operazione non autorizzata");
             }
-        }else{
+        } else {
             throw new NotificaWrongTypeException();
         }
 
     }
-
-
 
 
     /**
@@ -85,8 +69,8 @@ public class NotificheService {
     public ArrayList<NotificaDTO> getNotifiche(String username) {
 
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal.getUsername().equals(username)){
-            List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatario(username);
+        if (principal.getUsername().equals(username)) {
+            List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioOrderByDataDesc(username);
             ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
             for (NotificaEntity n : notifiche) {
                 notificheDTO.add(new NotificaDTO(n));
@@ -94,10 +78,9 @@ public class NotificheService {
 
             return notificheDTO;
 
-        }else{
+        } else {
             throw new UnauthorizedUserException("Operazione non autorizzata");
         }
-
 
 
     }
@@ -113,8 +96,7 @@ public class NotificheService {
         if (checkNotificaEntity.isPresent()) {
             //idNotifica di una notifica base
             NotificaEntity notificaEntity = checkNotificaEntity.get();
-            if (notificaEntity.getType().equals(NotBASE))
-                notificaRepository.delete(notificaEntity);
+            notificaRepository.delete(notificaEntity);
         } else {
             throw new NotificaNotFoundException();
         }

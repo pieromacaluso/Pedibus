@@ -283,11 +283,11 @@ public class ReservationService {
             simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
             if(isSet){
-                NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
+                NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.BASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
             }else{
                 //todo vedere se cancellarla ma in modo corretto, bisogna trovare il modo di identificare la notifica da cancellare
-                NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "No scherzavo XD.", null);
+                NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.BASE, userEntity.getUsername(), "No scherzavo XD.", null);
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
             }
 
@@ -323,7 +323,7 @@ public class ReservationService {
             reservationRepository.save(reservationEntity);
 
             UserEntity userEntity = childService.getChildParent(cfChild);
-            NotificaEntity notificaEntity = new NotificaEntity(NotBASE, userEntity.getUsername(), "Suo figlio è arrivato a scuola.", null);
+            NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.BASE, userEntity.getUsername(), "Suo figlio è arrivato a scuola.", null);
             notificheService.addNotifica(notificaEntity);
             //todo messaggio topic per atri admin
             return true;

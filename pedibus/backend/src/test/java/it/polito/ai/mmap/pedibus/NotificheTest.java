@@ -130,20 +130,20 @@ public class NotificheTest {
         userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
         ArrayList<NotificaEntity> notificaEntitiesGenitore=new ArrayList<>();
-        notificaEntitiesGenitore.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg1",null));
-        notificaEntitiesGenitore.add(new NotificaEntity(NotBase,"testGenitore@test.it","msg2",null));
+        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testGenitore@test.it","msg1",null));
+        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testGenitore@test.it","msg2",null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testGenitore@test.it","msg3",false,xxx,xxx)); //todo aggiungere una mappa di disponibilità
         notificheEntityMap.put("testGenitore",notificaEntitiesGenitore);
 
         ArrayList<NotificaEntity> notificaEntitiesNonGenitore=new ArrayList<>();
-        notificaEntitiesNonGenitore.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",null));
-        notificaEntitiesNonGenitore.add(new NotificaEntity(NotBase,"testNonGenitore@test.it","msg1",null));
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonGenitore@test.it","msg1",null));
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonGenitore@test.it","msg1",null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonGenitore@test.it","msg3",false,xxx,xxx));
         notificheEntityMap.put("testNonGenitore",notificaEntitiesNonGenitore);
 
         ArrayList<NotificaEntity> notificaEntitiesNonno=new ArrayList<>();
-        notificaEntitiesNonno.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",null));
-        notificaEntitiesNonno.add(new NotificaEntity(NotBase,"testNonno@test.it","msg1",null));
+        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonno@test.it","msg1",null));
+        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonno@test.it","msg1",null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonno@test.it","msg3",false,xxx,xxx));
         notificheEntityMap.put("testNonno",notificaEntitiesNonno);
 
@@ -278,7 +278,7 @@ public class NotificheTest {
         //autenticazione
         String token=loginAsGenitore();
         //legge dal db tutte le notifiche non lette di quell utente
-        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotBase)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
+        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotificaEntity.NotificationType.BASE)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
             NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
             return notificaDTO;
         }).collect(Collectors.toList());
@@ -305,7 +305,7 @@ public class NotificheTest {
         //autenticazione
         String token=loginAsGenitore();
         //legge dal db tutte le notifiche non lette di quell utente
-        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotDisponibilita)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
+        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotificaEntity.NotificationType.DISPONIBILITA)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
             NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
             return notificaDTO;
         }).collect(Collectors.toList());
