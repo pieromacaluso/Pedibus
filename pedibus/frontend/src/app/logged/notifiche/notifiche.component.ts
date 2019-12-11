@@ -11,20 +11,15 @@ import { DataShareService } from 'src/app/data-share.service';
 })
 export class NotificheComponent implements OnInit {
 
-  notifiche: Notifica[];
+  notifiche$: Observable<Notifica[]>;
   countNonLette = 0;
 
   constructor(private notificheService: NotificheService, private dataService: DataShareService) {
-    this.dataService.comunicazioni.subscribe(
-      (newNotifications) => {
-        this.notifiche.concat(newNotifications);
-      }
-    );
+    this.notifiche$ = dataService.comunicazioni;
   }
 
   ngOnInit() {
-    this.notificheService.getNotifiche(this.countNonLette);
-    this.notificheService.watchNotifiche(this.countNonLette);
+
   }
 
   readNotifica(idNotifica: string) {

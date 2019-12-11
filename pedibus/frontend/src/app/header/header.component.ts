@@ -4,6 +4,8 @@ import {Router} from '@angular/router';
 import {HeaderService, MenuItem} from './header.service';
 import {Observable} from 'rxjs';
 import {NotificheService} from '../logged/notifiche/notifiche.service';
+import {Notifica} from '../logged/notifiche/dtos';
+import {DataShareService} from '../data-share.service';
 
 @Component({
   selector: 'app-header',
@@ -17,11 +19,13 @@ export class HeaderComponent implements OnInit {
   userLogged: boolean;
   activeLoggedLink: any;
   headerMenu$: Observable<MenuItem[]>;
+  unReadNotification$: Observable<Notifica[]>;
 
   constructor(private auth: AuthService, private router: Router, private header: HeaderService,
-              private notificheService: NotificheService) {
+              private dataShareService: DataShareService) {
     this.userLogged = this.auth.isLoggedIn();
     this.headerMenu$ = this.header.menuAnnounced$;
+    this.unReadNotification$ = this.dataShareService.comunicazioni;
   }
 
   isLoggedIn() {

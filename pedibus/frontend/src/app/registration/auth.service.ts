@@ -7,6 +7,8 @@ import * as moment from 'moment';
 import * as jwt_decode from 'jwt-decode';
 import {myRxStompConfig} from '../my-rx-stomp.config';
 import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
+import {BehaviorSubject} from 'rxjs';
+import {Notifica} from '../logged/notifiche/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +16,22 @@ import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 export class AuthService {
 
   baseURL = environment.baseURL;
+  private sessionSource = new BehaviorSubject<string>(null);
+  newSession = this.sessionSource.asObservable();
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private rxStompService: RxStompService) {
+    if (localStorage.getItem('id_token')) {
+      const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
+        connectHeaders: {
+          Authentication: localStorage.getItem('id_token')
+        },
+        beforeConnect: () => {
+          console.log('%c called before connect', 'color: blue');
+        }
+      });
+      this.rxStompService.configure(stompConfig);
+      this.sessionSource.next(localStorage.getItem('id_token'));
+    }
   }
 
   /* METODO CHE RINNOVA LE CREDENZIALI */
@@ -53,10 +69,6 @@ export class AuthService {
     localStorage.setItem('id_token', authResult.token);
     localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
-    myRxStompConfig.connectHeaders.Authentication = localStorage.getItem('id_token');
-  }
-
-  public setupWebSocket(rxStompService) {
     const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
       connectHeaders: {
         Authentication: localStorage.getItem('id_token')
@@ -65,14 +77,24 @@ export class AuthService {
         console.log('%c called before connect', 'color: blue');
       }
     });
-    rxStompService.configure(stompConfig);
+    this.rxStompService.configure(stompConfig);
+    this.sessionSource.next(localStorage.getItem('id_token'));
   }
 
   logout() {
     localStorage.removeItem('id_token');
     localStorage.removeItem('roles');
     localStorage.removeItem('expires_at');
-    myRxStompConfig.connectHeaders.Authentication = '';
+    const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
+      connectHeaders: {
+        Authentication: ''
+      },
+      beforeConnect: () => {
+        console.log('%c called before connect', 'color: blue');
+      }
+    });
+    this.rxStompService.configure(stompConfig);
+    this.rxStompService.deactivate();
   }
 
   isAdmin() {

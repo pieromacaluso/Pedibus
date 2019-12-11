@@ -40,7 +40,6 @@ export class ListaPrenotazioniComponent implements OnInit {
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
-    authService.setupWebSocket(rxStompService);
     // First Observable
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),

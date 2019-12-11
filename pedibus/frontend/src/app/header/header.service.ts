@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {AuthService} from '../registration/auth.service';
+import {NotificheService} from '../logged/notifiche/notifiche.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class HeaderService {
   private signUp = {icon: 'person_add', link: 'sign-up', title: 'Sign Up'};
 
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private notificheService: NotificheService) {
   }
 
   update() {

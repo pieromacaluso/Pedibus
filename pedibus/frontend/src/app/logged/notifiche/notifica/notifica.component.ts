@@ -16,7 +16,6 @@ export class NotificaComponent implements OnInit {
   @Input() notifica: Notifica;
 
   constructor(private rxStompService: RxStompService, private notificheService: NotificheService, private authService: AuthService) {
-    authService.setupWebSocket(rxStompService);
   }
 
   ngOnInit() {

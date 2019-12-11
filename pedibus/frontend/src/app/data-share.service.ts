@@ -14,7 +14,9 @@ export class DataShareService {
   constructor() { }
 
   updateNotifiche(notifiche: Notifica[]) {
-    this.comunicazioniSource.next(notifiche);
+    this.comuArray = this.comuArray.concat(notifiche);
+    console.log('comu Array:', this.comuArray);
+    this.comunicazioniSource.next(this.comuArray);
   }
 
   removeNotifica(idNotifica: string) {

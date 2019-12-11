@@ -50,7 +50,6 @@ export class AggiuntaDispComponent implements OnInit {
               private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
-    authService.setupWebSocket(rxStompService);
     // Main Observable
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
