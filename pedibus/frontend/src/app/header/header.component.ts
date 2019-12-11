@@ -3,6 +3,7 @@ import {AuthService} from '../registration/auth.service';
 import {Router} from '@angular/router';
 import {HeaderService, MenuItem} from './header.service';
 import {Observable} from 'rxjs';
+import {NotificheService} from '../logged/notifiche/notifiche.service';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +18,8 @@ export class HeaderComponent implements OnInit {
   activeLoggedLink: any;
   headerMenu$: Observable<MenuItem[]>;
 
-  constructor(private auth: AuthService, private router: Router, private header: HeaderService) {
+  constructor(private auth: AuthService, private router: Router, private header: HeaderService,
+              private notificheService: NotificheService) {
     this.userLogged = this.auth.isLoggedIn();
     this.headerMenu$ = this.header.menuAnnounced$;
   }

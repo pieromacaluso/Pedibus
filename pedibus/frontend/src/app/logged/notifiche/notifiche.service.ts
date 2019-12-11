@@ -6,6 +6,7 @@ import { DataShareService } from 'src/app/data-share.service';
 import { Subscription } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { ApiService } from '../api.service';
+import {switchMap, tap} from 'rxjs/operators';
 
 const mapRoleNotifiche = [
   { role: 'ROLE_SYSTEM-ADMIN', notifiche: ['/user/notifiche', '/user/notifiche']},
@@ -25,6 +26,7 @@ export class NotificheService {
   constructor(private rxStompService: RxStompService, private authService: AuthService,
               private dataService: DataShareService, private apiService: ApiService) {
     authService.setupWebSocket(rxStompService);
+    console.log('NOTIFICHE SERVICE STARTS', 'red');
   }
 
   getNotifiche(countNonLette: number) {
@@ -37,23 +39,12 @@ export class NotificheService {
   }
 
   watchNotifiche(countNonLette: number) {
-    for (const role of this.authService.getRoles()) {
-      const element = mapRoleNotifiche.find(el => el.role === role);
-      if (element) {
-        element.notifiche.forEach(notifica => {
-          let sub = new Subscription();
-          this.subs.push(sub);
-          if (sub) { sub.unsubscribe(); }
-          sub = this.rxStompService.watch(notifica)
-            .subscribe((message: Message) => {
-              countNonLette++;
-              const nuoveNotifiche = JSON.parse(message.body);
-              this.dataService.updateNotifiche(nuoveNotifiche);
-              console.log('nuove notifiche da broker:', nuoveNotifiche);
-            });
-        });
-      }
-    }
+    this.rxStompService.watch('/user/notifiche').subscribe(message => {
+      countNonLette++;
+      const nuoveNotifiche = JSON.parse(message.body);
+      this.dataService.updateNotifiche(nuoveNotifiche);
+      console.log('nuove notifiche da broker:', nuoveNotifiche);
+    });
   }
 
   deleteNotifica(idNotifica: string) {
