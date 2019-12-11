@@ -21,6 +21,7 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient, private rxStompService: RxStompService) {
     if (localStorage.getItem('id_token')) {
+      this.rxStompService.deactivate();
       const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
         connectHeaders: {
           Authentication: localStorage.getItem('id_token')
@@ -30,6 +31,7 @@ export class AuthService {
         }
       });
       this.rxStompService.configure(stompConfig);
+      this.rxStompService.activate();
       this.sessionSource.next(localStorage.getItem('id_token'));
     }
   }
@@ -62,6 +64,7 @@ export class AuthService {
   }
 
   private setSession(authResult) {
+    this.rxStompService.deactivate();
     console.log(JSON.stringify(jwt_decode(authResult.token)));
     const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
     console.log('expires at: ' + expiresAt);
@@ -78,6 +81,7 @@ export class AuthService {
       }
     });
     this.rxStompService.configure(stompConfig);
+    this.rxStompService.activate();
     this.sessionSource.next(localStorage.getItem('id_token'));
   }
 
