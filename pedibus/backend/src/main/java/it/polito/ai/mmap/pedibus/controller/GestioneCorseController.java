@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 //TODO implementare la sicurezza degli endpoint
 
 @RestController
@@ -31,7 +33,12 @@ public class GestioneCorseController {
      */
     @GetMapping("/disp/{verso}/{data}")
     public DispTurnoResource getDisp(@PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        return gestioneCorseService.getDispTurnoResource(mongoTimeService.getMongoZonedDateTimeFromDate(data), verso);
+        try {
+            Date d = mongoTimeService.getMongoZonedDateTimeFromDate(data);
+            return gestioneCorseService.getDispTurnoResource(d, verso);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
     /**
