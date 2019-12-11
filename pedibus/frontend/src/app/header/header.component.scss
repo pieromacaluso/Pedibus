@@ -10,3 +10,14 @@ mat-icon {
 .mat-nav-list a.active {
   color: mat-color($pedibus-theme-accent, darker);
 }
+
+.notifica {
+  margin: 0 0 0 5px;
+  padding: 3px;
+  color: white;
+  background-color: red;
+  border-radius: 5px;
+  font-weight: bold;
+
+}
+

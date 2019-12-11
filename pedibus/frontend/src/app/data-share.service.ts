@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import { Notifica } from './logged/notifiche/dtos';
+import {Notifica} from './logged/notifiche/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +11,15 @@ export class DataShareService {
   comunicazioni = this.comunicazioniSource.asObservable();
   comuArray: Notifica[] = [];
 
-  constructor() { }
+  constructor() {
+  }
 
   updateNotifiche(notifiche: Notifica[]) {
-    this.comuArray = this.comuArray.concat(notifiche);
+    if (Array.isArray(notifiche)) {
+      this.comuArray = notifiche.concat(this.comuArray);
+    } else {
+      this.comuArray.unshift(notifiche);
+    }
     console.log('comu Array:', this.comuArray);
     this.comunicazioniSource.next(this.comuArray);
   }
@@ -25,5 +30,9 @@ export class DataShareService {
       this.comuArray.splice(indexNotifica, 1);
       this.comunicazioniSource.next(this.comuArray);
     }
+  }
+
+  reset() {
+    this.comuArray = [];
   }
 }

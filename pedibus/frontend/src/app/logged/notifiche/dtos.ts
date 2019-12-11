@@ -6,4 +6,5 @@ export interface Notifica {
     msg: string;
     isTouched: boolean;
     isAck: boolean;
+    data: Date;
 }

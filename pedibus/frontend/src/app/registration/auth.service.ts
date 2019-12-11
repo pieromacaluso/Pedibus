@@ -20,18 +20,20 @@ export class AuthService {
   newSession = this.sessionSource.asObservable();
 
   constructor(private httpClient: HttpClient, private rxStompService: RxStompService) {
+
     if (localStorage.getItem('id_token')) {
-      this.rxStompService.deactivate();
-      const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
-        connectHeaders: {
-          Authentication: localStorage.getItem('id_token')
-        },
-        beforeConnect: () => {
-          console.log('%c called before connect', 'color: blue');
-        }
-      });
-      this.rxStompService.configure(stompConfig);
-      this.rxStompService.activate();
+      if (!this.rxStompService.connected()) {
+        const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
+          connectHeaders: {
+            Authentication: localStorage.getItem('id_token')
+          },
+          beforeConnect: () => {
+            console.log('%c called before connect', 'color: blue');
+          }
+        });
+        this.rxStompService.configure(stompConfig);
+      }
+      console.log('SETSETTION', 'color:red');
       this.sessionSource.next(localStorage.getItem('id_token'));
     }
   }
@@ -64,7 +66,7 @@ export class AuthService {
   }
 
   private setSession(authResult) {
-    this.rxStompService.deactivate();
+    console.log('SETSETTION', 'color:red');
     console.log(JSON.stringify(jwt_decode(authResult.token)));
     const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
     console.log('expires at: ' + expiresAt);
@@ -81,8 +83,10 @@ export class AuthService {
       }
     });
     this.rxStompService.configure(stompConfig);
-    this.rxStompService.activate();
     this.sessionSource.next(localStorage.getItem('id_token'));
+    if (!this.rxStompService.connected()) {
+      this.rxStompService.activate();
+    }
   }
 
   logout() {
@@ -99,6 +103,7 @@ export class AuthService {
     });
     this.rxStompService.configure(stompConfig);
     this.rxStompService.deactivate();
+    this.sessionSource.next(null);
   }
 
   isAdmin() {

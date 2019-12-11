@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
 import {ApiDispService, DispAllResource} from '../../api-disp.service';
@@ -7,7 +7,7 @@ import {MatDialog, MatListOption, MatSelectionList, MatSnackBar} from '@angular/
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {debounceTime, finalize, first, mergeMap, switchMap, tap} from 'rxjs/operators';
-import {defer, forkJoin, Observable, Subject} from 'rxjs';
+import {defer, forkJoin, Observable, Subject, Subscription} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../../api-turni.service';
 import {variable} from '@angular/compiler/src/output/output_ast';
@@ -17,7 +17,7 @@ import {variable} from '@angular/compiler/src/output/output_ast';
   templateUrl: './elenco-disp.component.html',
   styleUrls: ['./elenco-disp.component.scss']
 })
-export class ElencoDispComponent implements OnInit {
+export class ElencoDispComponent implements OnInit, OnDestroy {
 
   idFermata: string;
   prenotazione$: Observable<PrenotazioneRequest>;
@@ -35,6 +35,10 @@ export class ElencoDispComponent implements OnInit {
   cross: any = '../assets/svg/cross.svg';
   tick: any = '../assets/svg/tick.svg';
   doubletick: any = '../assets/svg/double_tick.svg';
+  private dispStatusSub: Subscription;
+  private dispDelSub: Subscription;
+  private dispAddSub: Subscription;
+  private turnoStatusSub: Subscription;
 
 
 
@@ -86,7 +90,7 @@ export class ElencoDispComponent implements OnInit {
     );
 
     // WebSocket Turno
-    this.syncService.prenotazioneObs$.pipe(
+    this.turnoStatusSub =  this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
         pren => {
@@ -100,7 +104,7 @@ export class ElencoDispComponent implements OnInit {
     });
 
     // WebSocket Disponibilità add
-    this.syncService.prenotazioneObs$.pipe(
+    this.dispAddSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
         return this.rxStompService.watch('/dispws-add' + '/' + this.pathSub(pren));
@@ -116,7 +120,7 @@ export class ElencoDispComponent implements OnInit {
     );
 
     // WebSocket Disponibilità deleted
-    this.syncService.prenotazioneObs$.pipe(
+    this.dispDelSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
         return this.rxStompService.watch('/dispws-del' + '/' + this.pathSub(pren));
@@ -135,7 +139,7 @@ export class ElencoDispComponent implements OnInit {
     );
 
     // WebSocket Disponibilità status
-    this.syncService.prenotazioneObs$.pipe(
+    this.dispStatusSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
         this.p = pren;
@@ -161,6 +165,13 @@ export class ElencoDispComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy() {
+    this.dispAddSub.unsubscribe();
+    this.dispDelSub.unsubscribe();
+    this.dispStatusSub.unsubscribe();
+    this.turnoStatusSub.unsubscribe();
   }
 
   openTurno(turno: TurnoResource) {

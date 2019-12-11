@@ -1,4 +1,4 @@
-import {Component, Inject, Injectable, Input, OnInit, SimpleChange} from '@angular/core';
+import {Component, Inject, Injectable, Input, OnDestroy, OnInit, SimpleChange} from '@angular/core';
 import {LineReservationVerso, AlunniPerFermata, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
@@ -20,7 +20,7 @@ import {myRxStompConfig} from '../../../my-rx-stomp.config';
   templateUrl: './lista-prenotazioni.component.html',
   styleUrls: ['./lista-prenotazioni.component.scss']
 })
-export class ListaPrenotazioniComponent implements OnInit {
+export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
 
   resource: LineReservationVerso;
 
@@ -36,6 +36,8 @@ export class ListaPrenotazioniComponent implements OnInit {
   private handled$: Observable<any>;
   private reservation$: Observable<any>;
   private loading: boolean;
+  private handledSub: Subscription;
+  private reservationSub: Subscription;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -58,7 +60,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     );
 
     // Message Handled
-    this.syncService.prenotazioneObs$.pipe(
+    this.handledSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
         pren => {
@@ -75,7 +77,7 @@ export class ListaPrenotazioniComponent implements OnInit {
     });
 
     // Message reservation
-    this.syncService.prenotazioneObs$.pipe(
+    this.reservationSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
         pren => {
@@ -221,6 +223,11 @@ export class ListaPrenotazioniComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    this.handledSub.unsubscribe();
+    this.reservationSub.unsubscribe();
   }
 
   deleteNotReserved(al: AlunnoNotReserved) {

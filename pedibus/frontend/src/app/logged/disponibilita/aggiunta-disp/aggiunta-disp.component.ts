@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
@@ -6,7 +6,7 @@ import {MatDialog, MatSnackBar} from '@angular/material';
 import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {Alunno, PrenotazioneRequest, StopsByLine} from '../../line-details';
-import {concat, defer, EMPTY, forkJoin, Observable, Subject, timer} from 'rxjs';
+import {concat, defer, EMPTY, forkJoin, Observable, Subject, Subscription, timer} from 'rxjs';
 import {defaultIfEmpty, delay, distinctUntilChanged, finalize, first, flatMap, map, mergeMap, retry, switchMap, tap} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
 import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
@@ -18,7 +18,7 @@ import {myRxStompConfig} from '../../../my-rx-stomp.config';
   templateUrl: './aggiunta-disp.component.html',
   styleUrls: ['./aggiunta-disp.component.scss'],
 })
-export class AggiuntaDispComponent implements OnInit {
+export class AggiuntaDispComponent implements OnInit, OnDestroy {
 
   @Input() linee: string[];
   private loading;
@@ -45,6 +45,9 @@ export class AggiuntaDispComponent implements OnInit {
     delete: false,
     ack: false
   };
+  private dispCreateDelSub: Subscription;
+  private dispStatusSub: Subscription;
+  private turnoStatusSub: Subscription;
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private apiTurniService: ApiTurniService,
@@ -97,9 +100,9 @@ export class AggiuntaDispComponent implements OnInit {
       }
     );
     // WebSocket Disponibilità creazione/eliminazione
-    this.changeLinea.asObservable().pipe(
+    this.dispCreateDelSub = this.changeLinea.asObservable().pipe(
       switchMap(linea => {
-        return this.rxStompService.watch('/user/dispws' +  this.pathSub(this.p));
+        return this.rxStompService.watch('/user/dispws' + this.pathSub(this.p));
       }),
     ).subscribe(message => {
         const res = JSON.parse(message.body);
@@ -115,7 +118,7 @@ export class AggiuntaDispComponent implements OnInit {
     );
 
     // WebSocket Disponibilità status
-    this.changeLinea.asObservable().pipe(
+    this.dispStatusSub = this.changeLinea.asObservable().pipe(
       switchMap(linea => {
         return this.rxStompService.watch('/user/dispws-status' + this.pathSub(this.p));
       }),
@@ -129,7 +132,7 @@ export class AggiuntaDispComponent implements OnInit {
     );
 
     // WebSocket Turno cambio stato
-    this.changeLinea.asObservable().pipe(
+    this.turnoStatusSub = this.changeLinea.asObservable().pipe(
       switchMap(
         linea => {
           return this.rxStompService.watch('/turnows' + this.pathSub(this.p));
@@ -141,7 +144,7 @@ export class AggiuntaDispComponent implements OnInit {
     });
 
     this.changeLinea.asObservable().pipe(
-      mergeMap( linea => {
+      mergeMap(linea => {
           return this.apiService.getStopsByLine(linea).pipe(first());
         }
       )
@@ -153,7 +156,7 @@ export class AggiuntaDispComponent implements OnInit {
     );
 
     this.changeLinea.asObservable().pipe(
-      mergeMap( linea => {
+      mergeMap(linea => {
           return this.apiTurniService.getTurnoState(linea, this.p.verso, this.p.data).pipe(first());
         }
       )
@@ -167,6 +170,12 @@ export class AggiuntaDispComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy() {
+    this.dispCreateDelSub.unsubscribe();
+    this.dispStatusSub.unsubscribe();
+    this.turnoStatusSub.unsubscribe();
   }
 
   showLoading() {

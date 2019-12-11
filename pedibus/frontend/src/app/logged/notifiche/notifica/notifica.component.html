@@ -1,10 +1,14 @@
 <mat-card id="prenotazioni" ngClass="container" ngClass.lt-md="container-mobile">
   <mat-progress-bar class="progress-bar-button" *ngIf="showLoading()" mode="indeterminate"></mat-progress-bar>
-  <mat-card-header>
-    <h1>Message n.{{messageNumber}}</h1>
-  </mat-card-header>
-  <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile">
-    <p>{{notifica.msg}}</p>
-    <button mat-stroked-button class="alunno-presenza mat-background-accent" (click)="readNotifica()">Notifica letta</button>
+  <button mat-button class="close-button" (click)="readNotifica()"><img class="close-icon" [src]="tick"></button>
+
+  <mat-card-content>
+    <div>{{notifica.msg}}</div>
+    <div class="date">
+      <span *ngIf="islessThanAMinute(notifDate)">proprio ora</span>
+      <span *ngIf="islessThanAnHour(notifDate)  && !islessThanAMinute(notifDate)">{{getDiffMin(notifDate)}} <span *ngIf="getDiffMin(notifDate) > 1">minuti</span><span *ngIf="getDiffMin(notifDate) == 1">minuto</span> fa</span>
+      <span *ngIf="islessThanADay(notifDate)  && !islessThanAnHour(notifDate) && !islessThanAMinute(notifDate)">{{getDiffHour(notifDate)}} <span *ngIf="getDiffHour(notifDate) > 1">ore</span><span *ngIf="getDiffHour(notifDate) == 1">ora</span> fa</span>
+      <span *ngIf="!islessThanADay(notifDate)  && !islessThanAnHour(notifDate) && !islessThanAMinute(notifDate)">{{this.notifica.data | date:'medium'}}</span>
+    </div>
   </mat-card-content>
 </mat-card>

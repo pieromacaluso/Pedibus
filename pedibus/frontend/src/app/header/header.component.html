@@ -8,7 +8,7 @@
          routerLinkActive="active"
          [routerLink]="menu.link">
         <mat-icon aria-hidden="false" aria-label="Example home icon">{{menu.icon}}</mat-icon>
-        {{menu.title}} <span *ngIf="menu.link === 'notifiche'">{{(unReadNotification$ |async).length}}</span></a>
+        {{menu.title}} <span class="notifica" *ngIf="menu.link === 'notifiche' && (unReadNotification$ |async).length > 0"> {{(unReadNotification$ |async).length}}</span></a>
 
       <a mat-list-item (click)="logOut();sidenav.close();" *ngIf="isLoggedIn()">
         <mat-icon aria-hidden="false" aria-label="Example home icon">exit_to_app</mat-icon>
@@ -30,7 +30,7 @@
            routerLinkActive="mat-flat-button mat-accent"
            [routerLink]="menu.link">
           <mat-icon aria-hidden="false" aria-label="Example home icon">{{menu.icon}}</mat-icon>
-          {{menu.title}} <span *ngIf="menu.link === 'notifiche'">{{(unReadNotification$ |async).length}}</span></a>
+          {{menu.title}} <span class="notifica" *ngIf="menu.link === 'notifiche' && (unReadNotification$ |async).length > 0"> {{(unReadNotification$ |async).length}}</span></a>
         <a mat-button (click)="logOut()" *ngIf="isLoggedIn()">
           <mat-icon aria-hidden="false" aria-label="Example home icon">exit_to_app</mat-icon>
           Logout</a>

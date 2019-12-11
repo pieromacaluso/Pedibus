@@ -1,6 +1,14 @@
 @import "../../../app.component";
 
 
+.progress-bar-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+
 .card-stops {
   margin: 10px;
 }
@@ -69,9 +77,10 @@
 
   margin: 0 0 0 94px;
 }
+
 .prenotazioni-disabled {
   opacity: 0.3;
-  pointer-events:none;
+  pointer-events: none;
 }
 
 .prenotazioni-mobile {
@@ -80,6 +89,7 @@
   border-width: 0 0 0 2px;
   padding: 8px;
 }
+
 .noprenotazioni {
   padding: 8px;
 }
@@ -117,4 +127,19 @@
 
 .margin-final {
   height: 85px !important;
+}
+
+.close-button {
+  position: absolute;
+  float: right;
+  top: 0;
+  right: 0;
+}
+.close-icon {
+  height: 24px;
+}
+
+
+.date {
+  color: gray !important;
 }
