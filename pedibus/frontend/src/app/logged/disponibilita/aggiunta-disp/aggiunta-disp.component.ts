@@ -7,7 +7,20 @@ import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {Alunno, PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, Subscription, timer} from 'rxjs';
-import {defaultIfEmpty, delay, distinctUntilChanged, finalize, first, flatMap, map, mergeMap, retry, switchMap, tap} from 'rxjs/operators';
+import {
+  catchError,
+  defaultIfEmpty,
+  delay,
+  distinctUntilChanged,
+  finalize,
+  first,
+  flatMap,
+  map,
+  mergeMap,
+  retry,
+  switchMap,
+  tap
+} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
 import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
 import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
@@ -58,7 +71,14 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       tap(() => this.loading = true),
       switchMap(pren => {
         this.p = pren;
-        return this.apiDispService.getDisp(pren.verso, pren.data);
+        return this.apiDispService.getDisp(pren.verso, pren.data).pipe(
+          catchError((err, caught) => {
+            this.changeDisp.next(null);
+            this.changeTurno.next(null);
+            this.loading = false;
+            return null;
+          })
+        );
 
       }),
       tap(() => this.loading = false),
@@ -69,23 +89,21 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
           this.changeDisp.next(this.emptyDisp);
           this.changeTurno.next(null);
         } else {
-          this.changeDisp.next(res.disp);
-          this.changeTurno.next(res.turno);
-          this.p.linea = res.disp.idLinea;
-          this.changeLinea.next(res.disp.idLinea);
+          if ('turno' in res) {
+            this.changeDisp.next(res.disp);
+            this.changeTurno.next(res.turno);
+            this.p.linea = res.disp.idLinea;
+            this.changeLinea.next(res.disp.idLinea);
+          }
         }
-      },
-      err => {
-        // TODO: errore
-      }
-    );
+      });
 
     // change Disp
     this.changeDisp.asObservable().subscribe(
       res => {
-        if (res) {
-          console.log('disp', res);
-          this.disp = res;
+        console.log('disp', res);
+        this.disp = res;
+        if (this.disp) {
           this.disp.add = false;
           this.disp.ack = false;
           this.disp.delete = false;

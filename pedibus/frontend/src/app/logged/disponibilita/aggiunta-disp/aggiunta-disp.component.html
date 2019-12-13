@@ -1,4 +1,9 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
+  <mat-progress-bar
+    class="progress-bar-button"
+    *ngIf="showLoading()"
+    mode="indeterminate"
+  ></mat-progress-bar>
   <div *ngIf="this.disp else loadingDiv">
     <div *ngIf="!showLoading() else loadingDiv">
       <mat-card-header><h1>Disponibilità</h1></mat-card-header>
@@ -112,13 +117,8 @@
 
 
 <ng-template #loadingDiv>
-  <div>
-    <mat-progress-bar
-      class="progress-bar-button"
-      mode="indeterminate"
-    ></mat-progress-bar>
-    <mat-card-header><h1>Caricamento in corso...</h1></mat-card-header>
-  </div>
+    <mat-card-header *ngIf="showLoading()"><h1>Caricamento in corso...</h1></mat-card-header>
+    <mat-card-header *ngIf="!showLoading()"><h1>Non ci sono turni in questa giornata</h1></mat-card-header>
 </ng-template>
 
 <ng-template #notAuthorized>

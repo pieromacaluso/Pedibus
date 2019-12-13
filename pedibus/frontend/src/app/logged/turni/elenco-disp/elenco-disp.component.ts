@@ -6,7 +6,7 @@ import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatListOption, MatSelectionList, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
-import {debounceTime, finalize, first, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {catchError, debounceTime, finalize, first, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {defer, forkJoin, Observable, Subject, Subscription} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../../api-turni.service';
@@ -41,7 +41,6 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   private turnoStatusSub: Subscription;
 
 
-
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe) {
@@ -52,7 +51,13 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
         pren => {
           this.p = pren;
           const stops = this.apiService.getStopsByLine(pren.linea);
-          const turno = this.apiTurniService.getTurno(pren.linea, pren.verso, pren.data);
+          const turno = this.apiTurniService.getTurno(pren.linea, pren.verso, pren.data).pipe(
+            catchError((err, caught) => {
+              this.changeTurno.next(null);
+              this.changeDisp.next(null);
+              return null;
+            })
+          );
           return forkJoin([stops, turno]);
         }
       ),
@@ -61,13 +66,12 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       res => {
         console.log(res);
         this.linea = res[0];
-        res[1].turno.opening = false;
-        res[1].turno.closing = false;
-        this.changeTurno.next(res[1].turno);
-        this.changeDisp.next(res[1].listDisp);
-      },
-      err => {
-        // TODO: Errore
+        if (res[1] != null && 'turno' in res[1] && 'listDisp' in res[1]) {
+          res[1].turno.opening = false;
+          res[1].turno.closing = false;
+          this.changeTurno.next(res[1].turno);
+          this.changeDisp.next(res[1].listDisp);
+        }
       }
     );
 
@@ -82,15 +86,18 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     // change Turno
     this.changeTurno.asObservable().subscribe(
       res => {
-        console.log(res);
-        res.opening = false;
-        res.closing = false;
-        this.turno = res;
+        if (!res) {
+          this.turno = res;
+        } else {
+          res.opening = false;
+          res.closing = false;
+          this.turno = res;
+        }
       }
     );
 
     // WebSocket Turno
-    this.turnoStatusSub =  this.syncService.prenotazioneObs$.pipe(
+    this.turnoStatusSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
         pren => {

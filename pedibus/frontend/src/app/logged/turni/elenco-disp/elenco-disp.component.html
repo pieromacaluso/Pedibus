@@ -4,7 +4,7 @@
     *ngIf="showLoading()"
     mode="indeterminate"
   ></mat-progress-bar>
-  <div id="prenotazione" *ngIf="this.linea else loadingDiv">
+  <div id="prenotazione" *ngIf="this.linea && this.turno && this.listDisp else loadingDiv">
     <div *ngIf="!showLoading() else loadingDiv">
       <mat-card-header fxLayout="row" fxLayout.lt-sm="column">
         <div><h1>Gestione Turni</h1></div>
@@ -100,6 +100,9 @@
 
 <ng-template #loadingDiv>
   <mat-card-header *ngIf="showLoading()"><h1>Caricamento in corso...</h1></mat-card-header>
-  <mat-card-header *ngIf="!showLoading()"><h1>Il turno è chiuso e non può più essere riaperto</h1></mat-card-header>
+  <mat-card-header *ngIf="!showLoading()"><h1>Non ci sono turni in questa giornata</h1></mat-card-header>
 
+</ng-template>
+
+<ng-template #noTurno>
 </ng-template>

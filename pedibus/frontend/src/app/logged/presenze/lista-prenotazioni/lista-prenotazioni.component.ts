@@ -11,7 +11,7 @@ import {Message} from '@stomp/stompjs';
 import {concat, defer, Observable, Subject, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
 import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
-import {finalize, flatMap, map, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, finalize, flatMap, map, mergeMap, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {fadeAnimation} from '../../../route-animations';
 import {myRxStompConfig} from '../../../my-rx-stomp.config';
 
@@ -49,13 +49,21 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
         pren => {
           console.log('ciao', pren);
           this.prenotazione = pren;
-          return this.apiService.getPrenotazioneByLineaAndDateAndVerso(pren);
+          return this.apiService.getPrenotazioneByLineaAndDateAndVerso(pren).pipe(
+            catchError((err, caught) => {
+              this.resource = null;
+              this.loading = false;
+              return null;
+            })
+          );
         }
       ),
       tap(() => this.loading = false)
     ).subscribe(res => {
         console.log('first', res);
-        this.resource = res;
+        if ('alunniPerFermata' in res) {
+          this.resource = res;
+        }
       }
     );
 

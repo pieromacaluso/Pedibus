@@ -24,7 +24,6 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
         retry(1),
         catchError((error: HttpErrorResponse) => {
           // Errori Unauthorized fanno logout e navigano verso sign-in
-          if (error.status === 401) {this.auth.logout(); this.router.navigate(['/sign-in']); }
           let errorMessage = '';
           if (error.error instanceof ErrorEvent) {
             // client-side error
@@ -34,10 +33,20 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
             errorMessage = `${error.error.errorMessage}`;
           }
           console.log(error);
-          this.snackBar.open(
-            errorMessage, '', {
-              duration: 10000,
-            });
+
+          switch (error.status) {
+            case 401:
+              this.auth.logout();
+              this.router.navigate(['/sign-in']);
+              break;
+            case 404:
+              break;
+            default:
+              this.snackBar.open(
+                errorMessage, '', {
+                  duration: 5000,
+                });
+          }
           const timer = JSON.parse(localStorage.getItem('expires_at'));
           if (timer && (Date.now() > timer)) {
             this.auth.logout();
