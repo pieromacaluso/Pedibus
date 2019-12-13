@@ -67,15 +67,7 @@ public class ReservationController {
     @GetMapping("/reservations/verso/{id_linea}/{data}/{verso}")
     public GetReservationsIdDataVersoResource getReservationsToward(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/verso/" + idLinea + "/" + data + "/" + verso + " è stato contattato");
-        Date dataFormatted;
-        try {
-            dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data);
-        } catch (IllegalArgumentException ignored) {
-            // Se weekend o scuola chiusa restituisco null, lato backed viene gestito visualizzando
-            // "Nessuna corsa disponibile con i parametri selezionati"
-            return null;
-        }
-        return reservationService.getReservationsVersoResource(idLinea, dataFormatted, verso);
+        return reservationService.getReservationsVersoResource(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso);
     }
 
     /**

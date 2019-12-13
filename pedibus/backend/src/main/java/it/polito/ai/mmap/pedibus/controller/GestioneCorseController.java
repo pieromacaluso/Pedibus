@@ -1,11 +1,11 @@
 package it.polito.ai.mmap.pedibus.controller;
 
-import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.resources.*;
 import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
+import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,27 +18,20 @@ import java.util.Date;
 
 @RestController
 public class GestioneCorseController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     GestioneCorseService gestioneCorseService;
-
+    @Autowired
+    MongoTimeService mongoTimeService;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @Autowired
-    MongoTimeService mongoTimeService;
     /**
      * Permette a una guide/admin di una linea di recuperare la propria disponibilità e e lo stato del relativo turno
      */
     @GetMapping("/disp/{verso}/{data}")
     public DispTurnoResource getDisp(@PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        try {
-            Date d = mongoTimeService.getMongoZonedDateTimeFromDate(data);
-            return gestioneCorseService.getDispTurnoResource(d, verso);
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
+            return gestioneCorseService.getDispTurnoResource(mongoTimeService.getMongoZonedDateTimeFromDate(data), verso);
     }
 
     /**
@@ -139,7 +132,6 @@ public class GestioneCorseController {
 
 
     }
-
 
 
 }

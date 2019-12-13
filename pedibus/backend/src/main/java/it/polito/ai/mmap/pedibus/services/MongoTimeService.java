@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.pedibus.exception.SchoolClosedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ public class MongoTimeService {
     public Date getDateCheckConstraints(String date) {
         // holiday
         if (holidayList.contains(date))
-            throw new IllegalArgumentException("Holiday");
+            throw new SchoolClosedException("Holiday");
 
         // weekend
         Date result = parseData(date + "T" + LocalTime.now().withHour(12).withMinute(30).withSecond(30).withNano(500000000).toString() + " GMT+00:00");
@@ -91,13 +92,13 @@ public class MongoTimeService {
         calendar.setTime(result);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         if (dayOfWeek == 7 || dayOfWeek == 1)
-            throw new IllegalArgumentException("Weekend");
+            throw new SchoolClosedException("Weekend");
 
         // school closed
         Date schoolStart = parseData(dataInzioScuola + "T" + LocalTime.now().withHour(0).withMinute(30).withSecond(30).withNano(500000000).toString() + " GMT+00:00");
         Date schoolEnd = parseData(dataFineScuola + "T" + LocalTime.now().withHour(23).withMinute(30).withSecond(30).withNano(500000000).toString() + " GMT+00:00");
         if (result.before(schoolStart) || result.after(schoolEnd)) {
-            throw new IllegalArgumentException("School closed");
+            throw new SchoolClosedException("School closed");
         }
         return result;
     }
