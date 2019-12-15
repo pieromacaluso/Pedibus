@@ -268,60 +268,6 @@ public class NotificheTest {
     }
 
     /**
-     * Testa che vengano ritornate le notifiche base di un determinato utente
-     * @throws Exception
-     */
-    @Test
-    public void getNotificheBase() throws Exception {
-        String user="testGenitore@test.it";
-        logger.info("Test getNotificheBase user: "+user+" ...");
-        //autenticazione
-        String token=loginAsGenitore();
-        //legge dal db tutte le notifiche non lette di quell utente
-        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotBase)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
-            NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
-            return notificaDTO;
-        }).collect(Collectors.toList());
-        String expectedJson = objectMapper.writeValueAsString(expectedResult);
-
-        mockMvc.perform(get("/notifiche/base/{username}",user)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson))
-                .andDo(document("get-notifiche-base",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
-        logger.info("Test done.");
-    }
-
-    /**
-     * Testa che vengano ritornate le notifiche disponibilita di un determinato utente
-     * @throws Exception
-     */
-    @Test
-    public void getNotificheDisp() throws Exception {
-        String user="testGenitore@test.it";
-        logger.info("Test getNotificheDisp user: "+user+" ...");
-        //autenticazione
-        String token=loginAsGenitore();
-        //legge dal db tutte le notifiche non lette di quell utente
-        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals(user)).filter(notificaEntity -> notificaEntity.getType().compareTo(NotDisponibilita)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
-            NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
-            return notificaDTO;
-        }).collect(Collectors.toList());
-        String expectedJson = objectMapper.writeValueAsString(expectedResult);
-
-        mockMvc.perform(get("/notifiche/disp/{username}",user)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson))
-                .andDo(document("get-notifiche-disp",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
-        logger.info("Test done.");
-    }
-
-    /**
      * Verifica che in caso di utente non autenticato le risorse notifiche non sono disponibili
      * @throws Exception
      */
