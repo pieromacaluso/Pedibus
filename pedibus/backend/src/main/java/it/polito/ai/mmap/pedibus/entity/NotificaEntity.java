@@ -56,7 +56,7 @@ public class NotificaEntity {
             this.dispID = dispID;
         }
         this.data = new Date();
-
+        this.isTouched=false;
     }
 
 
