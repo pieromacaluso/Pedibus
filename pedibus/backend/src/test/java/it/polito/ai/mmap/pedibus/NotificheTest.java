@@ -212,7 +212,10 @@ public class NotificheTest {
             NotificaEntity notificaToDel=notificaRepository.findById(idNotificaToDel).get();    //da usare per ripristinare il db dopo averla cancellata
 
             //legge dal db tutte le notifiche non lette di quell utente tranne quella che si sta cancellando e le mappa come notificaDTO
-            List<NotificaEntity> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIdNotifica().equals(idNotificaToDel)).collect(Collectors.toList());
+            List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIdNotifica().equals(idNotificaToDel)).map(notificaEntity -> {
+                NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+                return notificaDTO;
+            }).collect(Collectors.toList());
 
             String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
@@ -248,7 +251,10 @@ public class NotificheTest {
         //autenticazione
         String token=loginAsGenitore();
         //legge dal db tutte le notifiche non lette di quell utente
-        List<NotificaEntity> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).collect(Collectors.toList());
+        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
+            NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+            return notificaDTO;
+        }).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
         mockMvc.perform(get("/notifiche/all/{username}",user)
