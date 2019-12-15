@@ -43,7 +43,7 @@ public class AdminRestController {
     @PostMapping("/sysadmin/user")
     public void insertUser(@RequestBody UserInsertResource userInsertResource) {
         //todo controllo validità mail
-        userService.inserUser(userInsertResource);
+        userService.insertUser(userInsertResource);
     }
 
     /**

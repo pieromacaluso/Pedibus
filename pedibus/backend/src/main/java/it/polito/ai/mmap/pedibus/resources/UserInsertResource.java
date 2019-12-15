@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
 @Data
 public class UserInsertResource {
 
-    private String email;
+    private String userId;
     private List<String> roleIdList;
+    private List<String> lineaIdList;
 
     public UserInsertResource(UserEntity userEntity) {
-        email = userEntity.getUsername();
+        userId = userEntity.getUsername();
         roleIdList = userEntity.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList());
     }
 }

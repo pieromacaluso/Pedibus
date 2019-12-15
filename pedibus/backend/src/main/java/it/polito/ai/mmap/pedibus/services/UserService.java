@@ -38,6 +38,8 @@ public class UserService implements UserDetailsService {
     private ActivationTokenRepository activationTokenRepository;
     @Autowired
     private GMailService gMailService;
+    @Autowired
+    LineeService lineeService;
 
     @Value("${mail.baseURL}")
     private String baseURL;
@@ -64,18 +66,26 @@ public class UserService implements UserDetailsService {
         return check.get();
     }
 
-    public void inserUser(UserInsertResource userInsertResource) {
-        userRepository.save(new UserEntity(userInsertResource.getEmail(), userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new))));
+    public void insertUser(UserInsertResource userInsertResource) {
+        insertAdminLine(userInsertResource);
+        userRepository.save(new UserEntity(userInsertResource.getUserId(), userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new))));
     }
 
     public void updateUser(UserInsertResource userInsertResource) {
-        UserEntity userEntity = ((UserEntity) loadUserByUsername(userInsertResource.getEmail()));
+        UserEntity userEntity = ((UserEntity) loadUserByUsername(userInsertResource.getUserId()));
+        lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
+        insertAdminLine(userInsertResource);
         userEntity.setRoleList(userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new)));
         userRepository.save(userEntity);
     }
 
+    private void insertAdminLine(UserInsertResource userInsertResource) {
+        if (userInsertResource.getRoleIdList().contains("ROLE_ADMIN")) {
+            userInsertResource.getLineaIdList().forEach(lineaId -> lineeService.addAdminLine(userInsertResource.getUserId(), lineaId));
+        }
+    }
+
     /**
-     *
      * @param idRole
      * @return una RoleEntity a partire dal suo identificativo
      */
