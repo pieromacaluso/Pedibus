@@ -142,7 +142,7 @@ public class GestioneCorseService {
      */
     public DispTurnoResource addDisp(DispDTO dispDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        //TODO aggiungere stampa su log per salvare che un utente abbia aggiunto la disponibilità
         if (!idDispDuplicate(dispDTO.getTurnoDTO())) {
             TurnoEntity turnoEntity = getTurnoEntity(dispDTO.getTurnoDTO());
 
