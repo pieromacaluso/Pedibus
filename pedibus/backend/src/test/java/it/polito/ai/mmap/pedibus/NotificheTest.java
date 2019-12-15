@@ -7,6 +7,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.services.LineeService;
+import it.polito.ai.mmap.pedibus.services.NotificheService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -81,7 +82,6 @@ public class NotificheTest {
 
     @Autowired
     TurnoRepository turnoRepository;
-
 
     @Autowired
     NotificaRepository notificaRepository;
@@ -256,6 +256,7 @@ public class NotificheTest {
                 return notificaDTO;
         }).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
+
 
         mockMvc.perform(get("/notifiche/all/{username}",user)
                 .header("Authorization", "Bearer " + token))
