@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,9 +95,11 @@ public class NotificheService {
      * @param idNotifica
      */
     public void deleteNotifica(String idNotifica) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             NotificaEntity notificaEntity = getNotifica(idNotifica);
+            if(notificaEntity.getUsernameDestinatario().compareTo(principal.getUsername())!=0)
+                throw new IllegalArgumentException();
             if(notificaEntity.getType().equals(NotificaEntity.NotificationType.DISPONIBILITA)){
-                //Aggiornamento disponibilità
                 gestioneCorseService.setAckDisp(notificaEntity.getDispID());
             }
             notificaRepository.delete(notificaEntity);
