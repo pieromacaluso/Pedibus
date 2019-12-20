@@ -4,28 +4,44 @@
 
 - [Last Requirements Steps](#last-requirements-steps)
   - [Indice dei contenuti](#indice-dei-contenuti)
+  - [NOTE IMPORTANTI](#note-importanti)
   - [Amministrazione](#amministrazione)
+    - [Temi diversi a seconda della pagine/ruolo](#temi-diversi-a-seconda-della-pagineruolo)
     - [Gestione degli Utenti](#gestione-degli-utenti)
     - [Interfaccia inserimento nuovo utente](#interfaccia-inserimento-nuovo-utente)
     - [Gestione Ruoli dell'utente](#gestione-ruoli-dellutente)
     - [Amministratore Master per la linea](#amministratore-master-per-la-linea)
-    - [Cambio fermata Disponibilità](#cambio-fermata-disponibilit%c3%a0)
+    - [Cambio fermata Disponibilità [PIERO e ANGELO]](#cambio-fermata-disponibilit%c3%a0-piero-e-angelo)
   - [Comunicazione](#comunicazione)
+    - [Notifiche Speciali [ANGELO]](#notifiche-speciali-angelo)
     - [Revisione notifiche generale](#revisione-notifiche-generale)
     - [Ottimizzazione WebSocket](#ottimizzazione-websocket)
-  - [Genitore](#genitore)
+  - [Genitore [MARCO]](#genitore-marco)
     - [Aggiunta Prenotazione Figlio](#aggiunta-prenotazione-figlio)
   - [Database delle linee](#database-delle-linee)
     - [Aggiunta Posizione GPS](#aggiunta-posizione-gps)
     - [Aggiunta Amministratore Master](#aggiunta-amministratore-master)
 
+## NOTE IMPORTANTI
+
+SYS_ADMIN => ANAGRAFICA / RUOLI
+
+ADMIN LINEA => SOLO RUOLI
+
+
 ## Amministrazione
+
+### Temi diversi a seconda della pagine/ruolo
+
+[TRIVIAL] da vedere dopo. Bisogna verificare se è fattibile lato frontend in maniera easy.
 
 ### Gestione degli Utenti
 
 L'amministratore di sistema deve essere in grado di poter avere accesso alla lista di tutti gli utenti, consultare le informazioni e modificarle. Alcune delle informazioni importanti sono anagrafica, bambini e ruolo dell'utente.
 
 **Spunti implementativi**
+
+**LINK UTILE**: [https://www.baeldung.com/rest-api-pagination-in-spring](https://www.baeldung.com/rest-api-pagination-in-spring)
 
 Lato Backend si dovrebbe implementare la restituzione di un semplice elenco degli utenti. Secondo me qui ha senso pensare alla **paginazione**, perchè caricare più di cento utenti nella stessa view potrebbe essere provocare *lag*. C'era qualche modo per farlo easy in Spring, dovremmo indagare.
 
@@ -56,15 +72,21 @@ Dai requisiti viene richiesto un amministratore master per la linea che viene de
 
 Aggiunta da file di configurazione caricato in fase di startup del server.
 
-### Cambio fermata Disponibilità
+### Cambio fermata Disponibilità [PIERO e ANGELO]
 
 L'amministratore di una determinata linea deve essere in grado di modificare la fermata di una disponibilità comunicata. Nel file del professore non viene indicato esplicitamente che nel momento della comunicazione della disponibilità si debba indicare una fermata: io manterrei comunque questa possibilità facendola passare come fermata preferita inserita al momento della sottomissione della disponibilità. Sarà cura dell'amministratore di linea che si trova con una fermata senza accompagnatori a riempirla modificando le disponibilità.
+
+Aggiungere la possibilità per l'amministratore di linea di rifiutare una disponibilità (Notifica e Timestamp). Aggiungiamo uno stato all'interno della disponibilità al posto dell'`isConfirmed`.
 
 **Spunti implementativi**
 
 Oltre al pulsante Approva, metterei un pulsante modifica: attenzione va posta sulla gestione di websocket per aggiornare le view degli altri utenti.
 
 ## Comunicazione
+
+### Notifiche Speciali [ANGELO]
+
+Quando una notifica speciale (e.g. disponibilità) viene cancellata, questo provoca alcune operazioni callaterali. Nel caso della disponibilità setta `isAck` a `true` e inserisce la data e ora in cui questo Ack è stato ricevuto (all'interno dell'Entity Disponibilità).
 
 ### Revisione notifiche generale
 
@@ -105,7 +127,7 @@ Per far questo sarebbe necessario *"implementare"* una sorta di nostro protocoll
 }
 ```
 
-## Genitore
+## Genitore [MARCO]
 
 Credo sia utile per il genitore avere accesso solo ed esclusivamente a aggiunta prenotazione e comunicazioni (notifiche).
 
