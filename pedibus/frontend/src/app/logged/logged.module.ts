@@ -25,6 +25,7 @@ import { DeleteDialogComponent } from './presenze/lista-prenotazioni/delete-dial
 import { AggiuntaDispComponent } from './disponibilita/aggiunta-disp/aggiunta-disp.component';
 import { ElencoDispComponent } from './turni/elenco-disp/elenco-disp.component';
 import { NotificaComponent } from './notifiche/notifica/notifica.component';
+import { UpdateDispDialogComponent } from './turni/elenco-disp/update-disp-dialog/update-disp-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { NotificaComponent } from './notifiche/notifica/notifica.component';
     DeleteDialogComponent,
     AggiuntaDispComponent,
     ElencoDispComponent,
-    NotificaComponent],
+    NotificaComponent,
+    UpdateDispDialogComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -62,7 +64,7 @@ import { NotificaComponent } from './notifiche/notifica/notifica.component';
     MatListModule
   ],
   exports: [],
-  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent]
+  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, UpdateDispDialogComponent]
 })
 export class LoggedModule {
 }

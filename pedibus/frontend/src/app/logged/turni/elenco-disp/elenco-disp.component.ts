@@ -3,7 +3,7 @@ import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
 import {ApiDispService, DispAllResource} from '../../api-disp.service';
 import {AuthService} from '../../../registration/auth.service';
-import {MatDialog, MatListOption, MatSelectionList, MatSnackBar} from '@angular/material';
+import {MatDialog, MatDialogRef, MatListOption, MatSelectionList, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {catchError, debounceTime, finalize, first, mergeMap, switchMap, tap} from 'rxjs/operators';
@@ -11,6 +11,8 @@ import {defer, forkJoin, Observable, Subject, Subscription} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../../api-turni.service';
 import {variable} from '@angular/compiler/src/output/output_ast';
+import {DeleteDialogComponent} from '../../presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
+import {UpdateDispDialogComponent} from './update-disp-dialog/update-disp-dialog.component';
 
 @Component({
   selector: 'app-elenco-disp',
@@ -39,6 +41,8 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   private dispDelSub: Subscription;
   private dispAddSub: Subscription;
   private turnoStatusSub: Subscription;
+  private dispUpSub: Subscription;
+  private updateDispDialog: MatDialogRef<UpdateDispDialogComponent, any>;
 
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
@@ -50,7 +54,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       switchMap(
         pren => {
           this.p = pren;
-          const stops = this.apiService.getStopsByLine(pren.linea);
+          this.stops$ = this.apiService.getStopsByLine(pren.linea);
           const turno = this.apiTurniService.getTurno(pren.linea, pren.verso, pren.data).pipe(
             catchError((err, caught) => {
               this.changeTurno.next(null);
@@ -58,7 +62,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
               return null;
             })
           );
-          return forkJoin([stops, turno]);
+          return forkJoin([this.stops$, turno]);
         }
       ),
       tap(() => this.loading = false)
@@ -145,6 +149,35 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       }
     );
 
+    // WebSocket Disponibilità updated
+    this.dispUpSub = this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      switchMap(pren => {
+        return this.rxStompService.watch('/dispws-up' + '/' + this.pathSub(pren));
+      }),
+      tap(() => this.loading = false),
+    ).subscribe(message => {
+        const res = JSON.parse(message.body);
+        const fermate = Object.keys(this.listDisp).map(key => this.listDisp[key]);
+
+        fermate.forEach((disps, iFerm) => {
+          if (!disps) {
+            return;
+          }
+          disps.forEach(
+            (disp, iDisp) => {
+              if (disp.guideUsername === res.guideUsername && iDisp > -1) {
+                this.listDisp[disp.nomeFermata].splice(iDisp, 1);
+              }
+            });
+        });
+        if (!this.listDisp[res.nomeFermata]) {
+          this.listDisp[res.nomeFermata] = [];
+        }
+        this.listDisp[res.nomeFermata].push(res);
+      }
+    );
+
     // WebSocket Disponibilità status
     this.dispStatusSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
@@ -177,6 +210,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.dispAddSub.unsubscribe();
     this.dispDelSub.unsubscribe();
+    this.dispUpSub.unsubscribe();
     this.dispStatusSub.unsubscribe();
     this.turnoStatusSub.unsubscribe();
   }
@@ -227,5 +261,28 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   private pathSub(prenotazione: PrenotazioneRequest) {
     return '/' + this.datePipe.transform(
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
+  }
+
+  updateDisp(disp: DispAllResource) {
+
+    this.dialog.closeAll();
+
+    this.updateDispDialog = this.dialog.open(UpdateDispDialogComponent, {
+      hasBackdrop: true,
+      data: {
+        disps: disp,
+        turno: this.turno,
+        linea: (this.turno.verso ? this.linea.andata : this.linea.ritorno)
+      }
+    });
+    // disp.idFermata = 2;
+    // console.log(disp);
+    // this.apiTurniService.updateDisp(disp.id, disp).pipe(first()).subscribe(response => {
+    //   this.changeDisp.next(this.listDisp);
+    // }, (error) => {
+    //   // TODO: errore
+    // });
+
+
   }
 }

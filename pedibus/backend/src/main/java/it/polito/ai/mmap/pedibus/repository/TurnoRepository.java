@@ -8,5 +8,6 @@ import java.util.Date;
 import java.util.Optional;
 
 public interface TurnoRepository extends MongoRepository<TurnoEntity, ObjectId> {
+    Optional<TurnoEntity> findByTurnoId(ObjectId idTurno);
     Optional<TurnoEntity> findByIdLineaAndDataAndVerso(String idLinea, Date data, Boolean verso);
 }

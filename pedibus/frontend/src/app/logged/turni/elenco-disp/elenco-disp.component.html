@@ -66,6 +66,10 @@
                   <img *ngIf="disp.isConfirmed && disp.isAck" class="user-icon-tick" [src]="doubletick" alt="Bus Stop"/>
                 </div>
                 <div class="status">{{disp.guideUsername}}
+                  <button (click)="updateDisp(disp)" *ngIf="!turno.isOpen && !disp.isConfirmed"
+                          [disabled]="this.turno.isExpired"
+                          mat-raised-button color="primary">Modifica
+                  </button>
                   <button (click)="confermaDisp(disp)" *ngIf="!turno.isOpen && !disp.isConfirmed"
                           [disabled]="this.turno.isExpired"
                           mat-raised-button color="accent">Approva

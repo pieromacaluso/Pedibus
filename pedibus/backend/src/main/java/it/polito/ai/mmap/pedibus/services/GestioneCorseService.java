@@ -6,10 +6,16 @@ import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.DispNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
-import it.polito.ai.mmap.pedibus.objectDTO.*;
+import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.repository.DispRepository;
 import it.polito.ai.mmap.pedibus.repository.TurnoRepository;
-import it.polito.ai.mmap.pedibus.resources.*;
+import it.polito.ai.mmap.pedibus.resources.DispAllResource;
+import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
+import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
+import it.polito.ai.mmap.pedibus.resources.TurnoResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +43,6 @@ public class GestioneCorseService {
     NotificheService notificheService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-    @Value("${notifiche.type.Base}")
-    String NotBASE;
-    @Value("${notifiche.type.Disponibilita}")
-    String NotDISPONIBILITA;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -162,6 +164,36 @@ public class GestioneCorseService {
             return new DispTurnoResource(d, t);
         } else
             throw new IllegalArgumentException("Disponibilità già presente");
+    }
+
+    /**
+     * Aggiorna la disponibilità cambiando l'id della fermata
+     *
+     * @param idDisp
+     * @param disp
+     */
+    public DispTurnoResource updateDisp(String idDisp, DispAllResource disp) {
+        Optional<DispEntity> entityCheck = dispRepository.findByDispId(disp.getId());
+        // Solo usato come assert
+        if (!entityCheck.isPresent()) throw new IllegalArgumentException("Disponibilità non trovata");
+        DispEntity e = entityCheck.get();
+
+        Optional<TurnoEntity> turnoCheck = turnoRepository.findByTurnoId(e.getTurnoId());
+        if (!turnoCheck.isPresent()) throw new IllegalArgumentException("Turno non trovata");
+        TurnoEntity t = turnoCheck.get();
+
+        if (!t.getIsExpired()) {
+            e.setIdFermata(disp.getIdFermata());
+            dispRepository.save(e);
+
+            TurnoResource res_t = new TurnoResource(t);
+            DispAllResource res_d = new DispAllResource(e,
+                    lineeService.getFermataEntityById(e.getIdFermata()),
+                    lineeService.getLineaEntityById(e.getIdLinea()));
+            return new DispTurnoResource(res_d, res_t);
+        } else
+            throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
+
     }
 
     /**
@@ -299,4 +331,6 @@ public class GestioneCorseService {
 
 
     }
+
+
 }

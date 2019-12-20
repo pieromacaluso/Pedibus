@@ -47,9 +47,17 @@ export class ApiTurniService {
       .post(this.baseURL + 'turno/disp/' + idLinea + '/' + idVerso + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd'), disp);
   }
+
+  updateDisp(id: string, disp: DispAllResource) {
+    return this.httpClient
+      .post(this.baseURL + 'disp/' + id.toString(), disp);
+  }
 }
 
 export interface TurnoResource {
+  idLinea: string;
+  data: Date;
+  verso: boolean;
   isOpen: boolean;
   isExpired: boolean;
   opening: boolean;

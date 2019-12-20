@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 //TODO implementare la sicurezza degli endpoint
@@ -45,6 +47,18 @@ public class GestioneCorseController {
         return dispTurnoResource.getDisp();
     }
 
+    /**
+     * Permette a una guide di segnalare la propria disponibilità
+     */
+    @PostMapping("/disp/{idDisp}")
+    public DispAllResource updateDisp(@PathVariable("idDisp") String idDisp, @RequestBody DispAllResource disp) throws Exception {
+        DispTurnoResource res = gestioneCorseService.updateDisp(idDisp, disp);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        simpMessagingTemplate.convertAndSend("/dispws-up/" + dateFormat.format(res.getTurno().getData()) + "/" + res.getTurno().getIdLinea() + "/" + ((res.getTurno().getVerso()) ? 1 : 0), res.getDisp());
+        simpMessagingTemplate.convertAndSendToUser(res.getDisp().getGuideUsername(), "/dispws/" + dateFormat.format(res.getTurno().getData()) + "/" + res.getTurno().getIdLinea() + "/" + ((res.getTurno().getVerso()) ? 1 : 0), res);
+        return res.getDisp();
+    }
+
 
     /**
      * Permette a una guide di annullare la propria disponibilità
@@ -55,7 +69,6 @@ public class GestioneCorseController {
         simpMessagingTemplate.convertAndSend("/dispws/" + deleted.getGuideUsername() + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
         simpMessagingTemplate.convertAndSendToUser(deleted.getGuideUsername(), "/dispws/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
         simpMessagingTemplate.convertAndSend("/dispws-del/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), deleted);
-
     }
 
     /**
@@ -101,7 +114,7 @@ public class GestioneCorseController {
 
     /**
      * Permette di specificare quali degli accompagnatori è stato confermato
-     *
+     *2909
      * @param idLinea
      * @param verso
      * @param data

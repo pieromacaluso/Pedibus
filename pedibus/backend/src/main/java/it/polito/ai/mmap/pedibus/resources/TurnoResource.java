@@ -13,10 +13,16 @@ import java.util.Date;
 @Data
 public class TurnoResource {
 
+    private String idLinea;
+    private Date data;
+    private Boolean verso;
     private Boolean isOpen; //true aperto, false chiuso
     private Boolean isExpired;
 
     public TurnoResource(TurnoEntity turno){
+        this.idLinea = turno.getIdLinea();
+        this.data = turno.getData();
+        this.verso = turno.getVerso();
         this.isOpen = turno.getIsOpen();
         this.isExpired = turno.getIsExpired();
     }
