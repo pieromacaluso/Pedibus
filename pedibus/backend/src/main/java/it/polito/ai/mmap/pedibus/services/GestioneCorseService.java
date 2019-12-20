@@ -16,6 +16,7 @@ import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
 import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
 import it.polito.ai.mmap.pedibus.resources.TurnoResource;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,20 @@ public class GestioneCorseService {
      */
     private DispEntity getDispEntity(TurnoDTO turnoDTO, String guideUsername) throws DispNotFoundException {
         Optional<DispEntity> checkDisp = dispRepository.findByGuideUsernameAndTurnoId(guideUsername, getTurnoEntity(turnoDTO).getTurnoId());
+        if (checkDisp.isPresent())
+            return checkDisp.get();
+        else
+            throw new DispNotFoundException("Disponibilità non trovata");
+    }
+
+    /**
+     * Restituisce una dispEntity a partire dall' id della disponibilità
+     * @param idDisp
+     * @return
+     * @throws DispNotFoundException
+     */
+    private DispEntity getDispEntitybyId(String idDisp) throws DispNotFoundException {
+        Optional<DispEntity> checkDisp = dispRepository.findByDispId(idDisp);
         if (checkDisp.isPresent())
             return checkDisp.get();
         else
@@ -173,10 +188,7 @@ public class GestioneCorseService {
      * @param disp
      */
     public DispTurnoResource updateDisp(String idDisp, DispAllResource disp) {
-        Optional<DispEntity> entityCheck = dispRepository.findByDispId(disp.getId());
-        // Solo usato come assert
-        if (!entityCheck.isPresent()) throw new IllegalArgumentException("Disponibilità non trovata");
-        DispEntity e = entityCheck.get();
+        DispEntity e = getDispEntitybyId(idDisp);
 
         Optional<TurnoEntity> turnoCheck = turnoRepository.findByTurnoId(e.getTurnoId());
         if (!turnoCheck.isPresent()) throw new IllegalArgumentException("Turno non trovata");
@@ -332,5 +344,14 @@ public class GestioneCorseService {
 
     }
 
-
+    /**
+     * Dato un id disponibilità la segna come letta (isAck=true e data settata)
+     * @param dispID
+     */
+    public void setAckDisp(ObjectId dispID) {
+        DispEntity dispEntity=getDispEntitybyId(dispID.toString());
+        dispEntity.setIsAck(true);
+        //todo aggiungere data disponibilità
+        dispRepository.save(dispEntity);
+    }
 }

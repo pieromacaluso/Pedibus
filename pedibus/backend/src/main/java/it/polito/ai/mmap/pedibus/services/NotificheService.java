@@ -31,6 +31,8 @@ public class NotificheService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private GestioneCorseService gestioneCorseService;
 
     /**
      * Restituisce le notifiche non lette con type
@@ -93,6 +95,10 @@ public class NotificheService {
      */
     public void deleteNotifica(String idNotifica) {
             NotificaEntity notificaEntity = getNotifica(idNotifica);
+            if(notificaEntity.getType().equals(NotificaEntity.NotificationType.DISPONIBILITA)){
+                //Aggiornamento disponibilità
+                gestioneCorseService.setAckDisp(notificaEntity.getDispID());
+            }
             notificaRepository.delete(notificaEntity);
     }
 
