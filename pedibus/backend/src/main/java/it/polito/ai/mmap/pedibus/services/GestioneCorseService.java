@@ -345,13 +345,16 @@ public class GestioneCorseService {
     }
 
     /**
-     * Dato un id disponibilità la segna come letta (isAck=true e data settata)
+     * Dato un id disponibilità la segna come letta (isAck=true e data settata).
+     * Usato quando un utente legge la notifica con la quale l'amministratore di linea conferma la disponibilità data.
      * @param dispID
      */
     public void setAckDisp(ObjectId dispID) {
         DispEntity dispEntity=getDispEntitybyId(dispID.toString());
-        dispEntity.setIsAck(true);
-        //todo aggiungere data disponibilità
-        dispRepository.save(dispEntity);
+        if(dispEntity.getIsConfirmed()){
+            dispEntity.setIsAck(true);
+            dispEntity.setDataAck(new Date());
+            dispRepository.save(dispEntity);
+        }
     }
 }

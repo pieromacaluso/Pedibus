@@ -31,7 +31,7 @@ public class NotificaEntity {
     private NotificationType type;
     private String usernameDestinatario;
     private String msg;
-    private Boolean isTouched;
+    private Boolean isTouched;  //todo probabilmente possibile eliminarlo
     private Date data;
     //todo aggiunta data
 

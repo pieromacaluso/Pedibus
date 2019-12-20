@@ -90,7 +90,7 @@ public class NotificheService {
 
 
     /**
-     * Elimina una qualsiasi notifica attraverso il suo id
+     * Elimina una notifica attraverso il suo id. Solo il destinatario di una determinata notifica può eliminarla
      *
      * @param idNotifica
      */

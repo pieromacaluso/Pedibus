@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +24,7 @@ public class DispEntity {
     private ObjectId turnoId;
     private Boolean isConfirmed;
     private Boolean isAck;
-
+    private Date dataAck;
 
     public DispEntity(String guideUsername, String idLinea, Integer idFermata, ObjectId turnoId) {
         this.guideUsername = guideUsername;
