@@ -4,6 +4,7 @@ import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class UserService implements UserDetailsService {
     private ActivationTokenRepository activationTokenRepository;
     @Autowired
     private GMailService gMailService;
+    @Autowired
+    LineeService lineeService;
 
     @Value("${mail.baseURL}")
     private String baseURL;
@@ -44,8 +47,7 @@ public class UserService implements UserDetailsService {
     private String REGISTRATION_SUBJECT;
     @Value("${mail.recover_account_subject}")
     private String RECOVER_ACCOUNT_SUBJECT;
-    @Value("${mail.minutes_to_enable}")
-    private int minuti;
+
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
@@ -64,11 +66,28 @@ public class UserService implements UserDetailsService {
         return check.get();
     }
 
+    public void insertUser(UserInsertResource userInsertResource) {
+        insertAdminLine(userInsertResource);
+        userRepository.save(new UserEntity(userInsertResource.getUserId(), userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new))));
+    }
+
+    public void updateUser(UserInsertResource userInsertResource) {
+        UserEntity userEntity = ((UserEntity) loadUserByUsername(userInsertResource.getUserId()));
+        lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
+        insertAdminLine(userInsertResource);
+        userEntity.setRoleList(userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new)));
+        userRepository.save(userEntity);
+    }
+
+    private void insertAdminLine(UserInsertResource userInsertResource) {
+        if (userInsertResource.getRoleIdList().contains("ROLE_ADMIN")) {
+            userInsertResource.getLineaIdList().forEach(lineaId -> lineeService.addAdminLine(userInsertResource.getUserId(), lineaId));
+        }
+    }
+
     /**
-     * Metodo che restituisce un RoleEntity a partire dal suo identificativo
-     *
      * @param idRole
-     * @return
+     * @return una RoleEntity a partire dal suo identificativo
      */
     public RoleEntity getRoleEntityById(String idRole) {
         Optional<RoleEntity> checkRole = roleRepository.findById(idRole);
@@ -76,6 +95,10 @@ public class UserService implements UserDetailsService {
             return checkRole.get();
         else
             throw new IllegalStateException();
+    }
+
+    public List<String> getAllRole() {
+        return roleRepository.findAll().stream().map(RoleEntity::getId).collect(Collectors.toList());
     }
 
     /**
@@ -246,33 +269,32 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
-    public Boolean isSysAdmin()
-    {
+    public Boolean isSysAdmin() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getRoleList().contains(getRoleEntityById("ROLE_SYSTEM-ADMIN"));
     }
 
-    public Boolean isAdmin()
-    {
+    public Boolean isAdmin() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getRoleList().contains(getRoleEntityById("ROLE_ADMIN"));
     }
-    public Boolean isGuide()
-    {
+
+    public Boolean isGuide() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getRoleList().contains(getRoleEntityById("ROLE_GUIDE"));
     }
 
     /**
      * Metodo da usare in altri service in modo da non dover fare sempre i controlli
+     *
      * @param idParent
      * @return
      */
     public UserEntity getUserEntity(ObjectId idParent) {
-        Optional<UserEntity> checkUser=userRepository.findById(idParent);
-        if(checkUser.isPresent()){
+        Optional<UserEntity> checkUser = userRepository.findById(idParent);
+        if (checkUser.isPresent()) {
             return checkUser.get();
-        }else
+        } else
             throw new UserNotFoundException();
     }
 

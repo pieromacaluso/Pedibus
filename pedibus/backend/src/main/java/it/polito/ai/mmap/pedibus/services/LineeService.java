@@ -136,6 +136,12 @@ public class LineeService {
         lineaRepository.save(lineaEntity);
     }
 
+    public void removeAdminFromAllLine(String userId) {
+        List<LineaEntity> entityList = lineaRepository.findAll();
+        entityList.forEach(lineaEntity -> lineaEntity.getAdminList().remove(userId));
+        lineaRepository.saveAll(entityList);
+    }
+
     public void delAdminLine(String userID, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
         ArrayList<String> adminList = lineaEntity.getAdminList();
@@ -149,15 +155,13 @@ public class LineeService {
     }
 
 
-    public FermataDTO getFermataPartenzaOrArrivo(String idLinea, Boolean verso)
-    {
+    public FermataDTO getFermataPartenzaOrArrivo(String idLinea, Boolean verso) {
         LineaDTO lineaDTO = getLineaDTOById(idLinea);
         return verso ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get();
     }
 
 
-    public Boolean isAdminLine(String idLinea)
-    {
+    public Boolean isAdminLine(String idLinea) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return getLineaEntityById(idLinea).getAdminList().contains(principal.getUsername()) && this.userService.isAdmin();
     }

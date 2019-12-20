@@ -1,26 +1,18 @@
 package it.polito.ai.mmap.pedibus.controller;
 
-
-import it.polito.ai.mmap.pedibus.entity.LineaEntity;
-import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
-import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import it.polito.ai.mmap.pedibus.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.*;
-
-import static org.springframework.http.ResponseEntity.ok;
+import java.util.stream.Collectors;
 
 @RestController
 public class AdminRestController {
@@ -34,37 +26,41 @@ public class AdminRestController {
     ChildService childService;
     @Autowired
     LineeService lineeService;
-
+    @Autowired
+    RoleRepository roleRepository;
 
     /**
-     * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti gli utenti registrati.
-     * Essendo usato da admin può essere più utile restituire le UserEntity e non UserDTO per poter osservare
-     * maggior dettagli quali ruoli e altro.
-     * TODO (marcof) non mi convince troppo restituire un entity perchè dovrebbe funzionare solo come oggetto tramite per il db, c'è da capire che dati gli possono servire e metterli nel dto (?)
-     *
-     * @return
+     * @return i possibili ruoli da assegnare a un utente
      */
-    @GetMapping("/admin/users")
-    //tramite consumers è possibile indicare quale header Content-Type deve avere la richiesta
-    public ResponseEntity getUsers() {
-        List<UserEntity> allUsers = userService.getAllUsers();
-        Map<Object, Object> model = new HashMap<>();
-        model.put("ListaUtenti", allUsers);
-        return ok(model);
+    @GetMapping("/sysadmin/role")
+    public List<String> getAvailableRole() {
+        return userService.getAllRole();
     }
 
     /**
-     * Metodo usato solo da Admin o System-Admin per avere l'elenco di tutti i bambini
-     *
-     * @return
+     * @param userInsertResource l'utente da inserire con i suoi ruoli
      */
-    @GetMapping("/admin/children/")
-    public List<ChildDTO> getChildren() {
-        return childService.getAllChildren();
-//        List<ChildDTO> allChildren=userService.getAllChildren();
-//        Map<Object, Object> model = new HashMap<>();
-//        model.put("ListaChildren", allChildren);
-//        return ok(model);
+    @PostMapping("/sysadmin/user")
+    public void insertUser(@RequestBody UserInsertResource userInsertResource) {
+        //todo controllo validità mail
+        userService.insertUser(userInsertResource);
+    }
+
+    /**
+     * @return l'elenco degli utenti salvati
+     */
+    @GetMapping("/sysadmin/users")
+    public List<UserInsertResource> getUsers() {
+        return userService.getAllUsers().stream().map(UserInsertResource::new).collect(Collectors.toList());
+    }
+
+    /**
+     *
+     * @param userInsertResource l'utente i cui dettagli vanno aggiornati
+     */
+    @PutMapping("/sysadmin/user")
+    public void updateUser(@RequestBody UserInsertResource userInsertResource) {
+        userService.updateUser(userInsertResource);
     }
 
     /**
@@ -84,8 +80,5 @@ public class AdminRestController {
         } else {
             throw new PermissionDeniedException("Non hai i privilegi per eseguire questa operazione");
         }
-
     }
-
-
 }

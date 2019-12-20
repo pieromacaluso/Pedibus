@@ -44,7 +44,7 @@ public class NotificaEntity {
         //idNotifica= new ObjectId().toString();
         this.usernameDestinatario = user;
         this.msg = msg;
-
+        this.isTouched=false;
         if (type == NotificationType.BASE) {
             if (dispID!=null) {
                 throw new NotificaWrongTypeException();             //Specificato type base ma anche un dispID
@@ -56,7 +56,6 @@ public class NotificaEntity {
             this.dispID = dispID;
         }
         this.data = new Date();
-        this.isTouched=false;
     }
 
 
