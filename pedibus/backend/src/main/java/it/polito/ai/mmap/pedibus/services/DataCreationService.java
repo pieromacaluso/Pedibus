@@ -279,7 +279,7 @@ public class DataCreationService {
                     i++;
                 }
 
-            } catch (IllegalArgumentException ignored) {
+            } catch (SchoolClosedException ignored) {
             }
         }
 
