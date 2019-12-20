@@ -46,6 +46,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
   private changeLinea = new Subject<string>();
 
   emptyDisp: DispAllResource = {
+    id: null,
     guideUsername: null,
     orario: null,
     idLinea: null,
