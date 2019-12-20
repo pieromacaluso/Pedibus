@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
+import it.polito.ai.mmap.pedibus.exception.SchoolClosedException;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
@@ -279,7 +280,7 @@ public class DataCreationService {
                     i++;
                 }
 
-            } catch (IllegalArgumentException ignored) {
+            } catch (SchoolClosedException ignored) {
             }
         }
 
