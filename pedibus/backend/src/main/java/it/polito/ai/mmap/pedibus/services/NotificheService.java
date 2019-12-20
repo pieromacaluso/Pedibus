@@ -92,14 +92,8 @@ public class NotificheService {
      * @param idNotifica
      */
     public void deleteNotifica(String idNotifica) {
-        Optional<NotificaEntity> checkNotificaEntity = notificaRepository.findById(idNotifica);
-        if (checkNotificaEntity.isPresent()) {
-            //idNotifica di una notifica base
-            NotificaEntity notificaEntity = checkNotificaEntity.get();
+            NotificaEntity notificaEntity = getNotifica(idNotifica);
             notificaRepository.delete(notificaEntity);
-        } else {
-            throw new NotificaNotFoundException();
-        }
     }
 
     /**
@@ -111,4 +105,17 @@ public class NotificheService {
         logger.info("Notifica salvata e inviata.");
     }
 
+    /**
+     * Ricevuto un id di una notifica ritorna la notifica corrispondente se presente altrimente lancia una eccezione
+     * @param idNotifica
+     * @return
+     * @throws NotificaNotFoundException
+     */
+    public NotificaEntity getNotifica(String idNotifica) throws NotificaNotFoundException{
+        Optional<NotificaEntity> checkNotificaEntity = notificaRepository.findById(idNotifica);
+        if(checkNotificaEntity.isPresent()){
+            return checkNotificaEntity.get();
+        }else
+            throw new NotificaNotFoundException();
+    }
 }
