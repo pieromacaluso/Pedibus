@@ -1,1 +1,4 @@
-<p>genitore works!</p>
+<div>
+    <app-toolbar [showVerso]="true" [showLinea]="true" [linee]="linee | async"></app-toolbar>
+    <app-scheda-bambino *ngFor="let figlio of figli" [bambino]="figlio"></app-scheda-bambino>
+  </div>

@@ -27,6 +27,7 @@ import { ElencoDispComponent } from './turni/elenco-disp/elenco-disp.component';
 import { NotificaComponent } from './notifiche/notifica/notifica.component';
 import { UpdateDispDialogComponent } from './turni/elenco-disp/update-disp-dialog/update-disp-dialog.component';
 import { GenitoreComponent } from './genitore/genitore.component';
+import { SchedaBambinoComponent } from './genitore/scheda-bambino/scheda-bambino.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { GenitoreComponent } from './genitore/genitore.component';
     ElencoDispComponent,
     NotificaComponent,
     UpdateDispDialogComponent,
-    GenitoreComponent],
+    GenitoreComponent,
+    SchedaBambinoComponent],
   imports: [
     CommonModule,
     MatIconModule,

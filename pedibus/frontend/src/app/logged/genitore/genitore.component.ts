@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ChildrenDTO } from './dtos';
+import { GenitoreService } from './genitore.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-genitore',
@@ -7,7 +10,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GenitoreComponent implements OnInit {
 
-  constructor() { }
+  figli: Observable<ChildrenDTO[]>;
+  linee: Observable<string[]>;
+
+  constructor(private genitoreService: GenitoreService) {
+    this.figli = genitoreService.getChildren();
+    this.linee = genitoreService.getLinee();
+  }
 
   ngOnInit() {
   }

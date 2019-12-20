@@ -6,6 +6,7 @@ import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import {Observable} from 'rxjs';
 import { Notifica } from './notifiche/dtos';
+import { ChildrenDTO } from './genitore/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +26,8 @@ export class ApiService {
     return this.httpClient.delete<any[]>(this.baseURL + 'notifiche/' + idNotifica);
   }
 
-  getChildren(): Observable<any[]> {
-    return this.httpClient.get<any[]>(this.baseURL + 'children');
+  getChildren(): Observable<ChildrenDTO[]> {
+    return this.httpClient.get<ChildrenDTO[]>(this.baseURL + 'children');
   }
 
   getLinee(): Observable<string[]> {
