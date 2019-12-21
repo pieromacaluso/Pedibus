@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ChildrenDTO } from './dtos';
-import { GenitoreService } from './genitore.service';
-import { Observable } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {ChildrenDTO} from './dtos';
+import {GenitoreService} from './genitore.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-genitore',
