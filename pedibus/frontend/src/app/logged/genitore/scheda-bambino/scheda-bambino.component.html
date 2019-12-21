@@ -1,7 +1,16 @@
-<div style="border-style: solid; border-width: 3px;">
+<div style="border-style: solid; border-width: 2px; margin: 3px 3px 3px 3px;">
     <h4>{{bambino.name}}</h4>
     <ul>
-        <li> <b>Andata:</b> <i>nome fermata qui</i> <i>(eventuale orario qui)</i> </li>
-        <li> <b>Ritorno:</b> <i>nome fermata qui</i> <i>(eventuale orario qui)</i> </li>
+        <li>
+            <b>Fermata andata predefinita:</b> <i>nome fermata qui</i> 
+        </li>
+        <li> 
+            <b>Fermata ritorno predefinita:</b> <i>nome fermata qui</i> 
+        </li>
+        <li>
+            <b>Status per {{request.verso}} {{request.data | date}}</b> <i>Status qui...</i>
+        </li>
     </ul>
+    <button style="background-color: rgb(133, 210, 255);">Modifica Anagrafica</button>
+    <button style="background-color: rgb(133, 210, 255);">Effettua Prenotazione</button>
 </div>
