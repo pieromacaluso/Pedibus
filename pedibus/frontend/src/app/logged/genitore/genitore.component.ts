@@ -14,8 +14,8 @@ export class GenitoreComponent implements OnInit {
   linee: Observable<string[]>;
 
   constructor(private genitoreService: GenitoreService) {
-    this.figli = genitoreService.getChildren();
-    this.linee = genitoreService.getLinee();
+    this.figli = this.genitoreService.getChildren();
+    this.linee = this.genitoreService.getLinee();
   }
 
   ngOnInit() {

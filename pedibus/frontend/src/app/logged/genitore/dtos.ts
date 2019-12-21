@@ -6,3 +6,9 @@ export interface ChildrenDTO {
     idFermataRitorno: number;
     //private ObjectId idParent;
 }
+
+export interface FermataDTO {
+    id: number;
+    nome: number;
+    orario: string;
+}

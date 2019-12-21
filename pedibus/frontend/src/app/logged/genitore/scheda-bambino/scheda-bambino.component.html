@@ -2,13 +2,13 @@
     <h4>{{bambino.name}}</h4>
     <ul>
         <li>
-            <b>Fermata andata predefinita:</b> <i>nome fermata qui</i> 
+            <b>Fermata andata predefinita:</b> <i>{{(defaultAndata | async)?.nome}}</i> 
         </li>
         <li> 
-            <b>Fermata ritorno predefinita:</b> <i>nome fermata qui</i> 
+            <b>Fermata ritorno predefinita:</b> <i>{{(defaultRitorno | async)?.nome}}</i> 
         </li>
         <li>
-            <b>Status per {{request.verso}} {{request.data | date}}</b> <i>Status qui...</i>
+            <b>{{request.verso}} {{request.data | date}}:</b> <i>[Prenotato per fermata X, Non prenotato, preso in carica alle hh:mm]</i>
         </li>
     </ul>
     <button style="background-color: rgb(133, 210, 255);">Modifica Anagrafica</button>

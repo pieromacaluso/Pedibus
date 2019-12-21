@@ -6,7 +6,7 @@ import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import {Observable} from 'rxjs';
 import { Notifica } from './notifiche/dtos';
-import { ChildrenDTO } from './genitore/dtos';
+import { ChildrenDTO, FermataDTO } from './genitore/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +36,10 @@ export class ApiService {
 
   getStopsByLine(idLinea: string): Observable<StopsByLine> {
     return this.httpClient.get<StopsByLine>(this.baseURL + 'lines/' + idLinea);
+  }
+
+  getFermata(idFermata: number): Observable<FermataDTO> {
+    return this.httpClient.get<FermataDTO>(this.baseURL + 'lines/stops/' + idFermata);
   }
 
   getLineeNomi(): Observable<string[]> {

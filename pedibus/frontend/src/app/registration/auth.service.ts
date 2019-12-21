@@ -155,4 +155,16 @@ export class AuthService {
     }
 
   }
+
+  getHome(): string {
+    if (this.isUser()) {
+      return 'genitore';
+    }
+    if (this.isGuide()) {
+      return 'presenze';
+    }
+    if (this.isAdmin()) {
+      return 'presenze'; // cambiare con home admin
+    }
+  }
 }
