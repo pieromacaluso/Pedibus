@@ -5,44 +5,76 @@
     {
       "id": 1,
       "nome": "Bernini",
-      "orario": "07:20"
+      "orario": "07:20",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     },
     {
       "id": 2,
       "nome": "Medici",
-      "orario": "07:30"
+      "orario": "07:30",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     },
     {
       "id": 3,
       "nome": "Monte Grappa",
-      "orario": "07:40"
+      "orario": "07:40",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     },
     {
       "id": 4,
       "nome": "Montevideo",
-      "orario": "08:00"
+      "orario": "08:00",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     }
   ],
   "ritorno": [
     {
       "id": 5,
       "nome": "Montevideo",
-      "orario": "13:10"
+      "orario": "13:10",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     },
     {
       "id": 6,
       "nome": "Monte Grappa",
-      "orario": "13:30"
+      "orario": "13:30",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     },
     {
       "id": 7,
       "nome": "Racconigi",
-      "orario": "13:45"
+      "orario": "13:45",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     },
     {
       "id": 8,
       "nome": "Bernini",
-      "orario": "14:00"
+      "orario": "14:00",
+      "location": {
+        "type": "Point",
+        "coordinates": [45.06056, 7.6611]
+      }
     }
   ]
 }

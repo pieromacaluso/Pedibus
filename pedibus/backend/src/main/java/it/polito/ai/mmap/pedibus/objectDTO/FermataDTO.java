@@ -6,6 +6,7 @@ import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.Date;
 
@@ -19,6 +20,8 @@ public class FermataDTO {
     private String orario;
     private String idLinea;
     private String nomeLinea;
+    private GeoJsonPoint location;
+
 
     /**
      * Conversione da Entity a DTO
@@ -30,6 +33,7 @@ public class FermataDTO {
         nome = fermataEntity.getName();
         orario = fermataEntity.getOrario();
         idLinea = fermataEntity.getIdLinea();
+        location = fermataEntity.getLocation();
     }
 
     @JsonIgnore
