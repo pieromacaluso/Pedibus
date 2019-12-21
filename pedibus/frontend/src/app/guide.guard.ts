@@ -20,7 +20,7 @@ export class GuideGuard implements CanActivate {
     }
 
     if (!this.auth.isGuide() && !this.auth.isAdmin()) {
-      this.router.navigate(['genitore']);
+      this.router.navigate(['presenze']);
       return false;
     }
 

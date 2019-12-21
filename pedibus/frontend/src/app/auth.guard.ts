@@ -17,19 +17,19 @@ export class AuthGuard implements CanActivate {
     // Check that the user is logged in...
     if (this.auth.isLoggedIn()) {
       if (state.url === '/sign-up') {
-        this.auth.isUser ? this.router.navigate(['genitore']) : this.router.navigate(['presenze']);
+        this.router.navigate(['presenze']);
         return false;
       }
       if (state.url === '/sign-in') {
-        this.auth.isUser ? this.router.navigate(['genitore']) : this.router.navigate(['presenze']);
+        this.router.navigate(['presenze']);
         return false;
       }
       if (state.url === '/confirm') {
-        this.auth.isUser ? this.router.navigate(['genitore']) : this.router.navigate(['presenze']);
+        this.router.navigate(['presenze']);
         return false;
       }
       if (state.url === '/recover') {
-        this.auth.isUser ? this.router.navigate(['genitore']) : this.router.navigate(['presenze']);
+        this.router.navigate(['presenze']);
         return false;
       }
     } else {

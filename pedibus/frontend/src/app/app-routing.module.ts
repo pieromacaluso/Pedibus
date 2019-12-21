@@ -23,7 +23,7 @@ import { GenitoreComponent } from './logged/genitore/genitore.component';
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
-  {path: 'genitore', component: GenitoreComponent, canActivate: [AuthGuard], data: {animation: 'yes'}},
+  {path: 'genitore', component: GenitoreComponent, data: {animation: 'yes'}},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},
   {path: 'notifiche', component: NotificheComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
@@ -31,7 +31,7 @@ const appRoutes: Routes = [
   {path: 'recover', component: ForgotPasswordComponent, data: { animation: 'yes' }},
   {path: 'recover/:token', component: RecoverComponent, data: { animation: 'yes' }},
   {path: 'confirm/:token', component: ConfirmComponent, data: { animation: 'yes' }},
-  {path: '', redirectTo: 'genitore', pathMatch: 'full', data: { animation: 'yes' }},
+  {path: '', redirectTo: 'presenze', pathMatch: 'full', data: { animation: 'yes' }},
   {path: '404', component: PageNotFoundComponent, data: { animation: 'yes' }},
   {path: '**', redirectTo: '/404', data: { animation: 'yes' }}
 ];

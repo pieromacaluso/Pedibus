@@ -8,7 +8,6 @@ import * as jwt_decode from 'jwt-decode';
 import {myRxStompConfig} from '../my-rx-stomp.config';
 import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 import {BehaviorSubject} from 'rxjs';
-import {Notifica} from '../logged/notifiche/dtos';
 
 @Injectable({
   providedIn: 'root'

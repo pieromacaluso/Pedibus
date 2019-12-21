@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {SignInModel, SignUpModel} from '../models';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-sign-in',
@@ -30,7 +29,8 @@ export class SignInComponent implements OnInit {
     if (this.form.valid) {
       const model = {email: this.form.controls.email.value, password:  this.form.controls.password.value};
       this.auth.signIn(model).subscribe(response => {
-        this.auth.isUser ? this.router.navigate(['genitore']) : this.router.navigate(['presenze']);
+        console.log("Sign-in form OK, role:", this.auth.isUser());
+        this.router.navigate(['presenze']);
       }, (error) => {
         this.serverErrors = error.errorMessage;
       });
