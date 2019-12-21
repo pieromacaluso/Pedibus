@@ -5,44 +5,76 @@
     {
       "id": 101,
       "nome": "Olimpico",
-      "orario": "07:20"
+      "orario": "07:20",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     },
     {
       "id": 102,
       "nome": "Caserma Morelli",
-      "orario": "07:30"
+      "orario": "07:30",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     },
     {
       "id": 103,
       "nome": "Orbassano",
-      "orario": "07:40"
+      "orario": "07:40",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     },
     {
       "id": 104,
       "nome": "Rivotti",
-      "orario": "08:00"
+      "orario": "08:00",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     }
   ],
   "ritorno": [
     {
       "id": 105,
       "nome": "Rivotti",
-      "orario": "13:10"
+      "orario": "13:10",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     },
     {
       "id": 106,
       "nome": "Orbassano",
-      "orario": "13:30"
+      "orario": "13:30",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     },
     {
       "id": 107,
       "nome": "Caserma Morelli",
-      "orario": "13:45"
+      "orario": "13:45",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     },
     {
       "id": 108,
       "nome": "Olimpico",
-      "orario": "14:00"
+      "orario": "14:00",
+      "location": {
+        "coordinates": [45.06056, 7.6611],
+        "type": "Point"
+      }
     }
   ]
 }
