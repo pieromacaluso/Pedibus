@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# 1. build backend
+cd backend/
+./mvnw clean install -Pprod -Dmaven.test.skip=true
+

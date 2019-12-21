@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# 2. build frontend
+cd frontend/
+npm install
+ng build --prod

@@ -30,9 +30,7 @@ export class SignInComponent implements OnInit {
     if (this.form.valid) {
       const model = {email: this.form.controls.email.value, password:  this.form.controls.password.value};
       this.auth.signIn(model).subscribe(response => {
-        console.log('called');
-        console.log('response: ' + response);
-        this.router.navigate(['presenze']);
+        this.auth.isUser ? this.router.navigate(['genitore']) : this.router.navigate(['presenze']);
       }, (error) => {
         this.serverErrors = error.errorMessage;
       });

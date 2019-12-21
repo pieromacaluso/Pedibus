@@ -31,7 +31,7 @@ const appRoutes: Routes = [
   {path: 'recover', component: ForgotPasswordComponent, data: { animation: 'yes' }},
   {path: 'recover/:token', component: RecoverComponent, data: { animation: 'yes' }},
   {path: 'confirm/:token', component: ConfirmComponent, data: { animation: 'yes' }},
-  {path: '', redirectTo: 'presenze', pathMatch: 'full', data: { animation: 'yes' }},
+  {path: '', redirectTo: 'genitore', pathMatch: 'full', data: { animation: 'yes' }},
   {path: '404', component: PageNotFoundComponent, data: { animation: 'yes' }},
   {path: '**', redirectTo: '/404', data: { animation: 'yes' }}
 ];
