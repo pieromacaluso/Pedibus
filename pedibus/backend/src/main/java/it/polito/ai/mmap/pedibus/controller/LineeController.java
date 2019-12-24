@@ -57,6 +57,11 @@ public class LineeController {
         return lineeService.getLineaDTOById(idLinea);
     }
 
+    /**
+     * Dato l'id di una fermata restituisce un oggetto JSON contenente la fermata
+     * @param idFermata
+     * @return
+     */
     @GetMapping("/lines/stops/{id_fermata}")
     public FermataDTO getStopById(@PathVariable("id_fermata") Integer idFermata) {
         return lineeService.getFermataDTOById(idFermata);

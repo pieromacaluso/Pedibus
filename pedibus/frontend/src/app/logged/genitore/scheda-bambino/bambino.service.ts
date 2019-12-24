@@ -8,11 +8,19 @@ import { Observable } from 'rxjs';
 })
 export class BambinoService {
 
-  constructor(private apiService: ApiService) { 
+  defaultAndata: Observable<FermataDTO>;
+  defaultRitorno: Observable<FermataDTO>;
+
+  constructor(private apiService: ApiService) {
 
   }
 
-  getFertmata(idFermata: number): Observable<FermataDTO> {
-    return this.apiService.getFermata(idFermata);
+  getFertmata(idFermata: number, andata: boolean) {
+    if (andata) {
+      this.defaultAndata = this.apiService.getFermata(idFermata);
+    }
+    else {
+      this.defaultRitorno = this.apiService.getFermata(idFermata);
+    }
   }
 }

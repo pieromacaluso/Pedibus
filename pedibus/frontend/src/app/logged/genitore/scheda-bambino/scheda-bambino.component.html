@@ -11,6 +11,6 @@
             <b>{{request.verso}} {{request.data | date}}:</b> <i>[Prenotato per fermata X, Non prenotato, preso in carica alle hh:mm]</i>
         </li>
     </ul>
-    <button style="background-color: rgb(133, 210, 255);">Modifica Anagrafica</button>
-    <button style="background-color: rgb(133, 210, 255);">Effettua Prenotazione</button>
+    <button style="background-color: rgb(133, 210, 255);" (click)="showAnagraficaDialog()">Modifica Anagrafica</button>
+    <button style="background-color: rgb(133, 210, 255);" (click)="showPrenotazioneDialog()">Effettua Prenotazione</button>
 </div>
