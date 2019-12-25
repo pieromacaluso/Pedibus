@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Alunno, AlunnoNotReserved, LineReservationVerso, NuovaPrenotazione, PrenotazioneRequest, StopsByLine} from './line-details';
+import {Alunno, AlunnoNotReserved, LineReservationVerso, NuovaPrenotazione, PrenotazioneRequest, StopsByLine, Fermata} from './line-details';
 import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import {Observable} from 'rxjs';
 import { Notifica } from './notifiche/dtos';
-import { ChildrenDTO, FermataDTO } from './genitore/dtos';
+import { ChildrenDTO,  ReservationDTO } from './genitore/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -37,9 +37,21 @@ export class ApiService {
   getStopsByLine(idLinea: string): Observable<StopsByLine> {
     return this.httpClient.get<StopsByLine>(this.baseURL + 'lines/' + idLinea);
   }
+  /**
+   * Aggiorna le fermate di default di un bambino
+   * @param data oggetto corrispondente a ChildDefaultStopResource su backend
+   */
+  updateFermate(bambino: ChildrenDTO): Observable<any> {
+    const body = {idFermataAndata: bambino.idFermataAndata, idFermataRitorno: bambino.idFermataRitorno};
+    return this.httpClient.put<any>(this.baseURL + 'children/stops/' + bambino.codiceFiscale, body);
+  }
 
-  getFermata(idFermata: number): Observable<FermataDTO> {
-    return this.httpClient.get<FermataDTO>(this.baseURL + 'lines/stops/' + idFermata);
+  getStatus(bambino: ChildrenDTO, data: Date, verso: string): Observable<ReservationDTO> {
+    return this.httpClient.get<ReservationDTO>(this.baseURL + 'children/stops/' + bambino.codiceFiscale + '/' + this.datePipe.transform(data, 'yyyy-MM-dd') + '/' + verso);
+  }
+
+  getFermata(idFermata: number): Observable<Fermata> {
+    return this.httpClient.get<Fermata>(this.baseURL + 'lines/stops/' + idFermata);
   }
 
   getLineeNomi(): Observable<string[]> {

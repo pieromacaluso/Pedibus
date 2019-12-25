@@ -149,12 +149,12 @@ public class ReservationService {
      * @return
      * @throws Exception
      */
-    public ReservationEntity getChildReservation(Boolean verso, Date data, String cfChild) throws Exception {
+    public ReservationEntity getChildReservation(Boolean verso, Date data, String cfChild) {
         Optional<ReservationEntity> check = reservationRepository.findByCfChildAndDataAndVerso(cfChild, data, verso);
         if (check.isPresent()) {
             return check.get();
         } else {
-            throw new ReservationNotFoundException();
+           throw new ReservationNotFoundException("Reservation non trovata");
         }
     }
 

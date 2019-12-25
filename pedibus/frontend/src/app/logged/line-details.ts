@@ -1,12 +1,3 @@
-// export interface LineReservation {
-//   alunniPerFermataAndata: AlunniPerFermata[];
-//   alunniPerFermataRitorno: AlunniPerFermata[];
-//   arrivoScuola: string;
-//   partenzaScuola: string;
-//   childrenNotReserved: AlunnoNotReserved[];
-//   canModify: boolean;
-// }
-
 export interface LineReservationVerso {
   alunniPerFermata: AlunniPerFermata[];
   orarioScuola: string;

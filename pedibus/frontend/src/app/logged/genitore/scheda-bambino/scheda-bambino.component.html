@@ -8,7 +8,7 @@
             <b>Fermata ritorno predefinita:</b> <i>{{(defaultRitorno | async)?.nome}}</i> 
         </li>
         <li>
-            <b>{{request.verso}} {{request.data | date}}:</b> <i>[Prenotato per fermata X, Non prenotato, preso in carica alle hh:mm]</i>
+            <b>{{request.verso}} {{request.data | date}}:</b> <i>{{status}}</i>
         </li>
     </ul>
     <button style="background-color: rgb(133, 210, 255);" (click)="showAnagraficaDialog()">Modifica Anagrafica</button>

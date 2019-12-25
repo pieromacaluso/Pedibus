@@ -12,3 +12,13 @@ export interface FermataDTO {
     nome: number;
     orario: string;
 }
+
+export interface ReservationDTO {
+    cfChild: string;
+    data: Date;
+    idLinea: string;
+    idFermata: number;
+    verso: boolean;
+    presoInCarico: boolean;
+    arrivatoScuola: boolean;
+}

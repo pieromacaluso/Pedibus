@@ -34,7 +34,6 @@ export class DialogAnagraficaComponent implements OnInit {
     public dialogRef: MatDialogRef<DialogAnagraficaComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AnagraficaDialogData,
     private apiService: ApiService,
-    private bambinoService: BambinoService,
     private fb: FormBuilder
   ) {
 
@@ -60,7 +59,7 @@ export class DialogAnagraficaComponent implements OnInit {
   
   selectRitorno(emit: any) {
     const fermata = emit.value;
-    this.selectRitorno = fermata;
+    this.selectedRitorno = fermata;
   }
 
   cancel() {
@@ -70,9 +69,7 @@ export class DialogAnagraficaComponent implements OnInit {
   submit() {
     this.data.child.idFermataAndata = this.selectedAndata.id;
     this.data.child.idFermataRitorno = this.selectedRitorno.id;
-    this.bambinoService.getFertmata(this.selectedAndata.id, true);
-    this.bambinoService.getFertmata(this.selectedRitorno.id, false);
-    this.dialogRef.close();
+    this.dialogRef.close({data: this.data});
   }
 
 }
