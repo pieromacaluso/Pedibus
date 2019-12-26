@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
 @Component({
   selector: 'app-genitore',
   templateUrl: './genitore.component.html',
-  styleUrls: ['./genitore.component.css']
+  styleUrls: ['./genitore.component.scss']
 })
 export class GenitoreComponent implements OnInit {
 

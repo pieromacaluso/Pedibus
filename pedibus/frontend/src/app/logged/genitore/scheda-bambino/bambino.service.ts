@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { ApiService } from '../../api.service';
-import { Observable } from 'rxjs';
-import { Fermata } from '../../line-details';
-import { MatDialog } from '@angular/material';
-import { DialogAnagraficaComponent } from '../dialog-anagrafica/dialog-anagrafica.component';
-import { ChildrenDTO,ReservationDTO } from '../dtos';
+import {Injectable} from '@angular/core';
+import {ApiService} from '../../api.service';
+import {Observable} from 'rxjs';
+import {Fermata} from '../../line-details';
+import {MatDialog} from '@angular/material';
+import {DialogAnagraficaComponent} from '../dialog-anagrafica/dialog-anagrafica.component';
+import {ChildrenDTO, ReservationDTO} from '../dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class BambinoService {
 
   }
 
-  getFertmata(idFermata: number): Observable<Fermata> {
+  getFermata(idFermata: number): Observable<Fermata> {
     return this.apiService.getFermata(idFermata);
   }
 

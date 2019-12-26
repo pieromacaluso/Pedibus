@@ -1,16 +1,21 @@
-<div style="border-style: solid; border-width: 2px; margin: 3px 3px 3px 3px;">
-    <h4>{{bambino.name}}</h4>
+<mat-card ngClass="container" ngClass.lt-md="container-mobile">
+  <mat-card-header class="header-primary"><h1>{{bambino.name}}</h1> <button class="edit-button" mat-button (click)="showAnagraficaDialog()"><mat-icon >edit</mat-icon></button>
+    <div class="button-container">
+      <button mat-fab (click)="showPrenotazioneDialog()" color="accent"><mat-icon>add</mat-icon></button>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
     <ul>
-        <li>
-            <b>Fermata andata predefinita:</b> <i>{{(defaultAndata | async)?.nome}}</i> 
-        </li>
-        <li> 
-            <b>Fermata ritorno predefinita:</b> <i>{{(defaultRitorno | async)?.nome}}</i> 
-        </li>
-        <li>
-            <b>{{request.verso}} {{request.data | date}}:</b> <i>{{status}}</i>
-        </li>
+      <li>
+        <b>Fermata andata predefinita: </b><i>{{(defaultAndata | async)?.nome}}</i>
+      </li>
+      <li>
+        <b>Fermata ritorno predefinita: </b><i>{{(defaultRitorno | async)?.nome}}</i>
+      </li>
+      <li>
+        <b>{{request.verso}} {{request.data | date}}: </b><i>{{status}}</i>
+      </li>
     </ul>
-    <button style="background-color: rgb(133, 210, 255);" (click)="showAnagraficaDialog()">Modifica Anagrafica</button>
-    <button style="background-color: rgb(133, 210, 255);" (click)="showPrenotazioneDialog()">Effettua Prenotazione</button>
-</div>
+  </mat-card-content>
+
+</mat-card>

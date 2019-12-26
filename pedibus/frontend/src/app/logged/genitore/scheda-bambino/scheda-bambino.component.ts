@@ -10,7 +10,7 @@ import { DialogAnagraficaComponent } from '../dialog-anagrafica/dialog-anagrafic
 @Component({
   selector: 'app-scheda-bambino',
   templateUrl: './scheda-bambino.component.html',
-  styleUrls: ['./scheda-bambino.component.css']
+  styleUrls: ['./scheda-bambino.component.scss']
 })
 export class SchedaBambinoComponent implements OnInit {
 
@@ -44,16 +44,16 @@ export class SchedaBambinoComponent implements OnInit {
       }
 
     });
-    this.defaultAndata = this.bambinoService.getFertmata(this.bambino.idFermataAndata);
-    this.defaultRitorno = this.bambinoService.getFertmata(this.bambino.idFermataRitorno);
+    this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
+    this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
   }
 
   showAnagraficaDialog() {
     this.bambinoService.openDialog(this.bambino, this.linee).subscribe((data) => {
       this.bambino = data.data.child;
-      this.defaultAndata = this.bambinoService.getFertmata(this.bambino.idFermataAndata);
-      this.defaultRitorno = this.bambinoService.getFertmata(this.bambino.idFermataRitorno);
-      this.bambinoService.updateFermate(this.bambino).subscribe((data) => console.log(data), (error) => console.log(error));
+      this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
+      this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
+      this.bambinoService.updateFermate(this.bambino).subscribe((d) => console.log(d), (error) => console.log(error));
     });
   }
 

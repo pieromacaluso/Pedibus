@@ -1,0 +1,51 @@
+@import '../../../../pedibus-theme';
+
+.container {
+  width: 60%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding: 0 0 10px 0;
+}
+
+.header-primary {
+  background-color: mat-color($pedibus-theme-primary);
+}
+
+.container-mobile {
+  width: 85%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding: 0 0 10px 0;
+}
+
+.button-container {
+  top: 70px;
+  right: 0;
+  float: right;
+  position: absolute;
+  display: flex;
+  align-content: flex-end;
+  align-items: flex-end;
+}
+.button-container button {
+  margin: 0 16px;
+
+}
+
+mat-card-content {
+  padding-top: 25px;
+}
+
+mat-card-header {
+  padding: 10px 0;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bolder;
+  color: white;
+}
+
+.edit-button {
+  color: white;
+}
