@@ -14,7 +14,7 @@ export interface AnagraficaDialogData {
 @Component({
   selector: 'app-dialog-anagrafica',
   templateUrl: './dialog-anagrafica.component.html',
-  styleUrls: ['./dialog-anagrafica.component.css']
+  styleUrls: ['./dialog-anagrafica.component.scss']
 })
 export class DialogAnagraficaComponent implements OnInit {
 
@@ -56,7 +56,7 @@ export class DialogAnagraficaComponent implements OnInit {
     const fermata = emit.value;
     this.selectedAndata = fermata;
   }
-  
+
   selectRitorno(emit: any) {
     const fermata = emit.value;
     this.selectedRitorno = fermata;
