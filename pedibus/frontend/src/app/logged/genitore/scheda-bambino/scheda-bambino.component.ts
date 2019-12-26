@@ -1,11 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ChildrenDTO, FermataDTO } from '../dtos';
-import { PrenotazioneRequest, Fermata } from '../../line-details';
-import { SyncService } from '../../presenze/sync.service';
-import { Observable } from 'rxjs';
-import { BambinoService } from './bambino.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { DialogAnagraficaComponent } from '../dialog-anagrafica/dialog-anagrafica.component';
+import {Component, OnInit, Input} from '@angular/core';
+import {ChildrenDTO, FermataDTO, ReservationDTO} from '../dtos';
+import {PrenotazioneRequest, Fermata} from '../../line-details';
+import {SyncService} from '../../presenze/sync.service';
+import {Observable} from 'rxjs';
+import {BambinoService} from './bambino.service';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {DialogAnagraficaComponent} from '../dialog-anagrafica/dialog-anagrafica.component';
 
 @Component({
   selector: 'app-scheda-bambino',
@@ -19,8 +19,11 @@ export class SchedaBambinoComponent implements OnInit {
   request: PrenotazioneRequest;
   defaultAndata: Observable<Fermata>;
   defaultRitorno: Observable<Fermata>;
+  andata: ReservationDTO;
+  ritorno: ReservationDTO;
   status = 'Non prenotato';
   anagraficaDialog: MatDialogRef<DialogAnagraficaComponent>;
+  private schoolClosed: boolean;
 
   constructor(private syncService: SyncService, private bambinoService: BambinoService, private dialog: MatDialog) {
   }
@@ -30,17 +33,20 @@ export class SchedaBambinoComponent implements OnInit {
       this.request = data;
       // todo: inserire logica di reazione a richiesta qui
       if (this.bambino && this.request) {
-        this.bambinoService.getStatus(this.bambino, this.request.data, this.request.verso).subscribe((reservation) => {
-          if (!reservation.presoInCarico) {
-            this.status = 'Non ancora preso in carico';
+        this.bambinoService.getStatus(this.bambino, this.request.data).subscribe((reservation) => {
+          this.schoolClosed = false;
+          for (const res of reservation) {
+            if (res.verso) {
+              this.andata = res;
+            } else {
+              this.ritorno = res;
+            }
           }
-          if (reservation.presoInCarico) {
-            this.status = 'Preso in carico';
-          }
-          if (reservation.arrivatoScuola) {
-            this.status = 'Arrivato a scuola';
-          }
-        }, (error) => console.log(error));
+          console.log(reservation);
+        }, (error) => {
+          this.schoolClosed = true;
+          console.log(error);
+        });
       }
 
     });

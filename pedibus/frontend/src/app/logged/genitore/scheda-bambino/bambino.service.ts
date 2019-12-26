@@ -23,8 +23,8 @@ export class BambinoService {
     return this.apiService.updateFermate(data);
   }
 
-  getStatus(bambino: ChildrenDTO, data: Date, verso: string): Observable<ReservationDTO> {
-    return this.apiService.getStatus(bambino, data, verso);
+  getStatus(bambino: ChildrenDTO, data: Date): Observable<ReservationDTO[]> {
+    return this.apiService.getStatus(bambino, data);
   }
 
   openDialog(bambino: ChildrenDTO, linee: string[]): Observable<any> {

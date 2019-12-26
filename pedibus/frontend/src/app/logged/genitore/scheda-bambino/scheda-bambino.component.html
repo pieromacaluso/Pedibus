@@ -1,21 +1,46 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
-  <mat-card-header class="header-primary"><h1>{{bambino.name}}</h1> <button class="edit-button" mat-button (click)="showAnagraficaDialog()"><mat-icon >edit</mat-icon></button>
+  <mat-card-header class="header-primary"><h1>{{bambino.name}}</h1>
+    <button class="edit-button" mat-button (click)="showAnagraficaDialog()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <br>
     <div class="button-container">
-      <button mat-fab (click)="showPrenotazioneDialog()" color="accent"><mat-icon>add</mat-icon></button>
+      <button mat-fab (click)="showPrenotazioneDialog()" color="accent" *ngIf="!this.schoolClosed">
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
   </mat-card-header>
-  <mat-card-content>
-    <ul>
-      <li>
-        <b>Fermata andata predefinita: </b><i>{{(defaultAndata | async)?.nome}}</i>
-      </li>
-      <li>
-        <b>Fermata ritorno predefinita: </b><i>{{(defaultRitorno | async)?.nome}}</i>
-      </li>
-      <li>
-        <b>{{request.verso}} {{request.data | date}}: </b><i>{{status}}</i>
-      </li>
-    </ul>
+  <mat-card-content fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
+    <div class="column">
+      <ul>
+        <li>
+          <b>Fermata andata predefinita: </b><i>{{(defaultAndata | async)?.nome}}</i>
+        </li>
+        <li *ngIf="this.andata as res">
+          <b>{{res.verso}} {{res.data | date}}: </b><i>{{res |json}}</i>
+        </li>
+      </ul>
+    </div>
+    <div class="column">
+      <ul>
+        <li>
+          <b>Fermata ritorno predefinita: </b><i>{{(defaultRitorno | async)?.nome}}</i>
+        </li>
+        <li *ngIf="this.ritorno as res">
+          <b>{{request.verso}} {{request.data | date}}: </b><i>{{res |json}}</i>
+        </li>
+
+      </ul>
+    </div>
   </mat-card-content>
+  <ng-template #closed>
+    <mat-card-content>
+      <ul>
+        <li>
+          <b>Nessuna Prenotazione, scuola chiusa</b>
+        </li>
+      </ul>
+    </mat-card-content>
+  </ng-template>
 
 </mat-card>
