@@ -19,8 +19,8 @@ export class SchedaBambinoComponent implements OnInit {
   request: PrenotazioneRequest;
   defaultAndata: Observable<Fermata>;
   defaultRitorno: Observable<Fermata>;
-  status: string = 'Non prenotato';
-  anagraficaDialog: MatDialogRef<DialogAnagraficaComponent>
+  status = 'Non prenotato';
+  anagraficaDialog: MatDialogRef<DialogAnagraficaComponent>;
 
   constructor(private syncService: SyncService, private bambinoService: BambinoService, private dialog: MatDialog) {
   }
@@ -32,18 +32,18 @@ export class SchedaBambinoComponent implements OnInit {
       if (this.bambino && this.request) {
         this.bambinoService.getStatus(this.bambino, this.request.data, this.request.verso).subscribe((reservation) => {
           if (!reservation.presoInCarico) {
-            this.status = "Non ancora preso in carico";
+            this.status = 'Non ancora preso in carico';
           }
           if (reservation.presoInCarico) {
-            this.status = "Preso in carico";
+            this.status = 'Preso in carico';
           }
           if (reservation.arrivatoScuola) {
-            this.status = "Arrivato a scuola";
+            this.status = 'Arrivato a scuola';
           }
         }, (error) => console.log(error));
       }
 
-    })
+    });
     this.defaultAndata = this.bambinoService.getFertmata(this.bambino.idFermataAndata);
     this.defaultRitorno = this.bambinoService.getFertmata(this.bambino.idFermataRitorno);
   }
