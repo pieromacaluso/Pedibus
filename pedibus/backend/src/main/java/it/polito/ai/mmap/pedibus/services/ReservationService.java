@@ -158,6 +158,11 @@ public class ReservationService {
         }
     }
 
+    public List<ReservationEntity> getChildReservationsAR(Date data, String cfChild) {
+        Optional<List<ReservationEntity>> check = reservationRepository.findByCfChildAndData(cfChild, data);
+        return check.orElseGet(ArrayList::new);
+    }
+
     /**
      * Restituisce i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
      *

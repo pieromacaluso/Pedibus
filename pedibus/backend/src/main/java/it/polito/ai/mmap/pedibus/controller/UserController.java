@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,13 +44,13 @@ public class UserController {
      * Restituisce lo status di un bambino dato data e verso, lo status indica se il bambino è stato preso in carico o è arrivato a scuola
      * @param cfChild codice fiscale
      * @param date data
-     * @param verso verso
      */
-    @GetMapping("/children/stops/{cfChild}/{date}/{verso}")
-    public ReservationEntity getChildStatus(@PathVariable("cfChild") String cfChild, @PathVariable("date") String date, @PathVariable("verso") boolean verso) {
-        logger.info("GET /children/stops/" + cfChild + "/" + date + "/" + verso + " è stato contattato");
+    @GetMapping("/children/stops/{cfChild}/{date}")
+    public List<ReservationEntity> getChildStatus(@PathVariable("cfChild") String cfChild, @PathVariable("date") String date) {
+        logger.info("GET /children/stops/" + cfChild + "/" + date  + " è stato contattato");
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(date);
-        return this.reseService.getChildReservation(verso, dataFormatted, cfChild);
+        return this.reseService.getChildReservationsAR(dataFormatted, cfChild);
+
     }
 
 
@@ -59,8 +60,10 @@ public class UserController {
      * @param cfChild
      * @param stopRes
      */
-    @PutMapping("/children/stops/{childId}")
+    @PutMapping("/children/stops/{cfChild}")
     public void updateChildStop(@PathVariable("cfChild") String cfChild, @RequestBody ChildDefaultStopResource stopRes) {
+        logger.info("PUT /children/stops/" + cfChild + " è stato contattato");
+
         childService.updateChildStop(cfChild, stopRes);
     }
 
