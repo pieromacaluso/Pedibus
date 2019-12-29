@@ -1,8 +1,8 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {ChildrenDTO, FermataDTO, ReservationDTO} from '../dtos';
-import {PrenotazioneRequest, Fermata} from '../../line-details';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChildrenDTO, ReservationDTO} from '../dtos';
+import {Fermata, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../../presenze/sync.service';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {BambinoService} from './bambino.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {DialogAnagraficaComponent} from '../dialog-anagrafica/dialog-anagrafica.component';
@@ -12,7 +12,7 @@ import {DialogAnagraficaComponent} from '../dialog-anagrafica/dialog-anagrafica.
   templateUrl: './scheda-bambino.component.html',
   styleUrls: ['./scheda-bambino.component.scss']
 })
-export class SchedaBambinoComponent implements OnInit {
+export class SchedaBambinoComponent implements OnInit, OnDestroy {
 
   @Input() bambino: ChildrenDTO;
   @Input() linee: string[];
@@ -24,6 +24,7 @@ export class SchedaBambinoComponent implements OnInit {
   status = 'Non prenotato';
   anagraficaDialog: MatDialogRef<DialogAnagraficaComponent>;
   private schoolClosed: boolean;
+  private bambinoSub: Subscription;
 
   constructor(private syncService: SyncService, private bambinoService: BambinoService, private dialog: MatDialog) {
   }
@@ -47,24 +48,42 @@ export class SchedaBambinoComponent implements OnInit {
           this.schoolClosed = true;
           console.log(error);
         });
+
+        if (this.bambinoSub) {
+          this.bambinoSub.unsubscribe();
+        }
+        this.bambinoSub = this.bambinoService.watchChild(this.bambino.codiceFiscale).subscribe(
+          (message) => {
+            this.bambino = JSON.parse(message.body);
+            this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
+            this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
+          }
+        );
+        this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
+        this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
       }
 
     });
-    this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
-    this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
+
   }
 
   showAnagraficaDialog() {
-    this.bambinoService.openDialog(this.bambino, this.linee).subscribe((data) => {
-      this.bambino = data.data.child;
-      this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
-      this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
-      this.bambinoService.updateFermate(this.bambino).subscribe((d) => console.log(d), (error) => console.log(error));
+    this.bambinoService.openDialog(this.bambino, this.linee, this.defaultAndata, this.defaultRitorno).subscribe((data) => {
+      if (data) {
+        // this.bambino = data.data.child;
+        // this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
+        // this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
+        this.bambinoService.updateFermate(data.data.child).subscribe((d) => console.log(d), (error) => console.log(error));
+      }
     });
   }
 
   showPrenotazioneDialog() {
 
+  }
+
+  ngOnDestroy(): void {
+    this.bambinoSub.unsubscribe();
   }
 
 }

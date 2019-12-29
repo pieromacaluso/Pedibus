@@ -1,45 +1,55 @@
 <mat-card ngClass="container" ngClass.lt-md="container-mobile">
-  <mat-card-header class="header-primary"><h1>{{bambino.name}}</h1>
-    <button class="edit-button" mat-button (click)="showAnagraficaDialog()">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <br>
+  <mat-card-header class="header-primary"><h1>{{bambino.name}} {{bambino.surname}}</h1>
+  </mat-card-header>
+  <div class="header-child child-data"><h3>Prenotazione di Default</h3></div>
+  <mat-card-content class="child-data" fxLayout="row" fxLayout.lt-sm="column">
+    <div class="column">
+      <b>Andata: </b><i>{{(defaultAndata | async)?.nomeLinea}} - {{(defaultAndata | async)?.nome}} {{(defaultAndata | async)?.orario}}</i>
+    </div>
+    <div class="column">
+      <b>Ritorno: </b><i>{{(defaultRitorno | async)?.nomeLinea}} - {{(defaultRitorno | async)?.nome}} {{(defaultRitorno | async)?.orario}}</i>
+    </div>
     <div class="button-container">
-      <button mat-fab (click)="showPrenotazioneDialog()" color="accent" *ngIf="!this.schoolClosed">
-        <mat-icon>add</mat-icon>
+      <button mat-fab (click)="showAnagraficaDialog()" color="accent">
+        <mat-icon>edit</mat-icon>
       </button>
     </div>
-  </mat-card-header>
-  <mat-card-content fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
-    <div class="column">
-      <ul>
-        <li>
-          <b>Fermata andata predefinita: </b><i>{{(defaultAndata | async)?.nome}}</i>
-        </li>
-        <li *ngIf="this.andata as res">
-          <b>{{res.verso}} {{res.data | date}}: </b><i>{{res |json}}</i>
-        </li>
-      </ul>
-    </div>
-    <div class="column">
-      <ul>
-        <li>
-          <b>Fermata ritorno predefinita: </b><i>{{(defaultRitorno | async)?.nome}}</i>
-        </li>
-        <li *ngIf="this.ritorno as res">
-          <b>{{request.verso}} {{request.data | date}}: </b><i>{{res |json}}</i>
-        </li>
-
-      </ul>
-    </div>
   </mat-card-content>
+
+  <mat-card-content class="res-data" fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
+    <div class="column" *ngIf="this.andata as res else noandata">
+      <h3>Andata</h3>
+      <b>{{res.idLinea}} {{res.idFermata}} - {{res.data | date}}: </b><i>{{res |json}}</i>
+      <button mat-stroked-button color="accent">Modifica Ritorno</button>
+    </div>
+    <div class="column" *ngIf="this.ritorno as res else noritorno">
+      <h3>Ritorno</h3>
+      <b>{{res.idLinea}} {{res.idFermata}} {{res.data | date}}: </b><i>{{res |json}}</i>
+      <button mat-stroked-button color="accent">Modifica Ritorno</button>
+
+    </div>
+    <ng-template #noandata>
+      <div class="column">
+        <h3>Andata</h3>
+        Non è presente alcuna prenotazione per l'andata.
+        <button mat-raised-button color="accent">Aggiungi Andata</button>
+      </div>
+    </ng-template>
+    <ng-template #noritorno>
+      <div class="column">
+       <h3>Ritorno</h3>
+        Non è presente alcuna prenotazione per il ritorno.
+        <button mat-raised-button color="accent">Aggiungi Ritorno</button>
+      </div>
+    </ng-template>
+
+  </mat-card-content>
+
   <ng-template #closed>
     <mat-card-content>
-      <ul>
-        <li>
-          <b>Nessuna Prenotazione, scuola chiusa</b>
-        </li>
-      </ul>
+      <div class="column-single">
+      Non è possibile effettuare alcuna prenotazione per la data indicata poichè la scuola sarà chiusa.
+      </div>
     </mat-card-content>
   </ng-template>
 

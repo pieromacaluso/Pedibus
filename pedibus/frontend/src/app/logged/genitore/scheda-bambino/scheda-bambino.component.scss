@@ -9,6 +9,13 @@
 
 .header-primary {
   background-color: mat-color($pedibus-theme-primary);
+
+}
+
+.child-data {
+  background-color: mat-color($pedibus-theme-primary) !important;
+  color: white !important;
+  position: inherit;
 }
 
 .container-mobile {
@@ -19,27 +26,26 @@
 }
 
 .button-container {
-  top: 70px;
+  bottom: -25px;
   right: 0;
   float: right;
   position: absolute;
-  display: flex;
-  align-content: flex-end;
-  align-items: flex-end;
 }
+
 .button-container button {
   margin: 0 16px;
 
 }
 
-mat-card-content {
-  padding-top: 25px;
-  display:flex;
+mat-card-header {
+  color: white;
 }
 
-mat-card-header {
-  padding: 10px 0;
+mat-card-content {
+  display: flex;
+  margin-bottom: 0;
 }
+
 
 h1 {
   font-family: 'Montserrat', sans-serif;
@@ -47,6 +53,28 @@ h1 {
   color: white;
 }
 
+h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bolder;
+
+  margin: 0;
+}
+
 .edit-button {
   color: white;
+}
+
+.column{
+  width: 50%;
+  padding: 10px 32px;
+}
+.column-single {
+  width: 100%;
+  padding: 10px 32px;
+}
+
+.header-child {
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
 }

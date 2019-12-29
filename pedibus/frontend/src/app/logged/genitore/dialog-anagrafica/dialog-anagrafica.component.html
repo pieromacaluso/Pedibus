@@ -1,35 +1,37 @@
 <h1 mat-dialog-title>Modifica Anagrafica</h1>
-<form [formGroup]="anagraficaForm" (ngSubmit)="submit()">
+<form [formGroup]="anagraficaForm" (ngSubmit)="submit()" *ngIf="this.loading == 0">
+  <div>
   <div mat-dialog-content class="dialog-theme">
     <!-- FORM CONTENT HERE... -->
-    <p class="mat-h2">Seleziona informazioni andata</p>
+    <p class="mat-h2" >Seleziona informazioni andata</p>
     <mat-form-field style="padding: 5px;">
       <mat-label>Linea Andata:</mat-label>
-      <mat-select formControlName="anadataSelect"
-                  (selectionChange)="changeFermateAndata($event)">
-        <mat-option *ngFor="let linea of data.linee" [value]="linea">{{linea}}
+      <mat-select formControlName="andataSelect"
+                  (selectionChange)="changeFermateAndata($event.value)">
+        <mat-option *ngFor="let linea of data.linee" [value]="linea">{{lineData.get(linea).nome}}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field style="padding: 5px;">
+    <mat-form-field style="padding: 5px;" >
       <mat-label>Fermata Andata:</mat-label>
-      <mat-select [disabled]="!andata || andata.length == 0" (selectionChange)="selectAndata($event)">
-        <mat-option *ngFor="let feAndata of andata" [value]="feAndata">{{feAndata.nome}}</mat-option>
+      <mat-select formControlName="andataFermataSelect" [disabled]="!andata || andata.length == 0" (selectionChange)="selectAndata($event.value)"
+                  >
+        <mat-option *ngFor="let feAndata of andata" [value]="feAndata.id">{{feAndata.nome}} {{feAndata.orario}}</mat-option>
       </mat-select>
     </mat-form-field>
     <p class="mat-h2">Seleziona informazioni ritorno</p>
     <mat-form-field style="padding: 5px;">
       <mat-label>Linea Ritorno:</mat-label>
       <mat-select formControlName="ritornoSelect"
-                  (selectionChange)="changeFermateRitorno($event)">
-        <mat-option *ngFor="let linea of data.linee" [value]="linea">{{linea}}
+                  (selectionChange)="changeFermateRitorno($event.value)">
+        <mat-option *ngFor="let linea of data.linee" [value]="linea">{{lineData.get(linea).nome}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field style="padding: 5px;">
       <mat-label>Fermata Ritorno:</mat-label>
-      <mat-select [disabled]="!ritorno || ritorno.length == 0" (selectionChange)="selectRitorno($event)">
-        <mat-option *ngFor="let feRitorno of ritorno" [value]="feRitorno">{{feRitorno.nome}}</mat-option>
+      <mat-select formControlName="ritornoFermataSelect" [disabled]="!ritorno || ritorno.length == 0" (selectionChange)="selectRitorno($event.value)"  >
+        <mat-option *ngFor="let feRitorno of ritorno" [value]="feRitorno.id">{{feRitorno.nome}} {{feRitorno.orario}}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -37,10 +39,11 @@
   <mat-dialog-actions>
     <button mat-button type="button" (click)="cancel()">Annulla</button>
     <button type="submit" mat-raised-button color="primary"
-            [disabled]="!anagraficaForm.controls.anadataSelect.valid">
+            [disabled]="!anagraficaForm.valid">
       <!-- <mat-progress-bar class="progress-bar-button" *ngIf="data.alunno.update" mode="indeterminate">
       </mat-progress-bar> -->
       Modifica
     </button>
   </mat-dialog-actions>
+  </div>
 </form>

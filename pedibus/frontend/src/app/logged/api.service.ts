@@ -48,7 +48,7 @@ export class ApiService {
 
   /**
    * Aggiorna le fermate di default di un bambino
-   * @param data oggetto corrispondente a ChildDefaultStopResource su backend
+   * @param bambino oggetto corrispondente a ChildDefaultStopResource su backend
    */
   updateFermate(bambino: ChildrenDTO): Observable<any> {
     const body = {idFermataAndata: bambino.idFermataAndata, idFermataRitorno: bambino.idFermataRitorno};

@@ -5,13 +5,14 @@ import {Fermata} from '../../line-details';
 import {MatDialog} from '@angular/material';
 import {DialogAnagraficaComponent} from '../dialog-anagrafica/dialog-anagrafica.component';
 import {ChildrenDTO, ReservationDTO} from '../dtos';
+import {RxStompService} from '@stomp/ng2-stompjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BambinoService {
 
-  constructor(private apiService: ApiService, public dialog: MatDialog) {
+  constructor(private apiService: ApiService, public dialog: MatDialog, private rxStompService: RxStompService) {
 
   }
 
@@ -27,11 +28,15 @@ export class BambinoService {
     return this.apiService.getStatus(bambino, data);
   }
 
-  openDialog(bambino: ChildrenDTO, linee: string[]): Observable<any> {
+  openDialog(bambino: ChildrenDTO, linee: string[], defaultAndata: Observable<Fermata>, defaultRitorno: Observable<Fermata>): Observable<any> {
     const dialogRef = this.dialog.open(DialogAnagraficaComponent, {
       hasBackdrop: true,
-      data: {child: bambino, linee: linee}
+      data: {child: bambino, linee, defaultAndata, defaultRitorno}
     });
     return dialogRef.afterClosed();
+  }
+
+  watchChild(cf: string) {
+    return this.rxStompService.watch('/user/child/' + cf);
   }
 }

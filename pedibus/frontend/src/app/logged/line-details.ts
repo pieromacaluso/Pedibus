@@ -33,6 +33,8 @@ export interface Fermata {
   id: number;
   nome: string;
   orario: string;
+  idLinea: string;
+  nomeLinea: string;
 }
 
 export interface PrenotazioneRequest {
