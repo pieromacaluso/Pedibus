@@ -9,6 +9,7 @@ import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,8 @@ public class ChildService {
     ChildRepository childRepository;
     @Autowired
     LineeService lineeService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 
     public ChildDTO getChildDTOById(String codiceFiscale) {
@@ -71,6 +74,7 @@ public class ChildService {
                 childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
 
                 childRepository.save(childEntity);
+                this.simpMessagingTemplate.convertAndSendToUser(userService.getUserEntity(childEntity.getIdParent()).getUsername(), "/child/" + childEntity.getCodiceFiscale(), childEntity);
 
             } else
                 throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");

@@ -94,8 +94,15 @@ public class LineeService {
      * @return FermataDTO
      */
     public FermataDTO getFermataDTOById(Integer idFermata) {
-        return new FermataDTO(getFermataEntityById(idFermata));
-
+        FermataEntity fermataEntity = getFermataEntityById(idFermata);
+        Optional<LineaEntity> lineaEntity = this.lineaRepository.findById(fermataEntity.getIdLinea());
+        if (lineaEntity.isPresent()) {
+            FermataDTO fermataDTO = new FermataDTO(getFermataEntityById(idFermata));
+            fermataDTO.setNomeLinea(lineaEntity.get().getNome());
+            return fermataDTO;
+        } else {
+            throw new LineaNotFoundException("Linea " + fermataEntity.getIdLinea() + "non trovata!");
+        }
     }
 
 
