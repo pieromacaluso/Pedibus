@@ -4,10 +4,12 @@
   <div class="header-child child-data"><h3>Prenotazione di Default</h3></div>
   <mat-card-content class="child-data" fxLayout="row" fxLayout.lt-sm="column">
     <div class="column">
-      <b>Andata: </b><i>{{(defaultAndata | async)?.nomeLinea}} - {{(defaultAndata | async)?.nome}} {{(defaultAndata | async)?.orario}}</i>
+      <b>Andata: </b><i>{{(defaultAndata | async)?.nomeLinea}}
+      - {{(defaultAndata | async)?.nome}} {{(defaultAndata | async)?.orario}}</i>
     </div>
     <div class="column">
-      <b>Ritorno: </b><i>{{(defaultRitorno | async)?.nomeLinea}} - {{(defaultRitorno | async)?.nome}} {{(defaultRitorno | async)?.orario}}</i>
+      <b>Ritorno: </b><i>{{(defaultRitorno | async)?.nomeLinea}}
+      - {{(defaultRitorno | async)?.nome}} {{(defaultRitorno | async)?.orario}}</i>
     </div>
     <div class="button-container">
       <button mat-fab (click)="showAnagraficaDialog()" color="accent">
@@ -17,29 +19,37 @@
   </mat-card-content>
 
   <mat-card-content class="res-data" fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
-    <div class="column" *ngIf="this.andata as res else noandata">
+    <div class="column" *ngIf="this.andata && (andataStop|async) as res else noandata">
       <h3>Andata</h3>
-      <b>{{res.idLinea}} {{res.idFermata}} - {{res.data | date}}: </b><i>{{res |json}}</i>
-      <button mat-stroked-button color="accent">Modifica Ritorno</button>
+      <div>
+        <div>Linea: {{res.nomeLinea}}</div>
+        <div>Fermata: {{res.nome}}</div>
+        <div>Orario: {{res.orario}}</div>
+      </div>
+      <button mat-raised-button color="primary" (click)="editAndata()">Modifica Andata</button>
     </div>
-    <div class="column" *ngIf="this.ritorno as res else noritorno">
+    <div class="column" *ngIf="this.ritorno && (ritornoStop|async) as res else noritorno">
       <h3>Ritorno</h3>
-      <b>{{res.idLinea}} {{res.idFermata}} {{res.data | date}}: </b><i>{{res |json}}</i>
-      <button mat-stroked-button color="accent">Modifica Ritorno</button>
+      <div>
+        <div>Linea: {{res.nomeLinea}}</div>
+        <div>Fermata: {{res.nome}}</div>
+        <div>Orario: {{res.orario}}</div>
+      </div>
+      <button mat-raised-button color="primary" (click)="editRitorno()">Modifica Ritorno</button>
 
     </div>
     <ng-template #noandata>
       <div class="column">
         <h3>Andata</h3>
-        Non è presente alcuna prenotazione per l'andata.
-        <button mat-raised-button color="accent">Aggiungi Andata</button>
+        <div>Non è presente alcuna prenotazione per l'andata.</div>
+        <button mat-raised-button color="accent" (click)="addAndata()">Aggiungi Andata</button>
       </div>
     </ng-template>
     <ng-template #noritorno>
       <div class="column">
-       <h3>Ritorno</h3>
-        Non è presente alcuna prenotazione per il ritorno.
-        <button mat-raised-button color="accent">Aggiungi Ritorno</button>
+        <h3>Ritorno</h3>
+        <div>Non è presente alcuna prenotazione per il ritorno.</div>
+        <button mat-raised-button color="accent" (click)="addRitorno()">Aggiungi Ritorno</button>
       </div>
     </ng-template>
 
@@ -48,7 +58,7 @@
   <ng-template #closed>
     <mat-card-content>
       <div class="column-single">
-      Non è possibile effettuare alcuna prenotazione per la data indicata poichè la scuola sarà chiusa.
+        Non è possibile effettuare alcuna prenotazione per la data indicata poichè la scuola sarà chiusa.
       </div>
     </mat-card-content>
   </ng-template>

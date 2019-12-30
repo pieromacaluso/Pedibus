@@ -14,6 +14,7 @@ export interface FermataDTO {
 }
 
 export interface ReservationDTO {
+  id: string;
   cfChild: string;
   data: Date;
   idLinea: string;

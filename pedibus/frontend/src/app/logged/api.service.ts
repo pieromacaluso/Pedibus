@@ -113,9 +113,19 @@ export class ApiService {
 
     console.log('POSTTT:' + nuovaPrenotazione.cfChild + ' ' + nuovaPrenotazione.idFermata + ' ' + nuovaPrenotazione.verso);
 
+    return this.postPrenotazione(data.linea, data.data, nuovaPrenotazione);
+  }
+
+  postPrenotazione(linea: string, data: Date, prenotazione: NuovaPrenotazione) {
     return this.httpClient
-      .post(this.baseURL + 'reservations/' + data.linea + '/' + this.datePipe
-        .transform(data.data, 'yyyy-MM-dd'), nuovaPrenotazione);
+      .post(this.baseURL + 'reservations/' + linea + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd'), prenotazione);
+  }
+
+  updatePrenotazione(linea: string, data: Date, prenotazione: NuovaPrenotazione, id: string) {
+    return this.httpClient
+      .put(this.baseURL + 'reservations/' + linea + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd') + '/' + id, prenotazione);
   }
 
   /**

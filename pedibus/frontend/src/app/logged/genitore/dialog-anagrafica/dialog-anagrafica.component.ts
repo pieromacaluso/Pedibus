@@ -15,10 +15,6 @@ export interface AnagraficaDialogData {
     defaultRitorno: Observable<Fermata>;
 }
 
-interface Dictionary<T> {
-    [Key: string]: T;
-}
-
 @Component({
     selector: 'app-dialog-anagrafica',
     templateUrl: './dialog-anagrafica.component.html',

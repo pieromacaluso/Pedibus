@@ -1,1 +1,33 @@
-<p>dialog-prenotazione works!</p>
+<h1 mat-dialog-title>{{this.data.aggiunta ? "Aggiungi" : "Modifica" }} Prenotazione</h1>
+<form [formGroup]="prenotazioneForm" (ngSubmit)="submit()" *ngIf="this.loading == 0">
+  <div>
+    <div mat-dialog-content class="dialog-theme">
+      <!-- FORM CONTENT HERE... -->
+      <p class="mat-h2" >Stai aggiungendo una prenotazione di {{this.data.andata ? "andata" : "ritorno" }} per {{this.data.bambino.name}} {{this.data.bambino.surname}} in data {{this.data.data | date}}</p>
+      <mat-form-field style="padding: 5px;">
+        <mat-label>Linea:</mat-label>
+        <mat-select formControlName="lineSelect"
+                    (selectionChange)="changeFermate($event.value)">
+          <mat-option *ngFor="let linea of data.linee" [value]="linea">{{lineData.get(linea).nome}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field style="padding: 5px;" >
+        <mat-label>Fermata Andata:</mat-label>
+        <mat-select formControlName="stopSelect" [disabled]="!stops || stops.length == 0" (selectionChange)="selectStop($event.value)"
+        >
+          <mat-option *ngFor="let stop of stops" [value]="stop.id">{{stop.nome}} {{stop.orario}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <mat-dialog-actions>
+      <button mat-button type="button" (click)="cancel()">Annulla</button>
+      <button type="submit" mat-raised-button color="primary"
+              [disabled]="!prenotazioneForm.valid">
+        <!-- <mat-progress-bar class="progress-bar-button" *ngIf="data.alunno.update" mode="indeterminate">
+        </mat-progress-bar> -->
+        {{this.data.aggiunta ? "Aggiungi" : "Modifica" }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>

@@ -1,4 +1,4 @@
-import {Component,  OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LineReservationVerso, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
@@ -10,7 +10,7 @@ import {RxStompService} from '@stomp/ng2-stompjs';
 import {Observable, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
 import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
-import {catchError, switchMap,tap} from 'rxjs/operators';
+import {catchError, switchMap, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -88,17 +88,45 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     ).subscribe(message => {
       const res = JSON.parse(message.body);
       const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
-      const newAlunno: Alunno = {
-        codiceFiscale: oldAlunno.codiceFiscale,
-        name: oldAlunno.name,
-        surname: oldAlunno.surname,
-        presoInCarico: false,
-        arrivatoScuola: false,
-        update: false
-      };
-      const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
-      this.deleteNotReserved(oldAlunno);
-      this.togglePresenza(res.idFermata, newAlunno);
+      let newAlunno: Alunno;
+      if (!oldAlunno) {
+        let searchAlunno;
+        for (const fe of this.resource.alunniPerFermata) {
+          searchAlunno = fe.alunni.find(a => a.codiceFiscale === res.cfChild);
+          if (searchAlunno) {
+            newAlunno = {
+              codiceFiscale: searchAlunno.codiceFiscale,
+              name: searchAlunno.name,
+              surname: searchAlunno.surname,
+              presoInCarico: false,
+              arrivatoScuola: false,
+              update: false
+            };
+            const index: number = fe.alunni.indexOf(searchAlunno);
+            if (index !== -1) {
+              fe.alunni.splice(index, 1);
+            }
+            break;
+          }
+        }
+
+      } else {
+        newAlunno = {
+          codiceFiscale: oldAlunno.codiceFiscale,
+          name: oldAlunno.name,
+          surname: oldAlunno.surname,
+          presoInCarico: false,
+          arrivatoScuola: false,
+          update: false
+        };
+        this.deleteNotReserved(oldAlunno);
+      }
+      if (newAlunno) {
+        const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
+        if (oldAlunno) {
+          this.togglePresenza(res.idFermata, newAlunno);
+        }
+      }
     });
     this.setBottoCardTitle();
 
