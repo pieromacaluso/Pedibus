@@ -2,15 +2,14 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
-import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.MongoTimeService;
-import it.polito.ai.mmap.pedibus.services.ReservationService;
-import it.polito.ai.mmap.pedibus.services.UserService;
+import it.polito.ai.mmap.pedibus.services.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,8 @@ public class ReservationController {
     ReservationService reservationService;
     @Autowired
     UserService userService;
+    @Autowired
+    ChildService childService;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -116,7 +117,11 @@ public class ReservationController {
         logger.info("Nuova Reservation " + reservationResource.toString());
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         String idReservation = reservationService.addReservation(reservationDTO);
+        reservationDTO.setId(idReservation);
+        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
+        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+
         return objectMapper.writeValueAsString(idReservation);
     }
 
@@ -167,6 +172,10 @@ public class ReservationController {
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data);
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         reservationService.updateReservation(reservationDTO, reservationId);
+        // TODO: Gestione parenti multipli?
+        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
+        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
+        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
     }
 
     /**

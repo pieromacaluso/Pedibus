@@ -83,6 +83,7 @@ public class ReservationService {
         if (isValidReservation(reservationDTO)) {
             reservationEntity.update(reservationDTO);
             reservationRepository.save(reservationEntity);
+            reservationDTO.setId(reservationEntity.getId().toString());
         } else {
             throw new IllegalArgumentException("Aggiornamento reservation non valida");
         }
@@ -158,9 +159,14 @@ public class ReservationService {
         }
     }
 
-    public List<ReservationEntity> getChildReservationsAR(Date data, String cfChild) {
+    public List<ReservationDTO> getChildReservationsAR(Date data, String cfChild) {
         Optional<List<ReservationEntity>> check = reservationRepository.findByCfChildAndData(cfChild, data);
-        return check.orElseGet(ArrayList::new);
+        List<ReservationDTO> reservationDTOS = new ArrayList<>();
+        List<ReservationEntity> entities = check.orElseGet(ArrayList::new);
+        entities.forEach((element) -> {
+            reservationDTOS.add(new ReservationDTO(element));
+        });
+        return reservationDTOS;
     }
 
     /**

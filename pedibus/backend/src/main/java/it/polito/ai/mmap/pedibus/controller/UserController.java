@@ -3,6 +3,7 @@ package it.polito.ai.mmap.pedibus.controller;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
 import it.polito.ai.mmap.pedibus.services.ChildService;
 import it.polito.ai.mmap.pedibus.services.MongoTimeService;
@@ -48,7 +49,7 @@ public class UserController {
      * @param date data
      */
     @GetMapping("/children/stops/{cfChild}/{date}")
-    public List<ReservationEntity> getChildStatus(@PathVariable("cfChild") String cfChild, @PathVariable("date") String date) {
+    public List<ReservationDTO> getChildStatus(@PathVariable("cfChild") String cfChild, @PathVariable("date") String date) {
         logger.info("GET /children/stops/" + cfChild + "/" + date  + " è stato contattato");
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(date);
         return this.reseService.getChildReservationsAR(dataFormatted, cfChild);
