@@ -11,6 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class ReservationDTO {
 
+    private String id;
     private String cfChild;
     private Date data;
     private String idLinea;
@@ -30,6 +31,7 @@ public class ReservationDTO {
     }
 
     public ReservationDTO(ReservationEntity reservationEntity) {
+        this.id = reservationEntity.getId().toString();
         this.data = reservationEntity.getData();
         this.idLinea = reservationEntity.getIdLinea();
         verso = reservationEntity.isVerso();

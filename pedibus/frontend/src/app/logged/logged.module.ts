@@ -26,6 +26,10 @@ import { AggiuntaDispComponent } from './disponibilita/aggiunta-disp/aggiunta-di
 import { ElencoDispComponent } from './turni/elenco-disp/elenco-disp.component';
 import { NotificaComponent } from './notifiche/notifica/notifica.component';
 import { UpdateDispDialogComponent } from './turni/elenco-disp/update-disp-dialog/update-disp-dialog.component';
+import { GenitoreComponent } from './genitore/genitore.component';
+import { SchedaBambinoComponent } from './genitore/scheda-bambino/scheda-bambino.component';
+import { DialogAnagraficaComponent } from './genitore/dialog-anagrafica/dialog-anagrafica.component';
+import { DialogPrenotazioneComponent } from './genitore/dialog-prenotazione/dialog-prenotazione.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +46,11 @@ import { UpdateDispDialogComponent } from './turni/elenco-disp/update-disp-dialo
     AggiuntaDispComponent,
     ElencoDispComponent,
     NotificaComponent,
-    UpdateDispDialogComponent],
+    UpdateDispDialogComponent,
+    GenitoreComponent,
+    SchedaBambinoComponent,
+    DialogAnagraficaComponent,
+    DialogPrenotazioneComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -64,7 +72,7 @@ import { UpdateDispDialogComponent } from './turni/elenco-disp/update-disp-dialo
     MatListModule
   ],
   exports: [],
-  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, UpdateDispDialogComponent]
+  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent]
 })
 export class LoggedModule {
 }

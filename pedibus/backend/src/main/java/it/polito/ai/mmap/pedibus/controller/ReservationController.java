@@ -2,15 +2,13 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
-import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.MongoTimeService;
-import it.polito.ai.mmap.pedibus.services.ReservationService;
-import it.polito.ai.mmap.pedibus.services.UserService;
+import it.polito.ai.mmap.pedibus.services.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,8 @@ public class ReservationController {
     ReservationService reservationService;
     @Autowired
     UserService userService;
+    @Autowired
+    ChildService childService;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -116,7 +116,11 @@ public class ReservationController {
         logger.info("Nuova Reservation " + reservationResource.toString());
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         String idReservation = reservationService.addReservation(reservationDTO);
+        reservationDTO.setId(idReservation);
+        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
+        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+
         return objectMapper.writeValueAsString(idReservation);
     }
 
@@ -167,6 +171,10 @@ public class ReservationController {
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data);
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         reservationService.updateReservation(reservationDTO, reservationId);
+        // TODO: Gestione parenti multipli?
+        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
+        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
+        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
     }
 
     /**
@@ -180,7 +188,17 @@ public class ReservationController {
     public void deleteReservation(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         logger.info("Eliminazione reservation" + reservationId);
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data);
+        ReservationDTO reservationDTO = reservationService.getReservationCheck(idLinea, dataFormatted, reservationId);
+        ReservationResource reservationResource = ReservationResource.builder()
+                .cfChild(reservationDTO.getCfChild())
+                .idFermata(null)
+                .verso(reservationDTO.getVerso()).build();
+
+        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
         reservationService.deleteReservation(idLinea, dataFormatted, reservationId);
+        reservationDTO.setIdFermata(null);
+        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationDTO.getVerso()) ? 1 : 0), reservationResource);
+        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
     }
 
     /**

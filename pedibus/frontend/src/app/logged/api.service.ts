@@ -1,11 +1,20 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Alunno, AlunnoNotReserved, LineReservationVerso, NuovaPrenotazione, PrenotazioneRequest, StopsByLine} from './line-details';
+import {
+  Alunno,
+  AlunnoNotReserved,
+  LineReservationVerso,
+  NuovaPrenotazione,
+  PrenotazioneRequest,
+  StopsByLine,
+  Fermata
+} from './line-details';
 import {DatePipe} from '@angular/common';
 import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-book-dialog.component';
 import {Observable} from 'rxjs';
-import { Notifica } from './notifiche/dtos';
+import {Notifica} from './notifiche/dtos';
+import {ChildrenDTO, ReservationDTO} from './genitore/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +34,8 @@ export class ApiService {
     return this.httpClient.delete<any[]>(this.baseURL + 'notifiche/' + idNotifica);
   }
 
-  getChildren(): Observable<any[]> {
-    return this.httpClient.get<any[]>(this.baseURL + 'children');
+  getChildren(): Observable<ChildrenDTO[]> {
+    return this.httpClient.get<ChildrenDTO[]>(this.baseURL + 'children');
   }
 
   getLinee(): Observable<string[]> {
@@ -35,6 +44,28 @@ export class ApiService {
 
   getStopsByLine(idLinea: string): Observable<StopsByLine> {
     return this.httpClient.get<StopsByLine>(this.baseURL + 'lines/' + idLinea);
+  }
+
+  /**
+   * Aggiorna le fermate di default di un bambino
+   * @param bambino oggetto corrispondente a ChildDefaultStopResource su backend
+   * @param date data da cui aggiornare le prenotazione
+   */
+  updateFermate(bambino: ChildrenDTO, date: Date): Observable<any> {
+    const body = {
+      idFermataAndata: bambino.idFermataAndata,
+      idFermataRitorno: bambino.idFermataRitorno,
+      data: this.datePipe.transform(date, 'yyyy-MM-dd')
+    };
+    return this.httpClient.put<any>(this.baseURL + 'children/stops/' + bambino.codiceFiscale, body);
+  }
+
+  getStatus(bambino: ChildrenDTO, data: Date): Observable<ReservationDTO[]> {
+    return this.httpClient.get<ReservationDTO[]>(this.baseURL + 'children/stops/' + bambino.codiceFiscale + '/' + this.datePipe.transform(data, 'yyyy-MM-dd'));
+  }
+
+  getFermata(idFermata: number): Observable<Fermata> {
+    return this.httpClient.get<Fermata>(this.baseURL + 'lines/stops/' + idFermata);
   }
 
   getLineeNomi(): Observable<string[]> {
@@ -87,9 +118,25 @@ export class ApiService {
 
     console.log('POSTTT:' + nuovaPrenotazione.cfChild + ' ' + nuovaPrenotazione.idFermata + ' ' + nuovaPrenotazione.verso);
 
+    return this.postPrenotazione(data.linea, data.data, nuovaPrenotazione);
+  }
+
+  postPrenotazione(linea: string, data: Date, prenotazione: NuovaPrenotazione) {
     return this.httpClient
-      .post(this.baseURL + 'reservations/' + data.linea + '/' + this.datePipe
-        .transform(data.data, 'yyyy-MM-dd'), nuovaPrenotazione);
+      .post(this.baseURL + 'reservations/' + linea + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd'), prenotazione);
+  }
+
+  updatePrenotazione(linea: string, data: Date, prenotazione: NuovaPrenotazione, id: string) {
+    return this.httpClient
+      .put(this.baseURL + 'reservations/' + linea + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd') + '/' + id, prenotazione);
+  }
+
+  deletePrenotazione(linea: string, data: Date, id: string) {
+    return this.httpClient
+      .delete(this.baseURL + 'reservations/' + linea + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd') + '/' + id);
   }
 
   /**

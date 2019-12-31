@@ -1,16 +1,44 @@
-@import "../registration-component";
-
-.container{
-  text-align: center;
-}
-
-
-.container-mobile{
-  text-align: center;
-}
 
 .forgot {
   margin-bottom: 20px;
 }
 
+.container {
+  width: 60%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding-top: 25px;
+  text-align: center;
 
+}
+
+.container-mobile {
+  width: 85%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding-top: 25px;
+  text-align: center;
+
+}
+
+.main-image {
+  width: 100%;
+  text-align: center;
+  font-size: 10em;
+  height: auto;
+}
+
+
+mat-form-field {
+  width: 300px;
+}
+
+.form-field {
+  width: 40%;
+  padding:10px;
+}
+
+.form-field-mobile {
+  width: 100%;
+  padding:10px;
+}

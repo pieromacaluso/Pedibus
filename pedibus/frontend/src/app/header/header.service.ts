@@ -13,6 +13,7 @@ export class HeaderService {
 
   // Observable string streams
   menuAnnounced$ = this.menuSource.asObservable();
+  private genitori = {icon: 'supervisor_account', link: 'genitore', title: 'Genitore'};
   private presenze = {icon: 'people', link: 'presenze', title: 'Presenze'};
   private schedule = {icon: 'schedule', link: 'disponibilita', title: 'Disponibilità'};
   private notification = {icon: 'notification_important', link: 'notifiche', title: 'Comunicazioni'};
@@ -36,7 +37,7 @@ export class HeaderService {
       } else if (this.auth.getRoles().includes('ROLE_GUIDE')) {
         menu.push(this.presenze, this.schedule, this.notification);
       } else if (this.auth.getRoles().includes('ROLE_USER')) {
-        menu.push(this.presenze, this.notification);
+        menu.push(this.genitori, this.notification);
       }
     } else {
       menu.push(this.signIn, this.signUp);

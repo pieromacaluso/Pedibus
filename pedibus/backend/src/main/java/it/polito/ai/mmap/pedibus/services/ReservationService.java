@@ -78,11 +78,13 @@ public class ReservationService {
      *
      * @param reservationDTO contiene i nuovi dati
      */
-    public void updateReservation(ReservationDTO reservationDTO, ObjectId reservationId) {
+    public ReservationEntity updateReservation(ReservationDTO reservationDTO, ObjectId reservationId) {
         ReservationEntity reservationEntity = getReservationEntityById(reservationId);
         if (isValidReservation(reservationDTO)) {
             reservationEntity.update(reservationDTO);
-            reservationRepository.save(reservationEntity);
+            ReservationEntity res = reservationRepository.save(reservationEntity);
+            reservationDTO.setId(reservationEntity.getId().toString());
+            return res;
         } else {
             throw new IllegalArgumentException("Aggiornamento reservation non valida");
         }
@@ -149,13 +151,23 @@ public class ReservationService {
      * @return
      * @throws Exception
      */
-    public ReservationEntity getChildReservation(Boolean verso, Date data, String cfChild) throws Exception {
+    public ReservationEntity getChildReservation(Boolean verso, Date data, String cfChild) {
         Optional<ReservationEntity> check = reservationRepository.findByCfChildAndDataAndVerso(cfChild, data, verso);
         if (check.isPresent()) {
             return check.get();
         } else {
-            throw new ReservationNotFoundException();
+           throw new ReservationNotFoundException("Reservation non trovata");
         }
+    }
+
+    public List<ReservationDTO> getChildReservationsAR(Date data, String cfChild) {
+        Optional<List<ReservationEntity>> check = reservationRepository.findByCfChildAndData(cfChild, data);
+        List<ReservationDTO> reservationDTOS = new ArrayList<>();
+        List<ReservationEntity> entities = check.orElseGet(ArrayList::new);
+        entities.forEach((element) -> {
+            reservationDTOS.add(new ReservationDTO(element));
+        });
+        return reservationDTOS;
     }
 
     /**

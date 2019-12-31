@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import org.slf4j.Logger;
@@ -54,6 +55,16 @@ public class LineeController {
     @GetMapping("/lines/{id_linea}")
     public LineaDTO getStopsLine(@PathVariable("id_linea") String idLinea) {
         return lineeService.getLineaDTOById(idLinea);
+    }
+
+    /**
+     * Dato l'id di una fermata restituisce un oggetto JSON contenente la fermata
+     * @param idFermata
+     * @return
+     */
+    @GetMapping("/lines/stops/{id_fermata}")
+    public FermataDTO getStopById(@PathVariable("id_fermata") Integer idFermata) {
+        return lineeService.getFermataDTOById(idFermata);
     }
 
 

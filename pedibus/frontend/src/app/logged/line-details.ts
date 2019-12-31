@@ -1,12 +1,3 @@
-// export interface LineReservation {
-//   alunniPerFermataAndata: AlunniPerFermata[];
-//   alunniPerFermataRitorno: AlunniPerFermata[];
-//   arrivoScuola: string;
-//   partenzaScuola: string;
-//   childrenNotReserved: AlunnoNotReserved[];
-//   canModify: boolean;
-// }
-
 export interface LineReservationVerso {
   alunniPerFermata: AlunniPerFermata[];
   orarioScuola: string;
@@ -42,6 +33,8 @@ export interface Fermata {
   id: number;
   nome: string;
   orario: string;
+  idLinea: string;
+  nomeLinea: string;
 }
 
 export interface PrenotazioneRequest {

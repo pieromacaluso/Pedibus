@@ -17,6 +17,8 @@ public class FermataDTO {
     private Integer id;
     private String nome;
     private String orario;
+    private String idLinea;
+    private String nomeLinea;
 
     /**
      * Conversione da Entity a DTO
@@ -27,6 +29,7 @@ public class FermataDTO {
         id = fermataEntity.getId();
         nome = fermataEntity.getName();
         orario = fermataEntity.getOrario();
+        idLinea = fermataEntity.getIdLinea();
     }
 
     @JsonIgnore

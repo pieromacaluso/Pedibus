@@ -1,0 +1,91 @@
+<mat-card ngClass="container" ngClass.lt-md="container-mobile">
+  <mat-card-header class="header-primary"><h1>{{bambino.name}} {{bambino.surname}}</h1>
+  </mat-card-header>
+  <div class="header-child child-data"><h3>Prenotazione di Default</h3></div>
+  <mat-card-content class="child-data" fxLayout="row" fxLayout.lt-sm="column">
+    <div class="column">
+      <b>Andata: </b><i>{{(defaultAndata | async)?.nomeLinea}}
+      - {{(defaultAndata | async)?.nome}} {{(defaultAndata | async)?.orario}}</i>
+    </div>
+    <div class="column">
+      <b>Ritorno: </b><i>{{(defaultRitorno | async)?.nomeLinea}}
+      - {{(defaultRitorno | async)?.nome}} {{(defaultRitorno | async)?.orario}}</i>
+    </div>
+    <div class="button-container">
+      <button mat-fab (click)="showAnagraficaDialog()" color="accent">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  </mat-card-content>
+
+  <mat-card-content class="res-data" fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
+    <div class="column" *ngIf="this.andata && (andataStop|async) as res else noandata">
+      <div class="ar-header">
+        <h3>Andata</h3>
+        <button class="edit-button" mat-icon-button color="accent" (click)="editAndata()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteAndata()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      <div>
+        <div>Linea: {{res.nomeLinea}}</div>
+        <div>Fermata: {{res.nome}}</div>
+        <div>Orario: {{res.orario}}</div>
+      </div>
+
+
+    </div>
+    <div class="column" *ngIf="this.ritorno && (ritornoStop|async) as res else noritorno">
+      <div class="ar-header">
+        <h3>Ritorno</h3>
+        <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteRitorno()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      <div>
+        <div>Linea: {{res.nomeLinea}}</div>
+        <div>Fermata: {{res.nome}}</div>
+        <div>Orario: {{res.orario}}</div>
+      </div>
+
+
+    </div>
+    <ng-template #noandata>
+      <div class="column">
+        <div class="ar-header">
+          <h3>Andata</h3>
+          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <div>Non è presente alcuna prenotazione per l'andata.</div>
+      </div>
+    </ng-template>
+    <ng-template #noritorno>
+      <div class="column">
+        <div class="ar-header">
+          <h3>Ritorno</h3>
+          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <div>Non è presente alcuna prenotazione per il ritorno.</div>
+      </div>
+    </ng-template>
+
+  </mat-card-content>
+
+  <ng-template #closed>
+    <mat-card-content>
+      <div class="column-single">
+        Non è possibile effettuare alcuna prenotazione per la data indicata poichè la scuola sarà chiusa.
+      </div>
+    </mat-card-content>
+  </ng-template>
+
+</mat-card>

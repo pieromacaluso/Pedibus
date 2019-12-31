@@ -3,7 +3,6 @@ import {AuthService} from '../registration/auth.service';
 import {Router} from '@angular/router';
 import {HeaderService, MenuItem} from './header.service';
 import {Observable} from 'rxjs';
-import {NotificheService} from '../logged/notifiche/notifiche.service';
 import {Notifica} from '../logged/notifiche/dtos';
 import {DataShareService} from '../data-share.service';
 

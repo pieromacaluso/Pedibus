@@ -19,16 +19,16 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class MongoTimeService {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     ObjectMapper objectMapper;
-
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Value("${dataInizioScuola}")
     private String dataInzioScuola;
     @Value("${dataFineScuola}")
@@ -36,20 +36,15 @@ public class MongoTimeService {
 
     private List<String> holidayList;
 
-    @PostConstruct
-    public void init() throws IOException {
-        holidayList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/holiday_date.json"), new TypeReference<List<String>>() {
-        });
-    }
-
-
     private static Date parseData(String completeData) {
         ZonedDateTime londonTime = ZonedDateTime.parse(completeData, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS z"));
         return Date.from(londonTime.toInstant());
     }
 
-    public Date getMongoZonedDateTimeFromDate(String date) {
-        return getDateCheckConstraints(date);
+    public static String dateToString(Date date) {
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
     }
 
     public static Date getMongoZonedDateTimeFromTime(String time) {
@@ -66,7 +61,6 @@ public class MongoTimeService {
         return parseData(LocalDateTime.now().withNano(1000000).toString() + " GMT+00:00");
     }
 
-
     public static Date getStartOfToday() {
         return parseData(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(1000000).toString() + " GMT+00:00");
     }
@@ -77,6 +71,16 @@ public class MongoTimeService {
 
     public static boolean isToday(Date data) {
         return data.after(getStartOfToday()) && data.before(getStartOfTomorrow());
+    }
+
+    @PostConstruct
+    public void init() throws IOException {
+        holidayList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/holiday_date.json"), new TypeReference<List<String>>() {
+        });
+    }
+
+    public Date getMongoZonedDateTimeFromDate(String date) {
+        return getDateCheckConstraints(date);
     }
 
     //non mettere dentro getMongoZonedDateTimeFromDate()
@@ -119,7 +123,7 @@ public class MongoTimeService {
     public String getOneValidDate(int shifAmount) {
         for (int i = 2; i < 120; i++) {
             try {
-                return isValidDate(LocalDate.now().plus(i+shifAmount, ChronoUnit.DAYS));
+                return isValidDate(LocalDate.now().plus(i + shifAmount, ChronoUnit.DAYS));
             } catch (IllegalArgumentException ignored) {
             }
         }

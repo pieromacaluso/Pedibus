@@ -1,0 +1,93 @@
+@import '../../../../pedibus-theme';
+
+.container {
+  width: 60%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding: 0 0 10px 0;
+}
+
+.header-primary {
+  background-color: mat-color($pedibus-theme-primary);
+
+}
+
+.child-data {
+  background-color: mat-color($pedibus-theme-primary) !important;
+  color: white !important;
+  position: inherit;
+}
+
+.container-mobile {
+  width: 85%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding: 0 0 10px 0;
+}
+
+.button-container {
+  bottom: -25px;
+  right: 0;
+  float: right;
+  position: absolute;
+}
+
+.button-container button {
+  margin: 0 16px;
+
+}
+
+mat-card-header {
+  color: white;
+}
+
+mat-card-content {
+  display: flex;
+  margin-bottom: 0;
+}
+
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bolder;
+  color: white;
+}
+
+h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bolder;
+  margin: 0;
+}
+
+.edit-button {
+  color: white;
+}
+
+.column{
+  width: 50%;
+  padding: 10px 32px;
+}
+.column-single {
+  width: 100%;
+  padding: 10px 32px;
+}
+
+.header-child {
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+}
+
+.ar-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ar-header button.edit-button {
+  color: mat-color($pedibus-theme-primary);
+}
+
+.ar-header button.add-button {
+  color: mat-color($pedibus-theme-accent);
+}

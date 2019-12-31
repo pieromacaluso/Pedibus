@@ -31,8 +31,8 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   private changeTurno = new Subject<TurnoResource>();
 
   linea: StopsByLine;
-  private turno: TurnoResource;
-  private listDisp: MapDisp;
+  turno: TurnoResource;
+  listDisp: MapDisp;
   selectedDisp: any;
   cross: any = '../assets/svg/cross.svg';
   tick: any = '../assets/svg/tick.svg';
