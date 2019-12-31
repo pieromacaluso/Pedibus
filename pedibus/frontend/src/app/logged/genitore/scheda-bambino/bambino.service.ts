@@ -22,8 +22,8 @@ export class BambinoService {
     return this.apiService.getFermata(idFermata);
   }
 
-  updateFermate(data: ChildrenDTO): Observable<any> {
-    return this.apiService.updateFermate(data);
+  updateFermate(data: ChildrenDTO, date: Date): Observable<any> {
+    return this.apiService.updateFermate(data, date);
   }
 
   getStatus(bambino: ChildrenDTO, data: Date): Observable<ReservationDTO[]> {
@@ -70,6 +70,10 @@ export class BambinoService {
       verso: verso ? 1 : 0
     };
     return this.apiService.updatePrenotazione(linea, data, prenotazione, id);
+  }
+
+  deleteReservation(linea: string, data: Date, id: string) {
+    return this.apiService.deletePrenotazione(linea, data, id);
   }
 
 }

@@ -56,7 +56,6 @@ h1 {
 h3 {
   font-family: 'Montserrat', sans-serif;
   font-weight: bolder;
-
   margin: 0;
 }
 
@@ -77,4 +76,18 @@ h3 {
   display: flex;
   align-items: center;
   padding: 0 32px;
+}
+
+.ar-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ar-header button.edit-button {
+  color: mat-color($pedibus-theme-primary);
+}
+
+.ar-header button.add-button {
+  color: mat-color($pedibus-theme-accent);
 }

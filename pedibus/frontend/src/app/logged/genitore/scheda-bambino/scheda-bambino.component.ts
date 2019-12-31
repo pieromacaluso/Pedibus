@@ -69,6 +69,15 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
         this.bambinoRes = this.bambinoService.watchChildReservation(this.bambino.codiceFiscale, this.request.data).subscribe(
           (message) => {
             const reservation: ReservationDTO = JSON.parse(message.body);
+            if (reservation.idFermata === null) {
+              if (reservation.verso) {
+                this.andata = null;
+              } else {
+                this.ritorno = null;
+
+              }
+              return;
+            }
             if (reservation.verso) {
               this.andata = reservation;
               this.andataStop = this.bambinoService.getFermata(this.andata.idFermata);
@@ -93,7 +102,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
         // this.bambino = data.data.child;
         // this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
         // this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
-        this.bambinoService.updateFermate(data.data.child).subscribe((d) => console.log(d), (error) => console.log(error));
+        this.bambinoService.updateFermate(data.data.child, this.request.data).subscribe((d) => console.log(d), (error) => console.log(error));
       }
     });
   }
@@ -144,5 +153,15 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
             .subscribe((d) => console.log(d), (error) => console.log(error));
         }
       });
+  }
+
+  deleteAndata() {
+    this.bambinoService.deleteReservation(this.andata.idLinea, this.request.data, this.andata.id)
+      .subscribe((d) => console.log(d), (error) => console.log(error));
+  }
+
+  deleteRitorno() {
+    this.bambinoService.deleteReservation(this.ritorno.idLinea, this.request.data, this.ritorno.id)
+      .subscribe((d) => console.log(d), (error) => console.log(error));
   }
 }

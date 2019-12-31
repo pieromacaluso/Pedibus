@@ -49,9 +49,14 @@ export class ApiService {
   /**
    * Aggiorna le fermate di default di un bambino
    * @param bambino oggetto corrispondente a ChildDefaultStopResource su backend
+   * @param date data da cui aggiornare le prenotazione
    */
-  updateFermate(bambino: ChildrenDTO): Observable<any> {
-    const body = {idFermataAndata: bambino.idFermataAndata, idFermataRitorno: bambino.idFermataRitorno};
+  updateFermate(bambino: ChildrenDTO, date: Date): Observable<any> {
+    const body = {
+      idFermataAndata: bambino.idFermataAndata,
+      idFermataRitorno: bambino.idFermataRitorno,
+      data: this.datePipe.transform(date, 'yyyy-MM-dd')
+    };
     return this.httpClient.put<any>(this.baseURL + 'children/stops/' + bambino.codiceFiscale, body);
   }
 
@@ -126,6 +131,12 @@ export class ApiService {
     return this.httpClient
       .put(this.baseURL + 'reservations/' + linea + '/' + this.datePipe
         .transform(data, 'yyyy-MM-dd') + '/' + id, prenotazione);
+  }
+
+  deletePrenotazione(linea: string, data: Date, id: string) {
+    return this.httpClient
+      .delete(this.baseURL + 'reservations/' + linea + '/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd') + '/' + id);
   }
 
   /**

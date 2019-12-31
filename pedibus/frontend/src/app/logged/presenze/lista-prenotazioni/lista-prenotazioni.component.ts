@@ -87,6 +87,22 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       tap(() => this.loading = false)
     ).subscribe(message => {
       const res = JSON.parse(message.body);
+      // Se idFermata è null, si tratta di una cancellazione
+      if (res.idFermata === null) {
+        let searchAlunno;
+        for (const fe of this.resource.alunniPerFermata) {
+          searchAlunno = fe.alunni.find(a => a.codiceFiscale === res.cfChild);
+          if (searchAlunno) {
+            const index: number = fe.alunni.indexOf(searchAlunno);
+            if (index !== -1) {
+              fe.alunni.splice(index, 1);
+            }
+            break;
+          }
+        }
+        this.resource.childrenNotReserved.push(searchAlunno);
+        return;
+      }
       const oldAlunno = this.resource.childrenNotReserved.find(a => a.codiceFiscale === res.cfChild);
       let newAlunno: Alunno;
       if (!oldAlunno) {
@@ -109,7 +125,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
             break;
           }
         }
-
       } else {
         newAlunno = {
           codiceFiscale: oldAlunno.codiceFiscale,

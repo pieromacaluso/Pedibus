@@ -20,36 +20,61 @@
 
   <mat-card-content class="res-data" fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
     <div class="column" *ngIf="this.andata && (andataStop|async) as res else noandata">
-      <h3>Andata</h3>
+      <div class="ar-header">
+        <h3>Andata</h3>
+        <button class="edit-button" mat-icon-button color="accent" (click)="editAndata()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteAndata()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
       <div>
         <div>Linea: {{res.nomeLinea}}</div>
         <div>Fermata: {{res.nome}}</div>
         <div>Orario: {{res.orario}}</div>
       </div>
-      <button mat-raised-button color="primary" (click)="editAndata()">Modifica Andata</button>
+
+
     </div>
     <div class="column" *ngIf="this.ritorno && (ritornoStop|async) as res else noritorno">
-      <h3>Ritorno</h3>
+      <div class="ar-header">
+        <h3>Ritorno</h3>
+        <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteRitorno()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
       <div>
         <div>Linea: {{res.nomeLinea}}</div>
         <div>Fermata: {{res.nome}}</div>
         <div>Orario: {{res.orario}}</div>
       </div>
-      <button mat-raised-button color="primary" (click)="editRitorno()">Modifica Ritorno</button>
+
 
     </div>
     <ng-template #noandata>
       <div class="column">
-        <h3>Andata</h3>
+        <div class="ar-header">
+          <h3>Andata</h3>
+          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
         <div>Non è presente alcuna prenotazione per l'andata.</div>
-        <button mat-raised-button color="accent" (click)="addAndata()">Aggiungi Andata</button>
       </div>
     </ng-template>
     <ng-template #noritorno>
       <div class="column">
-        <h3>Ritorno</h3>
+        <div class="ar-header">
+          <h3>Ritorno</h3>
+          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
         <div>Non è presente alcuna prenotazione per il ritorno.</div>
-        <button mat-raised-button color="accent" (click)="addRitorno()">Aggiungi Ritorno</button>
       </div>
     </ng-template>
 
