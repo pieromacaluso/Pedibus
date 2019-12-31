@@ -2,7 +2,6 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
@@ -189,7 +188,17 @@ public class ReservationController {
     public void deleteReservation(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         logger.info("Eliminazione reservation" + reservationId);
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data);
+        ReservationDTO reservationDTO = reservationService.getReservationCheck(idLinea, dataFormatted, reservationId);
+        ReservationResource reservationResource = ReservationResource.builder()
+                .cfChild(reservationDTO.getCfChild())
+                .idFermata(null)
+                .verso(reservationDTO.getVerso()).build();
+
+        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
         reservationService.deleteReservation(idLinea, dataFormatted, reservationId);
+        reservationDTO.setIdFermata(null);
+        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationDTO.getVerso()) ? 1 : 0), reservationResource);
+        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
     }
 
     /**

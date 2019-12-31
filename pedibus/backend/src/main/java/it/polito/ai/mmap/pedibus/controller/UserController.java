@@ -66,8 +66,8 @@ public class UserController {
     @PutMapping("/children/stops/{cfChild}")
     public void updateChildStop(@PathVariable("cfChild") String cfChild, @RequestBody ChildDefaultStopResource stopRes) {
         logger.info("PUT /children/stops/" + cfChild + " è stato contattato");
-
-        childService.updateChildStop(cfChild, stopRes);
+        Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(stopRes.getData());
+        childService.updateChildStop(cfChild, stopRes, dataFormatted);
     }
 
 

@@ -1,10 +1,13 @@
 package it.polito.ai.mmap.pedibus.services;
 
 
-import it.polito.ai.mmap.pedibus.entity.*;
-import it.polito.ai.mmap.pedibus.exception.*;
+import it.polito.ai.mmap.pedibus.entity.ChildEntity;
+import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
+import it.polito.ai.mmap.pedibus.entity.UserEntity;
+import it.polito.ai.mmap.pedibus.exception.ChildNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
-import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
+import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,21 +17,26 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ChildService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
     UserService userService;
     @Autowired
+    MongoTimeService mongoTimeService;
+    @Autowired
     ChildRepository childRepository;
     @Autowired
     LineeService lineeService;
+    @Autowired
+    ReservationService reservationService;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -60,8 +68,9 @@ public class ChildService {
      *
      * @param cfChild
      * @param stopRes
+     * @param date
      */
-    public void updateChildStop(String cfChild, ChildDefaultStopResource stopRes) {
+    public void updateChildStop(String cfChild, ChildDefaultStopResource stopRes, Date date) {
         Optional<ChildEntity> c = childRepository.findById(cfChild);
         if (c.isPresent()) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -74,8 +83,38 @@ public class ChildService {
                 childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
 
                 childRepository.save(childEntity);
+                // Remove one day
+                LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).minusDays(1);
+                Date out = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
                 this.simpMessagingTemplate.convertAndSendToUser(userService.getUserEntity(childEntity.getIdParent()).getUsername(), "/child/" + childEntity.getCodiceFiscale(), childEntity);
+                Optional<List<ReservationEntity>> toBeUpdatedCheck = reservationService.reservationRepository.findByCfChildAndDataIsAfter(cfChild, out);
+                List<ReservationEntity> toBeUpdated = toBeUpdatedCheck.orElseGet(ArrayList::new);
+                for (ReservationEntity res : toBeUpdated) {
+                    ReservationDTO reservationDTO = new ReservationDTO(res);
 
+                    ReservationDTO oldreservationDTO = new ReservationDTO(res);
+                    oldreservationDTO.setIdFermata(null);
+
+                    ReservationEntity oldRes = new ReservationEntity();
+                    oldRes.setCfChild(reservationDTO.getCfChild());
+                    oldRes.setIdFermata(null);
+
+                    Integer fermata = reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno();
+                    String linea = lineeService.getFermataEntityById(reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno()).getIdLinea();
+
+                    reservationDTO.setIdFermata(fermata);
+                    reservationDTO.setIdLinea(linea);
+                    res = reservationService.updateReservation(reservationDTO, res.getId());
+                    UserEntity parent = this.getChildParent(reservationDTO.getCfChild());
+
+                    //Vecchia prenotazione (Eliminazione)
+                    simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(oldreservationDTO.getData()) + "/" + oldreservationDTO.getIdLinea() + "/" + ((oldreservationDTO.getVerso()) ? 1 : 0), oldRes);
+                    simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + oldreservationDTO.getCfChild() + "/" + MongoTimeService.dateToString(oldreservationDTO.getData()), oldreservationDTO);
+
+                    //Nuova prenotazione (Aggiunta)
+                    simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(reservationDTO.getData()) + "/" + reservationDTO.getIdLinea() + "/" + ((reservationDTO.getVerso()) ? 1 : 0), res);
+                    simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationDTO.getCfChild() + "/" + MongoTimeService.dateToString(reservationDTO.getData()), reservationDTO);
+                }
             } else
                 throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
         } else

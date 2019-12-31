@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ChildDefaultStopResource {
     private Integer idFermataAndata;
     private Integer idFermataRitorno;
+    private String data;
 }

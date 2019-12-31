@@ -78,12 +78,13 @@ public class ReservationService {
      *
      * @param reservationDTO contiene i nuovi dati
      */
-    public void updateReservation(ReservationDTO reservationDTO, ObjectId reservationId) {
+    public ReservationEntity updateReservation(ReservationDTO reservationDTO, ObjectId reservationId) {
         ReservationEntity reservationEntity = getReservationEntityById(reservationId);
         if (isValidReservation(reservationDTO)) {
             reservationEntity.update(reservationDTO);
-            reservationRepository.save(reservationEntity);
+            ReservationEntity res = reservationRepository.save(reservationEntity);
             reservationDTO.setId(reservationEntity.getId().toString());
+            return res;
         } else {
             throw new IllegalArgumentException("Aggiornamento reservation non valida");
         }
