@@ -1,9 +1,11 @@
-<h1 mat-dialog-title>{{this.data.aggiunta ? "Aggiungi" : "Modifica" }} Prenotazione</h1>
+<h1 mat-dialog-title>{{this.data.aggiunta ? "Aggiungi" : "Modifica" }} Prenotazione {{this.data.bambino.name}} {{this.data.bambino.surname}}</h1>
 <form [formGroup]="prenotazioneForm" (ngSubmit)="submit()" *ngIf="this.loading == 0">
   <div>
+    <p class="mat-h2 dialog-theme">{{this.data.andata ? "Andata" : "Ritorno" }} del {{this.data.data | date}}</p>
+    <app-stops-map *ngIf="this.selectedLine" [center]="this.selectedStop ? this.selectedStop.location : null" [stops]="this.stopsLocation" [description]="this.stopsDescription" (changeStop)="selectStopIndex($event)"></app-stops-map>
+
     <div mat-dialog-content class="dialog-theme">
       <!-- FORM CONTENT HERE... -->
-      <p class="mat-h2" >Stai aggiungendo una prenotazione di {{this.data.andata ? "andata" : "ritorno" }} per {{this.data.bambino.name}} {{this.data.bambino.surname}} in data {{this.data.data | date}}</p>
       <mat-form-field style="padding: 5px;">
         <mat-label>Linea:</mat-label>
         <mat-select formControlName="lineSelect"

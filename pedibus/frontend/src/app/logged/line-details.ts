@@ -1,3 +1,5 @@
+import {GeoJSON, Point} from 'geojson';
+
 export interface LineReservationVerso {
   alunniPerFermata: AlunniPerFermata[];
   orarioScuola: string;
@@ -35,6 +37,7 @@ export interface Fermata {
   orario: string;
   idLinea: string;
   nomeLinea: string;
+  location: Point;
 }
 
 export interface PrenotazioneRequest {

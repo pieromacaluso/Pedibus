@@ -1,0 +1,8 @@
+<agm-map  [latitude]="lat" [longitude]="lng" [zoom]="15" [streetViewControl]="false">
+
+  <agm-marker [latitude]="lat" [longitude]="lng">
+    <agm-info-window [isOpen]="true" [disableAutoPan]="true">
+      {{description}}
+    </agm-info-window>
+  </agm-marker>
+</agm-map>

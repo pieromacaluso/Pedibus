@@ -19,22 +19,24 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import {RouterModule} from '@angular/router';
 import { RecoverComponent } from './recover/recover.component';
 import { ConfirmComponent } from './confirm/confirm.component';
+import {AgmCoreModule} from '@agm/core';
 
 @NgModule({
   declarations: [SignUpComponent, SignInComponent, ForgotPasswordComponent, RecoverComponent, ConfirmComponent],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    FormsModule,
-    MatInputModule,
-    MatCardModule,
-    FlexLayoutModule,
-    MatCheckboxModule,
-    RouterModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    ReactiveFormsModule
-  ]
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        FormsModule,
+        MatInputModule,
+        MatCardModule,
+        FlexLayoutModule,
+        MatCheckboxModule,
+        RouterModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        ReactiveFormsModule,
+        AgmCoreModule
+    ]
 })
 export class RegistrationModule { }

@@ -1,0 +1,16 @@
+<agm-map [streetViewControl]="false" [fitBounds]="true" [clickableIcons]="false">
+
+  <ng-container *ngFor="let stop of this.stops; let i=index">
+    <agm-marker *ngIf="stop != this.center" [agmFitBounds]="true" [iconUrl]="this.markerBlue"
+                [title]="this.description[i]"
+                [latitude]="stop.coordinates[0]" [longitude]="stop.coordinates[1]" (markerClick)="changeStop.emit(i)">
+    </agm-marker>
+    <agm-marker *ngIf="stop == this.center" [agmFitBounds]="true" [iconUrl]="this.markerGreen" animation="BOUNCE"
+                [latitude]="stop.coordinates[0]" [longitude]="stop.coordinates[1]" [title]="this.description[i]" (markerClick)="changeStop.emit(i)">
+    </agm-marker>
+  </ng-container>
+  <agm-polyline [strokeColor]="'blue'">
+    <agm-polyline-point *ngFor="let stop of this.stops; let i = index" [latitude]="stop.coordinates[0]"
+                        [longitude]="stop.coordinates[1]"></agm-polyline-point>
+  </agm-polyline>
+</agm-map>

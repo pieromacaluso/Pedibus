@@ -5,6 +5,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {ChildrenDTO, ReservationDTO} from '../dtos';
 import {Observable} from 'rxjs';
 import {Fermata, PrenotazioneRequest, StopsByLine} from '../../line-details';
+import {Point} from 'geojson';
 
 
 export interface PrenotazioneDialogData {
@@ -33,6 +34,8 @@ export class DialogPrenotazioneComponent implements OnInit {
   private stops: Fermata[];
   private selectedStop: Fermata;
   private selectedLine: string;
+  private stopsLocation: Point[] = [];
+  private stopsDescription: string[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<DialogPrenotazioneComponent>,
@@ -72,8 +75,24 @@ export class DialogPrenotazioneComponent implements OnInit {
   }
 
   changeFermate(value: any) {
+    const sameLine = this.selectedLine === value;
     this.selectedLine = value;
-    this.stops = this.data.andata ? this.lineData.get(value).andata : this.lineData.get(value).ritorno;
+    if (!sameLine) {
+      this.stops = this.data.andata ? this.lineData.get(value).andata : this.lineData.get(value).ritorno;
+      this.stopsLocation = [];
+      this.stopsDescription = [];
+      for (const s of this.stops) {
+        this.stopsLocation.push(s.location);
+        this.stopsDescription.push(s.nome);
+      }
+    }
+  }
+
+  selectStopIndex(value: any) {
+    this.selectedStop = this.stops[value];
+    this.prenotazioneForm.patchValue({
+      stopSelect: this.selectedStop.id
+    });
   }
 
   selectStop(value: any) {

@@ -1,6 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
+import { AgmCoreModule } from '@agm/core';
 
 import {AppComponent} from './app.component';
 import {
@@ -29,10 +30,13 @@ import {LoggedModule} from './logged/logged.module';
   declarations: [
     AppComponent,
     PageNotFoundComponent,
-    HeaderComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyBMo_rSgOdamFX_yHIbnmd24A-U7D7f2-0'
+    }),
     BrowserAnimationsModule,
     MatTabsModule,
     AppRoutingModule,
@@ -43,7 +47,6 @@ import {LoggedModule} from './logged/logged.module';
     FlexLayoutModule,
     MatButtonModule,
     MatSnackBarModule,
-    LoggedModule,
     MatCardModule
   ],
   providers: [DatePipe,

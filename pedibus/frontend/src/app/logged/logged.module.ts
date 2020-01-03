@@ -30,6 +30,10 @@ import { GenitoreComponent } from './genitore/genitore.component';
 import { SchedaBambinoComponent } from './genitore/scheda-bambino/scheda-bambino.component';
 import { DialogAnagraficaComponent } from './genitore/dialog-anagrafica/dialog-anagrafica.component';
 import { DialogPrenotazioneComponent } from './genitore/dialog-prenotazione/dialog-prenotazione.component';
+import {AgmCoreModule} from '@agm/core';
+import {StopMapComponent} from './common/stop-map/stop-map.component';
+import {StopsMapComponent} from './common/stops-map/stops-map.component';
+
 
 @NgModule({
   declarations: [
@@ -50,7 +54,10 @@ import { DialogPrenotazioneComponent } from './genitore/dialog-prenotazione/dial
     GenitoreComponent,
     SchedaBambinoComponent,
     DialogAnagraficaComponent,
-    DialogPrenotazioneComponent],
+    DialogPrenotazioneComponent,
+    StopMapComponent,
+    StopsMapComponent
+  ],
   imports: [
     CommonModule,
     MatIconModule,
@@ -69,7 +76,8 @@ import { DialogPrenotazioneComponent } from './genitore/dialog-prenotazione/dial
     MatProgressSpinnerModule,
     MatRadioModule,
     MatSlideToggleModule,
-    MatListModule
+    MatListModule,
+    AgmCoreModule
   ],
   exports: [],
   entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent]
