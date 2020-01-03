@@ -1,4 +1,4 @@
-<agm-map [streetViewControl]="false" [fitBounds]="true" [clickableIcons]="false">
+<agm-map ngClass.lt-sm="map-small"  [streetViewControl]="false" [fitBounds]="true" [clickableIcons]="false">
 
   <ng-container *ngFor="let stop of this.stops; let i=index">
     <agm-marker *ngIf="stop != this.center" [agmFitBounds]="true" [iconUrl]="this.markerBlue"

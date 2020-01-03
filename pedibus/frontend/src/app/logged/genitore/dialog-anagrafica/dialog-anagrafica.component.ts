@@ -7,6 +7,7 @@ import {Fermata, StopsByLine} from '../../line-details';
 import {BambinoService} from '../scheda-bambino/bambino.service';
 import {forkJoin, Observable} from 'rxjs';
 import {finalize, first, tap} from 'rxjs/operators';
+import {Point} from 'geojson';
 
 export interface AnagraficaDialogData {
   child: ChildrenDTO;
@@ -27,14 +28,20 @@ export class DialogAnagraficaComponent implements OnInit {
   ritorno: Fermata[] = [];
   selectedAndata: Fermata;
   selectedRitorno: Fermata;
+  private stopsLocationA: Point[] = [];
+  private stopsDescriptionA: string[] = [];
+  private stopsLocationR: Point[];
+  private stopsDescriptionR: string[];
 
   anagraficaForm = this.fb.group({
     andataSelect: ['', [Validators.required]],
     ritornoSelect: ['', [Validators.required]],
-    andataFermataSelect: ['', [Validators.required]],
-    ritornoFermataSelect: ['', [Validators.required]],
+    andataFermataSelect: [{value: '', disabled: true}, [Validators.required]],
+    ritornoFermataSelect: [{value: '', disabled: true}, [Validators.required]],
   });
   private loading = 0;
+  private selectedLineaAndata: any;
+  private selectedLineaRitorno: any;
 
   constructor(
     public dialogRef: MatDialogRef<DialogAnagraficaComponent>,
@@ -50,38 +57,58 @@ export class DialogAnagraficaComponent implements OnInit {
     this.data.linee.forEach((value, index) => {
       lines$.push(this.apiService.getStopsByLine(value).pipe(first()));
     });
-    forkJoin(lines$).subscribe((result: StopsByLine[]) => {
-      result.forEach((value, index) => {
-        this.lineData.set(value.id, value);
-      });
+    forkJoin(lines$).pipe(finalize(() => {
       this.data.defaultAndata.subscribe((res) => {
+        this.changeFermateAndata(res.idLinea);
+        this.selectAndata(res.id);
         this.anagraficaForm.patchValue({
           andataSelect: res.idLinea,
           andataFermataSelect: res.id
         });
-        this.changeFermateAndata(res.idLinea);
-        this.selectAndata(res.id);
       });
       this.data.defaultRitorno.subscribe((res) => {
+        this.changeFermateRitorno(res.idLinea);
+        this.selectRitorno(res.id);
         this.anagraficaForm.patchValue({
           ritornoSelect: res.idLinea,
           ritornoFermataSelect: res.id
         });
-        this.changeFermateRitorno(res.idLinea);
-        this.selectRitorno(res.id);
       });
+    })).subscribe((result: StopsByLine[]) => {
+      result.forEach((value, index) => {
+        this.lineData.set(value.id, value);
+      });
+
     });
   }
 
   changeFermateAndata(emit: any) {
-    const linea = emit;
-    this.andata = this.lineData.get(linea).andata;
+    const sameLine = this.selectedLineaAndata === emit;
+    this.selectedLineaAndata = emit;
+    if (!sameLine) {
+      this.andata = this.lineData.get(this.selectedLineaAndata).andata;
+      this.stopsLocationA = [];
+      this.stopsDescriptionA = [];
+      for (const s of this.andata) {
+        this.stopsLocationA.push(s.location);
+        this.stopsDescriptionA.push(s.nome);
+      }
+    }
+
   }
 
   changeFermateRitorno(emit: any) {
-    const linea = emit;
-    this.ritorno = this.lineData.get(linea).ritorno;
-
+    const sameLine = this.selectedLineaRitorno === emit;
+    this.selectedLineaRitorno = emit;
+    if (!sameLine) {
+      this.ritorno = this.lineData.get(this.selectedLineaRitorno).ritorno;
+      this.stopsLocationR = [];
+      this.stopsDescriptionR = [];
+      for (const s of this.ritorno) {
+        this.stopsLocationR.push(s.location);
+        this.stopsDescriptionR.push(s.nome);
+      }
+    }
   }
 
   selectAndata(emit: any) {
@@ -92,6 +119,20 @@ export class DialogAnagraficaComponent implements OnInit {
   selectRitorno(emit: any) {
     const fermata = emit;
     this.selectedRitorno = this.ritorno.find((el) => el.id === fermata);
+  }
+
+  selectAndataIndex(emit: any) {
+    this.selectedAndata = this.andata[emit];
+    this.anagraficaForm.patchValue({
+      andataFermataSelect: this.selectedAndata.id
+    });
+  }
+
+  selectRitornoIndex(emit: any) {
+    this.selectedRitorno = this.ritorno[emit];
+    this.anagraficaForm.patchValue({
+      ritornoFermataSelect: this.selectedRitorno.id
+    });
   }
 
   cancel() {
