@@ -79,15 +79,15 @@ public class MongoTimeService {
         });
     }
 
-    public Date getMongoZonedDateTimeFromDate(String date) {
-        return getDateCheckConstraints(date);
+    public Date getMongoZonedDateTimeFromDate(String date, boolean checkValidity) {
+        return getDateCheckConstraints(date, checkValidity);
     }
 
     //non mettere dentro getMongoZonedDateTimeFromDate()
     //Se si cambia tipo di eccezione bisogna cambiare un paio di catch
-    public Date getDateCheckConstraints(String date) {
+    public Date getDateCheckConstraints(String date, boolean checkValidity) {
         // holiday
-        if (holidayList.contains(date))
+        if (holidayList.contains(date) && checkValidity)
             throw new SchoolClosedException("Holiday");
 
         // weekend
@@ -95,13 +95,13 @@ public class MongoTimeService {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(result);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        if (dayOfWeek == 7 || dayOfWeek == 1)
+        if ((dayOfWeek == 7 || dayOfWeek == 1) && checkValidity)
             throw new SchoolClosedException("Weekend");
 
         // school closed
         Date schoolStart = parseData(dataInzioScuola + "T" + LocalTime.now().withHour(0).withMinute(30).withSecond(30).withNano(500000000).toString() + " GMT+00:00");
         Date schoolEnd = parseData(dataFineScuola + "T" + LocalTime.now().withHour(23).withMinute(30).withSecond(30).withNano(500000000).toString() + " GMT+00:00");
-        if (result.before(schoolStart) || result.after(schoolEnd)) {
+        if ((result.before(schoolStart) || result.after(schoolEnd)) && checkValidity) {
             throw new SchoolClosedException("School closed");
         }
         return result;
@@ -115,7 +115,7 @@ public class MongoTimeService {
         String month = Integer.toString(date.getMonth().getValue());
         if (month.length() == 1)
             month = "0" + month;
-        getDateCheckConstraints(date.getYear() + "-" + month + "-" + day);
+        getDateCheckConstraints(date.getYear() + "-" + month + "-" + day, true);
         return date.getYear() + "-" + month + "-" + day;
     }
 

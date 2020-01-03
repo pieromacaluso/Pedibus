@@ -45,7 +45,7 @@ public class NotificaDTO {
 
         @Override
         public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            return mongoTimeService.getMongoZonedDateTimeFromDate(jsonParser.getText());
+            return mongoTimeService.getMongoZonedDateTimeFromDate(jsonParser.getText(), true);
         }
 
         public CustomDateDeserializer(Class<?> vc) {

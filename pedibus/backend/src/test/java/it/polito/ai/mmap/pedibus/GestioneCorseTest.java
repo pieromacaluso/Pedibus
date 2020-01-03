@@ -118,7 +118,7 @@ public class GestioneCorseTest {
         // necessario per trovare un turno che sia valido (vacanza,weekend ecc)
         daysDef = mongoTimeService.getOneValidDate(0);
         lineaDef = lineaRepository.findAll().get(0);
-        Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef), versoDef);
+        Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef, true), versoDef);
         if (checkTurno.isPresent())
             isDefTurnoOpen = checkTurno.get().getIsOpen();
         else
@@ -161,7 +161,7 @@ public class GestioneCorseTest {
 
     @After
     public void tearDownMethod() {
-        TurnoEntity turno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef), versoDef).get();
+        TurnoEntity turno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef, true), versoDef).get();
         turno.setIsOpen(isDefTurnoOpen);
         turnoRepository.save(turno);
 

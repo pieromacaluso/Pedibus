@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 //TODO implementare la sicurezza degli endpoint
 
@@ -33,7 +32,7 @@ public class GestioneCorseController {
      */
     @GetMapping("/disp/{verso}/{data}")
     public DispTurnoResource getDisp(@PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-            return gestioneCorseService.getDispTurnoResource(mongoTimeService.getMongoZonedDateTimeFromDate(data), verso);
+            return gestioneCorseService.getDispTurnoResource(mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso);
     }
 
     /**
@@ -41,7 +40,7 @@ public class GestioneCorseController {
      */
     @PostMapping("/disp/{idLinea}/{verso}/{data}")
     public DispAllResource addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
-        DispTurnoResource dispTurnoResource = gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso)));
+        DispTurnoResource dispTurnoResource = gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso)));
         simpMessagingTemplate.convertAndSend("/dispws-add/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource.getDisp());
         simpMessagingTemplate.convertAndSendToUser(dispTurnoResource.getDisp().getGuideUsername(), "/dispws/" + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource);
         return dispTurnoResource.getDisp();
@@ -65,7 +64,7 @@ public class GestioneCorseController {
      */
     @DeleteMapping("/disp/{idLinea}/{verso}/{data}")
     public void deleteDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        DispAllResource deleted = gestioneCorseService.deleteDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso));
+        DispAllResource deleted = gestioneCorseService.deleteDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso));
         simpMessagingTemplate.convertAndSend("/dispws/" + deleted.getGuideUsername() + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
         simpMessagingTemplate.convertAndSendToUser(deleted.getGuideUsername(), "/dispws/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
         simpMessagingTemplate.convertAndSend("/dispws-del/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), deleted);
@@ -80,7 +79,7 @@ public class GestioneCorseController {
      */
     @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
     public TurnoResource getTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
-        return gestioneCorseService.getTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso));
+        return gestioneCorseService.getTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso));
     }
 
     /**
@@ -93,7 +92,7 @@ public class GestioneCorseController {
      */
     @PutMapping("/turno/state/{idLinea}/{verso}/{data}")
     public void setTurnoState(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Boolean isOpen) {
-        TurnoEntity turno = gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso), isOpen);
+        TurnoEntity turno = gestioneCorseService.setTurnoState(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso), isOpen);
         TurnoResource tr = new TurnoResource(turno);
         simpMessagingTemplate.convertAndSend("/turnows/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), tr);
     }
@@ -109,7 +108,7 @@ public class GestioneCorseController {
      */
     @GetMapping("/turno/disp/{idLinea}/{verso}/{data}")
     public TurnoDispResource getAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) throws Exception {
-        return gestioneCorseService.getAllTurnoDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso));
+        return gestioneCorseService.getAllTurnoDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso));
     }
 
     /**
@@ -123,7 +122,7 @@ public class GestioneCorseController {
      */
     @PostMapping("/turno/disp/{idLinea}/{verso}/{data}")
     public void setAllTurnoDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody DispAllResource dispResource) throws Exception {
-        gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso), dispResource);
+        gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso), dispResource);
         DispStateResource state = new DispStateResource(dispResource);
         simpMessagingTemplate.convertAndSendToUser(dispResource.getGuideUsername(), "/dispws-status/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
         simpMessagingTemplate.convertAndSend("/dispws-status/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispResource);
@@ -138,7 +137,7 @@ public class GestioneCorseController {
      */
     @PostMapping("/turno/disp/ack/{idLinea}/{verso}/{data}")
     public void ackDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
-        DispAllResource d = gestioneCorseService.ackDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data), verso));
+        DispAllResource d = gestioneCorseService.ackDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso));
         DispStateResource state = new DispStateResource(d);
         simpMessagingTemplate.convertAndSendToUser(d.getGuideUsername(), "/dispws-status/" + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
         simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), d);

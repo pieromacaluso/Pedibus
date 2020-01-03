@@ -256,7 +256,7 @@ public class DataCreationService {
                     //andata
                     reservationEntity = new ReservationEntity();
                     reservationEntity.setCfChild(childEntity.getCodiceFiscale());
-                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked));
+                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked, true));
                     reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea());
                     reservationEntity.setVerso(true);
                     reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
@@ -268,7 +268,7 @@ public class DataCreationService {
                     //ritorno
                     reservationEntity = new ReservationEntity();
                     reservationEntity.setCfChild(childEntity.getCodiceFiscale());
-                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked.toString()));
+                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked.toString(), true));
                     reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataRitorno()).getIdLinea());
                     reservationEntity.setVerso(false);
                     reservationEntity.setIdFermata(childEntity.getIdFermataRitorno());
