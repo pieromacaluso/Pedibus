@@ -4,37 +4,37 @@
   "andata": [
     {
       "id": 101,
-      "nome": "Olimpico",
+      "nome": "Palagiustizia",
       "orario": "07:20",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [ 45.069299, 7.660402 ],
         "type": "Point"
       }
     },
     {
       "id": 102,
-      "nome": "Caserma Morelli",
+      "nome": "Inghilterra",
       "orario": "07:30",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [ 45.068643, 7.662228 ],
         "type": "Point"
       }
     },
     {
       "id": 103,
-      "nome": "Orbassano",
+      "nome": "Vinzaglio",
       "orario": "07:40",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [ 45.067500, 7.665387 ],
         "type": "Point"
       }
     },
     {
       "id": 104,
-      "nome": "Rivotti",
+      "nome": "Stati Uniti",
       "orario": "08:00",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [ 45.065289, 7.664628 ],
         "type": "Point"
       }
     }
@@ -42,37 +42,37 @@
   "ritorno": [
     {
       "id": 105,
-      "nome": "Rivotti",
+      "nome": "Stati Uniti",
       "orario": "13:10",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [ 45.065289, 7.664628 ],
         "type": "Point"
       }
     },
     {
       "id": 106,
-      "nome": "Orbassano",
+      "nome": "Vinzaglio",
       "orario": "13:30",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [ 45.067500, 7.665387 ],
         "type": "Point"
       }
     },
     {
       "id": 107,
-      "nome": "Caserma Morelli",
+      "nome": "Inghilterra",
       "orario": "13:45",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [45.068643, 7.662228],
         "type": "Point"
       }
     },
     {
       "id": 108,
-      "nome": "Olimpico",
+      "nome": "Palagiustizia",
       "orario": "14:00",
       "location": {
-        "coordinates": [45.06056, 7.6611],
+        "coordinates": [ 45.069299, 7.660402 ],
         "type": "Point"
       }
     }

@@ -6,6 +6,7 @@ import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.Date;
 

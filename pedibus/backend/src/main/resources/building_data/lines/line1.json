@@ -4,76 +4,76 @@
   "andata": [
     {
       "id": 1,
-      "nome": "Bernini",
+      "nome": "Ferrucci",
       "orario": "07:20",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.062553, 7.655359 ]
       }
     },
     {
       "id": 2,
-      "nome": "Medici",
+      "nome": "Mediterraneo",
       "orario": "07:30",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.061319, 7.658548 ]
       }
     },
     {
       "id": 3,
-      "nome": "Monte Grappa",
+      "nome": "Einaudi",
       "orario": "07:40",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.060710, 7.661373 ]
       }
     },
     {
       "id": 4,
-      "nome": "Montevideo",
+      "nome": "Politecnico",
       "orario": "08:00",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.062630, 7.662780 ]
       }
     }
   ],
   "ritorno": [
     {
       "id": 5,
-      "nome": "Montevideo",
+      "nome": "Politecnico",
       "orario": "13:10",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.062630, 7.662780 ]
       }
     },
     {
       "id": 6,
-      "nome": "Monte Grappa",
+      "nome": "Einaudi",
       "orario": "13:30",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.060710, 7.661373 ]
       }
     },
     {
       "id": 7,
-      "nome": "Racconigi",
+      "nome": "Mediterraneo",
       "orario": "13:45",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.061319, 7.658548 ]
       }
     },
     {
       "id": 8,
-      "nome": "Bernini",
+      "nome": "Ferrucci",
       "orario": "14:00",
       "location": {
         "type": "Point",
-        "coordinates": [45.06056, 7.6611]
+        "coordinates": [ 45.062553, 7.655359 ]
       }
     }
   ]
