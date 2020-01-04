@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Informazioni Fermata</h1>
+<div ngClass="body-large-mob" ngClass.gt-sm="body-large-desk" *ngIf="(this.fermata | async) as fermata">
+  <app-stop-map [lat]="fermata.location.coordinates[0]" [lng]="fermata.location.coordinates[1]"
+  [description]="fermata.nome"></app-stop-map>
+  <div class="mat-h3 text-center">
+    <div>{{fermata.nomeLinea}}</div>
+    <div>{{fermata.nome}} - {{fermata.id}}</div>
+    <div>{{fermata.orario}}</div>
+  </div>
+
+</div>

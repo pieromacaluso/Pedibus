@@ -11,6 +11,7 @@ import {Observable, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
 import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
 import {catchError, switchMap, tap} from 'rxjs/operators';
+import {MapService} from '../../common/map.service';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -33,7 +34,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
-              private rxStompService: RxStompService, private datePipe: DatePipe) {
+              private rxStompService: RxStompService, private datePipe: DatePipe, private mapService: MapService) {
     // First Observable
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
@@ -278,5 +279,9 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     if (index !== -1) {
       this.resource.childrenNotReserved.splice(index, 1);
     }
+  }
+
+  openMapDialog(idFermata: number) {
+    this.mapService.openMapDialog(idFermata).subscribe();
   }
 }

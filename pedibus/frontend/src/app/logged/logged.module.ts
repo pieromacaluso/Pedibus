@@ -33,6 +33,7 @@ import { DialogPrenotazioneComponent } from './genitore/dialog-prenotazione/dial
 import {AgmCoreModule} from '@agm/core';
 import {StopMapComponent} from './common/stop-map/stop-map.component';
 import {StopsMapComponent} from './common/stops-map/stops-map.component';
+import { MapDialogComponent } from './common/map-dialog/map-dialog.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import {StopsMapComponent} from './common/stops-map/stops-map.component';
     DialogAnagraficaComponent,
     DialogPrenotazioneComponent,
     StopMapComponent,
-    StopsMapComponent
+    StopsMapComponent,
+    MapDialogComponent
   ],
   imports: [
     CommonModule,
@@ -80,7 +82,7 @@ import {StopsMapComponent} from './common/stops-map/stops-map.component';
     AgmCoreModule
   ],
   exports: [],
-  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent]
+  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent, MapDialogComponent]
 })
 export class LoggedModule {
 }

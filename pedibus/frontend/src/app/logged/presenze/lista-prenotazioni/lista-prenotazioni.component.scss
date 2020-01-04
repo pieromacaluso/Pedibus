@@ -8,6 +8,20 @@
   z-index: 70;
 }
 
+.mat-card-header .mat-card-title {
+  margin-bottom: 0;
+}
+
+.header-stop{
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+}
+
+.map-button{
+  color: mat-color($pedibus-theme-accent, default);
+}
+
 
 .progress-bar-button {
   position: absolute;
