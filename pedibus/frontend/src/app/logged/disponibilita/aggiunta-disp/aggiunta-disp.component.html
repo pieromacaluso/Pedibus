@@ -85,29 +85,34 @@
                     [class.status-nope]="this.turno.isExpired">{{this.turno.isExpired ? "Scaduto" : (this.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
             </div>
           </div>
-          <div *ngIf="this.turno && this.linea">
-
-            <label id="turno" class="mat-h2">Seleziona la fermata di
-              {{this.p.verso == 'Andata' ? 'partenza' : 'arrivo'}}</label>
-            <mat-radio-group [disabled]="!this.turno.isOpen || this.turno.isExpired" #idFermata="matRadioGroup"
-                             aria-labelledby="turno"
-                             class="example-radio-group">
-              <mat-radio-button class="example-radio-button"
-                                *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno);
-                          first as isFirst; last as isLast;"
-                                [value]="stop.id" [checked]="(this.p.verso == 'Andata' ? isFirst : isLast)">
-                {{stop.nome}}
-              </mat-radio-button>
-            </mat-radio-group>
-            <button type="submit" [disabled]="!this.turno.isOpen || this.turno.isExpired" mat-raised-button
-                    color="primary" (click)="addDisp(idFermata.value)">
-              <mat-progress-bar
-                class="progress-bar-button"
-                mode="indeterminate"
-                *ngIf="this.disp.add"
-              ></mat-progress-bar>
-              Invia Disponibilità
-            </button>
+          <div fxLayout="row" fxLayout.lt-sm="column" *ngIf="this.turno && this.linea">
+            <form [formGroup]="dispForm" (ngSubmit)="addDisp(idFermata.value)">
+              <mat-form-field style="padding-right: 10px">
+                <mat-label>Fermata {{this.p.verso == 'Andata' ? 'partenza' : 'arrivo'}}:</mat-label>
+                <mat-select [disabled]="!this.turno.isOpen || this.turno.isExpired" #idFermata
+                            formControlName="stopSelect" (valueChange)="selectFermata($event.value)" (selectionChange)="selectFermata($event.value)"
+                >
+                  <mat-option *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)"
+                              [value]="stop.id">{{stop.nome}} {{stop.orario}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button type="submit" [disabled]="!this.turno.isOpen || this.turno.isExpired || !dispForm.valid" mat-raised-button
+                      color="primary">
+                <mat-progress-bar
+                  class="progress-bar-button"
+                  mode="indeterminate"
+                  *ngIf="this.disp.add"
+                ></mat-progress-bar>
+                Invia Disponibilità
+              </button>
+            </form>
+          </div>
+          <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" *ngIf="this.turno && this.linea">
+            <div fxFlex="100">
+              <app-stops-map [center]="this.selectedFermata ? this.selectedFermata.location : undefined"
+                             [stops]="this.stops" [description]="this.stopsDesc"
+                             (changeStop)="selectFermataIndex($event)"></app-stops-map>
+            </div>
           </div>
         </ng-template>
       </div>
@@ -117,8 +122,8 @@
 
 
 <ng-template #loadingDiv>
-    <mat-card-header *ngIf="showLoading()"><h1>Caricamento in corso...</h1></mat-card-header>
-    <mat-card-header *ngIf="!showLoading()"><h1>Non ci sono turni in questa giornata</h1></mat-card-header>
+  <mat-card-header *ngIf="showLoading()"><h1>Caricamento in corso...</h1></mat-card-header>
+  <mat-card-header *ngIf="!showLoading()"><h1>Non ci sono turni in questa giornata</h1></mat-card-header>
 </ng-template>
 
 <ng-template #notAuthorized>

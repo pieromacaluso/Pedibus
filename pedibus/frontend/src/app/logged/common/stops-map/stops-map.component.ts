@@ -1,5 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, Directive, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Point} from 'geojson';
+import {AgmMap} from '@agm/core';
+
 
 @Component({
   selector: 'app-stops-map',
@@ -23,6 +25,10 @@ export class StopsMapComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
+  recenter(map: AgmMap) {
+    map.boundsChange.emit();
+  }
 }

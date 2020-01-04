@@ -5,7 +5,7 @@ import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatSnackBar} from '@angular/material';
 import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
-import {Alunno, PrenotazioneRequest, StopsByLine} from '../../line-details';
+import {Alunno, Fermata, PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, Subscription, timer} from 'rxjs';
 import {
   catchError,
@@ -25,6 +25,8 @@ import {fadeAnimation} from '../../../route-animations';
 import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
 import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
 import {myRxStompConfig} from '../../../my-rx-stomp.config';
+import {Point} from 'geojson';
+import {FormBuilder, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-aggiunta-disp',
@@ -62,11 +64,19 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
   private dispCreateDelSub: Subscription;
   private dispStatusSub: Subscription;
   private turnoStatusSub: Subscription;
+  private stops: Point[] = [];
+  private stopsDesc: string[] = [];
+  selectedFermata: Fermata;
+  selectedFermataCheck: any;
+  dispForm = this.fb.group({
+    stopSelect: ['', [Validators.required]]
+  });
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
-              private rxStompService: RxStompService, private datePipe: DatePipe) {
+              private rxStompService: RxStompService, private datePipe: DatePipe, private fb: FormBuilder
+  ) {
     // Main Observable
     this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
@@ -116,6 +126,14 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     this.changeTurno.asObservable().subscribe(
       res => {
         this.turno = res;
+        if (!this.turno || !this.turno.isOpen || this.turno.isExpired) {
+          this.dispForm.patchValue({
+            stopSelect: {value: '', disabled: true}
+          });
+        }
+        this.dispForm.patchValue({
+          stopSelect: ''
+        });
       }
     );
     // WebSocket Disponibilità creazione/eliminazione
@@ -170,6 +188,19 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     ).subscribe(
       res => {
         this.linea = res;
+        this.stops = [];
+        this.stopsDesc = [];
+        if (this.p.verso === 'Andata') {
+          this.linea.andata.forEach((value, index) => {
+            this.stops.push(value.location);
+            this.stopsDesc.push(value.nome);
+          });
+        } else {
+          this.linea.ritorno.forEach((value, index) => {
+            this.stops.push(value.location);
+            this.stopsDesc.push(value.nome);
+          });
+        }
         console.log('linea', this.linea);
       }
     );
@@ -206,7 +237,11 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     this.apiDispService.postDisp(this.p.linea, idFermata, this.p.verso, this.p.data).subscribe(response => {
       this.changeDisp.next(response);
     }, (error) => {
-      // TODO: errore aggiunta disponibilità
+      this.disp.add = true;
+      this.snackBar.open(
+        'Errore Aggiunta Disponibilità, riprova più tardi o contatta l\'amministratore di sistema', '', {
+          duration: 5000,
+        });
     });
   }
 
@@ -239,6 +274,36 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
   private pathSub(prenotazione: PrenotazioneRequest) {
     return '/' + this.datePipe.transform(
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
+  }
+
+  selectFermata($event: number) {
+    if (!this.turno.isOpen || this.turno.isExpired) {
+      return;
+    }
+    console.log($event);
+    this.selectedFermata = this.p.verso === 'Andata' ?
+      this.linea.andata.find((el) => el.id === $event) :
+      this.linea.ritorno.find((el) => el.id === $event);
+    this.selectedFermataCheck = this.selectedFermata.id;
+    this.dispForm.patchValue({
+        stopSelect: this.selectedFermataCheck
+      }
+    );
+  }
+
+  selectFermataIndex(index: number) {
+    if (!this.turno.isOpen || this.turno.isExpired) {
+      return;
+    }
+
+    this.selectedFermata = this.p.verso === 'Andata' ?
+      this.linea.andata[index] :
+      this.linea.ritorno[index];
+    this.selectedFermataCheck = this.selectedFermata.id;
+    this.dispForm.patchValue({
+        stopSelect: this.selectedFermataCheck
+      }
+    );
   }
 }
 
