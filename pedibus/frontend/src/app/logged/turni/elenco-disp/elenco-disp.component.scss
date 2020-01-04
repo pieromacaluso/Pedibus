@@ -48,3 +48,16 @@
   top: 15px;
   left: 5px;
 }
+.header-stop{
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+}
+
+.map-button{
+  color: mat-color($pedibus-theme-accent, default);
+}
+.mat-card-header .mat-card-title {
+  margin-bottom: 0;
+}
+

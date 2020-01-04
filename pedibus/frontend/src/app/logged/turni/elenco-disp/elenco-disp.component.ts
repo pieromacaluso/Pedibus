@@ -13,6 +13,7 @@ import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../../
 import {variable} from '@angular/compiler/src/output/output_ast';
 import {DeleteDialogComponent} from '../../presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
 import {UpdateDispDialogComponent} from './update-disp-dialog/update-disp-dialog.component';
+import {MapService} from '../../common/map.service';
 
 @Component({
   selector: 'app-elenco-disp',
@@ -47,7 +48,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
-              private rxStompService: RxStompService, private datePipe: DatePipe) {
+              private rxStompService: RxStompService, private datePipe: DatePipe, private mapService: MapService) {
     this.syncService.prenotazioneObs$.pipe(
       debounceTime(1000),
       tap(() => this.loading = true),
@@ -284,5 +285,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     // });
 
 
+  }
+
+  openMapDialog(idFermata: number) {
+    this.mapService.openMapDialog(idFermata).subscribe();
   }
 }

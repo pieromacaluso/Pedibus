@@ -22,14 +22,23 @@
 
       <div *ngIf="turno.isOpen else notOpen">
         <div class="no-stops" *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)">
-          <div fxLayout="row">
+          <div fxLayout="row" class="header-stop">
             <mat-card-header>
-              <mat-card-title class="stop-clock">{{stop.orario}}</mat-card-title>
+              <mat-card-title class="stop-clock">{{
+                stop.orario
+                }}</mat-card-title>
             </mat-card-header>
-            <img class="cross" [src]="cross" alt="Bus Stop"/>
-            <mat-card-header>
-              <mat-card-title class="stop-title">{{stop.nome}}</mat-card-title>
+            <div><img class="cross" [src]="cross" alt="Bus Stop"/></div>
+            <mat-card-header fxFlexAlign="center">
+              <mat-card-title class="stop-title">{{
+                stop.nome
+                }}</mat-card-title>
             </mat-card-header>
+            <div>
+              <button mat-icon-button class="map-button" (click)="openMapDialog(stop.id)">
+                <mat-icon>info</mat-icon>
+              </button>
+            </div>
           </div>
           <div ngClass=" prenotazioni no-stops" ngClass.lt-sm="prenotazioni-mobile" *ngIf="this.listDisp[stop.nome] && this.listDisp[stop.nome].length > 0 else empty">
             <mat-list>
@@ -48,14 +57,23 @@
 
       <ng-template #notOpen>
         <div class="no-stops" *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)">
-          <div fxLayout="row">
+          <div fxLayout="row" class="header-stop">
             <mat-card-header>
-              <mat-card-title class="stop-clock">{{stop.orario}}</mat-card-title>
+              <mat-card-title class="stop-clock">{{
+                stop.orario
+                }}</mat-card-title>
             </mat-card-header>
-            <img class="cross" [src]="cross" alt="Bus Stop"/>
-            <mat-card-header>
-              <mat-card-title class="stop-title">{{stop.nome}}</mat-card-title>
+            <div><img class="cross" [src]="cross" alt="Bus Stop"/></div>
+            <mat-card-header fxFlexAlign="center">
+              <mat-card-title class="stop-title">{{
+                stop.nome
+                }}</mat-card-title>
             </mat-card-header>
+            <div>
+              <button mat-icon-button class="map-button" (click)="openMapDialog(stop.id)">
+                <mat-icon>info</mat-icon>
+              </button>
+            </div>
           </div>
           <div ngClass=" prenotazioni no-stops" ngClass.lt-sm="prenotazioni-mobile" *ngIf="this.listDisp[stop.nome] && this.listDisp[stop.nome].length > 0 else empty">
             <mat-list #disps>
