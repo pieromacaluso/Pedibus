@@ -71,6 +71,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
   dispForm = this.fb.group({
     stopSelect: ['', [Validators.required]]
   });
+  private fermataDisp: Observable<Fermata>;
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private apiTurniService: ApiTurniService,
@@ -118,6 +119,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
           this.disp.add = false;
           this.disp.ack = false;
           this.disp.delete = false;
+          this.fermataDisp = this.apiService.getFermata(this.disp.idFermata);
         }
       }
     );
@@ -126,6 +128,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     this.changeTurno.asObservable().subscribe(
       res => {
         this.turno = res;
+        this.dispForm.markAsUntouched();
         if (!this.turno || !this.turno.isOpen || this.turno.isExpired) {
           this.dispForm.patchValue({
             stopSelect: {value: '', disabled: true}
@@ -295,13 +298,12 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     if (!this.turno.isOpen || this.turno.isExpired) {
       return;
     }
-
     this.selectedFermata = this.p.verso === 'Andata' ?
       this.linea.andata[index] :
       this.linea.ritorno[index];
     this.selectedFermataCheck = this.selectedFermata.id;
     this.dispForm.patchValue({
-        stopSelect: this.selectedFermataCheck
+      stopSelect: this.selectedFermataCheck
       }
     );
   }

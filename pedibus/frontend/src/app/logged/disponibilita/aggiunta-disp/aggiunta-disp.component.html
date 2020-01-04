@@ -15,47 +15,54 @@
                   [class.status-warn]="!this.turno.isOpen && !this.turno.isExpired"
                   [class.status-nope]="this.turno.isExpired">{{this.turno.isExpired ? "Scaduto" : (this.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
           </div>
-          <div>
-            Linea di {{this.p.verso == 'Andata' ? 'Partenza' : 'Arrivo'}}:
-            <span class="status">{{this.disp.nomeLinea}}</span>
-          </div>
-          <div>
-            Fermata di {{this.p.verso == 'Andata' ? 'Partenza' : 'Arrivo'}}:
-            <span class="status">{{this.disp.nomeFermata}}</span>
-          </div>
-          <div>
-            Orario:
-            <span class="status">{{this.disp.orario}}</span>
-          </div>
-          <div>
-            Conferma: <span class="status">{{this.disp.isConfirmed ? "Confermato" : "In Attesa"}}</span>
-            <div *ngIf="this.disp.isConfirmed">
-              Conferma Ricezione: <span
-              class="status">{{this.disp.isAck ? "Comunicata" : "In Attesa"}}</span>
+          <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap="20px">
+            <div *ngIf="(this.fermataDisp|async) as f" fxFlex="50">
+              <app-stop-map [lat]="f.location.coordinates[0]" [lng]="f.location.coordinates[1]" [description]="f.nome"></app-stop-map>
             </div>
-          </div>
-          <div>
-            <button type="submit" (click)="delDisp()"
-                    *ngIf="this.turno.isOpen && !this.turno.isExpired && !this.disp.isConfirmed" mat-raised-button
-                    color="warn">
-              <mat-progress-bar
-                class="progress-bar-button"
-                mode="indeterminate"
-                *ngIf="this.disp.delete"
-              ></mat-progress-bar>
-              Cancella Disponibilità
-            </button>
-          </div>
-          <div *ngIf="this.disp.guideUsername && !this.disp.isAck && this.disp.isConfirmed">
-            <button (click)="ackDisp()" [disabled]="this.turno.isExpired" mat-raised-button
-                    color="accent">
-              <mat-progress-bar
-                class="progress-bar-button"
-                mode="indeterminate"
-                *ngIf="this.disp.ack"
-              ></mat-progress-bar>
-              Comunica Ricezione
-            </button>
+            <div fxFlex="50">
+              <div>
+              Linea di {{this.p.verso == 'Andata' ? 'Partenza' : 'Arrivo'}}:
+              <span class="status">{{this.disp.nomeLinea}}</span>
+            </div>
+            <div>
+              Fermata di {{this.p.verso == 'Andata' ? 'Partenza' : 'Arrivo'}}:
+              <span class="status">{{this.disp.nomeFermata}}</span>
+            </div>
+            <div>
+              Orario:
+              <span class="status">{{this.disp.orario}}</span>
+            </div>
+            <div>
+              Conferma: <span class="status">{{this.disp.isConfirmed ? "Confermato" : "In Attesa"}}</span>
+              <div *ngIf="this.disp.isConfirmed">
+                Conferma Ricezione: <span
+                class="status">{{this.disp.isAck ? "Comunicata" : "In Attesa"}}</span>
+              </div>
+            </div>
+            <div>
+              <button type="submit" (click)="delDisp()"
+                      *ngIf="this.turno.isOpen && !this.turno.isExpired && !this.disp.isConfirmed" mat-raised-button
+                      color="warn">
+                <mat-progress-bar
+                  class="progress-bar-button"
+                  mode="indeterminate"
+                  *ngIf="this.disp.delete"
+                ></mat-progress-bar>
+                Cancella Disponibilità
+              </button>
+            </div>
+            <div *ngIf="this.disp.guideUsername && !this.disp.isAck && this.disp.isConfirmed">
+              <button (click)="ackDisp()" [disabled]="this.turno.isExpired" mat-raised-button
+                      color="accent">
+                <mat-progress-bar
+                  class="progress-bar-button"
+                  mode="indeterminate"
+                  *ngIf="this.disp.ack"
+                ></mat-progress-bar>
+                Comunica Ricezione
+              </button>
+            </div>
+            </div>
           </div>
         </div>
 
@@ -86,17 +93,19 @@
             </div>
           </div>
           <div fxLayout="row" fxLayout.lt-sm="column" *ngIf="this.turno && this.linea">
-            <form [formGroup]="dispForm" (ngSubmit)="addDisp(idFermata.value)">
+            <form [formGroup]="dispForm" (ngSubmit)="addDisp(this.selectedFermataCheck)">
               <mat-form-field style="padding-right: 10px">
                 <mat-label>Fermata {{this.p.verso == 'Andata' ? 'partenza' : 'arrivo'}}:</mat-label>
                 <mat-select [disabled]="!this.turno.isOpen || this.turno.isExpired" #idFermata
-                            formControlName="stopSelect" (valueChange)="selectFermata($event.value)" (selectionChange)="selectFermata($event.value)"
+                            formControlName="stopSelect" (valueChange)="selectFermata($event.value)"
+                            (selectionChange)="selectFermata($event.value)"
                 >
                   <mat-option *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)"
                               [value]="stop.id">{{stop.nome}} {{stop.orario}}</mat-option>
                 </mat-select>
               </mat-form-field>
-              <button type="submit" [disabled]="!this.turno.isOpen || this.turno.isExpired || !dispForm.valid" mat-raised-button
+              <button type="submit" [disabled]="!this.turno.isOpen || this.turno.isExpired || !dispForm.valid"
+                      mat-raised-button
                       color="primary">
                 <mat-progress-bar
                   class="progress-bar-button"
