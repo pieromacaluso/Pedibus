@@ -2,7 +2,7 @@
 <form [formGroup]="prenotazioneForm" (ngSubmit)="submit()" *ngIf="this.loading == 0">
   <div>
     <p class="mat-h2 dialog-theme">{{this.data.andata ? "Andata" : "Ritorno" }} del {{this.data.data | date}}</p>
-    <app-stops-map *ngIf="this.selectedLine" [center]="this.selectedStop ? this.selectedStop.location : null" [stops]="this.stopsLocation" [description]="this.stopsDescription" (changeStop)="selectStopIndex($event)"></app-stops-map>
+    <app-stops-map [center]="this.selectedStop ? this.selectedStop.location : null" [lines]="lineData" [stops]="this.stopsLocation" [description]="this.stopsDescription" (changeStop)="selectStopIndex($event)"></app-stops-map>
 
     <div mat-dialog-content class="dialog-theme">
       <!-- FORM CONTENT HERE... -->

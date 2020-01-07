@@ -1,6 +1,7 @@
 import {Component, Directive, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Point} from 'geojson';
 import {AgmMap} from '@agm/core';
+import {StopsByLine} from '../../line-details';
 
 
 @Component({
@@ -14,6 +15,7 @@ export class StopsMapComponent implements OnInit {
   markerBlue = '../../../../assets/png/marker_blue.png';
   @Input() center: Point;
   @Input() stops: Point[];
+  @Input() lines: Map<string, StopsByLine>;
   @Input() description: string[];
   @Output() changeStop = new EventEmitter<number>();
 
