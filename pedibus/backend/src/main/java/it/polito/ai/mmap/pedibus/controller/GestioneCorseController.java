@@ -137,12 +137,7 @@ public class GestioneCorseController {
      */
     @PostMapping("/turno/disp/ack/{idLinea}/{verso}/{data}")
     public void ackDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data) {
-        DispAllResource d = gestioneCorseService.ackDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso));
-        DispStateResource state = new DispStateResource(d);
-        simpMessagingTemplate.convertAndSendToUser(d.getGuideUsername(), "/dispws-status/" + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
-        simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), d);
-
-
+        gestioneCorseService.ackDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso));
     }
 
 

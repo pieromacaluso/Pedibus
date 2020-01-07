@@ -20,7 +20,6 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -90,6 +89,7 @@ public class GestioneCorseService {
 
     /**
      * Restituisce una dispEntity a partire dall' id della disponibilità
+     *
      * @param idDisp
      * @return
      * @throws DispNotFoundException
@@ -263,7 +263,7 @@ public class GestioneCorseService {
                 dispEntity.setIdFermata(dispAllResource.getIdFermata());
                 dispEntity.setIsConfirmed(dispAllResource.getIsConfirmed());
                 dispEntity = dispRepository.save(dispEntity);
-                NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.DISPONIBILITA, dispAllResource.getGuideUsername(), "La tua disponibilità è stata confermata", dispEntity.getDispId());
+                NotificaEntity notificaEntity = this.notificheService.generateDispNotification(dispEntity);
                 notificheService.addNotifica(notificaEntity);      //salvataggio e invio notifica
                 //todo messaggio per aggiornare l'interfaccia admin, quando arrivato a scuola friz tutti gli utenti
             } else
@@ -296,15 +296,13 @@ public class GestioneCorseService {
      *
      * @param turnoDTO
      */
-    public DispAllResource ackDisp(TurnoDTO turnoDTO) {
+    public void ackDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
         if (dispEntity.getIsConfirmed()) {
             dispEntity.setIsAck(true);
             dispRepository.save(dispEntity);
-            return new DispAllResource(dispEntity,
-                    lineeService.getFermataEntityById(dispEntity.getIdFermata()),
-                    lineeService.getLineaEntityById(dispEntity.getIdLinea()));
+            this.notificheService.sendNotificheDisp(dispEntity);
         } else {
             //todo else questa guida non era stata confermata per quel turno, quindi non dovrebbe mandare l'ack: ignoriamo o segnaliamo errore ?
             throw new IllegalArgumentException("La guida non ha la facoltà di confermare la ricezione.");
@@ -347,14 +345,26 @@ public class GestioneCorseService {
     /**
      * Dato un id disponibilità la segna come letta (isAck=true e data settata).
      * Usato quando un utente legge la notifica con la quale l'amministratore di linea conferma la disponibilità data.
+     *
      * @param dispID
      */
     public void setAckDisp(ObjectId dispID) {
-        DispEntity dispEntity=getDispEntitybyId(dispID.toString());
-        if(dispEntity.getIsConfirmed()){
+        DispEntity dispEntity = getDispEntitybyId(dispID.toString());
+        if (dispEntity.getIsConfirmed()) {
             dispEntity.setIsAck(true);
             dispEntity.setDataAck(new Date());
             dispRepository.save(dispEntity);
+            notificheService.sendNotificheDisp(dispEntity);
+        }
+    }
+
+    public TurnoEntity getTurnoEntityById(ObjectId turnoId) {
+        Optional<TurnoEntity> turnoCheck = this.turnoRepository.findByTurnoId(turnoId);
+        if (turnoCheck.isPresent()) {
+            return turnoCheck.get();
+        } else {
+            //TODO: Eccezione Custom?
+            throw new IllegalArgumentException("Turno non presente");
         }
     }
 }

@@ -6,6 +6,8 @@ import it.polito.ai.mmap.pedibus.exception.NotificaWrongTypeException;
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
 import it.polito.ai.mmap.pedibus.repository.NotificaRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
+import it.polito.ai.mmap.pedibus.resources.DispAllResource;
+import it.polito.ai.mmap.pedibus.resources.DispStateResource;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,5 +182,33 @@ public class NotificheService {
         return new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
                 childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato segnalato/a come assente alla partenza " +
                         (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getAssenteDate()), null);
+    }
+
+    public void sendNotificheDisp(DispEntity dispEntity) {
+        DispAllResource d = new DispAllResource(dispEntity,
+                lineeService.getFermataEntityById(dispEntity.getIdFermata()),
+                lineeService.getLineaEntityById(dispEntity.getIdLinea()));
+        Optional<TurnoEntity> turnoCheck = gestioneCorseService.turnoRepository.findByTurnoId(dispEntity.getTurnoId());
+        if (turnoCheck.isPresent()) {
+            TurnoEntity turnoEntity = turnoCheck.get();
+            DispStateResource state = new DispStateResource(d);
+            simpMessagingTemplate.convertAndSendToUser(dispEntity.getGuideUsername(), "/dispws-status" + "/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), state);
+            simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), d);
+        }
+    }
+
+    public NotificaEntity generateDispNotification(DispEntity dispEntity) {
+        TurnoEntity turnoEntity = gestioneCorseService.getTurnoEntityById(dispEntity.getTurnoId());
+        FermataEntity fermataEntity = lineeService.getFermataEntityById(dispEntity.getIdFermata());
+        LineaEntity lineaEntity = lineeService.getLineaEntityById(dispEntity.getIdLinea());
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        return new NotificaEntity(NotificaEntity.NotificationType.DISPONIBILITA, dispEntity.getGuideUsername(),
+                "La tua disponibilità per la corsa di " + (turnoEntity.getVerso() ? "andata" : "ritorno") + " del "
+                        + simpleDateFormat.format(turnoEntity.getData()) + " "
+                        + (turnoEntity.getVerso() ? "con partenza d" : "con arrivo ")
+                        + "alla fermata " + fermataEntity.getName() + " della " + lineaEntity.getNome()
+                        + " alle ore " + fermataEntity.getOrario() + " è stata confermata", dispEntity.getDispId());
     }
 }
