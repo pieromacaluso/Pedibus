@@ -58,7 +58,7 @@ public class MongoTimeService {
     }
 
     public static Date getNow() {
-        return parseData(LocalDateTime.now().withNano(1000000).toString() + " GMT+00:00");
+        return new Date();
     }
 
     public static Date getStartOfToday() {

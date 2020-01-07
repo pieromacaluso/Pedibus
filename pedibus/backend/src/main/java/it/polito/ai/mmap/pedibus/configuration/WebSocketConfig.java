@@ -43,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/handled", "/reservation", "/dispws", "dispws-add", "dispws-del", "dispws-up", "dispws-status",
+        config.enableSimpleBroker("/handled", "/arrived", "/reservation", "/dispws", "dispws-add", "dispws-del", "dispws-up", "dispws-status",
                 "/turnows", "/admin", "/dispws-confirmed", "/notifiche", "/child");
     }
 

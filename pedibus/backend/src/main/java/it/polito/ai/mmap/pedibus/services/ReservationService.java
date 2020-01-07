@@ -3,9 +3,15 @@ package it.polito.ai.mmap.pedibus.services;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
-import it.polito.ai.mmap.pedibus.objectDTO.*;
-import it.polito.ai.mmap.pedibus.repository.*;
-import it.polito.ai.mmap.pedibus.resources.*;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
+import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
+import it.polito.ai.mmap.pedibus.resources.FermataAlunniResource;
+import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
+import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
+import it.polito.ai.mmap.pedibus.resources.ReservationChildResource;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,35 +26,25 @@ import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     ReservationRepository reservationRepository;
-
     @Autowired
     GestioneCorseService gestioneCorseService;
-
     @Autowired
     LineeService lineeService;
-
     @Autowired
     UserService userService;
-
     @Autowired
     ChildService childService;
-
     @Autowired
     NotificheService notificheService;
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-
-
-
     @Value("${notifiche.type.Base}")
     String NotBASE;
     @Value("${notifiche.type.Disponibilita}")
     String NotDISPONIBILITA;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     public ReservationEntity getReservationEntityById(ObjectId idReservation) {
         Optional<ReservationEntity> checkReservation = reservationRepository.findById(idReservation);
@@ -110,7 +106,7 @@ public class ReservationService {
 
         return (checkTime(reservationDTO.getData(), fermataEntity)
                 && ((lineaEntity.getAndata().contains(fermataEntity.getId()) && reservationDTO.getVerso()) || (lineaEntity.getRitorno().contains(fermataEntity.getId()) && !reservationDTO.getVerso()))
-                && (principal.getChildrenList().contains(reservationDTO.getCfChild()) || lineeService.isAdminLine(reservationDTO.getIdLinea()) || userService.isSysAdmin()));
+                && (principal.getChildrenList().contains(reservationDTO.getCfChild()) || this.canModify(reservationDTO.getIdLinea(), reservationDTO.getData(), reservationDTO.getVerso())));
     }
 
     /**
@@ -156,7 +152,7 @@ public class ReservationService {
         if (check.isPresent()) {
             return check.get();
         } else {
-           throw new ReservationNotFoundException("Reservation non trovata");
+            throw new ReservationNotFoundException("Reservation non trovata");
         }
     }
 
@@ -289,20 +285,53 @@ public class ReservationService {
             UserEntity userEntity = childService.getChildParent(cfChild);
 
             ReservationEntity reservationEntity = getChildReservation(verso, datef, cfChild);
+            reservationEntity.setPresoInCarico(isSet);
+            reservationEntity.setPresoInCaricoDate(isSet ? MongoTimeService.getNow() : null);
+//            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            pre.setPresoInCarico(isSet);
-            updateReservation(pre, reservationEntity.getId());
-            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
-            if(isSet){
-                NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.BASE, userEntity.getUsername(), "Suo figlio è sul pedibus in direzione scuola.", null);
+            // TODO: Gestione parenti multipli?
+            UserEntity parent = childService.getChildParent(pre.getCfChild());
+            simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + data, pre);
+
+            if (isSet) {
+                NotificaEntity notificaEntity = this.notificheService.generateHandledNotification(reservationEntity);
                 notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-            }else{
-                //todo vedere se cancellarla ma in modo corretto, bisogna trovare il modo di identificare la notifica da cancellare
-                NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.BASE, userEntity.getUsername(), "No scherzavo XD.", null);
-                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                pre.setPresoInCaricoNotifica(notificaEntity.getIdNotifica());
+            } else {
+                notificheService.deleteNotificaAdmin(reservationEntity.getPresoInCaricoNotifica());
             }
+            updateReservation(pre, reservationEntity.getId());
+            logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
+        } else
+            throw new IllegalStateException();
+    }
 
+
+    public void manageAssente(Boolean verso, String data, Date datef, Boolean isSet, String idLinea, String cfChild) {
+        if (canModify(idLinea, datef, verso)) {
+            UserEntity userEntity = childService.getChildParent(cfChild);
+
+            ReservationEntity reservationEntity = getChildReservation(verso, datef, cfChild);
+            reservationEntity.setAssente(isSet);
+            reservationEntity.setAssenteDate(isSet ? MongoTimeService.getNow() : null);
+//            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
+
+            ReservationDTO pre = new ReservationDTO(reservationEntity);
+            // TODO: Gestione parenti multipli?
+            UserEntity parent = childService.getChildParent(pre.getCfChild());
+            simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + data, pre);
+
+            if (isSet) {
+                NotificaEntity notificaEntity = notificheService.generateAssenteNotification(reservationEntity);
+                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                pre.setAssenteNotifica(notificaEntity.getIdNotifica());
+            } else {
+                notificheService.deleteNotificaAdmin(reservationEntity.getAssenteNotifica());
+            }
+            updateReservation(pre, reservationEntity.getId());
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
             throw new IllegalStateException();
@@ -313,7 +342,8 @@ public class ReservationService {
             return true;
 
         //todo (marcof) io terrei solo il ruolo di guida per gestire la manage e la handle, quello di admin invece concerne la gestione delle disp, turni ecc
-        return ((lineeService.isAdminLine(idLinea) || gestioneCorseService.isGuideConfirmed(idLinea,date,verso)) && MongoTimeService.isToday(date));
+        //TODO : Decommenta per consegna
+        return ((lineeService.isAdminLine(idLinea) || gestioneCorseService.isGuideConfirmed(idLinea, date, verso)) /*&& MongoTimeService.isToday(date)*/);
 
     }
 
@@ -328,19 +358,71 @@ public class ReservationService {
      */
 
     public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
+        // TODO: check all
         if (canModify(idLinea, data, verso)) {
+            UserEntity parent = childService.getChildParent(cfChild);
+
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             reservationEntity.setArrivatoScuola(isSet);
-            //todo da eliminare prima
-            reservationRepository.save(reservationEntity);
-
-            UserEntity userEntity = childService.getChildParent(cfChild);
-            NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.BASE, userEntity.getUsername(), "Suo figlio è arrivato a scuola.", null);
-            notificheService.addNotifica(notificaEntity);
-            //todo messaggio topic per atri admin
+            reservationEntity.setArrivatoScuolaDate(isSet ? MongoTimeService.getNow() : null);
+            if (isSet) {
+                NotificaEntity notificaEntity = notificheService.generateArrivedNotification(reservationEntity);
+                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                reservationEntity.setArrivatoScuolaNotifica(notificaEntity.getIdNotifica());
+            } else {
+                notificheService.deleteNotificaAdmin(reservationEntity.getArrivatoScuolaNotifica());
+            }
+            logger.info("/arrived/" + data + "/" + idLinea + "/" + verso);
+//            simpMessagingTemplate.convertAndSend("/arrived/" + MongoTimeService.dateToString(data) + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
+            // TODO: Gestione parenti multipli?
+            ReservationDTO pre = new ReservationDTO(reservationEntity);
+            simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(data) + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + MongoTimeService.dateToString(data), pre);
+            updateReservation(pre, reservationEntity.getId());
             return true;
         }
         return false;
+    }
+
+    /**
+     * Admin lina indica che ha lasciato l'alunno a scuola/fermata ritorno
+     *
+     * @param verso
+     * @param data
+     * @param cfChild
+     * @param idLinea
+     * @throws Exception
+     */
+    public void manageRestore(Boolean verso, Date data, String cfChild, String idLinea) throws Exception {
+        // TODO: check all
+        if (canModify(idLinea, data, verso)) {
+            UserEntity parent = childService.getChildParent(cfChild);
+
+            ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
+            if (reservationEntity.getPresoInCaricoNotifica() != null) {
+                notificheService.deleteNotificaAdmin(reservationEntity.getPresoInCaricoNotifica());
+                reservationEntity.setPresoInCaricoNotifica(null);
+            }
+            if (reservationEntity.getArrivatoScuolaNotifica() != null) {
+                notificheService.deleteNotificaAdmin(reservationEntity.getArrivatoScuolaNotifica());
+                reservationEntity.setArrivatoScuolaNotifica(null);
+            }
+            if (reservationEntity.getAssenteNotifica() != null) {
+                notificheService.deleteNotificaAdmin(reservationEntity.getAssenteNotifica());
+                reservationEntity.setAssenteNotifica(null);
+            }
+            reservationEntity.setArrivatoScuola(false);
+            reservationEntity.setArrivatoScuolaDate(null);
+            reservationEntity.setPresoInCarico(false);
+            reservationEntity.setPresoInCaricoDate(null);
+            reservationEntity.setAssente(false);
+            reservationEntity.setAssenteDate(null);
+            // TODO: Gestione parenti multipli?
+            ReservationDTO pre = new ReservationDTO(reservationEntity);
+            simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(data) + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + MongoTimeService.dateToString(data), pre);
+            updateReservation(pre, reservationEntity.getId());
+        }
     }
 
     /**
@@ -370,7 +452,7 @@ public class ReservationService {
                 .forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), verso)));
 
         res.setChildrenNotReserved(getChildrenNotReserved(dataFormatted, verso));
-        res.setCanModify(canModify(idLinea, dataFormatted,verso));
+        res.setCanModify(canModify(idLinea, dataFormatted, verso));
 
         return res;
     }

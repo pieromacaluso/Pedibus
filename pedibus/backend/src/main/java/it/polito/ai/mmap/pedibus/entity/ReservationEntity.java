@@ -24,6 +24,13 @@ public class ReservationEntity {
     private boolean verso;
     private boolean presoInCarico;
     private boolean arrivatoScuola;
+    private boolean assente;
+    private Date presoInCaricoDate;
+    private Date arrivatoScuolaDate;
+    private Date assenteDate;
+    private String presoInCaricoNotifica;
+    private String arrivatoScuolaNotifica;
+    private String assenteNotifica;
 
     public ReservationEntity(ReservationDTO reservationDTO) {
         cfChild = reservationDTO.getCfChild();
@@ -33,6 +40,14 @@ public class ReservationEntity {
         idLinea = reservationDTO.getIdLinea();
         this.presoInCarico = reservationDTO.getPresoInCarico();
         this.arrivatoScuola = reservationDTO.getArrivatoScuola();
+        this.assente = reservationDTO.getAssente();
+        this.presoInCaricoDate = reservationDTO.getPresoInCaricoDate();
+        this.arrivatoScuolaDate = reservationDTO.getArrivatoScuolaDate();
+        this.assenteDate = reservationDTO.getAssenteDate();
+        this.presoInCaricoNotifica = reservationDTO.getPresoInCaricoNotifica();
+        this.arrivatoScuolaNotifica = reservationDTO.getArrivatoScuolaNotifica();
+        this.assenteNotifica = reservationDTO.getAssenteNotifica();
+
     }
 
     public void update(ReservationDTO reservationDTO) {
@@ -44,6 +59,13 @@ public class ReservationEntity {
         this.idLinea = reservationDTO.getIdLinea();
         this.presoInCarico = reservationDTO.getPresoInCarico();
         this.arrivatoScuola = reservationDTO.getArrivatoScuola();
+        this.assente = reservationDTO.getAssente();
+        this.presoInCaricoDate = reservationDTO.getPresoInCaricoDate();
+        this.arrivatoScuolaDate = reservationDTO.getArrivatoScuolaDate();
+        this.assenteDate = reservationDTO.getAssenteDate();
+        this.presoInCaricoNotifica = reservationDTO.getPresoInCaricoNotifica();
+        this.arrivatoScuolaNotifica = reservationDTO.getArrivatoScuolaNotifica();
+        this.assenteNotifica = reservationDTO.getAssenteNotifica();
     }
 
 

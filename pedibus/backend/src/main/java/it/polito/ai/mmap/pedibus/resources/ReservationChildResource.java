@@ -18,6 +18,7 @@ public class ReservationChildResource {
     private String surname;
     private Boolean presoInCarico;
     private Boolean arrivatoScuola;
+    private Boolean assente;
 
     public ReservationChildResource(ReservationEntity p, ChildEntity c){
         this.codiceFiscale = p.getCfChild();
@@ -25,6 +26,7 @@ public class ReservationChildResource {
         this.surname = c.getSurname();
         this.presoInCarico = p.isPresoInCarico();
         this.arrivatoScuola = p.isArrivatoScuola();
+        this.assente = p.isAssente();
 
     }
 

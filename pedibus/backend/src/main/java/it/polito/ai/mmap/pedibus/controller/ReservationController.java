@@ -134,9 +134,23 @@ public class ReservationController {
      * @param cfChild true per indicare che è stato preso, false per annullare
      */
     @PostMapping("/reservations/handled/{idLinea}/{verso}/{data}/{isSet}")
-    public void manageHandled(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild, HttpServletResponse response) throws Exception {
+    public void manageHandled(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         reservationService.manageHandled(verso, data, datef, isSet, idLinea, cfChild);
+    }
+
+    /**
+     * Usato da guide linea per indicare che ha preso il bambino dalla fermata
+     *
+     * @param idLinea
+     * @param verso
+     * @param data
+     * @param cfChild true per indicare che è stato preso, false per annullare
+     */
+    @PostMapping("/reservations/assente/{idLinea}/{verso}/{data}/{isSet}")
+    public void manageAssente(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
+        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        reservationService.manageAssente(verso, data, datef, isSet, idLinea, cfChild);
     }
 
 
@@ -150,10 +164,17 @@ public class ReservationController {
      */
 
     @PostMapping("/reservations/arrived/{idLinea}/{verso}/{data}/{isSet}")
-    public void manageArrived(@PathVariable("verso") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
+    public void manageArrived(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         if (reservationService.manageArrived(verso, date, cfChild, isSet, idLinea))
             logger.info("Child " + cfChild + " is arrived");
+    }
+
+    @PostMapping("/reservations/restore/{idLinea}/{verso}/{data}")
+    public void manageRestore(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody String cfChild) throws Exception {
+        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        reservationService.manageRestore(verso, date, cfChild, idLinea);
+        logger.info("Child " + cfChild + " is restored");
     }
 
     /**
