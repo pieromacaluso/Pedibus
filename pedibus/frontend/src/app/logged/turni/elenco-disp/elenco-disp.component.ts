@@ -43,13 +43,14 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   private dispAddSub: Subscription;
   private turnoStatusSub: Subscription;
   private dispUpSub: Subscription;
+  private elencoDispSub: Subscription;
   private updateDispDialog: MatDialogRef<UpdateDispDialogComponent, any>;
 
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe, private mapService: MapService) {
-    this.syncService.prenotazioneObs$.pipe(
+    this.elencoDispSub = this.syncService.prenotazioneObs$.pipe(
       debounceTime(1000),
       tap(() => this.loading = true),
       switchMap(
@@ -214,6 +215,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     this.dispUpSub.unsubscribe();
     this.dispStatusSub.unsubscribe();
     this.turnoStatusSub.unsubscribe();
+    this.elencoDispSub.unsubscribe()
   }
 
   openTurno(turno: TurnoResource) {

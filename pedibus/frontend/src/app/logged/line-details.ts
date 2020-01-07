@@ -28,6 +28,7 @@ export interface Alunno {
   surname: string;
   presoInCarico: boolean;
   arrivatoScuola: boolean;
+  assente: boolean;
   update: boolean;
 }
 

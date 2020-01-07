@@ -23,14 +23,14 @@
       <!--Scuola ritorno-->
       <div class="card-stops" [class.prenotazioni-disabled]="showLoading()">
         <div *ngIf="prenot.verso === 'Ritorno'">
-          <div fxLayout="row">
+          <div fxLayout="row" class="header-stop">
             <mat-card-header>
               <mat-card-title class="stop-clock">{{
                 this.resource.orarioScuola
                 }}</mat-card-title>
             </mat-card-header>
-            <img class="cross" [src]="cross" alt="Bus Stop"/>
-            <mat-card-header>
+            <div><img class="cross" [src]="cross" alt="Bus Stop"/></div>
+            <mat-card-header fxFlexAlign="center">
               <mat-card-title class="stop-title">Scuola</mat-card-title>
             </mat-card-header>
           </div>
@@ -86,7 +86,10 @@
                 mat-stroked-button
                 class="alunno-presenza mat-background-accent"
                 [class.presente]="alunno.presoInCarico"
+                [class.assente]="alunno.assente"
+                [class.arrivato]="alunno.arrivatoScuola"
                 [disableRipple]="!canModify()"
+
                 (click)="togglePresenza(res.fermata.id, alunno)"
                 *ngFor="let alunno of sortedAlunni(res.alunni)"
               >
@@ -115,14 +118,14 @@
       <div class="card-stops" [class.prenotazioni-disabled]="showLoading()">
         <div *ngIf="this.prenotazione.verso === 'Andata'">
           <!--        <mat-card-content ngClass="prenotazioni" ngClass.lt-sm="prenotazioni-mobile"></mat-card-content>-->
-          <div fxLayout="row">
+          <div fxLayout="row" class="header-stop">
             <mat-card-header>
               <mat-card-title class="stop-clock">{{
                 this.resource.orarioScuola
                 }}</mat-card-title>
             </mat-card-header>
-            <img class="cross" [src]="cross" alt="Bus Stop"/>
-            <mat-card-header>
+            <div><img class="cross" [src]="cross" alt="Bus Stop"/></div>
+            <mat-card-header fxFlexAlign="center">
               <mat-card-title class="stop-title">Scuola</mat-card-title>
             </mat-card-header>
           </div>

@@ -7,6 +7,7 @@ import {Subscription} from 'rxjs';
 import {Message} from '@stomp/stompjs';
 import {ApiService} from '../api.service';
 import {switchMap, take, tap} from 'rxjs/operators';
+import {Notifica} from './dtos';
 
 const mapRoleNotifiche = [
   {role: 'ROLE_SYSTEM-ADMIN', notifiche: ['/user/notifiche', '/user/notifiche']},
@@ -23,6 +24,7 @@ export class NotificheService {
   baseURL = environment.baseURL;
   subs: Subscription[] = [];
   private websocketNotification: Subscription;
+  private websocketNotificationTrash: Subscription;
 
   constructor(private rxStompService: RxStompService, private authService: AuthService,
               private dataService: DataShareService, private apiService: ApiService) {
@@ -32,6 +34,8 @@ export class NotificheService {
         this.getNotifiche();
         if (this.websocketNotification) {
           this.websocketNotification.unsubscribe();
+          this.websocketNotificationTrash.unsubscribe();
+
         }
         this.watchNotifiche();
       } else {
@@ -54,6 +58,11 @@ export class NotificheService {
       const nuoveNotifiche = JSON.parse(message.body);
       this.dataService.updateNotifiche(nuoveNotifiche);
       console.log('nuove notifiche da broker:', nuoveNotifiche);
+    });
+    this.websocketNotificationTrash = this.rxStompService.watch('/user/notifiche/trash').subscribe(message => {
+      const notificaToBeTrashed: Notifica = JSON.parse(message.body);
+      this.dataService.removeNotifica(notificaToBeTrashed.idNotifica);
+      console.log('eliminazione notifica da broker:', notificaToBeTrashed);
     });
   }
 

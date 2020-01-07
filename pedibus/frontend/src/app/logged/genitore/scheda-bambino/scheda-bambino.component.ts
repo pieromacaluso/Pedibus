@@ -28,12 +28,13 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   private bambinoRes: Subscription;
   private andataStop: Observable<Fermata>;
   private ritornoStop: Observable<Fermata>;
+  private subRequest: Subscription;
 
   constructor(private syncService: SyncService, private bambinoService: BambinoService, private dialog: MatDialog) {
   }
 
   ngOnInit() {
-    this.syncService.prenotazioneObs$.subscribe((data) => {
+    this.subRequest = this.syncService.prenotazioneObs$.subscribe((data) => {
       this.request = data;
       this.andata = null;
       this.ritorno = null;
@@ -113,6 +114,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.bambinoSub.unsubscribe();
+    this.subRequest.unsubscribe();
   }
 
   addAndata() {

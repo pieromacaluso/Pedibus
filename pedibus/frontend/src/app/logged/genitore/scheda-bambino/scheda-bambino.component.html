@@ -33,6 +33,16 @@
         <div>Linea: {{res.nomeLinea}}</div>
         <div>Fermata: {{res.nome}}</div>
         <div>Orario: {{res.orario}}</div>
+        <ng-container *ngIf="!andata.assente">
+          <div>Partenza
+            Effettiva: {{andata.presoInCarico ? (andata.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
+          <div>Arrivo a
+            Scuola: {{andata.arrivatoScuola ? (andata.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
+        </ng-container>
+        <ng-container *ngIf="andata.assente">
+          <div>Contrassegnato
+            Assente: {{andata.assente ? (andata.assenteDate | date:'medium') : "Non disponibile"}}</div>
+        </ng-container>
       </div>
 
 
@@ -51,6 +61,16 @@
         <div>Linea: {{res.nomeLinea}}</div>
         <div>Fermata: {{res.nome}}</div>
         <div>Orario: {{res.orario}}</div>
+        <ng-container *ngIf="!ritorno.assente">
+          <div>Partenza
+            Effettiva: {{ritorno.presoInCarico ? (ritorno.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
+          <div>Arrivo a
+            Scuola: {{ritorno.arrivatoScuola ? (ritorno.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
+        </ng-container>
+        <ng-container *ngIf="ritorno.assente">
+          <div>Contrassegnato
+            Assente: {{ritorno.assente ? (ritorno.assenteDate | date:'medium') : "Non disponibile"}}</div>
+        </ng-container>
       </div>
 
 

@@ -21,19 +21,20 @@ import {DisponibilitaComponent} from './disponibilita/disponibilita.component';
 import {TurniComponent} from './turni/turni.component';
 import {ComunicazioniComponent} from './comunicazioni/comunicazioni.component';
 import {NotificheComponent} from './notifiche/notifiche.component';
-import { DeleteDialogComponent } from './presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
-import { AggiuntaDispComponent } from './disponibilita/aggiunta-disp/aggiunta-disp.component';
-import { ElencoDispComponent } from './turni/elenco-disp/elenco-disp.component';
-import { NotificaComponent } from './notifiche/notifica/notifica.component';
-import { UpdateDispDialogComponent } from './turni/elenco-disp/update-disp-dialog/update-disp-dialog.component';
-import { GenitoreComponent } from './genitore/genitore.component';
-import { SchedaBambinoComponent } from './genitore/scheda-bambino/scheda-bambino.component';
-import { DialogAnagraficaComponent } from './genitore/dialog-anagrafica/dialog-anagrafica.component';
-import { DialogPrenotazioneComponent } from './genitore/dialog-prenotazione/dialog-prenotazione.component';
+import {DeleteDialogComponent} from './presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
+import {AggiuntaDispComponent} from './disponibilita/aggiunta-disp/aggiunta-disp.component';
+import {ElencoDispComponent} from './turni/elenco-disp/elenco-disp.component';
+import {NotificaComponent} from './notifiche/notifica/notifica.component';
+import {UpdateDispDialogComponent} from './turni/elenco-disp/update-disp-dialog/update-disp-dialog.component';
+import {GenitoreComponent} from './genitore/genitore.component';
+import {SchedaBambinoComponent} from './genitore/scheda-bambino/scheda-bambino.component';
+import {DialogAnagraficaComponent} from './genitore/dialog-anagrafica/dialog-anagrafica.component';
+import {DialogPrenotazioneComponent} from './genitore/dialog-prenotazione/dialog-prenotazione.component';
 import {AgmCoreModule} from '@agm/core';
 import {StopMapComponent} from './common/stop-map/stop-map.component';
 import {StopsMapComponent} from './common/stops-map/stops-map.component';
-import { MapDialogComponent } from './common/map-dialog/map-dialog.component';
+import {MapDialogComponent} from './common/map-dialog/map-dialog.component';
+import {PresenceDialogComponent} from './presenze/lista-prenotazioni/presence-dialog/presence-dialog.component';
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import { MapDialogComponent } from './common/map-dialog/map-dialog.component';
     DialogPrenotazioneComponent,
     StopMapComponent,
     StopsMapComponent,
-    MapDialogComponent
+    MapDialogComponent,
+    PresenceDialogComponent
   ],
   imports: [
     CommonModule,
@@ -82,7 +84,7 @@ import { MapDialogComponent } from './common/map-dialog/map-dialog.component';
     AgmCoreModule
   ],
   exports: [],
-  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent, MapDialogComponent]
+  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent, MapDialogComponent, PresenceDialogComponent]
 })
 export class LoggedModule {
 }

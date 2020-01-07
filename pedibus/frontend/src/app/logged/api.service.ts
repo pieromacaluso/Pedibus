@@ -83,9 +83,41 @@ export class ApiService {
    */
   postPresenza(alunno: Alunno, presenza: PrenotazioneRequest, choice: boolean) {
     const idVerso = this.versoToInt(presenza.verso);
+    const choiceNum = choice ? 1 : 0;
     return this.httpClient
       .post(this.baseURL + 'reservations/handled/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
-        .transform(presenza.data, 'yyyy-MM-dd') + '/' + choice, alunno.codiceFiscale);
+        .transform(presenza.data, 'yyyy-MM-dd') + '/' + choiceNum, alunno.codiceFiscale);
+  }
+  /**
+   * Segnala la assente di un alunno
+   */
+  postAssenza(alunno: Alunno, presenza: PrenotazioneRequest, choice: boolean) {
+    const idVerso = this.versoToInt(presenza.verso);
+    const choiceNum = choice ? 1 : 0;
+    return this.httpClient
+      .post(this.baseURL + 'reservations/assente/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
+        .transform(presenza.data, 'yyyy-MM-dd') + '/' + choiceNum, alunno.codiceFiscale);
+  }
+
+  /**
+   * Segnala la presoInCarico di un alunno
+   */
+  postArrivato(alunno: Alunno, presenza: PrenotazioneRequest, choice: boolean) {
+    const idVerso = this.versoToInt(presenza.verso);
+    const choiceNum = choice ? 1 : 0;
+    return this.httpClient
+      .post(this.baseURL + 'reservations/arrived/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
+        .transform(presenza.data, 'yyyy-MM-dd') + '/' + choiceNum, alunno.codiceFiscale);
+  }
+
+  /**
+   * Segnala la presoInCarico di un alunno
+   */
+  postRestore(alunno: Alunno, presenza: PrenotazioneRequest,) {
+    const idVerso = this.versoToInt(presenza.verso);
+    return this.httpClient
+      .post(this.baseURL + 'reservations/restore/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
+        .transform(presenza.data, 'yyyy-MM-dd'), alunno.codiceFiscale);
   }
 
   getNonPrenotati(date: Date, verso: string) {

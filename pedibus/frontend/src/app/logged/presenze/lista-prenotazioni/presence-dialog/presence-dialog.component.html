@@ -1,0 +1,36 @@
+<div>
+  <div class="mat-h2">{{this.data.alunno.surname}} {{this.data.alunno.name}}</div>
+</div>
+<mat-nav-list>
+  <ng-container
+    *ngIf="!this.data.alunno.presoInCarico && !this.data.alunno.arrivatoScuola && !this.data.alunno.assente">
+    <a mat-list-item (click)="selectAction(0)">
+      <span mat-line class="presente">Presente</span>
+      <span mat-line>L'alunno è presente alla fermata</span>
+    </a>
+
+    <a mat-list-item (click)="selectAction(1)">
+      <span mat-line class="assente">Assente</span>
+      <span mat-line>L'alunno è assente alla fermata</span>
+    </a>
+  </ng-container>
+
+  <ng-container *ngIf="this.data.alunno.presoInCarico && !this.data.alunno.arrivatoScuola">
+    <a mat-list-item (click)="selectAction(2)">
+      <span mat-line class="arrivato">Arrivato a Destinazione</span>
+      <span mat-line>L'alunno è arrivato a destinazione</span>
+    </a>
+
+    <a mat-list-item (click)="selectAction(3)">
+      <span mat-line>Annulla</span>
+      <span mat-line>Il bambino non è preso in carico</span>
+    </a>
+  </ng-container>
+
+  <ng-container *ngIf="this.data.alunno.assente || this.data.alunno.arrivatoScuola">
+    <a mat-list-item (click)="selectAction(3)">
+      <span mat-line>Annulla</span>
+      <span mat-line>Il bambino non è preso in carico</span>
+    </a>
+  </ng-container>
+</mat-nav-list>

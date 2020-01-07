@@ -5,13 +5,15 @@ import {ApiService} from '../../api.service';
 import {AuthService} from '../../../registration/auth.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AdminBookDialogComponent} from './admin-book-dialog/admin-book-dialog.component';
-import {MatSnackBar} from '@angular/material';
+import {MatBottomSheet, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {Observable, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
 import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
 import {catchError, switchMap, tap} from 'rxjs/operators';
 import {MapService} from '../../common/map.service';
+import {ReservationDTO} from '../../genitore/dtos';
+import {PresenceDialogComponent} from './presence-dialog/presence-dialog.component';
 
 @Component({
   selector: 'app-lista-prenotazioni',
@@ -31,12 +33,14 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   private loading: boolean;
   private handledSub: Subscription;
   private reservationSub: Subscription;
+  private firstSub: Subscription;
+  private arrivedSub: Subscription;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe, private mapService: MapService) {
     // First Observable
-    this.syncService.prenotazioneObs$.pipe(
+    this.firstSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
         pren => {
@@ -77,6 +81,23 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       al.presoInCarico = res.isSet;
     });
 
+    // Message Handled
+    this.arrivedSub = this.syncService.prenotazioneObs$.pipe(
+      tap(() => this.loading = true),
+      switchMap(
+        pren => {
+          return this.rxStompService.watch('/arrived' + this.pathSub(pren));
+        }
+      ),
+      tap(() => this.loading = false)
+    ).subscribe(message => {
+      const res = JSON.parse(message.body);
+      console.log('ws', res);
+      // tslint:disable-next-line:max-line-length
+      const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
+      al.arrivatoScuola = res.isSet;
+    });
+
     // Message reservation
     this.reservationSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
@@ -87,7 +108,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       ),
       tap(() => this.loading = false)
     ).subscribe(message => {
-      const res = JSON.parse(message.body);
+      const res: ReservationDTO = JSON.parse(message.body);
       // Se idFermata è null, si tratta di una cancellazione
       if (res.idFermata === null) {
         let searchAlunno;
@@ -115,8 +136,9 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
               codiceFiscale: searchAlunno.codiceFiscale,
               name: searchAlunno.name,
               surname: searchAlunno.surname,
-              presoInCarico: false,
-              arrivatoScuola: false,
+              presoInCarico: res.presoInCarico,
+              arrivatoScuola: res.arrivatoScuola,
+              assente: res.assente,
               update: false
             };
             const index: number = fe.alunni.indexOf(searchAlunno);
@@ -133,6 +155,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
           surname: oldAlunno.surname,
           presoInCarico: false,
           arrivatoScuola: false,
+          assente: false,
           update: false
         };
         this.deleteNotReserved(oldAlunno);
@@ -205,7 +228,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   }
 
   canModify() {
-    return this.authService.isAdmin() && this.resource.canModify;
+    return this.authService.isAdmin() || this.resource.canModify;
     // return true;
   }
 
@@ -220,24 +243,15 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   togglePresenza(id: number, alunno: Alunno) {
     console.log(id, alunno);
     if (this.canModify()) {
-      const al = this.resource.alunniPerFermata.find(p => p.fermata.id === id).alunni.find(a => a === alunno);
-      console.log(al);
-
-      al.update = true;
-      this.apiService.postPresenza(al, this.prenotazione, !al.presoInCarico).subscribe((rese) => {
-        console.log('presenza subscribe emitted something');
-        al.update = false;
-      }, (error) => {
-        console.error(error);
-        al.update = false;
+      this.dialog.open(PresenceDialogComponent, {
+        hasBackdrop: true,
+        data: {
+          alunno,
+          prenotazione: this.prenotazione,
+          res: this.resource.alunniPerFermata,
+          resource: this.resource
+        }
       });
-    }
-    if (this.authService.isUser()) {
-      const isChild = this.children.find((c) => c.codiceFiscale === alunno.codiceFiscale);
-      if (isChild) {
-        console.log('Opened delete dialog');
-        this.openDeleteDialog(alunno);
-      }
     }
   }
 
@@ -272,6 +286,8 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.handledSub.unsubscribe();
     this.reservationSub.unsubscribe();
+    this.firstSub.unsubscribe();
+    this.arrivedSub.unsubscribe();
   }
 
   deleteNotReserved(al: AlunnoNotReserved) {
@@ -283,5 +299,27 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
 
   openMapDialog(idFermata: number) {
     this.mapService.openMapDialog(idFermata).subscribe();
+  }
+
+  openArrivedDialog() {
+
+  }
+
+  openScuolaRitornoDialog() {
+
+  }
+
+  openScuolaAndataDialog() {
+    let alunniInCarico: Alunno[] = [];
+    for (const stop of this.resource.alunniPerFermata) {
+      for (const alunno of stop.alunni) {
+        if (alunno.presoInCarico) {
+          alunniInCarico.push(alunno);
+        }
+      }
+    }
+    alunniInCarico = this.sortedAlunni(alunniInCarico);
+    console.log(alunniInCarico);
+
   }
 }

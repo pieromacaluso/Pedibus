@@ -72,6 +72,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     stopSelect: ['', [Validators.required]]
   });
   private fermataDisp: Observable<Fermata>;
+  private mainSub: Subscription;
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private apiTurniService: ApiTurniService,
@@ -79,7 +80,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
               private rxStompService: RxStompService, private datePipe: DatePipe, private fb: FormBuilder
   ) {
     // Main Observable
-    this.syncService.prenotazioneObs$.pipe(
+    this.mainSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
         this.p = pren;
@@ -229,6 +230,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     this.dispCreateDelSub.unsubscribe();
     this.dispStatusSub.unsubscribe();
     this.turnoStatusSub.unsubscribe();
+    this.mainSub.unsubscribe();
   }
 
   showLoading() {

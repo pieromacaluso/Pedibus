@@ -28,6 +28,18 @@
   color: white;
 }
 
+.assente {
+  background-color: mat-color($pedibus-theme-warn, darker);
+  font-weight: bold;
+  color: white;
+}
+
+.arrivato {
+  background-color: mat-color($pedibus-theme-primary, darker);
+  font-weight: bold;
+  color: white;
+}
+
 .alunno-presenza {
   margin-top: 0.5%;
   margin-right: 0.5%;
