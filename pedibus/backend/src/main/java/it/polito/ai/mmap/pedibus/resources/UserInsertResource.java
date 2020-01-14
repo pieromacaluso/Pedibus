@@ -15,11 +15,15 @@ import java.util.stream.Collectors;
 public class UserInsertResource {
 
     private String userId;
+    private String name;
+    private String surname;
     private List<String> roleIdList;
     private List<String> lineaIdList;
 
     public UserInsertResource(UserEntity userEntity) {
         userId = userEntity.getUsername();
+        name = userEntity.getName();
+        surname = userEntity.getSurname();
         roleIdList = userEntity.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList());
     }
 }

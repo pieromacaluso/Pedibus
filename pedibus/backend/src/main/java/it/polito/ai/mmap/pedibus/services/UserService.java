@@ -303,8 +303,8 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public Page<UserInsertResource> getAllPagedUsers(Pageable pageable) {
-        Page<UserEntity> pagedUsersEntity = userRepository.findAll(pageable);
+    public Page<UserInsertResource> getAllPagedUsers(Pageable pageable, String keyword) {
+        Page<UserEntity> pagedUsersEntity = userRepository.findAllByNameContainingOrSurnameContainingOrderBySurnameAsc(keyword, keyword, pageable);
         return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map(UserInsertResource::new).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
     }
 }
