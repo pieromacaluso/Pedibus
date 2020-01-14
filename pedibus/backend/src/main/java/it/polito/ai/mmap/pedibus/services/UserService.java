@@ -244,8 +244,7 @@ public class UserService implements UserDetailsService {
         return jwtTokenService.createToken(username, roles);
     }
 
-    //Usato prima di paginare gli utenti
-    //TODO cancellare quando sicuri
+
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
