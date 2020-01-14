@@ -54,7 +54,7 @@ public class AdminRestController {
      * @return l'elenco degli utenti salvati
      */
     @GetMapping("/sysadmin/users")
-    public Page<UserInsertResource> getUsers(Pageable pageable, @RequestAttribute("keyword") String keyword) {
+    public Page<UserInsertResource> getUsers(Pageable pageable, @RequestParam("keyword") String keyword) {
         return userService.getAllPagedUsers(pageable, keyword);
     }
 

@@ -75,7 +75,7 @@ public class DataCreationService {
         logger.info("Caricamento linee in corso...");
         readPiedibusLines();
         logger.info("Caricamento linee completato.");
-//        makeChildUserReservations();
+        makeChildUserReservations();
 
         if (environment.getActiveProfiles()[0].equals("prod")) {
             logger.info("Creazione Basi di dati di test in corso...");
