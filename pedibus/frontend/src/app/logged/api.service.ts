@@ -181,11 +181,11 @@ export class ApiService {
         + this.datePipe.transform(data, 'yyyy-MM-dd') + '/' + this.versoToBool(verso));
   }
 
-  getUsers(pageNumber: number): Observable<any> {
+  getUsers(pageNumber: number, keyword: string): Observable<any> {
     const params = {
       page: JSON.stringify(pageNumber),
       size: JSON.stringify(10),
-      keyword: 'm'
+      keyword
     };
     return this.httpClient.get<any>(this.baseURL + '/sysadmin/users', {params});
   }

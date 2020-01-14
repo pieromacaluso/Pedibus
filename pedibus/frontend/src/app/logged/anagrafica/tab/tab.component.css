@@ -1,0 +1,26 @@
+.container {
+  width: 60%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding-top: 25px;
+  text-align: center;
+
+}
+.container-mobile {
+  width: 85%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding-top: 25px;
+  text-align: center;
+
+}
+
+.search-bar {
+  width: 100%;
+  display: flex;
+  align-content: space-around;
+  justify-content: center;
+}
+.search-bar-div {
+  width: 100%;
+}

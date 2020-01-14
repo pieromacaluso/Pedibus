@@ -1,0 +1,5 @@
+<mat-tab-group mat-align-tabs="center">
+  <mat-tab label="Utenti"> <app-tab *ngIf="(page | async) as p" [page]="p"></app-tab></mat-tab>
+<!--  <mat-tab label="Bambino"> <app-tab [page]="'bambino'"></app-tab></mat-tab>-->
+</mat-tab-group>
+<button class="add-button" mat-fab color="primary"><mat-icon>add</mat-icon></button>
