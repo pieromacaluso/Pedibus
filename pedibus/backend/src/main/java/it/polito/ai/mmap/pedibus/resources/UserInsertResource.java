@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -19,11 +20,15 @@ public class UserInsertResource {
     private String surname;
     private List<String> roleIdList;
     private List<String> lineaIdList;
+    private Set<String> childIdList;
+
 
     public UserInsertResource(UserEntity userEntity) {
         userId = userEntity.getUsername();
         name = userEntity.getName();
         surname = userEntity.getSurname();
         roleIdList = userEntity.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList());
+        childIdList = userEntity.getChildrenList();
+
     }
 }
