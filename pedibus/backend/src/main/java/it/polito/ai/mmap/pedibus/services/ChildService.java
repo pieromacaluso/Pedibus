@@ -9,9 +9,13 @@ import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -159,5 +163,11 @@ public class ChildService {
     public UserEntity getChildParent(String cfChild) {
         ChildEntity childEntity = getChildrenEntity(cfChild);
         return userService.getUserEntity(childEntity.getIdParent());
+    }
+
+    public Page<ChildDTO> getAllPagedChildren(Pageable pageable, String keyword) {
+        Page<ChildEntity> pagedUsersEntity = childRepository.findAllByNameContainingOrSurnameContainingOrCodiceFiscaleContainingOrderBySurnameAscNameAscCodiceFiscaleAsc(keyword, keyword, keyword, pageable);
+        return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map(ChildDTO::new).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
+
     }
 }

@@ -1,7 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
-import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
@@ -11,12 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class AdminRestController {
@@ -56,6 +54,22 @@ public class AdminRestController {
     @GetMapping("/sysadmin/users")
     public Page<UserInsertResource> getUsers(Pageable pageable, @RequestParam("keyword") String keyword) {
         return userService.getAllPagedUsers(pageable, keyword);
+    }
+
+    /**
+     * @return l'elenco di tutti i bambini salvati
+     */
+    @GetMapping("/sysadmin/children")
+    public Page<ChildDTO> getChildren(Pageable pageable, @RequestParam("keyword") String keyword) {
+        return childService.getAllPagedChildren(pageable, keyword);
+    }
+
+    /**
+     * @return l'elenco di tutti i bambini salvati
+     */
+    @GetMapping("/sysadmin/children/{idChild}")
+    public ChildDTO getChildren(@PathVariable("idChild") String cfChild) {
+        return childService.getChildDTOById(cfChild);
     }
 
     /**
