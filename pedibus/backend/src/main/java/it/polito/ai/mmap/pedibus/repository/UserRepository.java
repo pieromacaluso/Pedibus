@@ -14,5 +14,5 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId>{
     Optional<UserEntity> findByUsername(String email);
     Optional<UserEntity> findByUsernameAndIsEnabled(String email, Boolean isEnabled);
     Optional<UserEntity> findByRoleListContainingAndUsernameAndIsEnabled(RoleEntity roleEntity, String email, Boolean enabled);
-    Page<UserEntity> findAllByNameContainingOrSurnameContainingOrderBySurnameAsc(String name, String surname, Pageable pageable);
+    Page<UserEntity> findAllByNameContainingOrSurnameContainingOrUsernameContainingOrderBySurnameAsc(String name, String surname, String username, Pageable pageable);
 }
