@@ -48,7 +48,7 @@ export class NotificheService {
     const username = this.authService.getUsername();
     console.log('username:', username);
     this.apiService.getNotificheNonLette(username).pipe(take(1)).subscribe((notifiche) => {
-      this.dataService.updateNotifiche(notifiche);
+      this.dataService.updateNotifiche(notifiche.content);
       console.log('nuove notifiche:', notifiche);
     }, (err) => console.log(err));
   }

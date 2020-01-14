@@ -1,42 +1,28 @@
-<mat-card class="container" ngClass.lt-md="container-mobile">
-  <mat-card-header class="search-bar" fxLayout="row" fxLayoutGap="5px">
-    <div class="search-bar-div">
-      <mat-form-field class="search-bar-div">
-        <input #search (input)="searchKeyword(search.value)" matInput type="search" placeholder="Cerca...">
-      </mat-form-field>
-    </div>
-    <button mat-button>
-      <mat-icon>search</mat-icon>
-    </button>
-  </mat-card-header>
-  <mat-card-content>
+<mat-card class="container search-bar" ngClass.lt-md="container-mobile" fxLayout="row">
+  <div class="search-bar-div">
+    <mat-form-field class="search-bar-div">
+      <input #search (input)="searchKeyword(search.value)" matInput type="search">
+      <button mat-button *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear"
+              (click)="resetValue(search)">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-label><mat-icon>search</mat-icon> Cerca tra {{isUserDTO() ? 'gli utenti' : 'i bambini'}}...</mat-label>
+    </mat-form-field>
+  </div>
+</mat-card>
+
+<div class="container" ngClass.lt-md="container-mobile">
     <mat-paginator [length]="len"
                    [pageSize]="10"
                    [pageIndex]="1"
                    (page)="cambiaPagina($event)">
     </mat-paginator>
 
-    <div>
-      <mat-card *ngFor="let user of elements">
-        <div class="user">{{user.surname}} {{user.name}}</div>
-        <div class="user">{{user.userId}}</div>
-        <div class="role">
-          <div *ngFor="let role of user.roleIdList">
-            {{role}}
-          </div>
-        </div>
-        <div class="child">
-          <div *ngFor="let child of user.childIdList">
-            {{child}}
-          </div>
-        </div>
-        <div>
-          <button mat-button>
-            <mat-icon>edit</mat-icon>
-          </button>
-        </div>
-      </mat-card>
+    <div *ngIf="isUserDTO()">
+      <app-entry-user *ngFor="let user of elements" [user]="user"></app-entry-user>
     </div>
-  </mat-card-content>
-</mat-card>
+    <div *ngIf="isChildDTO()">
+        <app-entry-child *ngFor="let child of elements" [child]="child"></app-entry-child>
+    </div>
+</div>
 

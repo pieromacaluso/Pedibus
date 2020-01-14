@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AnagraficaService} from './anagrafica.service';
+import {AnagraficaService, ElementType} from './anagrafica.service';
 import {Observable} from 'rxjs';
 import {UserDTO} from './dtos';
+
+
 
 @Component({
   selector: 'app-anagrafica',
@@ -10,12 +12,14 @@ import {UserDTO} from './dtos';
 })
 export class AnagraficaComponent implements OnInit {
 
-  page: Observable<any>;
+  pageUser: Observable<any>;
   pageNumber: number;
+  pageChildren: Observable<any>;
 
   constructor(private anagraficaService: AnagraficaService) {
     this.pageNumber = 0;
-    this.page = anagraficaService.getUsers(this.pageNumber, '');
+    this.pageUser = anagraficaService.getUsers(this.pageNumber, '');
+    this.pageChildren = anagraficaService.getChildren(this.pageNumber, '');
   }
 
   ngOnInit() {

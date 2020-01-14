@@ -16,6 +16,7 @@ import {Observable} from 'rxjs';
 import {Notifica} from './notifiche/dtos';
 import {ChildrenDTO, ReservationDTO} from './genitore/dtos';
 import {UserDTO} from './anagrafica/dtos';
+import {debounceTime, distinctUntilChanged, first, share, take} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +28,8 @@ export class ApiService {
   constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
   }
 
-  getNotificheNonLette(username: string): Observable<Notifica[]> {
-    return this.httpClient.get<Notifica[]>(this.baseURL + 'notifiche/all/' + username);
+  getNotificheNonLette(username: string): Observable<any> {
+    return this.httpClient.get<any>(this.baseURL + 'notifiche/all/' + username);
   }
 
   deleteNotifica(idNotifica: string): Observable<any[]> {
@@ -37,6 +38,15 @@ export class ApiService {
 
   getChildren(): Observable<ChildrenDTO[]> {
     return this.httpClient.get<ChildrenDTO[]>(this.baseURL + 'children');
+  }
+
+  getAllChildren(pageNumber: number, keyword: string): Observable<any> {
+    const params = {
+      page: JSON.stringify(pageNumber),
+      size: JSON.stringify(10),
+      keyword
+    };
+    return this.httpClient.get<any>(this.baseURL + 'sysadmin/children', {params});
   }
 
   getLinee(): Observable<string[]> {
@@ -89,6 +99,7 @@ export class ApiService {
       .post(this.baseURL + 'reservations/handled/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
         .transform(presenza.data, 'yyyy-MM-dd') + '/' + choiceNum, alunno.codiceFiscale);
   }
+
   /**
    * Segnala la assente di un alunno
    */
@@ -188,5 +199,10 @@ export class ApiService {
       keyword
     };
     return this.httpClient.get<any>(this.baseURL + '/sysadmin/users', {params});
+  }
+
+  getChild(child: any) {
+    return this.httpClient.get<ChildrenDTO>(this.baseURL + 'sysadmin/children/' + child);
+
   }
 }

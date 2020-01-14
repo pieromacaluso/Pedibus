@@ -37,6 +37,8 @@ import {MapDialogComponent} from './common/map-dialog/map-dialog.component';
 import {PresenceDialogComponent} from './presenze/lista-prenotazioni/presence-dialog/presence-dialog.component';
 import { AnagraficaComponent } from './anagrafica/anagrafica.component';
 import { TabComponent } from './anagrafica/tab/tab.component';
+import { EntryUserComponent } from './anagrafica/tab/entry-user/entry-user.component';
+import { EntryChildComponent } from './anagrafica/tab/entry-child/entry-child.component';
 
 
 @NgModule({
@@ -65,6 +67,8 @@ import { TabComponent } from './anagrafica/tab/tab.component';
     PresenceDialogComponent,
     AnagraficaComponent,
     TabComponent,
+    EntryUserComponent,
+    EntryChildComponent,
   ],
   imports: [
     CommonModule,

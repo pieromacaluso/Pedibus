@@ -1,7 +1,7 @@
 import { InjectableRxStompConfig } from '@stomp/ng2-stompjs';
 
 const prepareBrokerURL = (path: string): string => {
-  // Create a relative http(s) URL relative to current page
+  // Create a relative http(s) URL relative to current pageUser
   const hostname = window.location.host;
   const href = 'ws://' + hostname;
   const url = new URL(path, href);
