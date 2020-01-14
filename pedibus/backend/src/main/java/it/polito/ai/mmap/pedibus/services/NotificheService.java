@@ -80,7 +80,8 @@ public class NotificheService {
      * @param username
      * @return
      */
-    public ArrayList<NotificaDTO> getNotifiche(String username) {
+    //TODO verificare forse non serve più
+    /*public ArrayList<NotificaDTO> getNotifiche(String username) {
 
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getUsername().equals(username)) {
@@ -97,7 +98,7 @@ public class NotificheService {
         }
 
 
-    }
+    }*/
 
 
     /**

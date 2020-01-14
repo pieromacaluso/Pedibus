@@ -47,6 +47,14 @@ public class DebugController {
         dataCreationService.makeChildUserReservations();
     }
 
+    @PostMapping("/debug/make/notifications")
+    public void makeNotifications() throws IOException {
+        logger.info("POST /debug/make/notifications è stato contattato");
+        dataCreationService.makeNotifications();
+    }
+
+
+
 
 
 }

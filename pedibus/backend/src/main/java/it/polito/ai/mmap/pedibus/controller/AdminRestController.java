@@ -54,12 +54,11 @@ public class AdminRestController {
      * @return l'elenco degli utenti salvati
      */
     @GetMapping("/sysadmin/users")
-    public Page<UserInsertResource> getUsers(Pageable pageable) {
-        return userService.getAllPagedUsers(pageable);
+    public Page<UserInsertResource> getUsers(Pageable pageable, @RequestParam("keyword") String keyword) {
+        return userService.getAllPagedUsers(pageable, keyword);
     }
 
     /**
-     *
      * @param userInsertResource l'utente i cui dettagli vanno aggiornati
      */
     @PutMapping("/sysadmin/user")

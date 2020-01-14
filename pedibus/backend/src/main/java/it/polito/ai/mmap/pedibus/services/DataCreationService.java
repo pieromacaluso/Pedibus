@@ -51,6 +51,8 @@ public class DataCreationService {
     RoleRepository roleRepository;
     @Autowired
     MongoTimeService mongoTimeService;
+    @Autowired
+    NotificheService notificheService;
 
     @Autowired
     private Environment environment;
@@ -73,7 +75,7 @@ public class DataCreationService {
         logger.info("Caricamento linee in corso...");
         readPiedibusLines();
         logger.info("Caricamento linee completato.");
-//        makeChildUserReservations();
+        makeChildUserReservations();
 
         if (environment.getActiveProfiles()[0].equals("prod")) {
             logger.info("Creazione Basi di dati di test in corso...");
@@ -295,5 +297,19 @@ public class DataCreationService {
         });
 
         return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Arrays.asList(roleEntity)), passwordEncoder)).collect(Collectors.toList());
+    }
+
+    /**
+     * Genera automaticamente 101 notifiche di tipo base destinate al primo degli user nel db
+     * @throws IOException
+     */
+    public void makeNotifications() throws IOException{
+        if(userService.getAllUsers().size()>0){
+            String dest=userService.getAllUsers().get(0).getUsername();
+            for(int i=0;i<101;i++){
+                NotificaEntity notificaEntity=new NotificaEntity(NotificaEntity.NotificationType.BASE,dest,"Notifica "+i,null);
+                notificheService.addNotifica(notificaEntity);
+            }
+        }
     }
 }

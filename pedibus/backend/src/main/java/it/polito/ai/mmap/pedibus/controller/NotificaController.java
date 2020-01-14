@@ -22,10 +22,11 @@ public class NotificaController {
     /**
      * Restituisce le notifiche non lette di un determinato utente
      */
-    @GetMapping("/notifiche/all/{username}")
+    //TODO eliminare quando siamo sicuri che la paginazione funziona
+    /*@GetMapping("/notifiche/all/{username}")
     public ArrayList<NotificaDTO> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotifiche(username);}
-
-    @GetMapping("/notifiche/paged/{username}")
+    */
+    @GetMapping("/notifiche/all/{username}")
     public Page<NotificaDTO> getPagedNotifications(@PathVariable("username") String username, Pageable pageable){ return notificheService.getPagedNotifications(username, pageable);}
 
 //TODO delete
