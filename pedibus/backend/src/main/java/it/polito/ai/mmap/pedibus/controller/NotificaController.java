@@ -26,7 +26,7 @@ public class NotificaController {
     public ArrayList<NotificaDTO> getNotifiche(@PathVariable("username") String username){ return notificheService.getNotifiche(username);}
 
     @GetMapping("/notifiche/paged/{username}")
-    public PageImpl<NotificaDTO> getPagedNotifications(@PathVariable("username") String username, Pageable pageable){ return notificheService.getPagedNotifications(username, pageable);}
+    public Page<NotificaDTO> getPagedNotifications(@PathVariable("username") String username, Pageable pageable){ return notificheService.getPagedNotifications(username, pageable);}
 
 //TODO delete
 

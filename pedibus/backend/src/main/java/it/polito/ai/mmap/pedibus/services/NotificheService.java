@@ -8,6 +8,7 @@ import it.polito.ai.mmap.pedibus.repository.NotificaRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispStateResource;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
@@ -24,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -215,16 +218,11 @@ public class NotificheService {
                         + " alle ore " + fermataEntity.getOrario() + " è stata confermata", dispEntity.getDispId());
     }
 
-    public PageImpl<NotificaDTO> getPagedNotifications(String username, Pageable pageable) {
+    public Page<NotificaDTO> getPagedNotifications(String username, Pageable pageable) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getUsername().equals(username)) {
-            List<NotificaEntity> pagedNotifications = notificaRepository.findAllByUsernameDestinatarioOrderByDataDesc(username);
-           List<NotificaDTO> notificheDTO = new ArrayList<>();
-            for (NotificaEntity n : pagedNotifications) {
-                notificheDTO.add(new NotificaDTO(n));
-            }
-
-            return new PageImpl<NotificaDTO>(notificheDTO, pageable, notificheDTO.size());
+            Page<NotificaEntity> pagedNotifications = notificaRepository.findAllByUsernameDestinatarioOrderByDataDesc(username, pageable);
+           return PageableExecutionUtils.getPage(pagedNotifications.stream().map(NotificaDTO::new).collect(Collectors.toList()), pageable, pagedNotifications::getTotalElements);
         } else {
             throw new UnauthorizedUserException("Operazione non autorizzata");
         }

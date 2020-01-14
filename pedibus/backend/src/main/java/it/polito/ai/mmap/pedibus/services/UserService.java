@@ -244,7 +244,8 @@ public class UserService implements UserDetailsService {
         return jwtTokenService.createToken(username, roles);
     }
 
-
+    //Usato prima di paginare gli utenti
+    //TODO cancellare quando sicuri
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
@@ -304,8 +305,7 @@ public class UserService implements UserDetailsService {
 
 
     public Page<UserInsertResource> getAllPagedUsers(Pageable pageable) {
-        Page<UserEntity> pageA=userRepository.findAll(pageable);
-        Function<List<UserEntity>,List<UserInsertResource>> collectionTransform;
-        return PageableExecutionUtils.getPage(pageA.stream().map(UserInsertResource::new).collect(Collectors.toList()), pageable,pageA::getTotalElements);
+        Page<UserEntity> pagedUsersEntity = userRepository.findAll(pageable);
+        return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map(UserInsertResource::new).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
     }
 }
