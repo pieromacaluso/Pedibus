@@ -12,6 +12,9 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
@@ -210,5 +213,20 @@ public class NotificheService {
                         + (turnoEntity.getVerso() ? "con partenza d" : "con arrivo ")
                         + "alla fermata " + fermataEntity.getName() + " della " + lineaEntity.getNome()
                         + " alle ore " + fermataEntity.getOrario() + " è stata confermata", dispEntity.getDispId());
+    }
+
+    public PageImpl<NotificaDTO> getPagedNotifications(String username, Pageable pageable) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal.getUsername().equals(username)) {
+            List<NotificaEntity> pagedNotifications = notificaRepository.findAllByUsernameDestinatarioOrderByDataDesc(username);
+           List<NotificaDTO> notificheDTO = new ArrayList<>();
+            for (NotificaEntity n : pagedNotifications) {
+                notificheDTO.add(new NotificaDTO(n));
+            }
+
+            return new PageImpl<NotificaDTO>(notificheDTO, pageable, notificheDTO.size());
+        } else {
+            throw new UnauthorizedUserException("Operazione non autorizzata");
+        }
     }
 }
