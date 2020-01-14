@@ -54,11 +54,9 @@ public class AdminRestController {
      * @return l'elenco degli utenti salvati
      */
     @GetMapping("/sysadmin/users")
-    public PageImpl<UserInsertResource> getUsers(Pageable pageable) {
+    public Page<UserInsertResource> getUsers(Pageable pageable) {
         logger.info(pageable.toString() );
-        List<UserInsertResource> users=userService.getAllUsers().stream().map(UserInsertResource::new).collect(Collectors.toList());
-        //Page<UserInsertResource> users=userService.getAllPagedUsers();
-        return new PageImpl<UserInsertResource>(users, pageable, users.size());
+        return userService.getAllPagedUsers(pageable);
     }
 
     /**

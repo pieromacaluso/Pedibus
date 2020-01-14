@@ -303,9 +303,9 @@ public class UserService implements UserDetailsService {
     }
 
 
-    /*public Page<UserInsertResource> getAllPagedUsers(Pageable pageable) {
+    public Page<UserInsertResource> getAllPagedUsers(Pageable pageable) {
         Page<UserEntity> pageA=userRepository.findAll(pageable);
         Function<List<UserEntity>,List<UserInsertResource>> collectionTransform;
-        return Page<UserInsertResource> pageB=PageableExecutionUtils.getPage(collectionTransform.apply(pageA.getContent()),pageable,pageA::getTotalElements);
-    }*/
+        return PageableExecutionUtils.getPage(pageA.stream().map(UserInsertResource::new).collect(Collectors.toList()), pageable,pageA::getTotalElements);
+    }
 }
