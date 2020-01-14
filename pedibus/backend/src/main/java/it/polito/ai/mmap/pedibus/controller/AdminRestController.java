@@ -55,7 +55,6 @@ public class AdminRestController {
      */
     @GetMapping("/sysadmin/users")
     public Page<UserInsertResource> getUsers(Pageable pageable, @RequestAttribute("keyword") String keyword) {
-        logger.info(pageable.toString());
         return userService.getAllPagedUsers(pageable, keyword);
     }
 
