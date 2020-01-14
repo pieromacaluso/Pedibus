@@ -76,7 +76,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     ).subscribe(message => {
       const res = JSON.parse(message.body);
       console.log('ws', res);
-      // tslint:disable-next-line:max-line-length
+      // tslint:disable-next-line:max-line-len
       const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
       al.presoInCarico = res.isSet;
     });
@@ -93,7 +93,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     ).subscribe(message => {
       const res = JSON.parse(message.body);
       console.log('ws', res);
-      // tslint:disable-next-line:max-line-length
+      // tslint:disable-next-line:max-line-len
       const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
       al.arrivatoScuola = res.isSet;
     });

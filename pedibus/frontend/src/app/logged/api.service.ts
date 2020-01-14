@@ -15,6 +15,7 @@ import {DialogData} from './presenze/lista-prenotazioni/admin-book-dialog/admin-
 import {Observable} from 'rxjs';
 import {Notifica} from './notifiche/dtos';
 import {ChildrenDTO, ReservationDTO} from './genitore/dtos';
+import {UserDTO} from './anagrafica/dtos';
 
 @Injectable({
   providedIn: 'root'
@@ -178,5 +179,14 @@ export class ApiService {
     return this.httpClient
       .delete(this.baseURL + 'reservations/' + codiceFiscale + '/' + idLinea + '/'
         + this.datePipe.transform(data, 'yyyy-MM-dd') + '/' + this.versoToBool(verso));
+  }
+
+  getUsers(pageNumber: number): Observable<any> {
+    const params = {
+      page: JSON.stringify(pageNumber),
+      size: JSON.stringify(10),
+      keyword: 'm'
+    };
+    return this.httpClient.get<any>(this.baseURL + '/sysadmin/users', {params});
   }
 }

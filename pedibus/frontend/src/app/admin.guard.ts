@@ -20,7 +20,7 @@ export class AdminGuard implements CanActivate {
               }
 
               if (!this.auth.isAdmin()) {
-                this.router.navigate(['presenze']);
+                this.router.navigate([this.auth.getHome()]);
                 return false;
               }
 

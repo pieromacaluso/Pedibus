@@ -8,8 +8,8 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule, MatListModule,
-  MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule,
-  MatSelectModule, MatSlideToggleModule
+  MatNativeDateModule, MatPaginatorModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule,
+  MatSelectModule, MatSlideToggleModule, MatTabsModule
 } from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ToolbarComponent} from './presenze/toolbar/toolbar.component';
@@ -35,6 +35,8 @@ import {StopMapComponent} from './common/stop-map/stop-map.component';
 import {StopsMapComponent} from './common/stops-map/stops-map.component';
 import {MapDialogComponent} from './common/map-dialog/map-dialog.component';
 import {PresenceDialogComponent} from './presenze/lista-prenotazioni/presence-dialog/presence-dialog.component';
+import { AnagraficaComponent } from './anagrafica/anagrafica.component';
+import { TabComponent } from './anagrafica/tab/tab.component';
 
 
 @NgModule({
@@ -60,7 +62,9 @@ import {PresenceDialogComponent} from './presenze/lista-prenotazioni/presence-di
     StopMapComponent,
     StopsMapComponent,
     MapDialogComponent,
-    PresenceDialogComponent
+    PresenceDialogComponent,
+    AnagraficaComponent,
+    TabComponent,
   ],
   imports: [
     CommonModule,
@@ -81,7 +85,9 @@ import {PresenceDialogComponent} from './presenze/lista-prenotazioni/presence-di
     MatRadioModule,
     MatSlideToggleModule,
     MatListModule,
-    AgmCoreModule
+    AgmCoreModule,
+    MatTabsModule,
+    MatPaginatorModule
   ],
   exports: [],
   entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent, MapDialogComponent, PresenceDialogComponent]

@@ -19,6 +19,7 @@ import { AdminGuard } from './admin.guard';
 import {GuideGuard} from './guide.guard';
 import { NotificheComponent } from './logged/notifiche/notifiche.component';
 import { GenitoreComponent } from './logged/genitore/genitore.component';
+import {AnagraficaComponent} from './logged/anagrafica/anagrafica.component';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
@@ -28,6 +29,7 @@ const appRoutes: Routes = [
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},
   {path: 'notifiche', component: NotificheComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard], data: { animation: 'yes' }},
+  {path: 'anagrafica', component: AnagraficaComponent, canActivate: [AdminGuard], data: { animation: 'yes' }},
   {path: 'recover', component: ForgotPasswordComponent, data: { animation: 'yes' }},
   {path: 'recover/:token', component: RecoverComponent, data: { animation: 'yes' }},
   {path: 'confirm/:token', component: ConfirmComponent, data: { animation: 'yes' }},

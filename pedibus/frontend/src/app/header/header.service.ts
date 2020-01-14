@@ -13,6 +13,7 @@ export class HeaderService {
 
   // Observable string streams
   menuAnnounced$ = this.menuSource.asObservable();
+  private anagrafica = {icon: 'person_add', link: 'anagrafica', title: 'Anagrafica'};
   private genitori = {icon: 'supervisor_account', link: 'genitore', title: 'Genitore'};
   private presenze = {icon: 'people', link: 'presenze', title: 'Presenze'};
   private schedule = {icon: 'schedule', link: 'disponibilita', title: 'Disponibilità'};
@@ -29,7 +30,7 @@ export class HeaderService {
     const menu: MenuItem[] = [];
     if (this.auth.isLoggedIn()) {
       if (this.auth.getRoles().includes('ROLE_SYSTEM-ADMIN')) {
-        menu.push(this.presenze, this.schedule, this.notification, this.turni);
+        menu.push(this.anagrafica, this.presenze, this.schedule, this.notification, this.turni);
       } else if (this.auth.getRoles().includes('ROLE_GUIDE') && this.auth.getRoles().includes('ROLE_ADMIN')) {
         menu.push(this.presenze, this.turni, this.schedule, this.notification);
       } else if (this.auth.getRoles().includes('ROLE_ADMIN')) {

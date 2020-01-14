@@ -164,7 +164,7 @@ export class AuthService {
       return 'presenze';
     }
     if (this.isAdmin()) {
-      return 'presenze'; // cambiare con home admin
+      return 'anagrafica';
     }
   }
 }
