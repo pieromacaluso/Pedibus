@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
+import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
@@ -9,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -50,8 +54,11 @@ public class AdminRestController {
      * @return l'elenco degli utenti salvati
      */
     @GetMapping("/sysadmin/users")
-    public List<UserInsertResource> getUsers() {
-        return userService.getAllUsers().stream().map(UserInsertResource::new).collect(Collectors.toList());
+    public PageImpl<UserInsertResource> getUsers(Pageable pageable) {
+        logger.info(pageable.toString() );
+        List<UserInsertResource> users=userService.getAllUsers().stream().map(UserInsertResource::new).collect(Collectors.toList());
+        //Page<UserInsertResource> users=userService.getAllPagedUsers();
+        return new PageImpl<UserInsertResource>(users, pageable, users.size());
     }
 
     /**

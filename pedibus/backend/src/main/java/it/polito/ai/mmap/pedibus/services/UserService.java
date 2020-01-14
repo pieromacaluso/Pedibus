@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -299,4 +303,9 @@ public class UserService implements UserDetailsService {
     }
 
 
+    /*public Page<UserInsertResource> getAllPagedUsers(Pageable pageable) {
+        Page<UserEntity> pageA=userRepository.findAll(pageable);
+        Function<List<UserEntity>,List<UserInsertResource>> collectionTransform;
+        return Page<UserInsertResource> pageB=PageableExecutionUtils.getPage(collectionTransform.apply(pageA.getContent()),pageable,pageA::getTotalElements);
+    }*/
 }
