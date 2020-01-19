@@ -4,7 +4,6 @@ import {Observable} from 'rxjs';
 import {UserDTO} from './dtos';
 
 
-
 @Component({
   selector: 'app-anagrafica',
   templateUrl: './anagrafica.component.html',
@@ -25,4 +24,15 @@ export class AnagraficaComponent implements OnInit {
   ngOnInit() {
   }
 
+  openDialog(selectedIndex: number) {
+    switch (selectedIndex) {
+      case ElementType.User:
+        this.anagraficaService.openDialogUser(null);
+        break;
+      case ElementType.Child:
+        this.anagraficaService.openDialogChild(null);
+        break;
+    }
+
+  }
 }

@@ -1,69 +1,89 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AnagraficaService, ElementType, RoleType} from '../anagrafica.service';
 import {UserDTO} from '../dtos';
-import {PageEvent} from '@angular/material';
+import {MatPaginator, PageEvent} from '@angular/material';
 import {ChildrenDTO} from '../../genitore/dtos';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.scss']
 })
-export class TabComponent implements OnInit {
+export class TabComponent implements OnInit, OnDestroy {
 
   @Input() page: any;
 
   @Input() type: ElementType;
   elements: any[];
   len: number;
+  pageIndex: number;
+  private updatesSub: Subscription;
 
   constructor(private anagraficaService: AnagraficaService) {
   }
 
   ngOnInit() {
-
+    console.log('INIT', 'color: red');
     console.log(this.page);
     this.elements = this.page.content;
     this.len = this.page.totalElements;
+    this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
+        this.searchKeyword(res, 0);
+      }, error => {
+        // TODO: error management
+      }
+    );
+    this.updatesSub = this.anagraficaService.watchUpdates(this.type).subscribe((res) => {
+      this.updateEmit();
+    });
   }
 
   cambiaPagina($event: PageEvent) {
     switch (this.type) {
       case ElementType.User:
-        this.anagraficaService.getUsers($event.pageIndex, '').subscribe((res) => {
-          this.elements = res.content;
-        }, (error) => {
-          // TODO: Errore cambio pagina
-        });
+        this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
+            this.searchKeyword(res, $event.pageIndex);
+          }, error => {
+            // TODO: error management
+          }
+        );
         break;
       case ElementType.Child:
-        this.anagraficaService.getChildren($event.pageIndex, '').subscribe((res) => {
-          this.elements = res.content;
-        }, (error) => {
-          // TODO: Errore cambio pagina
-        });
+        this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
+            this.searchKeyword(res, $event.pageIndex);
+          }, error => {
+            // TODO: error management
+          }
+        );
         break;
 
     }
-
   }
 
-  searchKeyword(keyword: string) {
+  updateEmit() {
+    this.anagraficaService.updateEmit();
+  }
+
+  emitKeyword(keyword: string, paginator: MatPaginator) {
+    this.anagraficaService.emitKeyword(keyword, this.type);
+    paginator.firstPage();
+  }
+
+  searchKeyword(keyword: string, pageIndex: number) {
     switch (this.type) {
       case ElementType.User:
-        this.anagraficaService.getUsers(0, keyword).subscribe((res) => {
+        this.anagraficaService.getUsers(pageIndex, keyword).subscribe((res) => {
           this.elements = res.content;
           this.len = res.totalElements;
-
         }, (error) => {
           // TODO: Errore cambio pagina
         });
         break;
       case ElementType.Child:
-        this.anagraficaService.getChildren(0, keyword).subscribe((res) => {
+        this.anagraficaService.getChildren(pageIndex, keyword).subscribe((res) => {
           this.elements = res.content;
           this.len = res.totalElements;
-
         }, (error) => {
           // TODO: Errore cambio pagina
         });
@@ -85,6 +105,7 @@ export class TabComponent implements OnInit {
       case ElementType.User:
         this.anagraficaService.getUsers(0, '').subscribe((res) => {
           this.elements = res.content;
+          this.pageIndex = 0;
         }, (error) => {
           // TODO: Errore cambio pagina
         });
@@ -92,11 +113,18 @@ export class TabComponent implements OnInit {
       case ElementType.Child:
         this.anagraficaService.getChildren(0, '').subscribe((res) => {
           this.elements = res.content;
+          this.pageIndex = 0;
         }, (error) => {
           // TODO: Errore cambio pagina
         });
         break;
 
     }
+  }
+
+  ngOnDestroy() {
+    console.log('DESTROY', 'color: red');
+    this.updatesSub.unsubscribe();
+    this.anagraficaService.resetKeyword();
   }
 }

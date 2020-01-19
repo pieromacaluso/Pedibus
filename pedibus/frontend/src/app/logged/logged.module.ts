@@ -39,6 +39,9 @@ import { AnagraficaComponent } from './anagrafica/anagrafica.component';
 import { TabComponent } from './anagrafica/tab/tab.component';
 import { EntryUserComponent } from './anagrafica/tab/entry-user/entry-user.component';
 import { EntryChildComponent } from './anagrafica/tab/entry-child/entry-child.component';
+import { ChildDialogComponent } from './anagrafica/child-dialog/child-dialog.component';
+import { UserDialogComponent } from './anagrafica/user-dialog/user-dialog.component';
+import { ConfirmationDialogComponent } from './common/confimation-dialog/confirmation-dialog.component';
 
 
 @NgModule({
@@ -69,6 +72,9 @@ import { EntryChildComponent } from './anagrafica/tab/entry-child/entry-child.co
     TabComponent,
     EntryUserComponent,
     EntryChildComponent,
+    ChildDialogComponent,
+    UserDialogComponent,
+    ConfirmationDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -94,7 +100,7 @@ import { EntryChildComponent } from './anagrafica/tab/entry-child/entry-child.co
     MatPaginatorModule
   ],
   exports: [],
-  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent, MapDialogComponent, PresenceDialogComponent]
+  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent, MapDialogComponent, PresenceDialogComponent, UserDialogComponent, ChildDialogComponent, ConfirmationDialogComponent]
 })
 export class LoggedModule {
 }

@@ -1,7 +1,7 @@
 <mat-card class="container search-bar" ngClass.lt-md="container-mobile" fxLayout="row">
   <div class="search-bar-div">
     <mat-form-field class="search-bar-div">
-      <input #search (input)="searchKeyword(search.value)" matInput type="search">
+        <input #search (input)="emitKeyword(search.value, paginator);" matInput type="search" class="text-white">
       <button mat-button *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear"
               (click)="resetValue(search)">
         <mat-icon>close</mat-icon>
@@ -12,9 +12,9 @@
 </mat-card>
 
 <div class="container" ngClass.lt-md="container-mobile">
-    <mat-paginator [length]="len"
+    <mat-paginator #paginator [length]="len"
                    [pageSize]="10"
-                   [pageIndex]="1"
+                   [pageIndex]="pageIndex"
                    (page)="cambiaPagina($event)">
     </mat-paginator>
 

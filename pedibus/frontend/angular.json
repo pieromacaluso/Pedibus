@@ -23,8 +23,10 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "src/pedibus-theme.scss"
+              {
+                "input": "src/pedibus-theme.scss"
+              },
+              "src/styles.scss"
             ],
             "scripts": [],
             "es5BrowserSupport": true
@@ -81,8 +83,10 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.css",
-              "src/pedibus-theme.scss"
+              {
+                "input": "src/pedibus-theme.scss"
+              },
+              "src/styles.scss"
             ],
             "scripts": [],
             "assets": [

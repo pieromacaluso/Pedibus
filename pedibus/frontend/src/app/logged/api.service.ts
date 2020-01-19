@@ -46,7 +46,7 @@ export class ApiService {
       size: JSON.stringify(10),
       keyword
     };
-    return this.httpClient.get<any>(this.baseURL + 'sysadmin/children', {params});
+    return this.httpClient.get<any>(this.baseURL + 'sysadmin/children', {params}).pipe(first());
   }
 
   getLinee(): Observable<string[]> {
@@ -198,11 +198,19 @@ export class ApiService {
       size: JSON.stringify(10),
       keyword
     };
-    return this.httpClient.get<any>(this.baseURL + '/sysadmin/users', {params});
+    return this.httpClient.get<any>(this.baseURL + '/sysadmin/users', {params}).pipe(first());
   }
 
-  getChild(child: any) {
-    return this.httpClient.get<ChildrenDTO>(this.baseURL + 'sysadmin/children/' + child);
+  addChild(child: ChildrenDTO) {
+    return this.httpClient
+      .post(this.baseURL + 'sysadmin/children/', child).pipe(first());
+  }
 
+  updateChild(codiceFiscale: string, child: ChildrenDTO) {
+    return this.httpClient.put<ChildrenDTO>(this.baseURL + 'sysadmin/children/' + codiceFiscale, child).pipe(first());
+  }
+
+  deleteChild(codiceFiscale: string) {
+      return this.httpClient.delete<void>(this.baseURL + 'sysadmin/children/' + codiceFiscale).pipe(first());
   }
 }

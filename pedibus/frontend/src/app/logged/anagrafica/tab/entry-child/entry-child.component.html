@@ -1,0 +1,19 @@
+<mat-card fxLayout="row" class="card-user">
+  <div fxLayout="column">
+    <div fxLayout="row">
+      <div class="mat-h2 name-surname primary">{{child.surname}} {{child.name}}</div>
+    </div>
+    <div class="mat-body user">
+      <b>Codice Fiscale:</b>
+      <span>{{child.codiceFiscale}}</span>
+    </div>
+  </div>
+  <div>
+    <button mat-button class="primary" color="primary" (click)="openDialog()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-button color="warn" (click)="deleteChild()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</mat-card>

@@ -1,0 +1,30 @@
+<mat-card fxLayout="row" class="card-user">
+  <div fxLayout="column">
+    <div fxLayout="row">
+      <div class="mat-h2 name-surname">{{user.surname}} {{user.name}}</div>
+    </div>
+    <div class="mat-body user">
+      <b>Email:</b>
+      <span>{{user.userId}}</span>
+    </div>
+    <div class="role mat-body user" fxLayout="row">
+      <b>Ruoli: </b>
+      <div *ngFor="let role of user.roleIdList">
+        {{printRole(role)}}
+      </div>
+    </div>
+    <div class="child mat-body user" *ngIf="user.childIdList.length > 0">
+      <b>Figli: </b>
+      <span *ngFor="let child of this.childObs; let i = index">
+        <ng-container *ngIf="(child | async) as details">
+          {{details.surname}} {{details.name}}<span *ngIf="this.childObs.length - 1 !== i">,</span>
+        </ng-container>
+      </span>
+    </div>
+  </div>
+  <div>
+    <button mat-button (click)="openDialog()">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+</mat-card>

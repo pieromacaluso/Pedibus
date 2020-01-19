@@ -1,0 +1,47 @@
+@import './pedibus-theme.scss';
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.invisible {
+  display: none !important;
+}
+
+.primary {
+  color: mat-color($pedibus-theme-primary) !important;
+}
+
+.accent {
+  color: mat-color($pedibus-theme-accent) !important;
+}
+.warn {
+  color: mat-color($pedibus-theme-warn) !important;
+}
+
+.primary-bg {
+  background-color: mat-color($pedibus-theme-primary) !important;
+  color: white;
+}
+
+.accent-bg {
+  background-color: mat-color($pedibus-theme-accent) !important;
+}
+.warn-bg {
+  background-color: mat-color($pedibus-theme-warn) !important;
+}
+
+.text-white {
+  color: white;
+}
+
+mat-card {
+  background-color: #fafafa !important;
+  color: black !important;
+}
+

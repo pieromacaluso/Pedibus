@@ -1,0 +1,26 @@
+mat-card {
+  margin-bottom: 10px;
+}
+
+mat-card-content {
+  text-align: left;
+}
+
+.card-user {
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.name-surname {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.role {
+  align-content: center;
+  margin: 0 0 16px;
+}
+
+.user {
+  text-align: left !important;
+}

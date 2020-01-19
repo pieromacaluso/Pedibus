@@ -1,0 +1,98 @@
+<div class="mat-h2"><span *ngIf="this.data">Modifica </span><span *ngIf="!this.data">Aggiungi </span>Bambino</div>
+<form #form [formGroup]="profileForm" fxLayout="column">
+  <mat-form-field>
+    <mat-label>Nome</mat-label>
+    <input matInput type="text" placeholder="Name" formControlName="name" required>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Cognome</mat-label>
+    <input matInput type="text" placeholder="Surname" formControlName="surname" required>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Codice Fiscale</mat-label>
+    <input matInput type="text" placeholder="CodiceFiscale" formControlName="codiceFiscale" required>
+  </mat-form-field>
+  <div *ngIf="(this.observableLines | async) as details" fxLayout="column">
+    <div fxLayout="row"  fxLayout.lt-sm="column" fxLayoutGap="5px">
+      <mat-form-field>
+        <mat-label>Linea Andata</mat-label>
+        <mat-select #selectAndata placeholder="Linea Andata" formControlName="idLineaAndata" required [value]="details.andata.id">
+          <mat-option *ngFor="let line of getLines(details.lines)" [value]="line.id">{{line.nome}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Fermate Andata</mat-label>
+        <mat-select placeholder="Fermate Andata" formControlName="idFermataAndata" required [disabled]="!selectAndata.value">
+          <ng-container *ngIf="selectAndata.value">
+            <mat-option *ngFor="let stop of getAndata(details.lines, selectAndata.value)"
+                        [value]="stop.id">{{stop.nome}}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="5px">
+      <mat-form-field>
+        <mat-label>Linea Ritorno</mat-label>
+        <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required [value]="details.ritorno.id">
+          <mat-option *ngFor="let line of getLines(details.lines)" [value]="line.id">{{line.nome}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Fermate Ritorno</mat-label>
+        <mat-select placeholder="Fermate Ritorno" formControlName="idFermataRitorno" required [disabled]="!selectRitorno.value">
+          <ng-container *ngIf="selectRitorno.value">
+            <mat-option *ngFor="let stop of getRitorno(details.lines, selectRitorno.value)"
+                        [value]="stop.id">{{stop.nome}}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <button [disabled]="!profileForm.valid" mat-raised-button color="primary" (click)="updateChild()">Modifica Bambino
+    </button>
+
+  </div>
+  <div *ngIf="(this.lineeObs | async) as details" fxLayout="column">
+    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="5px">
+      <mat-form-field>
+        <mat-label>Linea Andata</mat-label>
+        <mat-select #selectAndata placeholder="Linea Andata" formControlName="idLineaAndata" required>
+          <mat-option *ngFor="let line of getLines(details)" [value]="line.id">{{line.nome}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Fermate Andata</mat-label>
+        <mat-select placeholder="Fermate Andata" formControlName="idFermataAndata" [disabled]="!selectAndata.value"
+                    required>
+          <ng-container *ngIf="selectAndata.value">
+            <mat-option *ngFor="let stop of getAndata(details, selectAndata.value)"
+                        [value]="stop.id">{{stop.nome}}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row"  fxLayout.lt-sm="column" fxLayoutGap="5px">
+      <mat-form-field>
+        <mat-label>Linea Ritorno</mat-label>
+        <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required>
+          <mat-option *ngFor="let line of getLines(details)" [value]="line.id">{{line.nome}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Fermate Ritorno</mat-label>
+        <mat-select placeholder="Fermate Ritorno" formControlName="idFermataRitorno" [disabled]="!selectRitorno.value"
+                    required>
+          <ng-container *ngIf="selectRitorno.value">
+            <mat-option *ngFor="let stop of getRitorno(details, selectRitorno.value)"
+                        [value]="stop.id">{{stop.nome}}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <button [disabled]="!profileForm.valid" mat-raised-button (click)="addChild()">Aggiungi Bambino</button>
+
+  </div>
+
+
+</form>
+
