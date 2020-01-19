@@ -8,13 +8,11 @@ import it.polito.ai.mmap.pedibus.repository.NotificaRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispStateResource;
-import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -158,37 +156,46 @@ public class NotificheService {
             throw new NotificaNotFoundException();
     }
 
-    public NotificaEntity generateArrivedNotification(ReservationEntity reservationEntity) {
-        UserEntity parent = this.childService.getChildParent(reservationEntity.getCfChild());
+    public List<NotificaEntity> generateArrivedNotification(ReservationEntity reservationEntity) {
+        List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
         FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-        return new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
-                childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato consegnato/a " +
-                        (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getArrivatoScuolaDate()), null);
+        List<NotificaEntity> notificaEntities = new ArrayList<>();
+        for (UserEntity parent : parents) {
+            notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
+                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato consegnato/a " +
+                            (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getArrivatoScuolaDate()), null));
+        }
+        return notificaEntities;
     }
 
-    public NotificaEntity generateHandledNotification(ReservationEntity reservationEntity) {
-        UserEntity parent = this.childService.getChildParent(reservationEntity.getCfChild());
+    public List<NotificaEntity> generateHandledNotification(ReservationEntity reservationEntity) {
+        List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
         FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-        return new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
-                childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato prelevato/a " +
-                        (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getPresoInCaricoDate()), null);
+        List<NotificaEntity> notificaEntities = new ArrayList<>();
+        for (UserEntity parent : parents) {
+            notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
+                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato prelevato/a " +
+                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getPresoInCaricoDate()), null));
+        }
+        return notificaEntities;
     }
 
-    public NotificaEntity generateAssenteNotification(ReservationEntity reservationEntity) {
-        UserEntity parent = this.childService.getChildParent(reservationEntity.getCfChild());
+    public List<NotificaEntity> generateAssenteNotification(ReservationEntity reservationEntity) {
+        List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
         FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-        return new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
-                childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato segnalato/a come assente alla partenza " +
-                        (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getAssenteDate()), null);
+        List<NotificaEntity> notificaEntities = new ArrayList<>();
+        for (UserEntity parent : parents) {
+            notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
+                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato segnalato/a come assente alla partenza " +
+                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getAssenteDate()), null));
+        }
+        return notificaEntities;
     }
 
     public void sendNotificheDisp(DispEntity dispEntity) {
@@ -223,7 +230,7 @@ public class NotificheService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getUsername().equals(username)) {
             Page<NotificaEntity> pagedNotifications = notificaRepository.findAllByUsernameDestinatarioOrderByDataDesc(username, pageable);
-           return PageableExecutionUtils.getPage(pagedNotifications.stream().map(NotificaDTO::new).collect(Collectors.toList()), pageable, pagedNotifications::getTotalElements);
+            return PageableExecutionUtils.getPage(pagedNotifications.stream().map(NotificaDTO::new).collect(Collectors.toList()), pageable, pagedNotifications::getTotalElements);
         } else {
             throw new UnauthorizedUserException("Operazione non autorizzata");
         }

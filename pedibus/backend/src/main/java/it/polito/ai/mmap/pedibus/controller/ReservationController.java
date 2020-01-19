@@ -117,9 +117,11 @@ public class ReservationController {
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         String idReservation = reservationService.addReservation(reservationDTO);
         reservationDTO.setId(idReservation);
-        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
-        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+        List<UserEntity> parents = childService.getChildParents(reservationDTO.getCfChild());
+        for (UserEntity parent : parents) {
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+        }
 
         return objectMapper.writeValueAsString(idReservation);
     }
@@ -193,9 +195,11 @@ public class ReservationController {
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         reservationService.updateReservation(reservationDTO, reservationId);
         // TODO: Gestione parenti multipli?
-        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
-        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+        List<UserEntity> parents = childService.getChildParents(reservationDTO.getCfChild());
+        for (UserEntity parent : parents) {
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+        }
     }
 
     /**
@@ -215,11 +219,14 @@ public class ReservationController {
                 .idFermata(null)
                 .verso(reservationDTO.getVerso()).build();
 
-        UserEntity parent = childService.getChildParent(reservationDTO.getCfChild());
+
         reservationService.deleteReservation(idLinea, dataFormatted, reservationId);
         reservationDTO.setIdFermata(null);
         simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationDTO.getVerso()) ? 1 : 0), reservationResource);
-        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+        List<UserEntity> parents = childService.getChildParents(reservationDTO.getCfChild());
+        for (UserEntity parent : parents) {
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
+        }
     }
 
     /**

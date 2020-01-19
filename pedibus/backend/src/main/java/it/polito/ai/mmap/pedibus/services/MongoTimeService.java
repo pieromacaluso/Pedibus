@@ -19,6 +19,7 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,11 @@ public class MongoTimeService {
     }
 
     public static String dateToString(Date date) {
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
+    }
+    public static String localDateToString(LocalDate date) {
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
@@ -71,6 +77,23 @@ public class MongoTimeService {
 
     public static boolean isToday(Date data) {
         return data.after(getStartOfToday()) && data.before(getStartOfTomorrow());
+    }
+
+    public List<String> generateListOfDateStartingFrom(LocalDate dateTime) {
+        LocalDate iDate = LocalDate.from(dateTime);
+        LocalDate fineScuolaPlusOne = LocalDate.parse(dataFineScuola).plusDays(1);
+        List<String> listDate = new ArrayList<>();
+        String dataString;
+        for (; !iDate.equals(fineScuolaPlusOne); iDate = iDate.plusDays(1)) {
+            try {
+                isValidDate(iDate);
+                listDate.add(iDate.toString());
+            } catch (SchoolClosedException ignored){
+                // Ignora questa data, non verrà inserita nella lista
+            }
+        }
+
+        return listDate;
     }
 
     @PostConstruct

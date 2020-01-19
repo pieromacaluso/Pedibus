@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -304,7 +305,17 @@ public class UserService implements UserDetailsService {
 
 
     public Page<UserInsertResource> getAllPagedUsers(Pageable pageable, String keyword) {
-        Page<UserEntity> pagedUsersEntity = userRepository.findAllByNameContainingOrSurnameContainingOrUsernameContainingOrderBySurnameAsc(keyword, keyword, keyword, pageable);
+        Page<UserEntity> pagedUsersEntity = userRepository.searchByNameSurnameCF(UserService.fromKeywordToRegex(keyword), pageable);
         return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map(UserInsertResource::new).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
+    }
+
+    public static String fromKeywordToRegex(String keyword) {
+        List<String> keywords = Arrays.asList(keyword.split("\\s+"));
+        StringBuilder regex = new StringBuilder("");
+        for (int i = 0; i < keywords.size(); i++) {
+            regex.append(".*").append(keywords.get(i)).append(".*");
+            if (i != keywords.size() -1) regex.append("|");
+        }
+        return regex.toString();
     }
 }

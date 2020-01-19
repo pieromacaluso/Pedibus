@@ -208,8 +208,9 @@ public class DataCreationService {
             parent = userRepository.save(parent); //per avere l'objectId
 
             userList.set(i, parent);
-            child1.setIdParent(parent.getId());
-            child2.setIdParent(parent.getId());
+            // Rimosso parent id da Child
+//            child1.setIdParent(parent.getId());
+//            child2.setIdParent(parent.getId());
 
             i++;
         }

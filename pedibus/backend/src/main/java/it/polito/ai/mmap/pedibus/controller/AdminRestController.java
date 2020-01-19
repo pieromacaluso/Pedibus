@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
@@ -62,6 +63,24 @@ public class AdminRestController {
     @GetMapping("/sysadmin/children")
     public Page<ChildDTO> getChildren(Pageable pageable, @RequestParam("keyword") String keyword) {
         return childService.getAllPagedChildren(pageable, keyword);
+    }
+
+    /**
+     * @return l'elenco di tutti i bambini salvati
+     */
+    @PostMapping("/sysadmin/children")
+    public ChildDTO createChild(@RequestBody ChildDTO childDTO) {
+        ChildEntity childEntity = childService.createChild(childDTO);
+        return new ChildDTO(childEntity);
+    }
+    @PutMapping("/sysadmin/children/{childId}")
+    public ChildDTO updateChild(@PathVariable("childId") String childId, @RequestBody ChildDTO childDTO) {
+        ChildEntity childEntity = childService.updateChild(childId, childDTO);
+        return new ChildDTO(childEntity);
+    }
+    @DeleteMapping("/sysadmin/children/{childId}")
+    public void deleteChild(@PathVariable("childId") String childId) {
+        childService.deleteChild(childId);
     }
 
     /**

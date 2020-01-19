@@ -14,7 +14,6 @@ public class ChildDTO {
     private String surname;
     private Integer idFermataAndata;   //in fase di registrazione ad ogni bambino bisogna indicare la sua fermata di default dalla quale partire/arrivare
     private Integer idFermataRitorno;
-    private ObjectId idParent;
 
     public ChildDTO(ChildEntity childEntity){
         codiceFiscale=childEntity.getCodiceFiscale();
@@ -22,7 +21,6 @@ public class ChildDTO {
         surname=childEntity.getSurname();
         idFermataAndata =childEntity.getIdFermataAndata();
         idFermataRitorno = childEntity.getIdFermataRitorno();
-        idParent=childEntity.getIdParent();
     }
 }
 

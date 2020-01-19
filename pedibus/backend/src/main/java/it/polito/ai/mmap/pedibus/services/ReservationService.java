@@ -8,10 +8,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
-import it.polito.ai.mmap.pedibus.resources.FermataAlunniResource;
-import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
-import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
-import it.polito.ai.mmap.pedibus.resources.ReservationChildResource;
+import it.polito.ai.mmap.pedibus.resources.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +18,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +36,8 @@ public class ReservationService {
     ChildService childService;
     @Autowired
     NotificheService notificheService;
+    @Autowired
+    MongoTimeService mongoTimeService;
     @Value("${notifiche.type.Base}")
     String NotBASE;
     @Value("${notifiche.type.Disponibilita}")
@@ -282,7 +282,6 @@ public class ReservationService {
      */
     public void manageHandled(Boolean verso, String data, Date datef, Boolean isSet, String idLinea, String cfChild) throws Exception {
         if (canModify(idLinea, datef, verso)) {
-            UserEntity userEntity = childService.getChildParent(cfChild);
 
             ReservationEntity reservationEntity = getChildReservation(verso, datef, cfChild);
             reservationEntity.setPresoInCarico(isSet);
@@ -290,15 +289,19 @@ public class ReservationService {
 //            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
             ReservationDTO pre = new ReservationDTO(reservationEntity);
 
-            // TODO: Gestione parenti multipli?
-            UserEntity parent = childService.getChildParent(pre.getCfChild());
             simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
-            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + data, pre);
+            // TODO: Gestione parenti multipli?
+            List<UserEntity> parents = childService.getChildParents(pre.getCfChild());
+            for (UserEntity parent : parents) {
+                simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + data, pre);
+            }
 
             if (isSet) {
-                NotificaEntity notificaEntity = this.notificheService.generateHandledNotification(reservationEntity);
-                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                pre.setPresoInCaricoNotifica(notificaEntity.getIdNotifica());
+                List<NotificaEntity> notificaEntities = this.notificheService.generateHandledNotification(reservationEntity);
+                for (NotificaEntity notificaEntity : notificaEntities) {
+                    notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                    pre.setPresoInCaricoNotifica(notificaEntity.getIdNotifica());
+                }
             } else {
                 notificheService.deleteNotificaAdmin(reservationEntity.getPresoInCaricoNotifica());
             }
@@ -311,7 +314,6 @@ public class ReservationService {
 
     public void manageAssente(Boolean verso, String data, Date datef, Boolean isSet, String idLinea, String cfChild) {
         if (canModify(idLinea, datef, verso)) {
-            UserEntity userEntity = childService.getChildParent(cfChild);
 
             ReservationEntity reservationEntity = getChildReservation(verso, datef, cfChild);
             reservationEntity.setAssente(isSet);
@@ -319,15 +321,18 @@ public class ReservationService {
 //            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            // TODO: Gestione parenti multipli?
-            UserEntity parent = childService.getChildParent(pre.getCfChild());
             simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
-            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + data, pre);
-
+            // TODO: Gestione parenti multipli?
+            List<UserEntity> parents = childService.getChildParents(pre.getCfChild());
+            for (UserEntity parent : parents) {
+                simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + data, pre);
+            }
             if (isSet) {
-                NotificaEntity notificaEntity = notificheService.generateAssenteNotification(reservationEntity);
-                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                pre.setAssenteNotifica(notificaEntity.getIdNotifica());
+                List<NotificaEntity> notificaEntities = notificheService.generateAssenteNotification(reservationEntity);
+                for (NotificaEntity notificaEntity : notificaEntities) {
+                    notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                    pre.setAssenteNotifica(notificaEntity.getIdNotifica());
+                }
             } else {
                 notificheService.deleteNotificaAdmin(reservationEntity.getAssenteNotifica());
             }
@@ -360,15 +365,15 @@ public class ReservationService {
     public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
         // TODO: check all
         if (canModify(idLinea, data, verso)) {
-            UserEntity parent = childService.getChildParent(cfChild);
-
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             reservationEntity.setArrivatoScuola(isSet);
             reservationEntity.setArrivatoScuolaDate(isSet ? MongoTimeService.getNow() : null);
             if (isSet) {
-                NotificaEntity notificaEntity = notificheService.generateArrivedNotification(reservationEntity);
-                notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                reservationEntity.setArrivatoScuolaNotifica(notificaEntity.getIdNotifica());
+                List<NotificaEntity> notificaEntities = notificheService.generateArrivedNotification(reservationEntity);
+                for (NotificaEntity notificaEntity : notificaEntities) {
+                    notificheService.addNotifica(notificaEntity);      //salvataggio notifica
+                    reservationEntity.setArrivatoScuolaNotifica(notificaEntity.getIdNotifica());
+                }
             } else {
                 notificheService.deleteNotificaAdmin(reservationEntity.getArrivatoScuolaNotifica());
             }
@@ -377,7 +382,10 @@ public class ReservationService {
             // TODO: Gestione parenti multipli?
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(data) + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
-            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + MongoTimeService.dateToString(data), pre);
+            List<UserEntity> parents = childService.getChildParents(pre.getCfChild());
+            for (UserEntity parent : parents) {
+                simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + MongoTimeService.dateToString(data), pre);
+            }
             updateReservation(pre, reservationEntity.getId());
             return true;
         }
@@ -396,7 +404,6 @@ public class ReservationService {
     public void manageRestore(Boolean verso, Date data, String cfChild, String idLinea) throws Exception {
         // TODO: check all
         if (canModify(idLinea, data, verso)) {
-            UserEntity parent = childService.getChildParent(cfChild);
 
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             if (reservationEntity.getPresoInCaricoNotifica() != null) {
@@ -420,7 +427,10 @@ public class ReservationService {
             // TODO: Gestione parenti multipli?
             ReservationDTO pre = new ReservationDTO(reservationEntity);
             simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(data) + "/" + idLinea + "/" + ((pre.getVerso()) ? 1 : 0), pre);
-            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + MongoTimeService.dateToString(data), pre);
+            List<UserEntity> parents = childService.getChildParents(pre.getCfChild());
+            for (UserEntity parent : parents) {
+                simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + pre.getCfChild() + "/" + MongoTimeService.dateToString(data), pre);
+            }
             updateReservation(pre, reservationEntity.getId());
         }
     }
@@ -482,4 +492,29 @@ public class ReservationService {
     }
 
 
+    public void bulkReservation(ChildEntity childEntity) {
+        LocalDate dateTime = LocalDate.now();
+        List<String> listDate = mongoTimeService.generateListOfDateStartingFrom(dateTime);
+        for (String data : listDate) {
+
+            ReservationResource reservationResourceA = ReservationResource.builder()
+                    .cfChild(childEntity.getCodiceFiscale()).idFermata(childEntity.getIdFermataAndata()).verso(true).build();
+            ReservationResource reservationResourceR = ReservationResource.builder()
+                    .cfChild(childEntity.getCodiceFiscale()).idFermata(childEntity.getIdFermataRitorno()).verso(false).build();
+
+            String idLineaA = this.lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea();
+            String idLineaR = this.lineeService.getFermataEntityById(childEntity.getIdFermataRitorno()).getIdLinea();
+
+            Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+
+            ReservationDTO reservationADTO = new ReservationDTO(reservationResourceA, idLineaA, dataFormatted);
+            ReservationDTO reservationRDTO = new ReservationDTO(reservationResourceR, idLineaR, dataFormatted);
+            this.addReservation(reservationADTO);
+            this.addReservation(reservationRDTO);
+        }
+//        ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
+//        String idReservation = reservationService.addReservation(reservationDTO);
+//        ReservationEntity reservationEntity = this.addReservation()
+
+    }
 }
