@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -45,6 +47,9 @@ public class UserService implements UserDetailsService {
     private GMailService gMailService;
     @Autowired
     LineeService lineeService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
 
     @Value("${mail.baseURL}")
     private String baseURL;
@@ -318,4 +323,25 @@ public class UserService implements UserDetailsService {
         }
         return regex.toString();
     }
+
+    public void deleteUserByUsername(String userId) {
+        Optional<UserEntity> u = this.userRepository.findByUsername(userId);
+        if (!u.isPresent()) {
+            throw new UserNotFoundException();
+        }
+        this.userRepository.deleteById(u.get().getId());
+        this.sendUpdateNotification();
+    }
+
+    private void sendUpdateNotification() {
+        Optional<RoleEntity> roleEntity = this.roleRepository.findById("ROLE_SYSTEM-ADMIN");
+        if (roleEntity.isPresent()) {
+            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContaining(roleEntity.get());
+            if (userEntities.isPresent()) {
+                for (UserEntity admin : userEntities.get())
+                    this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");
+            }
+        }
+    }
+
 }

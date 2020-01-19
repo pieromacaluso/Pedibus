@@ -3,6 +3,7 @@ package it.polito.ai.mmap.pedibus.controller;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
@@ -55,6 +56,14 @@ public class AdminRestController {
     @GetMapping("/sysadmin/users")
     public Page<UserInsertResource> getUsers(Pageable pageable, @RequestParam("keyword") String keyword) {
         return userService.getAllPagedUsers(pageable, keyword);
+    }
+
+    /**
+     * @return l'elenco degli utenti salvati
+     */
+    @DeleteMapping("/sysadmin/users/{userId}")
+    public void deleteUser(@PathVariable("userId") String userId) {
+        userService.deleteUserByUsername(userId);
     }
 
     /**
