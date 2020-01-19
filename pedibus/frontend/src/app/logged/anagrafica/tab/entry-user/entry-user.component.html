@@ -1,7 +1,7 @@
 <mat-card fxLayout="row" class="card-user">
   <div fxLayout="column">
     <div fxLayout="row">
-      <div class="mat-h2 name-surname">{{user.surname}} {{user.name}}</div>
+      <div class="mat-h2 name-surname primary">{{user.surname}} {{user.name}}</div>
     </div>
     <div class="mat-body user">
       <b>Email:</b>
@@ -22,9 +22,12 @@
       </span>
     </div>
   </div>
-  <div>
-    <button mat-button (click)="openDialog()">
+  <div fxLayout="row" fxLayout.lt-sm="column">
+    <button mat-button class="primary" color="primary" (click)="openDialog()">
       <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-button color="warn" (click)="deleteUser()">
+      <mat-icon>delete</mat-icon>
     </button>
   </div>
 </mat-card>

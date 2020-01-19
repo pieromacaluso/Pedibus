@@ -19,6 +19,7 @@ export class TabComponent implements OnInit, OnDestroy {
   len: number;
   pageIndex: number;
   private updatesSub: Subscription;
+  private keywordSub: Subscription;
 
   constructor(private anagraficaService: AnagraficaService) {
   }
@@ -28,7 +29,8 @@ export class TabComponent implements OnInit, OnDestroy {
     console.log(this.page);
     this.elements = this.page.content;
     this.len = this.page.totalElements;
-    this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
+    this.anagraficaService.resetKeyword();
+    this.keywordSub = this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
         this.searchKeyword(res, 0);
       }, error => {
         // TODO: error management
@@ -42,7 +44,8 @@ export class TabComponent implements OnInit, OnDestroy {
   cambiaPagina($event: PageEvent) {
     switch (this.type) {
       case ElementType.User:
-        this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
+        this.keywordSub.unsubscribe();
+        this.keywordSub = this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
             this.searchKeyword(res, $event.pageIndex);
           }, error => {
             // TODO: error management
@@ -50,7 +53,8 @@ export class TabComponent implements OnInit, OnDestroy {
         );
         break;
       case ElementType.Child:
-        this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
+        this.keywordSub.unsubscribe();
+        this.keywordSub = this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
             this.searchKeyword(res, $event.pageIndex);
           }, error => {
             // TODO: error management
@@ -124,7 +128,7 @@ export class TabComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('DESTROY', 'color: red');
+    this.keywordSub.unsubscribe();
     this.updatesSub.unsubscribe();
-    this.anagraficaService.resetKeyword();
   }
 }

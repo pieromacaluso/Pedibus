@@ -213,4 +213,8 @@ export class ApiService {
   deleteChild(codiceFiscale: string) {
       return this.httpClient.delete<void>(this.baseURL + 'sysadmin/children/' + codiceFiscale).pipe(first());
   }
+
+  deleteUser(userId: string) {
+    return this.httpClient.delete<void>(this.baseURL + 'sysadmin/users/' + userId).pipe(first());
+  }
 }

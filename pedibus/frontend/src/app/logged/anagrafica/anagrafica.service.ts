@@ -83,6 +83,10 @@ export class AnagraficaService {
     return this.apiService.deleteChild(codiceFiscale);
   }
 
+  deleteUser(userId: string) {
+    return this.apiService.deleteUser(userId);
+  }
+
   openDialogChild(child: ChildrenDTO): void {
     let dialogRef;
     if (child) {
@@ -90,8 +94,7 @@ export class AnagraficaService {
         data: {child}
       });
     } else {
-      dialogRef = this.dialog.open(ChildDialogComponent, {
-      });
+      dialogRef = this.dialog.open(ChildDialogComponent, {});
     }
 
     dialogRef.afterClosed().subscribe(result => {
@@ -106,8 +109,7 @@ export class AnagraficaService {
         data: {user}
       });
     } else {
-      dialogRef = this.dialog.open(UserDialogComponent, {
-      });
+      dialogRef = this.dialog.open(UserDialogComponent, {});
     }
 
     dialogRef.afterClosed().subscribe(result => {
@@ -130,7 +132,9 @@ export class AnagraficaService {
   }
 
   resetKeyword() {
-    this.keywordChildSource.next('');
+    this.keywordUserSource.next('');
     this.keywordChildSource.next('');
   }
+
+
 }
