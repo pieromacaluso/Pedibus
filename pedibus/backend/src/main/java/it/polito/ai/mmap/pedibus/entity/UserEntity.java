@@ -1,7 +1,8 @@
 package it.polito.ai.mmap.pedibus.entity;
 
-import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
+import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -17,7 +18,6 @@ import java.util.*;
 /**
  * Classe che implementa l'interfaccia UserDetails
  * Il nostro username è la mail
- *
  */
 
 @Data
@@ -25,16 +25,16 @@ import java.util.*;
 @NoArgsConstructor
 public class UserEntity implements UserDetails {
 
+    boolean isAccountNonExpired;
+    boolean isAccountNonLocked;
+    boolean isCredentialsNonExpired;
+    boolean isEnabled;
     @Id
     private ObjectId id;
     private String username;
     private String name;
     private String surname;
     private String password;
-    boolean isAccountNonExpired;
-    boolean isAccountNonLocked;
-    boolean isCredentialsNonExpired;
-    boolean isEnabled;
     private Set<RoleEntity> roleList;
     private Set<String> childrenList; //puoi prenotare solo per i tuoi figli
     private Date creationDate;
@@ -71,15 +71,27 @@ public class UserEntity implements UserDetails {
         creationDate = MongoTimeService.getNow();
     }
 
-    public UserEntity(String email, HashSet<RoleEntity> userRoles) {
-        username = email;
+    /**
+     * Utilizzabile solo da Admin
+     *
+     * @param userInsertResource
+     * @param userRoles
+     * @param passwordEncoder
+     */
+    public UserEntity(UserInsertResource userInsertResource, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder) {
+        username = userInsertResource.getUserId();
+        name = userInsertResource.getName();
+        surname = userInsertResource.getSurname();
+        childrenList = userInsertResource.getChildIdList();
+        // Password di default
+        password = passwordEncoder.encode(this.surname + this.name + this.username.length());
+
         isAccountNonExpired = true;
         isAccountNonLocked = true;
         isCredentialsNonExpired = true;
         isEnabled = false;
         roleList = new HashSet<>();
         roleList.addAll(userRoles);
-        childrenList = new HashSet<>();
     }
 
     @Override
@@ -91,7 +103,7 @@ public class UserEntity implements UserDetails {
         return grantedAuthorities;
     }
 
-    public void addChild(String cf){
+    public void addChild(String cf) {
         childrenList.add(cf);
     }
 

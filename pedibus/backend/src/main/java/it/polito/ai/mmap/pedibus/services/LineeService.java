@@ -2,27 +2,24 @@ package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.entity.FermataEntity;
 import it.polito.ai.mmap.pedibus.entity.LineaEntity;
-import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.FermataNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.FermataRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;
 import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
 import lombok.Data;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +54,17 @@ public class LineeService {
         } else {
             throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLinea);
         }
+    }
+
+    /**
+     * Restituisce una lista di linea Entity di cui l'utente è amministratore
+     *
+     * @param username nome utente
+     * @return Lista di linea entiny
+     */
+    public List<LineaEntity> getAdminLineForUser(String username) {
+        Optional<List<LineaEntity>> checkLinea = lineaRepository.findAllByAdminListContaining(username);
+        return checkLinea.orElseGet(ArrayList::new);
     }
 
     /**

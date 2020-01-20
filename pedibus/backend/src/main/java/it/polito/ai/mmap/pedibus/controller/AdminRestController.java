@@ -43,21 +43,22 @@ public class AdminRestController {
     }
 
     /**
-     * @param userInsertResource l'utente da inserire con i suoi ruoli
-     */
-    @PostMapping("/sysadmin/user")
-    public void insertUser(@RequestBody UserInsertResource userInsertResource) {
-        //todo controllo validità mail
-        userService.insertUser(userInsertResource);
-    }
-
-    /**
      * @return l'elenco degli utenti salvati
      */
     @GetMapping("/sysadmin/users")
     public Page<UserInsertResource> getUsers(Pageable pageable, @RequestParam("keyword") String keyword) {
         return userService.getAllPagedUsers(pageable, keyword);
     }
+
+    /**
+     * @param userInsertResource l'utente da inserire con i suoi ruoli
+     */
+    @PostMapping("/sysadmin/users")
+    public UserEntity insertUser(@RequestBody UserInsertResource userInsertResource) {
+        //todo controllo validità mail
+        return userService.insertUser(userInsertResource);
+    }
+
     /**
      * @param userInsertResource l'utente i cui dettagli vanno aggiornati
      */
@@ -112,18 +113,18 @@ public class AdminRestController {
      * Un admin di una linea o il system-admin inserisce un utente come admin per una linea, indicando tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione si troverà i privilegi di admin
      */
-    @PutMapping("/admin/users/{userID}")
-    public void setUserAdmin(@RequestBody PermissionResource permissionResource, @PathVariable("userID") String userID) {
-        if (lineeService.isAdminLine(permissionResource.getIdLinea()) || userService.isSysAdmin()) {
-            if (permissionResource.isAddOrDel()) {
-                userService.addAdmin(userID);
-                lineeService.addAdminLine(userID, permissionResource.getIdLinea());
-            } else {
-                userService.delAdmin(userID);
-                lineeService.delAdminLine(userID, permissionResource.getIdLinea());
-            }
-        } else {
-            throw new PermissionDeniedException("Non hai i privilegi per eseguire questa operazione");
-        }
-    }
+//    @PutMapping("/admin/users/{userID}")
+//    public void setUserAdmin(@RequestBody PermissionResource permissionResource, @PathVariable("userID") String userID) {
+//        if (lineeService.isAdminLine(permissionResource.getIdLinea()) || userService.isSysAdmin()) {
+//            if (permissionResource.isAddOrDel()) {
+//                userService.addAdmin(userID);
+//                lineeService.addAdminLine(userID, permissionResource.getIdLinea());
+//            } else {
+//                userService.delAdmin(userID);
+//                lineeService.delAdminLine(userID, permissionResource.getIdLinea());
+//            }
+//        } else {
+//            throw new PermissionDeniedException("Non hai i privilegi per eseguire questa operazione");
+//        }
+//    }
 }

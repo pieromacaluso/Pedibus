@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.resources;
 
+import it.polito.ai.mmap.pedibus.entity.LineaEntity;
 import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import lombok.AllArgsConstructor;
@@ -23,12 +24,13 @@ public class UserInsertResource {
     private Set<String> childIdList;
 
 
-    public UserInsertResource(UserEntity userEntity) {
+    public UserInsertResource(UserEntity userEntity, List<LineaEntity> listLine ) {
         userId = userEntity.getUsername();
         name = userEntity.getName();
         surname = userEntity.getSurname();
         roleIdList = userEntity.getRoleList().stream().map(RoleEntity::getId).collect(Collectors.toList());
         childIdList = userEntity.getChildrenList();
+        lineaIdList = listLine.stream().map(LineaEntity::getId).collect(Collectors.toList());
 
     }
 }

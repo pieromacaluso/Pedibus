@@ -3,6 +3,7 @@ package it.polito.ai.mmap.pedibus.controller;
 import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
+import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.services.JwtTokenService;
 import it.polito.ai.mmap.pedibus.services.UserService;
@@ -146,6 +147,29 @@ public class AuthenticationRestController {
 
         try {
             userService.updateUserPassword(userDTO, randomUUID);
+        } catch (UsernameNotFoundException e) {
+            throw new RecoverProcessNotValidException();
+        }
+
+    }
+
+    /**
+     * @param newUserPassDTO
+     * @param bindingResult
+     * @param randomUUID
+     * @Valid delle password
+     * In caso vada tutto bene aggiorna la base dati degli utenti con la nuova password
+     * return 200 – Ok, in caso negativo restituisce 404 – Not found
+     */
+    @PostMapping("/new-user/{randomUUID}")
+    public void newUserVerification(@Valid @RequestBody NewUserPassDTO newUserPassDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(err -> logger.error("new-user/randomUUID -> " + err.toString()));
+            throw new RecoverProcessNotValidException();
+        }
+
+        try {
+            userService.updateNewUserPasswordAndEnable(newUserPassDTO, randomUUID);
         } catch (UsernameNotFoundException e) {
             throw new RecoverProcessNotValidException();
         }

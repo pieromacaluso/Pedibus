@@ -1,7 +1,11 @@
 package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.entity.*;
-import it.polito.ai.mmap.pedibus.exception.*;
+import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
+import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
+import it.polito.ai.mmap.pedibus.exception.UserAlreadyPresentException;
+import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
+import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
@@ -13,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,15 +25,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -40,13 +39,16 @@ public class UserService implements UserDetailsService {
     @Autowired
     JwtTokenService jwtTokenService;
     @Autowired
+    LineeService lineeService;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
     private RecoverTokenRepository recoverTokenRepository;
     @Autowired
     private ActivationTokenRepository activationTokenRepository;
     @Autowired
-    private GMailService gMailService;
+    private NewUserTokenRepository newUserTokenRepository;
     @Autowired
-    LineeService lineeService;
+    private GMailService gMailService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -57,7 +59,18 @@ public class UserService implements UserDetailsService {
     private String REGISTRATION_SUBJECT;
     @Value("${mail.recover_account_subject}")
     private String RECOVER_ACCOUNT_SUBJECT;
+    @Value("${mail.new_user_account_subject}")
+    private String NEW_USER_ACCOUNT_SUBJECT;
 
+    public static String fromKeywordToRegex(String keyword) {
+        List<String> keywords = Arrays.asList(keyword.split("\\s+"));
+        StringBuilder regex = new StringBuilder("");
+        for (int i = 0; i < keywords.size(); i++) {
+            regex.append(".*").append(keywords.get(i)).append(".*");
+            if (i != keywords.size() - 1) regex.append("|");
+        }
+        return regex.toString();
+    }
 
     /**
      * Metodo che ci restituisce un UserEntity a partire dall'email
@@ -76,9 +89,15 @@ public class UserService implements UserDetailsService {
         return check.get();
     }
 
-    public void insertUser(UserInsertResource userInsertResource) {
+    public UserEntity insertUser(UserInsertResource userInsertResource) {
         insertAdminLine(userInsertResource);
-        userRepository.save(new UserEntity(userInsertResource.getUserId(), userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new))));
+        UserEntity userEntity = new UserEntity(userInsertResource, userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new)), passwordEncoder);
+        lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
+        insertAdminLine(userInsertResource);
+        userEntity = userRepository.save(userEntity);
+        this.sendUpdateNotification();
+        this.firstAccount(userEntity);
+        return userEntity;
     }
 
     public void updateUser(String userId, UserInsertResource userInsertResource) {
@@ -248,6 +267,31 @@ public class UserService implements UserDetailsService {
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
+    /**
+     * Se la mail corrisponde a quella di un utente registrato invia una mail per iniziare il processo di recover
+     *
+     * @param userEntity
+     * @throws UsernameNotFoundException
+     */
+    public void firstAccount(UserEntity userEntity) throws RecoverProcessNotValidException {
+        Optional<UserEntity> check = userRepository.findByUsername(userEntity.getUsername());
+        if (!check.isPresent())
+            throw new UsernameNotFoundException("Utente inesistente");
+
+        NewUserTokenEntity tokenEntity = new NewUserTokenEntity(userEntity.getId());
+        logger.info(tokenEntity.getCreationDate().toString());
+        newUserTokenRepository.save(tokenEntity);
+        String href = baseURL + "new-user/" + tokenEntity.getId();
+        gMailService.sendMail(userEntity.getUsername(),
+                "<p>Il tuo account è stato appena creato con le seguenti credenziali:</p>" +
+                        "<p><ul>" +
+                        "<li><b>Username</b>: " + userEntity.getUsername() + "</li>" +
+                        "<li><b>Password</b>: " + userEntity.getSurname() + userEntity.getName() + userEntity.getUsername().length() + "</li>" +
+                        "</ul></p>" +
+                        "<p>Clicca per modificare la password e attivare il tuo account <a href='" + href + "'>Reset your password</a></p>", NEW_USER_ACCOUNT_SUBJECT);
+        logger.info("Inviata recover email a: " + userEntity.getUsername());
+    }
+
     public String getJwtToken(String username) {
         List<String> roles = new ArrayList<>();
         UserEntity userEntity = (UserEntity) loadUserByUsername(username);
@@ -255,28 +299,26 @@ public class UserService implements UserDetailsService {
         return jwtTokenService.createToken(username, roles);
     }
 
-
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
-
 
     /**
      * Se la mail dell'admin non corrisponde a nessun account ne creo uno vuoto con tali privilegi che poi l'utente quando si registra riempirà,
      *
      * @param userID
      */
-    public void addAdmin(String userID) {
-        Optional<UserEntity> check = userRepository.findByUsername(userID);
-        UserEntity userEntity;
-        if (!check.isPresent()) {
-            userEntity = new UserEntity(userID, new HashSet<>(Collections.singletonList(getRoleEntityById("ROLE_ADMIN"))));
-        } else {
-            userEntity = check.get();
-        }
-        userEntity.getRoleList().add(getRoleEntityById("ROLE_ADMIN"));
-        userRepository.save(userEntity);
-    }
+//    public void addAdmin(String userID) {
+//        Optional<UserEntity> check = userRepository.findByUsername(userID);
+//        UserEntity userEntity;
+//        if (!check.isPresent()) {
+//            userEntity = new UserEntity(userID, new HashSet<>(Collections.singletonList(getRoleEntityById("ROLE_ADMIN"))), passwordEncoder);
+//        } else {
+//            userEntity = check.get();
+//        }
+//        userEntity.getRoleList().add(getRoleEntityById("ROLE_ADMIN"));
+//        userRepository.save(userEntity);
+//    }
 
     public void delAdmin(String userID) {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
@@ -313,20 +355,9 @@ public class UserService implements UserDetailsService {
             throw new UserNotFoundException();
     }
 
-
     public Page<UserInsertResource> getAllPagedUsers(Pageable pageable, String keyword) {
         Page<UserEntity> pagedUsersEntity = userRepository.searchByNameSurnameCF(UserService.fromKeywordToRegex(keyword), pageable);
-        return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map(UserInsertResource::new).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
-    }
-
-    public static String fromKeywordToRegex(String keyword) {
-        List<String> keywords = Arrays.asList(keyword.split("\\s+"));
-        StringBuilder regex = new StringBuilder("");
-        for (int i = 0; i < keywords.size(); i++) {
-            regex.append(".*").append(keywords.get(i)).append(".*");
-            if (i != keywords.size() -1) regex.append("|");
-        }
-        return regex.toString();
+        return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map((e) -> new UserInsertResource(e, this.lineeService.getAdminLineForUser(e.getUsername()))).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
     }
 
     public void deleteUserByUsername(String userId) {
@@ -349,4 +380,32 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public void updateNewUserPasswordAndEnable(NewUserPassDTO newUserPassDTO, String randomUUID) {
+        Optional<NewUserTokenEntity> checkToken = newUserTokenRepository.findById(new ObjectId(randomUUID));
+        NewUserTokenEntity token;
+        if (checkToken.isPresent()) {
+            token = checkToken.get();
+        } else {
+            throw new TokenNotFoundException();
+        }
+
+        Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
+        UserEntity userEntity;
+        if (checkUser.isPresent()) {
+            userEntity = checkUser.get();
+        } else {
+            throw new TokenNotFoundException();
+        }
+        if (!passwordEncoder.matches(newUserPassDTO.getOldPassword(), userEntity.getPassword())) {
+            throw new TokenNotFoundException();
+        }
+        userEntity.setPassword(passwordEncoder.encode(newUserPassDTO.getPassword()));
+
+        if (!userEntity.isEnabled()) {
+            userEntity.setEnabled(true);
+            userRepository.save(userEntity);
+            newUserTokenRepository.delete(token);
+        }
+
+    }
 }

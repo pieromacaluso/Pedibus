@@ -65,6 +65,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/recover/**").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/new-user/**").permitAll()
                 .and()//TODO remove
                 .authorizeRequests()
                 .antMatchers("/debug/**").permitAll()
