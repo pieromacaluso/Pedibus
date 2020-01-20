@@ -20,6 +20,7 @@ import {GuideGuard} from './guide.guard';
 import { NotificheComponent } from './logged/notifiche/notifiche.component';
 import { GenitoreComponent } from './logged/genitore/genitore.component';
 import {AnagraficaComponent} from './logged/anagrafica/anagrafica.component';
+import {NewUserComponent} from './registration/new-user/new-user.component';
 
 const appRoutes: Routes = [
   {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
@@ -32,6 +33,7 @@ const appRoutes: Routes = [
   {path: 'anagrafica', component: AnagraficaComponent, canActivate: [AdminGuard], data: { animation: 'yes' }},
   {path: 'recover', component: ForgotPasswordComponent, data: { animation: 'yes' }},
   {path: 'recover/:token', component: RecoverComponent, data: { animation: 'yes' }},
+  {path: 'new-user/:token', component: NewUserComponent, data: { animation: 'yes' }},
   {path: 'confirm/:token', component: ConfirmComponent, data: { animation: 'yes' }},
   {path: '', redirectTo: 'presenze', pathMatch: 'full', data: { animation: 'yes' }},
   {path: '404', component: PageNotFoundComponent, data: { animation: 'yes' }},

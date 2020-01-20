@@ -42,6 +42,11 @@ export class AuthService {
     return this.httpClient.post(this.baseURL + 'recover/' + token, model);
   }
 
+  newUserPasswordChange(token: any, model: { password: string; passMatch: string; oldPassword: string }) {
+    return this.httpClient.post(this.baseURL + 'new-user/' + token, model);
+
+  }
+
   getConfirm(token: string) {
     return this.httpClient.get(this.baseURL + 'confirm/' + token);
   }
@@ -49,6 +54,8 @@ export class AuthService {
   postRecover(email: string) {
     return this.httpClient.post(this.baseURL + 'recover', email);
   }
+
+
 
   signUp(model: SignUpModel) {
     return this.httpClient.post(this.baseURL + 'register', model);
@@ -167,4 +174,6 @@ export class AuthService {
       return 'anagrafica';
     }
   }
+
+
 }

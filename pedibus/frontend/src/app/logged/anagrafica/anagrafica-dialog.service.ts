@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {forkJoin, Observable} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable} from 'rxjs';
 import {Fermata, StopsByLine} from '../line-details';
-import {flatMap, map} from 'rxjs/operators';
+import {debounceTime, flatMap, map} from 'rxjs/operators';
 import {ApiService} from '../api.service';
 import {ChildrenDTO} from '../genitore/dtos';
 import {UserDTO} from './dtos';
@@ -17,6 +17,10 @@ export interface ForkJoinRes {
 })
 export class AnagraficaDialogService {
 
+  private keywordChildSource = new BehaviorSubject<string>('');
+  keywordChild = this.keywordChildSource.asObservable();
+
+
   constructor(private apiService: ApiService) {
   }
 
@@ -29,7 +33,7 @@ export class AnagraficaDialogService {
     );
   }
 
-  getAllLinesInfo(): Observable<any> {
+  getAllLinesInfo(): Observable<Map<string, StopsByLine>> {
     return this.apiService.getLinee().pipe(
       flatMap((res: string[]) => {
         const subArray = [];
@@ -50,6 +54,7 @@ export class AnagraficaDialogService {
   addChild(child: ChildrenDTO) {
     return this.apiService.addChild(child);
   }
+
   updateChild(codiceFiscale: string, child: ChildrenDTO) {
     return this.apiService.updateChild(codiceFiscale, child);
   }
@@ -58,11 +63,28 @@ export class AnagraficaDialogService {
     return this.apiService.getRoles();
   }
 
-  childDetails(value: string) {
+  childDetails(value: string): Observable<ChildrenDTO> {
     return this.apiService.getChild(value);
   }
 
   updateUser(oldEmail: string, user: UserDTO) {
     return this.apiService.updateUser(oldEmail, user);
+  }
+
+  getListChildKey(value: string): Observable<ChildrenDTO[]> {
+    return this.apiService.getFirst5Children(value);
+  }
+
+  subscribeKeyword() {
+    return this.keywordChild.pipe(debounceTime(1000));
+  }
+
+  emitKeyword(value: string) {
+    this.keywordChildSource.next(value);
+  }
+
+  createUser(user: UserDTO) {
+    return this.apiService.createUser(user);
+
   }
 }

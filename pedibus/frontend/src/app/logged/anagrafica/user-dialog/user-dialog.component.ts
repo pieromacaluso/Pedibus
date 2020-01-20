@@ -1,10 +1,13 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {ChildrenDTO} from '../../genitore/dtos';
 import {UserDTO} from '../dtos';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatCheckboxChange, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AnagraficaDialogService} from '../anagrafica-dialog.service';
 import {Observable} from 'rxjs';
+import {StopsByLine} from '../../line-details';
+import {animate, style, transition, trigger} from '@angular/animations';
+import {flatMap} from 'rxjs/operators';
 
 export interface DialogData {
   user: UserDTO;
@@ -15,18 +18,21 @@ export interface DialogData {
   templateUrl: './user-dialog.component.html',
   styleUrls: ['./user-dialog.component.css']
 })
-export class UserDialogComponent implements OnInit {
+export class UserDialogComponent implements OnInit, OnDestroy {
   profileForm = new FormGroup({
     name: new FormControl('', Validators.required),
     surname: new FormControl('', Validators.required),
     userId: new FormControl('', Validators.required),
-    user: new FormControl('', Validators.required),
-    guide: new FormControl('', Validators.required),
-    lineAdmin: new FormControl('', Validators.required),
-    sysAdmin: new FormControl('', Validators.required),
+    user: new FormControl(),
+    guide: new FormControl( ),
+    lineAdmin: new FormControl(),
+    sysAdmin: new FormControl(),
   });
-  private oldEmail: string;
-  private childObs: Observable<ChildrenDTO>[];
+  oldEmail: string;
+  childObs: Map<string, Observable<ChildrenDTO>>;
+  lines: Observable<Map<string, StopsByLine>>;
+  childSearchObs: Observable<ChildrenDTO[]>;
+  userDTOres: UserDTO;
 
   constructor(
     private anagraficaDialogService: AnagraficaDialogService,
@@ -39,29 +45,45 @@ export class UserDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.childObs = [];
-    this.data.user.childIdList.forEach((value => {
-      this.childObs.push(this.anagraficaDialogService.childDetails(value));
-    }));
-    this.oldEmail = this.data.user.userId;
-    this.profileForm.patchValue({
-      name: this.data.user.name,
-      surname: this.data.user.surname,
-      userId: this.data.user.userId,
-      user: this.data.user.roleIdList.includes('ROLE_USER'),
-      guide: this.data.user.roleIdList.includes('ROLE_GUIDE'),
-      lineAdmin: this.data.user.roleIdList.includes('ROLE_ADMIN'),
-      sysAdmin: this.data.user.roleIdList.includes('ROLE_SYSTEM-ADMIN'),
-    });
+    this.userDTOres = {
+      childIdList: [],
+      lineaIdList: [],
+      name: '',
+      roleIdList: [],
+      surname: '',
+      userId: '',
+    };
+    this.childObs = new Map<string, Observable<ChildrenDTO>>();
+    this.lines = this.anagraficaDialogService.getAllLinesInfo();
+    this.childSearchObs = this.anagraficaDialogService.subscribeKeyword().pipe(
+      flatMap((res) => {
+        return this.anagraficaDialogService.getListChildKey(res);
+      }));
+    if (this.data) {
+      this.userDTOres = this.data.user;
+      this.userDTOres.childIdList.forEach((value => {
+        this.childObs.set(value, this.anagraficaDialogService.childDetails(value));
+      }));
+      this.oldEmail = this.userDTOres.userId;
+      this.profileForm.patchValue({
+        name: this.userDTOres.name,
+        surname: this.userDTOres.surname,
+        userId: this.userDTOres.userId,
+        user: this.userDTOres.roleIdList.includes('ROLE_USER'),
+        guide: this.userDTOres.roleIdList.includes('ROLE_GUIDE'),
+        lineAdmin: this.userDTOres.roleIdList.includes('ROLE_ADMIN'),
+        sysAdmin: this.userDTOres.roleIdList.includes('ROLE_SYSTEM-ADMIN'),
+      });
+    }
   }
 
   updateUserDialog() {
-    const user: UserDTO = this.data.user;
+    const user: UserDTO = this.userDTOres;
     user.name = this.profileForm.get('name').value;
     user.surname = this.profileForm.get('surname').value;
     user.userId = this.profileForm.get('userId').value;
-    user.childIdList = this.data.user.childIdList;
-    user.lineaIdList = this.data.user.lineaIdList;
+    user.childIdList = this.userDTOres.childIdList;
+    user.lineaIdList = this.userDTOres.lineaIdList;
     user.roleIdList = [];
     if (this.profileForm.get('user').value) {
       user.roleIdList.push('ROLE_USER');
@@ -75,11 +97,69 @@ export class UserDialogComponent implements OnInit {
     if (this.profileForm.get('sysAdmin').value) {
       user.roleIdList.push('ROLE_SYSTEM-ADMIN');
     }
-    this.anagraficaDialogService.updateUser(this.oldEmail, user).subscribe((u) => {
-      // TODO: Gestisci successo
-      this.dialogRef.close();
-    }, error => {
-      // TODO: Gestisci errore.
-    });
+    if (this.data) {
+      this.anagraficaDialogService.updateUser(this.oldEmail, user).subscribe((u) => {
+        // TODO: Gestisci successo
+        this.dialogRef.close();
+      }, error => {
+        // TODO: Gestisci errore.
+      });
+    } else {
+      this.anagraficaDialogService.createUser(user).subscribe((u) => {
+        // TODO: Gestisci successo
+        this.dialogRef.close();
+      }, error => {
+        // TODO: Gestisci errore.
+      });
+    }
+  }
+
+  changeLineList($event: MatCheckboxChange, id: string) {
+    if ($event.checked) {
+      this.userDTOres.lineaIdList.push(id);
+    } else {
+      const index = this.userDTOres.lineaIdList.indexOf(id, 0);
+      if (index > -1) {
+        this.userDTOres.lineaIdList.splice(index, 1);
+      }
+    }
+  }
+
+  getArray(linee: Map<string, StopsByLine>) {
+    return Array.from(linee.values());
+  }
+
+  newData(value: string) {
+    this.anagraficaDialogService.emitKeyword(value);
+  }
+
+  ngOnDestroy(): void {
+  }
+
+  alreadySelected(codiceFiscale: string) {
+    return this.userDTOres.childIdList.includes(codiceFiscale);
+  }
+
+  addChild(codiceFiscale: string) {
+    this.userDTOres.childIdList.push(codiceFiscale);
+    this.childObs.set(codiceFiscale, this.anagraficaDialogService.childDetails(codiceFiscale));
+  }
+
+  removeChild(codiceFiscale: string) {
+    const index = this.userDTOres.childIdList.indexOf(codiceFiscale, 0);
+    if (index > -1) {
+      this.userDTOres.childIdList.splice(index, 1);
+    }
+    this.childObs.delete(codiceFiscale);
+  }
+
+  getArrayChild() {
+    return Array.from(this.childObs.values());
+  }
+
+  lineAdminChange($event: MatCheckboxChange) {
+    if (!$event.checked) {
+      this.userDTOres.lineaIdList = [];
+    }
   }
 }

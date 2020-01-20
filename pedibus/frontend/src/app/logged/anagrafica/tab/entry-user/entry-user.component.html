@@ -4,20 +4,20 @@
       <div class="mat-h2 name-surname primary">{{user.surname}} {{user.name}}</div>
     </div>
     <div class="mat-body user">
-      <b>Email:</b>
+      <b>Email:&nbsp;</b>
       <span>{{user.userId}}</span>
     </div>
     <div class="role mat-body user" fxLayout="row">
-      <b>Ruoli: </b>
-      <div *ngFor="let role of user.roleIdList">
-        {{printRole(role)}}
+      <b>Ruoli:&nbsp;</b>
+      <div *ngFor="let role of user.roleIdList ; let i = index">
+        {{printRole(role)}}<span *ngIf="user.roleIdList.length - 1 !== i">,&nbsp;</span>
       </div>
     </div>
     <div class="child mat-body user" *ngIf="user.childIdList.length > 0">
-      <b>Figli: </b>
+      <b>Figli:&nbsp;</b>
       <span *ngFor="let child of this.childObs; let i = index">
         <ng-container *ngIf="(child | async) as details">
-          {{details.surname}} {{details.name}}<span *ngIf="this.childObs.length - 1 !== i">,</span>
+          {{details.surname}} {{details.name}}<span *ngIf="this.childObs.length - 1 !== i">,&nbsp;</span>
         </ng-container>
       </span>
     </div>

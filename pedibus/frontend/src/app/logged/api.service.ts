@@ -16,7 +16,7 @@ import {Observable} from 'rxjs';
 import {Notifica} from './notifiche/dtos';
 import {ChildrenDTO, ReservationDTO} from './genitore/dtos';
 import {UserDTO} from './anagrafica/dtos';
-import {debounceTime, distinctUntilChanged, first, share, take} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, first, flatMap, map, share, take} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +47,20 @@ export class ApiService {
       keyword
     };
     return this.httpClient.get<any>(this.baseURL + 'sysadmin/children', {params}).pipe(first());
+  }
+
+  getFirst5Children(keyword: string): Observable<ChildrenDTO[]> {
+    const params = {
+      page: JSON.stringify(0),
+      size: JSON.stringify(5),
+      keyword
+    };
+    return this.httpClient.get<any>(this.baseURL + 'sysadmin/children', {params}).pipe(
+      debounceTime(1000),
+      map((res) => {
+        return res.content;
+      })
+    );
   }
 
   getLinee(): Observable<string[]> {
@@ -211,7 +225,7 @@ export class ApiService {
   }
 
   deleteChild(codiceFiscale: string) {
-      return this.httpClient.delete<void>(this.baseURL + 'sysadmin/children/' + codiceFiscale).pipe(first());
+    return this.httpClient.delete<void>(this.baseURL + 'sysadmin/children/' + codiceFiscale).pipe(first());
   }
 
   deleteUser(userId: string) {
@@ -219,15 +233,20 @@ export class ApiService {
   }
 
   getRoles(): Observable<string[]> {
-    return this.httpClient.get<string[]>(this.baseURL + '/sysadmin/roles', ).pipe(first());
+    return this.httpClient.get<string[]>(this.baseURL + '/sysadmin/roles',).pipe(first());
 
   }
 
-  getChild(child: any) {
+  getChild(child: any): Observable<ChildrenDTO> {
     return this.httpClient.get<ChildrenDTO>(this.baseURL + 'sysadmin/children/' + child);
   }
 
   updateUser(oldEmail: string, user: UserDTO) {
     return this.httpClient.put<UserDTO>(this.baseURL + 'sysadmin/users/' + oldEmail, user).pipe(first());
+  }
+
+  createUser(user: UserDTO) {
+    return this.httpClient
+      .post(this.baseURL + 'sysadmin/users', user).pipe(first());
   }
 }
