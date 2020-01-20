@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
+import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
@@ -36,7 +37,7 @@ public class AdminRestController {
     /**
      * @return i possibili ruoli da assegnare a un utente
      */
-    @GetMapping("/sysadmin/role")
+    @GetMapping("/sysadmin/roles")
     public List<String> getAvailableRole() {
         return userService.getAllRole();
     }
@@ -56,6 +57,13 @@ public class AdminRestController {
     @GetMapping("/sysadmin/users")
     public Page<UserInsertResource> getUsers(Pageable pageable, @RequestParam("keyword") String keyword) {
         return userService.getAllPagedUsers(pageable, keyword);
+    }
+    /**
+     * @param userInsertResource l'utente i cui dettagli vanno aggiornati
+     */
+    @PutMapping("/sysadmin/users/{userId}")
+    public void updateUser(@PathVariable("userId") String userId, @RequestBody UserInsertResource userInsertResource) {
+        userService.updateUser(userId, userInsertResource);
     }
 
     /**
@@ -98,14 +106,6 @@ public class AdminRestController {
     @GetMapping("/sysadmin/children/{idChild}")
     public ChildDTO getChildren(@PathVariable("idChild") String cfChild) {
         return childService.getChildDTOById(cfChild);
-    }
-
-    /**
-     * @param userInsertResource l'utente i cui dettagli vanno aggiornati
-     */
-    @PutMapping("/sysadmin/user")
-    public void updateUser(@RequestBody UserInsertResource userInsertResource) {
-        userService.updateUser(userInsertResource);
     }
 
     /**

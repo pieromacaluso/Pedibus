@@ -81,12 +81,17 @@ public class UserService implements UserDetailsService {
         userRepository.save(new UserEntity(userInsertResource.getUserId(), userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new))));
     }
 
-    public void updateUser(UserInsertResource userInsertResource) {
-        UserEntity userEntity = ((UserEntity) loadUserByUsername(userInsertResource.getUserId()));
+    public void updateUser(String userId, UserInsertResource userInsertResource) {
+        UserEntity userEntity = ((UserEntity) loadUserByUsername(userId));
+        userEntity.setName(userInsertResource.getName());
+        userEntity.setSurname(userInsertResource.getSurname());
+        userEntity.setUsername(userInsertResource.getUserId());
         lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
         insertAdminLine(userInsertResource);
         userEntity.setRoleList(userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new)));
+        userEntity.setChildrenList(userInsertResource.getChildIdList());
         userRepository.save(userEntity);
+        this.sendUpdateNotification();
     }
 
     private void insertAdminLine(UserInsertResource userInsertResource) {
