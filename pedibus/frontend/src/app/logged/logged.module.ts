@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {PresenzeComponent} from './presenze/presenze.component';
 import {
   MatButtonModule,
-  MatCardModule,
+  MatCardModule, MatCheckboxModule,
   MatDatepickerModule, MatDialogModule,
   MatFormFieldModule,
   MatIconModule,
@@ -35,13 +35,13 @@ import {StopMapComponent} from './common/stop-map/stop-map.component';
 import {StopsMapComponent} from './common/stops-map/stops-map.component';
 import {MapDialogComponent} from './common/map-dialog/map-dialog.component';
 import {PresenceDialogComponent} from './presenze/lista-prenotazioni/presence-dialog/presence-dialog.component';
-import { AnagraficaComponent } from './anagrafica/anagrafica.component';
-import { TabComponent } from './anagrafica/tab/tab.component';
-import { EntryUserComponent } from './anagrafica/tab/entry-user/entry-user.component';
-import { EntryChildComponent } from './anagrafica/tab/entry-child/entry-child.component';
-import { ChildDialogComponent } from './anagrafica/child-dialog/child-dialog.component';
-import { UserDialogComponent } from './anagrafica/user-dialog/user-dialog.component';
-import { ConfirmationDialogComponent } from './common/confimation-dialog/confirmation-dialog.component';
+import {AnagraficaComponent} from './anagrafica/anagrafica.component';
+import {TabComponent} from './anagrafica/tab/tab.component';
+import {EntryUserComponent} from './anagrafica/tab/entry-user/entry-user.component';
+import {EntryChildComponent} from './anagrafica/tab/entry-child/entry-child.component';
+import {ChildDialogComponent} from './anagrafica/child-dialog/child-dialog.component';
+import {UserDialogComponent} from './anagrafica/user-dialog/user-dialog.component';
+import {ConfirmationDialogComponent} from './common/confimation-dialog/confirmation-dialog.component';
 
 
 @NgModule({
@@ -97,10 +97,21 @@ import { ConfirmationDialogComponent } from './common/confimation-dialog/confirm
     MatListModule,
     AgmCoreModule,
     MatTabsModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatCheckboxModule,
   ],
   exports: [],
-  entryComponents: [AdminBookDialogComponent, DeleteDialogComponent, DialogAnagraficaComponent, DialogPrenotazioneComponent, UpdateDispDialogComponent, MapDialogComponent, PresenceDialogComponent, UserDialogComponent, ChildDialogComponent, ConfirmationDialogComponent]
+  entryComponents: [
+    AdminBookDialogComponent,
+    DeleteDialogComponent,
+    DialogAnagraficaComponent,
+    DialogPrenotazioneComponent,
+    UpdateDispDialogComponent,
+    MapDialogComponent,
+    PresenceDialogComponent,
+    UserDialogComponent,
+    ChildDialogComponent,
+    ConfirmationDialogComponent]
 })
 export class LoggedModule {
 }

@@ -217,4 +217,17 @@ export class ApiService {
   deleteUser(userId: string) {
     return this.httpClient.delete<void>(this.baseURL + 'sysadmin/users/' + userId).pipe(first());
   }
+
+  getRoles(): Observable<string[]> {
+    return this.httpClient.get<string[]>(this.baseURL + '/sysadmin/roles', ).pipe(first());
+
+  }
+
+  getChild(child: any) {
+    return this.httpClient.get<ChildrenDTO>(this.baseURL + 'sysadmin/children/' + child);
+  }
+
+  updateUser(oldEmail: string, user: UserDTO) {
+    return this.httpClient.put<UserDTO>(this.baseURL + 'sysadmin/users/' + oldEmail, user).pipe(first());
+  }
 }

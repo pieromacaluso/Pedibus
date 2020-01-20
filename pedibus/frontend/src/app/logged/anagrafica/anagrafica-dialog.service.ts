@@ -4,6 +4,7 @@ import {Fermata, StopsByLine} from '../line-details';
 import {flatMap, map} from 'rxjs/operators';
 import {ApiService} from '../api.service';
 import {ChildrenDTO} from '../genitore/dtos';
+import {UserDTO} from './dtos';
 
 export interface ForkJoinRes {
   lines: Map<string, StopsByLine>;
@@ -51,5 +52,17 @@ export class AnagraficaDialogService {
   }
   updateChild(codiceFiscale: string, child: ChildrenDTO) {
     return this.apiService.updateChild(codiceFiscale, child);
+  }
+
+  getRoles(): Observable<string[]> {
+    return this.apiService.getRoles();
+  }
+
+  childDetails(value: string) {
+    return this.apiService.getChild(value);
+  }
+
+  updateUser(oldEmail: string, user: UserDTO) {
+    return this.apiService.updateUser(oldEmail, user);
   }
 }

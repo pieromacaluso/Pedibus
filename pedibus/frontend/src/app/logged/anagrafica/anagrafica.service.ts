@@ -23,7 +23,7 @@ export enum RoleType {
   User = 'ROLE_USER',
   Guide = 'ROLE_GUIDE',
   Admin = 'ROLE_ADMIN',
-  Sys = 'ROLE_SYS-ADMIN'
+  Sys = 'ROLE_SYSTEM-ADMIN'
 }
 
 @Injectable({
@@ -76,7 +76,7 @@ export class AnagraficaService {
   }
 
   getChild(child: any) {
-    return this.httpClient.get<ChildrenDTO>(this.baseURL + 'sysadmin/children/' + child);
+    return this.apiService.getChild(child);
   }
 
   deleteChild(codiceFiscale: string) {
