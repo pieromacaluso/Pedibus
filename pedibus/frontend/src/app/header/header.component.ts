@@ -18,13 +18,13 @@ export class HeaderComponent implements OnInit {
   userLogged: boolean;
   activeLoggedLink: any;
   headerMenu$: Observable<MenuItem[]>;
-  unReadNotification$: Observable<Notifica[]>;
+  unReadNotification$: Observable<number>;
 
   constructor(private auth: AuthService, private router: Router, private header: HeaderService,
               private dataShareService: DataShareService) {
     this.userLogged = this.auth.isLoggedIn();
     this.headerMenu$ = this.header.menuAnnounced$;
-    this.unReadNotification$ = this.dataShareService.comunicazioni;
+    this.unReadNotification$ = this.dataShareService.comunicazioniTotal;
   }
 
   isLoggedIn() {

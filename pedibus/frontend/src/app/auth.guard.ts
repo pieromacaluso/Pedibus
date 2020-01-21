@@ -25,11 +25,11 @@ export class AuthGuard implements CanActivate {
         return false;
       }
       if (state.url === '/confirm') {
-         this.router.navigate([this.auth.getHome()]);
+        this.router.navigate([this.auth.getHome()]);
         return false;
       }
       if (state.url === '/recover') {
-        this.router.navigate([this.auth.getHome()]) ;
+        this.router.navigate([this.auth.getHome()]);
         return false;
       }
     } else {

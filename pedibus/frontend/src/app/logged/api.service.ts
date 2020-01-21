@@ -28,8 +28,12 @@ export class ApiService {
   constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
   }
 
-  getNotificheNonLette(username: string): Observable<any> {
-    return this.httpClient.get<any>(this.baseURL + 'notifiche/all/' + username);
+  getNotificheNonLette(username: string, pageNumber: number): Observable<any> {
+    const params = {
+      page: JSON.stringify(pageNumber),
+      size: JSON.stringify(10),
+    };
+    return this.httpClient.get<any>(this.baseURL + 'notifiche/all/' + username, {params});
   }
 
   deleteNotifica(idNotifica: string): Observable<any[]> {

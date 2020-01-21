@@ -69,9 +69,10 @@
 
   margin: 0 0 0 94px;
 }
+
 .prenotazioni-disabled {
   opacity: 0.3;
-  pointer-events:none;
+  pointer-events: none;
 }
 
 .prenotazioni-mobile {
@@ -80,6 +81,7 @@
   border-width: 0 0 0 2px;
   padding: 8px;
 }
+
 .noprenotazioni {
   padding: 8px;
 }
@@ -117,4 +119,15 @@
 
 .margin-final {
   height: 85px !important;
+}
+
+
+.paginator-notification {
+  width: 60%;
+  height: auto;
+  margin: 0 auto 6px auto;
+}
+
+.paginator-notification-mobile {
+  width: 90%;
 }

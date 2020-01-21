@@ -19,7 +19,6 @@ import {AdminBookDialogComponent} from './presenze/lista-prenotazioni/admin-book
 import {FortmatLinePipe} from './presenze/toolbar/fortmat-line.pipe';
 import {DisponibilitaComponent} from './disponibilita/disponibilita.component';
 import {TurniComponent} from './turni/turni.component';
-import {ComunicazioniComponent} from './comunicazioni/comunicazioni.component';
 import {NotificheComponent} from './notifiche/notifiche.component';
 import {DeleteDialogComponent} from './presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
 import {AggiuntaDispComponent} from './disponibilita/aggiunta-disp/aggiunta-disp.component';
@@ -53,7 +52,6 @@ import {ConfirmationDialogComponent} from './common/confimation-dialog/confirmat
     FortmatLinePipe,
     DisponibilitaComponent,
     TurniComponent,
-    ComunicazioniComponent,
     NotificheComponent,
     DeleteDialogComponent,
     AggiuntaDispComponent,

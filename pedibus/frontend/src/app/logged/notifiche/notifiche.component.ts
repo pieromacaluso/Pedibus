@@ -15,6 +15,7 @@ export class NotificheComponent implements OnInit {
   notifiche$: Observable<Notifica[]>;
   countNonLette = 0;
 
+
   constructor(private notificheService: NotificheService, private dataService: DataShareService) {
     this.notifiche$ = dataService.comunicazioni;
   }

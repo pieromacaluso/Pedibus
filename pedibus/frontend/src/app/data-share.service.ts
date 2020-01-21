@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {Notifica} from './logged/notifiche/dtos';
+import {PageEvent} from '@angular/material';
 
 @Injectable({
   providedIn: 'root'
@@ -9,19 +10,27 @@ export class DataShareService {
 
   private comunicazioniSource = new BehaviorSubject<Notifica[]>([]);
   comunicazioni = this.comunicazioniSource.asObservable();
+  private comunicazioniNumberSource = new BehaviorSubject<number>(0);
+  comunicazioniTotal = this.comunicazioniNumberSource.asObservable();
   comuArray: Notifica[] = [];
+  totalNotifications: number;
 
   constructor() {
   }
 
   updateNotifiche(notifiche: Notifica[]) {
     if (Array.isArray(notifiche)) {
-      this.comuArray = notifiche.concat(this.comuArray);
+      this.comuArray = notifiche;
     } else {
       this.comuArray.unshift(notifiche);
     }
     console.log('comu Array:', this.comuArray);
     this.comunicazioniSource.next(this.comuArray);
+  }
+
+  updateTotal(totalNumber: number) {
+    this.totalNotifications = totalNumber;
+    this.comunicazioniNumberSource.next(this.totalNotifications);
   }
 
   removeNotifica(idNotifica: string) {

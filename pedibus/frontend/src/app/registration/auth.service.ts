@@ -115,7 +115,7 @@ export class AuthService {
   isAdmin() {
     if (this.isLoggedIn()) {
       const roles = JSON.parse(localStorage.getItem('roles'));
-      return roles.find(role => role === 'ROLE_SYSTEM-ADMIN') || roles.find(role => role === 'ROLE_ADMIN');
+      return  roles.find(role => role === 'ROLE_ADMIN');
     }
     return false;
   }
@@ -134,7 +134,7 @@ export class AuthService {
   isUser() {
     if (this.isLoggedIn()) {
       const roles = this.getRoles();
-      return roles.find(role => role === 'ROLE_USER') && !roles.find(role => role === 'ROLE_ADMIN');
+      return roles.find(role => role === 'ROLE_USER');
     }
     return false;
   }
@@ -164,6 +164,7 @@ export class AuthService {
   }
 
   getHome(): string {
+    // TODO: rivedere home per ogni ruolo
     if (this.isUser()) {
       return 'genitore';
     }
@@ -173,7 +174,17 @@ export class AuthService {
     if (this.isAdmin()) {
       return 'anagrafica';
     }
+    if (this.isSysAdmin()) {
+      return 'anagrafica';
+    }
   }
 
 
+  private isSysAdmin() {
+    if (this.isLoggedIn()) {
+      const roles = this.getRoles();
+      return roles.find(role => role === 'ROLE_SYSTEM-ADMIN');
+    }
+    return false;
+  }
 }

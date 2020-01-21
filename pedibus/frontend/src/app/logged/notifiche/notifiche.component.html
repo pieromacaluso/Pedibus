@@ -1,12 +1,20 @@
+<div style="width: 100%" class="primary-bg">
+  <mat-paginator class="primary-bg text-white paginator-notification" ngClass.lt-sm="paginator-notification-mobile"
+                 #paginator [length]="this.notificheService.len"
+                 [pageSize]="10"
+                 [pageIndex]="this.notificheService.pageIndex"
+                 (page)="this.notificheService.cambiaPagina($event)">
+  </mat-paginator>
+</div>
 <div *ngIf="(notifiche$ | async).length; else nessunaNotifica">
   <app-notifica *ngFor="let notifica of (notifiche$ | async); let i = index;" [notifica]="notifica" [messageNumber]="i">
   </app-notifica>
 </div>
 
 <ng-template #nessunaNotifica>
-    <mat-card id="prenotazioni" ngClass="container" ngClass.lt-md="container-mobile">
-        <mat-card-header>
-          <h1>Nessuna notifica da leggere</h1>
-        </mat-card-header>
-      </mat-card>
+  <mat-card id="prenotazioni" ngClass="container" ngClass.lt-md="container-mobile">
+    <mat-card-header>
+      <h1>Nessuna notifica da leggere</h1>
+    </mat-card-header>
+  </mat-card>
 </ng-template>
