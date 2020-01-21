@@ -15,9 +15,10 @@ public class PedibusString {
     public static final String UNAUTHORIZED_OPERATION = "Operazione non autorizzata";
     public static final String ALL_DELETED = "Bambini, utenti e prenotazioni sono state cancellati";
     public static final String NOTIFICATION_SENT = "Notifica salvata e inviata";
-    public static String POST_USER_ERROR = "Problemi nella creazione dell'utente, ricontrolla i dati";
-    public static String PUT_USER_ERROR = "Problemi nell'aggiornamento dell'utente, ricontrolla i dati";
-    public static String USER_NOT_FOUND = "Utente Non Trovato";
+    public static final String LOGIN_FAILED = "Credenziali non valide";
+    public static final String POST_USER_ERROR = "Problemi nella creazione dell'utente, ricontrolla i dati";
+    public static final String PUT_USER_ERROR = "Problemi nell'aggiornamento dell'utente, ricontrolla i dati";
+    public static final String USER_NOT_FOUND = "Utente Non Trovato";
 
     public static String NEW_USER_MAIL(String href, UserEntity userEntity) {
         return "<p>Il tuo account è stato appena creato con le seguenti credenziali:</p>" +
@@ -28,6 +29,7 @@ public class PedibusString {
                 "<p><a href='" + href + "'>Clicca qui per modificare la password e attivare il tuo account</a></p>";
 
     }
+
     public static String MAIL_SENT(String what, String who) {
         return "Email di " + what + " inviata correttamente a " + who;
 
@@ -36,11 +38,28 @@ public class PedibusString {
     public static String CHILD_DUPLICATE(String cf) {
         return "Bambino con codice fiscale " + cf + "già presente nel database";
     }
+
     public static String CHILD_NOT_FOUND(String cf) {
         return "Bambino con codice fiscale " + cf + "non trovato nel database";
     }
 
     public static String ENDPOINT_CALLED(String post, String s) {
         return post + " " + s + " è stato contattato";
+    }
+
+    public static String RECOVER_MAIL_NOT_FOUND(String email) {
+        return "Tentativo recupero password con mail errata '" + email + "'";
+    }
+
+    public static String USER_DUPLICATE(String user) {
+        return "Utente con mail " + user + "già presente nel database";
+    }
+
+    public static String CONFIRMATION_MAIL(String href) {
+        return "<p>Clicca per confermare account</p><a href='" + href + "'>Link di conferma</a>";
+    }
+
+    public static String RECOVER_MAIL(String href) {
+        return "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset password</a>";
     }
 }

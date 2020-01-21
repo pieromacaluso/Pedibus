@@ -1,7 +1,10 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
-import it.polito.ai.mmap.pedibus.exception.*;
+import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
+import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
+import it.polito.ai.mmap.pedibus.exception.TokenProcessException;
+import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.services.JwtTokenService;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -42,31 +46,38 @@ public class AuthenticationRestController {
      * L'utente invia un json contente email e password, le validiamo e controlliamo se l'utente è attivo e la password è corretta.
      * In caso affermativo viene creato un json web token che viene ritornato all'utente, altrimenti restituisce 401-Unauthorized
      *
-     * @param userDTO
-     * @return
+     * @param userDTO       Form Login Utente
+     * @param bindingResult Validazione
+     * @return Response Entity
      */
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
-//        logger.info("login result -> " + userService.isLoginValid(userDTO));
         if (bindingResult.getFieldErrorCount() == 0) {
             String username = userDTO.getEmail();
             String password = userDTO.getPassword();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));     //Genera un 'Authentication' formato dall'user e password che viene poi autenticato. In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
+            // Genera un 'Authentication' formato dall'user e password che viene poi autenticato.
+            // In caso di credenziali errate o utente non abilitato sarà lanciata un'eccezione
+            try {
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            } catch (AuthenticationException ignored) {
+                throw new BadCredentialsException(PedibusString.LOGIN_FAILED);
+            }
+            logger.info(PedibusString.ENDPOINT_CALLED("POST", "/login " + userDTO.getEmail()));
             Map<Object, Object> model = new HashMap<>();
             model.put("token", userService.getJwtToken(username));
             return ok(model);
         } else {
-            throw new BadCredentialsException("Credenziali non valide");
+            throw new BadCredentialsException(PedibusString.LOGIN_FAILED);
         }
-
     }
 
     /**
      * L'utente invia un json con le sue nuove credenziali, le validiamo con un validator, se rispettano
      * i criteri lo registriamo e inviamo una mail per l'attivazione dell'account, se no restituiamo un errore
      *
-     * @param userDTO
-     * @param bindingResult
+     * @param userDTO       dati utente da registrare
+     * @param bindingResult struttura per validazione
+     * @deprecated Appartiene a vecchie esercitazioni, non più usato nel progetto finale
      */
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
@@ -80,10 +91,11 @@ public class AuthenticationRestController {
     }
 
     /**
-     * TODO controllare da chi è usato questo metodo
+     * Controllo se la mail inserita presenta un duplicato
      *
-     * @param email
-     * @return
+     * @param email email da controllare
+     * @return true se duplicata, falso altrimenti
+     * @deprecated metodo utilizzato in passato dal modulo di registrazione ormai disattivato
      */
     @GetMapping("/register/checkMail/{email}")
     public boolean checkUserMailDuplicate(@PathVariable String email) {
@@ -98,16 +110,13 @@ public class AuthenticationRestController {
     /**
      * Ci permette di abilitare l'account dopo che l'utente ha seguito l'url inviato per mail
      *
-     * @param randomUUID
+     * @param randomUUID confirmation token
+     * @deprecated La registrazione dell'utente avviene ora per vie differenti
      */
     @GetMapping("/confirm/{randomUUID}")
     public void confirm(@PathVariable("randomUUID") String randomUUID) {
-        try {
-            ObjectId id = new ObjectId(randomUUID);
-            userService.enableUser(id);
-        } catch (IllegalArgumentException ex) {
-            throw new TokenNotFoundException();
-        }
+        ObjectId id = new ObjectId(randomUUID);
+        userService.enableUser(id);
     }
 
     /**
@@ -115,23 +124,25 @@ public class AuthenticationRestController {
      * password. Se l’indirizzo corrisponde a quello di un utente registrato, invia un messaggio di
      * posta elettronica all’utente contenente un link random per la modifica della password.
      * Risponde sempre 200 - Ok
+     *
+     * @param email email specificata
      */
     @PostMapping("/recover")
     public void recover(@RequestBody String email) {
         try {
             userService.recoverAccount(email);
         } catch (UserNotFoundException ignored) {
-            logger.error("Tentativo recupero password con mail errata >" + email + "<");
+            logger.error(PedibusString.RECOVER_MAIL_NOT_FOUND(email));
         }
     }
 
     /**
-     * @param userDTO       come in /register
-     * @param bindingResult
-     * @param randomUUID
-     * @Valid delle password
      * In caso vada tutto bene aggiorna la base dati degli utenti con la nuova password
      * return 200 – Ok, in caso negativo restituisce 404 – Not found
+     *
+     * @param userDTO       come login utente, ma contiene solo le due password da inserire per il recupero
+     * @param bindingResult validazione dati
+     * @param randomUUID    recover token
      */
     @PostMapping("/recover/{randomUUID}")
     public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
@@ -141,10 +152,9 @@ public class AuthenticationRestController {
         }
         try {
             userService.updateUserPassword(userDTO, randomUUID);
-        } catch (UserNotFoundException e) {
+        } catch (Exception e) {
             throw new RecoverProcessNotValidException();
         }
-
     }
 
     /**
@@ -152,8 +162,8 @@ public class AuthenticationRestController {
      * return 200 – Ok, in caso negativo restituisce 404 – Not found
      *
      * @param newUserPassDTO Form creazione nuovo utente, primo accesso
-     * @param bindingResult Binding Result per verificare che i dati siano corretti
-     * @param randomUUID randomUUID relativo all'utente che deve cambiare password
+     * @param bindingResult  Binding Result per verificare che i dati siano corretti
+     * @param randomUUID     randomUUID relativo all'utente che deve cambiare password
      */
     @PostMapping("/new-user/{randomUUID}")
     public void newUserVerification(@Valid @RequestBody NewUserPassDTO newUserPassDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
@@ -163,6 +173,4 @@ public class AuthenticationRestController {
         }
         userService.updateNewUserPasswordAndEnable(newUserPassDTO, randomUUID);
     }
-
-
 }

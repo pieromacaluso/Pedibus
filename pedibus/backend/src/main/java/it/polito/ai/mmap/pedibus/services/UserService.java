@@ -21,7 +21,6 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -171,8 +170,9 @@ public class UserService implements UserDetailsService {
      * - Se la mail è già associata a un account, ma che non è stato attivato entro una deadline e quindi si permette il riutilizzo
      * - Se la mail è già associata a un account che ha privilegi di admin ed è inattivo (ad es record creato ad inzio anno dal preside)
      *
-     * @param userDTO
-     * @throws UserAlreadyPresentException
+     * @param userDTO userDTO
+     * @throws UserAlreadyPresentException Eccezione utente già presente
+     * @deprecated Flusso di registrazione usato nelle registrazioni
      */
     public void registerUser(UserDTO userDTO) throws UserAlreadyPresentException {
         UserEntity userEntity;
@@ -182,7 +182,6 @@ public class UserService implements UserDetailsService {
             RoleEntity roleEntity = getRoleEntityById("ROLE_ADMIN");
             Optional<UserEntity> checkAdmin = userRepository.findByRoleListContainingAndUsernameAndIsEnabled(roleEntity, userDTO.getEmail(), false);
             Optional<ActivationTokenEntity> checkToken = activationTokenRepository.findByUserId(userEntity.getId());
-
             if (checkAdmin.isPresent()) {
                 //Se la mail è già stata registrata come relativa a un account admin e l'account è inattivo
                 userEntity = checkAdmin.get();
@@ -193,22 +192,18 @@ public class UserService implements UserDetailsService {
                 userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 userEntity.setCreationDate(MongoTimeService.getNow());
             } else {
-                throw new UserAlreadyPresentException("Utente già registrato");
-
+                throw new UserAlreadyPresentException(userDTO.getEmail());
             }
         } else {
             RoleEntity userRole = getRoleEntityById("ROLE_USER");
             userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(userRole)), passwordEncoder);
-
         }
-
         userRepository.save(userEntity);
         ActivationTokenEntity tokenEntity = new ActivationTokenEntity(userEntity.getId());
         activationTokenRepository.save(tokenEntity);
         String href = baseURL + "confirm/" + tokenEntity.getId();
-        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per confermare account</p><a href='" + href + "'>Confirmation Link</a>", REGISTRATION_SUBJECT);
-        logger.info("Inviata register email a: " + userEntity.getUsername());
-
+        gMailService.sendMail(userEntity.getUsername(), PedibusString.CONFIRMATION_MAIL(href), REGISTRATION_SUBJECT);
+        logger.info(PedibusString.MAIL_SENT("conferma", userEntity.getUsername()));
     }
 
     /**
@@ -219,7 +214,8 @@ public class UserService implements UserDetailsService {
      * tutto ok -> porta utente allo stato attivo e restituisce 200 – Ok
      * altrimenti -> restituisce 404 – Not found
      *
-     * @param randomUUID
+     * @param randomUUID token di conferma
+     * @deprecated Flusso di conferma non più utilizzato
      */
     public void enableUser(ObjectId randomUUID) {
         Optional<ActivationTokenEntity> checkToken = activationTokenRepository.findById(randomUUID);
@@ -242,7 +238,6 @@ public class UserService implements UserDetailsService {
             userRepository.save(userEntity);
             activationTokenRepository.delete(token);
         }
-
     }
 
 
@@ -292,8 +287,7 @@ public class UserService implements UserDetailsService {
     /**
      * Se la mail corrisponde a quella di un utente registrato invia una mail per iniziare il processo di recover
      *
-     * @param email
-     * @throws UsernameNotFoundException
+     * @param email email dell'utente da recuperare
      */
     public void recoverAccount(String email) {
         Optional<UserEntity> check = userRepository.findByUsernameAndIsEnabled(email, true);
@@ -305,7 +299,7 @@ public class UserService implements UserDetailsService {
         logger.info(tokenEntity.getCreationDate().toString());
         recoverTokenRepository.save(tokenEntity);
         String href = baseURL + "recover/" + tokenEntity.getId();
-        gMailService.sendMail(userEntity.getUsername(), "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset your password</a>", RECOVER_ACCOUNT_SUBJECT);
+        gMailService.sendMail(userEntity.getUsername(), PedibusString.RECOVER_MAIL(href), RECOVER_ACCOUNT_SUBJECT);
         logger.info("Inviata recover email a: " + userEntity.getUsername());
     }
 
@@ -329,6 +323,12 @@ public class UserService implements UserDetailsService {
         logger.info(PedibusString.MAIL_SENT("registrazione", userEntity.getUsername()));
     }
 
+    /**
+     * Da username a JWT token
+     *
+     * @param username email
+     * @return string con JWT Token
+     */
     public String getJwtToken(String username) {
         List<String> roles = new ArrayList<>();
         UserEntity userEntity = (UserEntity) loadUserByUsername(username);
@@ -411,6 +411,12 @@ public class UserService implements UserDetailsService {
     }
 
 
+    /**
+     * Aggiorna l'utente creato dall'amministratore con le nuove credenziali e il token fornito. Abilita l'utente.
+     *
+     * @param newUserPassDTO NewUserPassDTO con i dati
+     * @param randomUUID     newUser token
+     */
     public void updateNewUserPasswordAndEnable(NewUserPassDTO newUserPassDTO, String randomUUID) {
         Optional<NewUserTokenEntity> checkToken = newUserTokenRepository.findById(new ObjectId(randomUUID));
         NewUserTokenEntity token;
@@ -419,7 +425,6 @@ public class UserService implements UserDetailsService {
         } else {
             throw new TokenNotFoundException();
         }
-
         Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
         UserEntity userEntity;
         if (checkUser.isPresent()) {
