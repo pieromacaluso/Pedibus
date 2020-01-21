@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.services;
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.NotificaNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.NotificaWrongTypeException;
@@ -109,7 +110,7 @@ public class NotificheService {
     /**
      * Elimina una notifica attraverso il suo id. Solo il destinatario di una determinata notifica può eliminarla
      *
-     * @param idNotifica
+     * @param idNotifica id Notifica da Eliminare
      */
     public void deleteNotifica(String idNotifica) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -233,13 +234,19 @@ public class NotificheService {
                         + " alle ore " + fermataEntity.getOrario() + " è stata confermata", dispEntity.getDispId());
     }
 
+    /**
+     * Restituisce tutte le notifiche non lette di un determinato utente utilizzando paginazione
+     * @param username username dell'utente
+     * @param pageable oggeto paginazione
+     * @return Pagina di notifiche richiesta
+     */
     public Page<NotificaDTO> getPagedNotifications(String username, Pageable pageable) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getUsername().equals(username)) {
             Page<NotificaEntity> pagedNotifications = notificaRepository.findAllByUsernameDestinatarioOrderByDataDesc(username, pageable);
             return PageableExecutionUtils.getPage(pagedNotifications.stream().map(NotificaDTO::new).collect(Collectors.toList()), pageable, pagedNotifications::getTotalElements);
         } else {
-            throw new UnauthorizedUserException("Operazione non autorizzata");
+            throw new UnauthorizedUserException(PedibusString.UNAUTHORIZED_OPERATION);
         }
     }
 
