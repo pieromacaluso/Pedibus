@@ -62,4 +62,8 @@ public class PedibusString {
     public static String RECOVER_MAIL(String href) {
         return "<p>Clicca per modificare la password</p><a href='" + href + "'>Reset password</a>";
     }
+
+    public static String LINE_NOT_FOUND(String s) {
+        return "Linea " + s + "non trovata";
+    }
 }

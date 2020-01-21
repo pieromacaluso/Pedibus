@@ -6,21 +6,23 @@ import it.polito.ai.mmap.pedibus.services.LineeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 public class LineeController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     LineeService lineeService;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Mapping verso la home dell'applicazione.
      *
      * @return home
+     * @deprecated Non più utilizzato
      */
     @GetMapping("/")
     public String home() {
@@ -36,6 +38,7 @@ public class LineeController {
     public List<String> getLines() {
         return lineeService.getAllLinesIds();
     }
+
     /**
      * Restituisce una JSON con una lista dei nomi delle lines presenti nel DB.
      *
@@ -60,8 +63,9 @@ public class LineeController {
 
     /**
      * Dato l'id di una fermata restituisce un oggetto JSON contenente la fermata
-     * @param idFermata
-     * @return
+     *
+     * @param idFermata id della fermata
+     * @return FermataDTO
      */
     @GetMapping("/lines/stops/{id_fermata}")
     public FermataDTO getStopById(@PathVariable("id_fermata") Integer idFermata) {

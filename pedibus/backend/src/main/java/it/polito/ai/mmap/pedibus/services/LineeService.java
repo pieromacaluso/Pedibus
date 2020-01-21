@@ -49,7 +49,7 @@ public class LineeService {
         if (checkLinea.isPresent()) {
             return checkLinea.get();
         } else {
-            throw new LineaNotFoundException("Nessuna linea trovata con nome " + idLinea);
+            throw new LineaNotFoundException(idLinea);
         }
     }
 
@@ -106,7 +106,7 @@ public class LineeService {
             fermataDTO.setNomeLinea(lineaEntity.get().getNome());
             return fermataDTO;
         } else {
-            throw new LineaNotFoundException("Linea " + fermataEntity.getIdLinea() + "non trovata!");
+            throw new LineaNotFoundException(fermataEntity.getIdLinea());
         }
     }
 
@@ -178,6 +178,7 @@ public class LineeService {
     }
 
 
+    // TODO: non utilizzata, eliminare?
     public FermataDTO getFermataPartenzaOrArrivo(String idLinea, Boolean verso) {
         LineaDTO lineaDTO = getLineaDTOById(idLinea);
         return verso ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get();

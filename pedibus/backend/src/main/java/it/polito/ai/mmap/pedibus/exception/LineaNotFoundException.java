@@ -1,5 +1,7 @@
 package it.polito.ai.mmap.pedibus.exception;
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
+
 public class LineaNotFoundException extends RuntimeException {
 
     /**
@@ -16,6 +18,6 @@ public class LineaNotFoundException extends RuntimeException {
      * @param   s   the detail message.
      */
     public LineaNotFoundException(String s) {
-        super(s);
+        super(PedibusString.LINE_NOT_FOUND(s));
     }
 }
