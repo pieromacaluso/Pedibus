@@ -22,7 +22,7 @@ export class UserDialogComponent implements OnInit, OnDestroy {
   profileForm = new FormGroup({
     name: new FormControl('', Validators.required),
     surname: new FormControl('', Validators.required),
-    userId: new FormControl('', Validators.required),
+    userId: new FormControl('', [Validators.required, Validators.email]),
     user: new FormControl(),
     guide: new FormControl( ),
     lineAdmin: new FormControl(),
