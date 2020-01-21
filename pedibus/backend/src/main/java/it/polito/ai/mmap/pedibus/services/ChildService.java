@@ -78,7 +78,7 @@ public class ChildService {
     /**
      * Recuperiamo da db i figli dell'utente loggato
      *
-     * @return
+     * @return Lista dei figli del principal
      */
     public List<ChildDTO> getMyChildren() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -173,6 +173,11 @@ public class ChildService {
                 .findAllById(cfList)).stream().collect(Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
     }
 
+    /**
+     * Ottieni lista parenti dato il codice fiscale del bambino
+     * @param cfChild codice fiscale bambino
+     * @return Lista di parenti
+     */
     public List<UserEntity> getChildParents(String cfChild) {
         Optional<List<UserEntity>> userEntities = this.userService.userRepository.findAllByChildrenListIsContaining(cfChild);
 

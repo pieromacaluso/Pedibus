@@ -266,6 +266,13 @@ public class NotificheService {
         }
     }
 
+    /**
+     * Invio notifiche riguardanti cambiamento prenotazione a chi è interessato. Se `delete` viene settato a true,
+     * la notifica inviata avrà l'id della fermata settato a null, quindi si avrà la cancellazione della prenotazione
+     * lato frontend
+     * @param res ReservationDTO della prenotazione
+     * @param delete true se la prenotazione è da contrassegnare come eliminata, false se no
+     */
     public void sendReservationNotification(ReservationDTO res, boolean delete) {
         ReservationResource reservationResource = ReservationResource.builder()
                 .cfChild(res.getCfChild()).idFermata(res.getIdFermata()).verso(res.getVerso()).build();

@@ -10,7 +10,7 @@ public class PedibusString {
     public static final String INVALID_DATA = "Dati inseriti non validi";
     public static final String POST_CHILD_ERROR = "Problemi nella creazione del bambino, ricontrolla i dati";
     public static final String PUT_CHILD_ERROR = "Problemi nell'aggiornamento del bambino, ricontrolla i dati";
-    public static final String RESERVATION_INVALID = "Prenotazione già presente o non valida";
+    public static final String RESERVATION_DUPLICATE = "Prenotazione già presente o non valida";
     public static final String PERMISSION_DENIED = "Non hai i privilegi per eseguire questa operazione";
     public static final String UNAUTHORIZED_OPERATION = "Operazione non autorizzata";
     public static final String ALL_DELETED = "Bambini, utenti e prenotazioni sono state cancellati";
@@ -19,6 +19,7 @@ public class PedibusString {
     public static final String POST_USER_ERROR = "Problemi nella creazione dell'utente, ricontrolla i dati";
     public static final String PUT_USER_ERROR = "Problemi nell'aggiornamento dell'utente, ricontrolla i dati";
     public static final String USER_NOT_FOUND = "Utente Non Trovato";
+    public static final String UPDATE_RESERVATION_NOT_VALID = "Aggiornamento reservation non valida";
 
     public static String NEW_USER_MAIL(String href, UserEntity userEntity) {
         return "<p>Il tuo account è stato appena creato con le seguenti credenziali:</p>" +

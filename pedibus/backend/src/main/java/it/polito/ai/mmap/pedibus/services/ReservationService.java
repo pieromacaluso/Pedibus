@@ -66,7 +66,7 @@ public class ReservationService {
             ReservationEntity reservationEntity = new ReservationEntity(reservationDTO);
             return reservationRepository.save(reservationEntity).getId().toString();
         } else
-            throw new ReservationNotValidException(PedibusString.RESERVATION_INVALID);
+            throw new ReservationNotValidException(PedibusString.RESERVATION_DUPLICATE);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ReservationService {
             reservationDTO.setId(reservationEntity.getId().toString());
             return res;
         } else {
-            throw new IllegalArgumentException("Aggiornamento reservation non valida");
+            throw new ReservationNotValidException(PedibusString.UPDATE_RESERVATION_NOT_VALID);
         }
     }
 

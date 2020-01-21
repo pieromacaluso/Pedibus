@@ -1,5 +1,7 @@
 package it.polito.ai.mmap.pedibus.exception;
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
+
 public class ReservationNotValidException extends RuntimeException {
     /**
      * Constructs a {@code ReservationNotValidException} with no detail message.
