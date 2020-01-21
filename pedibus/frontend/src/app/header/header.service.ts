@@ -23,7 +23,7 @@ export class HeaderService {
   private signUp = {icon: 'person_add', link: 'sign-up', title: 'Sign Up'};
 
 
-  constructor(private auth: AuthService, private notificheService: NotificheService) {
+  constructor(private auth: AuthService) {
   }
 
   update() {

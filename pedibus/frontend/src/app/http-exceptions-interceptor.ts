@@ -36,6 +36,10 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
 
           switch (error.status) {
             case 401:
+              this.snackBar.open(
+                errorMessage, '', {
+                  duration: 5000,
+                });
               this.auth.logout();
               this.router.navigate(['/sign-in']);
               break;

@@ -180,7 +180,7 @@ export class AuthService {
   }
 
 
-  private isSysAdmin() {
+  isSysAdmin() {
     if (this.isLoggedIn()) {
       const roles = this.getRoles();
       return roles.find(role => role === 'ROLE_SYSTEM-ADMIN');
