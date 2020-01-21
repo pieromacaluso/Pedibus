@@ -13,6 +13,8 @@ public class PedibusString {
     public static final String RESERVATION_INVALID = "Prenotazione già presente o non valida";
     public static final String PERMISSION_DENIED = "Non hai i privilegi per eseguire questa operazione";
     public static final String UNAUTHORIZED_OPERATION = "Operazione non autorizzata";
+    public static final String ALL_DELETED = "Bambini, utenti e prenotazioni sono state cancellati";
+    public static final String NOTIFICATION_SENT = "Notifica salvata e inviata";
     public static String POST_USER_ERROR = "Problemi nella creazione dell'utente, ricontrolla i dati";
     public static String PUT_USER_ERROR = "Problemi nell'aggiornamento dell'utente, ricontrolla i dati";
     public static String USER_NOT_FOUND = "Utente Non Trovato";
@@ -36,5 +38,9 @@ public class PedibusString {
     }
     public static String CHILD_NOT_FOUND(String cf) {
         return "Bambino con codice fiscale " + cf + "non trovato nel database";
+    }
+
+    public static String ENDPOINT_CALLED(String post, String s) {
+        return post + " " + s + " è stato contattato";
     }
 }

@@ -336,6 +336,11 @@ public class UserService implements UserDetailsService {
         return jwtTokenService.createToken(username, roles);
     }
 
+    /**
+     * Ottieni tutti gli utenti nel database
+     *
+     * @return Lista di tutti gli utenti
+     */
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }

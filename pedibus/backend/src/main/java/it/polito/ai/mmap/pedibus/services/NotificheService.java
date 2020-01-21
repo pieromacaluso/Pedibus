@@ -142,11 +142,12 @@ public class NotificheService {
 
     /**
      * Salva nel db una nuova notifica passata come parametro
+     * @param notificaEntity notifica
      */
     public void addNotifica(NotificaEntity notificaEntity) {
         notificaRepository.save(notificaEntity);
         simpMessagingTemplate.convertAndSendToUser(notificaEntity.getUsernameDestinatario(), "/notifiche", notificaEntity);
-        logger.info("Notifica salvata e inviata.");
+        logger.info(PedibusString.NOTIFICATION_SENT);
     }
 
     /**

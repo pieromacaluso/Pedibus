@@ -168,12 +168,14 @@ public class DataCreationService {
     }
 
     /**
+     * TODO: DA RIVEDERE BENE
      * crea:
      * - 100 Child
      * - 50 genitori con 2 figli        contenuti nel file genitori.json e pw = 1!qwerty1!
      * - 1 ADMIN (prima linea), 4 ADMIN (prima linea) e GUIDE, 25 GUIDE contenuti nel file nonni_0.json e pw = 1!qwerty1!
      * - 1 ADMIN (seconda linea), 4 ADMIN (seconda linea) e GUIDE, 25 GUIDE contenuti nel file nonni_1.json e pw = 1!qwerty1!
      * - 1 reservation/figlio per oggi, domani e dopo domani (andata e ritorno)
+     * @throws IOException Eccezione File
      */
     public void makeChildUserReservations() throws IOException {
         RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
@@ -301,8 +303,9 @@ public class DataCreationService {
     }
 
     /**
+     * TODO: RIVEDERE BENE
      * Genera automaticamente 101 notifiche di tipo base destinate al primo degli user nel db
-     * @throws IOException
+     * @throws IOException Eccezione File
      */
     public void makeNotifications() throws IOException{
         if(userService.getAllUsers().size()>0){
