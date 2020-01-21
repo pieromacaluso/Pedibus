@@ -55,7 +55,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/js/**").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/register/**").permitAll()
+                .antMatchers("/register/**").denyAll() // Nessuno può più registrarsi da solo
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
