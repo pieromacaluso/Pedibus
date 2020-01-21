@@ -168,7 +168,7 @@ public class GestioneCorseService {
             if (!turnoEntity.getIsOpen())
                 throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
             if (!this.userService.isGuide())
-                throw new PermissionDeniedException("Accesso negato, l'utente non è guida");
+                throw new PermissionDeniedException();
 
             DispEntity dispEntity = new DispEntity(principal.getUsername(), turnoEntity.getIdLinea(), dispDTO.getIdFermata(), turnoEntity.getTurnoId());
             dispRepository.save(dispEntity);
@@ -288,7 +288,7 @@ public class GestioneCorseService {
             } else
                 throw new PermissionDeniedException("Il turno è scaduto");
         } else
-            throw new PermissionDeniedException("Non possiedi i privilegi necessari");
+            throw new PermissionDeniedException();
     }
 
     /**

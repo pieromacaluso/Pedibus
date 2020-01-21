@@ -10,9 +10,11 @@ import java.util.Optional;
 
 public interface ReservationRepository extends MongoRepository<ReservationEntity, ObjectId> {
     Optional<List<ReservationEntity>> findByCfChildAndData(String cfChild, Date data);
+    Optional<List<ReservationEntity>> findAllByCfChild(String cfChild);
     Optional<List<ReservationEntity>> findByCfChildAndDataIsAfter(String cfChild, Date data);
     Optional<ReservationEntity> findByCfChildAndDataAndVerso(String cfChild, Date data, boolean verso);
     List<ReservationEntity> findAllByDataAndIdFermataAndVerso(Date data, Integer id, boolean verso);
     void deleteAllByCfChild(String cfChild);
     List<ReservationEntity> findByDataAndVerso(Date data,boolean verso);
+
 }

@@ -1,8 +1,9 @@
 package it.polito.ai.mmap.pedibus.services;
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.*;
-import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
+import it.polito.ai.mmap.pedibus.exception.TokenProcessException;
 import it.polito.ai.mmap.pedibus.exception.UserAlreadyPresentException;
 import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private GMailService gMailService;
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private NotificheService notificheService;
 
 
     @Value("${mail.baseURL}")
@@ -76,30 +76,46 @@ public class UserService implements UserDetailsService {
      * Metodo che ci restituisce un UserEntity a partire dall'email
      * Implementazione fissata dalla classe UserDetailsService
      *
-     * @param email
-     * @return
-     * @throws UsernameNotFoundException
+     * @param email email
+     * @return UserDetails dettagli dell'utente
      */
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
         Optional<UserEntity> check = userRepository.findByUsername(email);
         if (!check.isPresent()) {
-            throw new UsernameNotFoundException("Utente inesistente");
+            throw new UserNotFoundException();
         }
         return check.get();
     }
 
+    /**
+     * Inserimento di un utente da parte di un Amministratore. Questo processo va ad inizializzare completamente l'utente
+     * lasciando solo il boolean di abilitazione su false. L'account infatti non sarà attivo fino a quando l'utente non
+     * avrà completato la procedura di cambio password iniziale.
+     *
+     * @param userInsertResource DTO per inserimento Utente da parte dell'amministratore
+     * @return UserEntity dell'utente inserito correttamente
+     */
     public UserEntity insertUser(UserInsertResource userInsertResource) {
-        insertAdminLine(userInsertResource);
-        UserEntity userEntity = new UserEntity(userInsertResource, userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new)), passwordEncoder);
+        UserEntity userEntity = new UserEntity(userInsertResource,
+                userInsertResource.getRoleIdList().stream()
+                        .map(this::getRoleEntityById)
+                        .collect(Collectors.toCollection(HashSet::new)), passwordEncoder);
         lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
         insertAdminLine(userInsertResource);
         userEntity = userRepository.save(userEntity);
-        this.sendUpdateNotification();
+        this.notificheService.sendUpdateNotification();
         this.firstAccount(userEntity);
         return userEntity;
     }
 
+    /**
+     * Funzione che permette all'amministratore di modificare l'utente.
+     *
+     * @param userId             indirizzo email che dovrebbe essere presente nel database, utilizzato per ottenere l'entity da
+     *                           modificare
+     * @param userInsertResource DTO utente con i nuovi dati.
+     */
     public void updateUser(String userId, UserInsertResource userInsertResource) {
         UserEntity userEntity = ((UserEntity) loadUserByUsername(userId));
         userEntity.setName(userInsertResource.getName());
@@ -110,9 +126,15 @@ public class UserService implements UserDetailsService {
         userEntity.setRoleList(userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new)));
         userEntity.setChildrenList(userInsertResource.getChildIdList());
         userRepository.save(userEntity);
-        this.sendUpdateNotification();
+        this.notificheService.sendUpdateNotification();
     }
 
+    /**
+     * Se l'utente è un amministratore di linea, questa funzione va ad aggiungerlo come amministratore di linea nelle
+     * linee indicate dal DTO User di amministrazione comunicato.
+     *
+     * @param userInsertResource DTO per inserimento Utente da parte dell'amministratore
+     */
     private void insertAdminLine(UserInsertResource userInsertResource) {
         if (userInsertResource.getRoleIdList().contains("ROLE_ADMIN")) {
             userInsertResource.getLineaIdList().forEach(lineaId -> lineeService.addAdminLine(userInsertResource.getUserId(), lineaId));
@@ -131,6 +153,11 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException();
     }
 
+    /**
+     * Funzione che restituisce tutti i ruoli disponibili nel Database
+     *
+     * @return Lista di Stringhe, ovvero ID ruoli
+     */
     public List<String> getAllRole() {
         return roleRepository.findAll().stream().map(RoleEntity::getId).collect(Collectors.toList());
     }
@@ -218,16 +245,17 @@ public class UserService implements UserDetailsService {
 
     }
 
+
     /**
      * Metodo che ci permette di aggiornare la password di un utente
      * Verifica che il codice random:
      * - sia uno di quelli che abbiamo generato
      * - non sia scaduto.
      *
-     * @param userDTO
-     * @throws UsernameNotFoundException se non trova l'user
+     * @param userDTO    dati dell'utente
+     * @param randomUUID Token
      */
-    public void updateUserPassword(UserDTO userDTO, String randomUUID) throws UsernameNotFoundException {
+    public void updateUserPassword(UserDTO userDTO, String randomUUID) {
         ObjectId idToken = new ObjectId(randomUUID);
         Optional<RecoverTokenEntity> checkToken = recoverTokenRepository.findById(idToken);
         if (checkToken.isPresent()) {
@@ -239,12 +267,26 @@ public class UserService implements UserDetailsService {
                 userRepository.save(userEntity);
                 recoverTokenRepository.delete(token);
             } else {
-                throw new RecoverProcessNotValidException();
+                throw new UserNotFoundException();
             }
 
         } else {
-            throw new RecoverProcessNotValidException();
+            throw new TokenNotFoundException();
         }
+    }
+
+    /**
+     * Funzione che elimina un utente dal database e manda una notifica per aggiornare il cambiamento per tutti gli admin
+     *
+     * @param userId email dell'utente da eliminare
+     */
+    public void deleteUserByUsername(String userId) {
+        Optional<UserEntity> u = this.userRepository.findByUsername(userId);
+        if (!u.isPresent()) {
+            throw new UserNotFoundException();
+        }
+        this.userRepository.deleteById(u.get().getId());
+        this.notificheService.sendUpdateNotification();
     }
 
     /**
@@ -253,10 +295,10 @@ public class UserService implements UserDetailsService {
      * @param email
      * @throws UsernameNotFoundException
      */
-    public void recoverAccount(String email) throws RecoverProcessNotValidException {
+    public void recoverAccount(String email) {
         Optional<UserEntity> check = userRepository.findByUsernameAndIsEnabled(email, true);
         if (!check.isPresent())
-            throw new UsernameNotFoundException("Utente inesistente");
+            throw new UserNotFoundException();
 
         UserEntity userEntity = check.get();
         RecoverTokenEntity tokenEntity = new RecoverTokenEntity(userEntity.getId());
@@ -268,28 +310,23 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Se la mail corrisponde a quella di un utente registrato invia una mail per iniziare il processo di recover
+     * Processo di inizializzazione dell'utente. Viene inviata una mail all'utente appena registrato dall'admin per
+     * permettegli di cambiare password e poter abilitare le funzionalità dell'applicazione.
      *
-     * @param userEntity
-     * @throws UsernameNotFoundException
+     * @param userEntity Oggetto UserEntity
      */
-    public void firstAccount(UserEntity userEntity) throws RecoverProcessNotValidException {
+    public void firstAccount(UserEntity userEntity) {
         Optional<UserEntity> check = userRepository.findByUsername(userEntity.getUsername());
         if (!check.isPresent())
-            throw new UsernameNotFoundException("Utente inesistente");
+            throw new UserNotFoundException();
 
         NewUserTokenEntity tokenEntity = new NewUserTokenEntity(userEntity.getId());
         logger.info(tokenEntity.getCreationDate().toString());
         newUserTokenRepository.save(tokenEntity);
         String href = baseURL + "new-user/" + tokenEntity.getId();
-        gMailService.sendMail(userEntity.getUsername(),
-                "<p>Il tuo account è stato appena creato con le seguenti credenziali:</p>" +
-                        "<p><ul>" +
-                        "<li><b>Username</b>: " + userEntity.getUsername() + "</li>" +
-                        "<li><b>Password</b>: " + userEntity.getSurname() + userEntity.getName() + userEntity.getUsername().length() + "</li>" +
-                        "</ul></p>" +
-                        "<p>Clicca per modificare la password e attivare il tuo account <a href='" + href + "'>Reset your password</a></p>", NEW_USER_ACCOUNT_SUBJECT);
-        logger.info("Inviata recover email a: " + userEntity.getUsername());
+        gMailService.sendMail(userEntity.getUsername(), PedibusString.NEW_USER_MAIL(href, userEntity),
+                NEW_USER_ACCOUNT_SUBJECT);
+        logger.info(PedibusString.MAIL_SENT("registrazione", userEntity.getUsername()));
     }
 
     public String getJwtToken(String username) {
@@ -304,22 +341,21 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Se la mail dell'admin non corrisponde a nessun account ne creo uno vuoto con tali privilegi che poi l'utente quando si registra riempirà,
+     * Aggiunta privilegio di amministratore di linea
      *
-     * @param userID
+     * @param userID identificatore utente
      */
-//    public void addAdmin(String userID) {
-//        Optional<UserEntity> check = userRepository.findByUsername(userID);
-//        UserEntity userEntity;
-//        if (!check.isPresent()) {
-//            userEntity = new UserEntity(userID, new HashSet<>(Collections.singletonList(getRoleEntityById("ROLE_ADMIN"))), passwordEncoder);
-//        } else {
-//            userEntity = check.get();
-//        }
-//        userEntity.getRoleList().add(getRoleEntityById("ROLE_ADMIN"));
-//        userRepository.save(userEntity);
-//    }
+    public void addAdmin(String userID) {
+        UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
+        userEntity.getRoleList().add(getRoleEntityById("ROLE_ADMIN"));
+        userRepository.save(userEntity);
+    }
 
+    /**
+     * Aggiunta privilegio di amministratore di linea
+     *
+     * @param userID Identificatore utente
+     */
     public void delAdmin(String userID) {
         UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
         userEntity.getRoleList().remove(getRoleEntityById("ROLE_ADMIN"));
@@ -355,30 +391,20 @@ public class UserService implements UserDetailsService {
             throw new UserNotFoundException();
     }
 
+    /**
+     * Restituisce tutti gli utenti paginati
+     *
+     * @param pageable oggetto Pageable che contiene query per paginazione
+     * @param keyword  Elenco di keyword di ricerca separate da spazi
+     * @return Pagina utente richiesta
+     */
     public Page<UserInsertResource> getAllPagedUsers(Pageable pageable, String keyword) {
         Page<UserEntity> pagedUsersEntity = userRepository.searchByNameSurnameCF(UserService.fromKeywordToRegex(keyword), pageable);
-        return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map((e) -> new UserInsertResource(e, this.lineeService.getAdminLineForUser(e.getUsername()))).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
+        return PageableExecutionUtils.getPage(pagedUsersEntity.stream()
+                .map((e) -> new UserInsertResource(e, this.lineeService.getAdminLineForUser(e.getUsername())))
+                .collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
     }
 
-    public void deleteUserByUsername(String userId) {
-        Optional<UserEntity> u = this.userRepository.findByUsername(userId);
-        if (!u.isPresent()) {
-            throw new UserNotFoundException();
-        }
-        this.userRepository.deleteById(u.get().getId());
-        this.sendUpdateNotification();
-    }
-
-    private void sendUpdateNotification() {
-        Optional<RoleEntity> roleEntity = this.roleRepository.findById("ROLE_SYSTEM-ADMIN");
-        if (roleEntity.isPresent()) {
-            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContaining(roleEntity.get());
-            if (userEntities.isPresent()) {
-                for (UserEntity admin : userEntities.get())
-                    this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");
-            }
-        }
-    }
 
     public void updateNewUserPasswordAndEnable(NewUserPassDTO newUserPassDTO, String randomUUID) {
         Optional<NewUserTokenEntity> checkToken = newUserTokenRepository.findById(new ObjectId(randomUUID));
@@ -397,7 +423,7 @@ public class UserService implements UserDetailsService {
             throw new TokenNotFoundException();
         }
         if (!passwordEncoder.matches(newUserPassDTO.getOldPassword(), userEntity.getPassword())) {
-            throw new TokenNotFoundException();
+            throw new TokenProcessException();
         }
         userEntity.setPassword(passwordEncoder.encode(newUserPassDTO.getPassword()));
 

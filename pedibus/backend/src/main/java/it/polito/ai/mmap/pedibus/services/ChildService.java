@@ -3,8 +3,8 @@ package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
-import it.polito.ai.mmap.pedibus.entity.RoleEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
+import it.polito.ai.mmap.pedibus.exception.ChildAlreadyPresentException;
 import it.polito.ai.mmap.pedibus.exception.ChildNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
@@ -15,14 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sun.misc.Regexp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,17 +41,34 @@ public class ChildService {
     LineeService lineeService;
     @Autowired
     ReservationService reservationService;
+    @Autowired
+    private NotificheService notificheService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    public static String fromKeywordToRegex(String keyword) {
+        List<String> keywords = Arrays.asList(keyword.split("\\s+"));
+        StringBuilder regex = new StringBuilder("");
+        for (int i = 0; i < keywords.size(); i++) {
+            regex.append(".*").append(keywords.get(i)).append(".*");
+            if (i != keywords.size() - 1) regex.append("|");
+        }
+        return regex.toString();
+    }
 
+    /**
+     * Ottieni il bambino dal database
+     *
+     * @param codiceFiscale codicefiscale bambino
+     * @return ChildDTO
+     */
     public ChildDTO getChildDTOById(String codiceFiscale) {
         Optional<ChildEntity> checkChild = childRepository.findById(codiceFiscale);
         if (checkChild.isPresent())
             return new ChildDTO(checkChild.get());
         else
-            throw new ChildNotFoundException("Alunno non trovato");
+            throw new ChildNotFoundException(codiceFiscale);
     }
 
     public List<ChildDTO> getAllChildren() {
@@ -74,9 +88,9 @@ public class ChildService {
     /**
      * Metodo che permette di cambiare la fermata di default di un bambino o dal suo genitore o da un System-Admin
      *
-     * @param cfChild
-     * @param stopRes
-     * @param date
+     * @param cfChild codice fiscale del bambino
+     * @param stopRes informazioni sulla nuova fermata da considerare
+     * @param date data di partenza da cui iniziare le modifiche
      */
     public void updateChildStop(String cfChild, ChildDefaultStopResource stopRes, Date date) {
         Optional<ChildEntity> c = childRepository.findById(cfChild);
@@ -116,21 +130,13 @@ public class ChildService {
                     reservationDTO.setIdFermata(fermata);
                     reservationDTO.setIdLinea(linea);
                     res = reservationService.updateReservation(reservationDTO, res.getId());
-                    //Vecchia prenotazione (Eliminazione)
-                    simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(oldreservationDTO.getData()) + "/" + oldreservationDTO.getIdLinea() + "/" + ((oldreservationDTO.getVerso()) ? 1 : 0), oldRes);
-                    //Nuova prenotazione (Aggiunta)
-                    simpMessagingTemplate.convertAndSend("/reservation/" + MongoTimeService.dateToString(reservationDTO.getData()) + "/" + reservationDTO.getIdLinea() + "/" + ((reservationDTO.getVerso()) ? 1 : 0), res);
-                    for (UserEntity parent : parents) {
-                        //Vecchia prenotazione (Eliminazione)
-                        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + oldreservationDTO.getCfChild() + "/" + MongoTimeService.dateToString(oldreservationDTO.getData()), oldreservationDTO);
-                        //Nuova prenotazione (Aggiunta)
-                        simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationDTO.getCfChild() + "/" + MongoTimeService.dateToString(reservationDTO.getData()), reservationDTO);
-                    }
+                    this.notificheService.sendReservationNotification(oldreservationDTO, true);
+                    this.notificheService.sendReservationNotification(reservationDTO, false);
                 }
             } else
-                throw new ChildNotFoundException("Bambino non trovato tra i tuoi figli");
+                throw new ChildNotFoundException(cfChild);
         } else
-            throw new ChildNotFoundException("Bambino non trovato");
+            throw new ChildNotFoundException(cfChild);
     }
 
     /**
@@ -144,7 +150,7 @@ public class ChildService {
         if (checkChild.isPresent()) {
             return checkChild.get();
         } else {
-            throw new ChildNotFoundException("Codice Fiscale non valido.");
+            throw new ChildNotFoundException(cfChild);
         }
     }
 
@@ -167,48 +173,57 @@ public class ChildService {
                 .findAllById(cfList)).stream().collect(Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));
     }
 
-
     public List<UserEntity> getChildParents(String cfChild) {
         Optional<List<UserEntity>> userEntities = this.userService.userRepository.findAllByChildrenListIsContaining(cfChild);
 
         return userEntities.orElseGet(ArrayList::new);
     }
 
+    /**
+     * Restituisce tutti i bambini paginati
+     *
+     * @param pageable oggetto Pageable che contiene query per paginazione
+     * @param keyword  Elenco di keyword di ricerca separate da spazi
+     * @return Pagina bambini richiesta
+     */
     public Page<ChildDTO> getAllPagedChildren(Pageable pageable, String keyword) {
         Page<ChildEntity> pagedUsersEntity = childRepository.searchByNameSurnameCF(ChildService.fromKeywordToRegex(keyword), pageable);
-        return PageableExecutionUtils.getPage(pagedUsersEntity.stream().map(ChildDTO::new).collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
+        return PageableExecutionUtils.getPage(pagedUsersEntity.stream()
+                .map(ChildDTO::new)
+                .collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);
     }
 
-    public static String fromKeywordToRegex(String keyword) {
-        List<String> keywords = Arrays.asList(keyword.split("\\s+"));
-        StringBuilder regex = new StringBuilder("");
-        for (int i = 0; i < keywords.size(); i++) {
-            regex.append(".*").append(keywords.get(i)).append(".*");
-            if (i != keywords.size() -1) regex.append("|");
-        }
-        return regex.toString();
-    }
-
+    /**
+     * Creazione di un bambino
+     *
+     * @param childDTO dati del bambino
+     * @return ChildEntity creato nel database
+     */
     public ChildEntity createChild(ChildDTO childDTO) {
         if (childRepository.findById(childDTO.getCodiceFiscale()).isPresent()) {
-            throw new IllegalArgumentException("Duplicate child with ID:" + childDTO.getCodiceFiscale());
+            throw new ChildAlreadyPresentException(childDTO.getCodiceFiscale());
         }
         ChildEntity child = new ChildEntity(childDTO);
         ChildEntity childEntity = childRepository.save(child);
         this.reservationService.bulkReservation(childEntity);
-        this.sendUpdateNotification();
+        this.notificheService.sendUpdateNotification();
         return childEntity;
     }
 
+    /**
+     * Funzione di aggiornamento bambino
+     *
+     * @param childId id del bambino da modificare
+     * @param childDTO dati del bambino aggiornati
+     * @return ChildEntity ottenuta
+     */
     public ChildEntity updateChild(String childId, ChildDTO childDTO) {
         if (!childId.equals(childDTO.getCodiceFiscale()) && childRepository.findById(childDTO.getCodiceFiscale()).isPresent()) {
-            // TODO: Eccezione Custom?
-            throw new IllegalArgumentException("Duplicate child with ID:" + childDTO.getCodiceFiscale());
+            throw new ChildAlreadyPresentException(childDTO.getCodiceFiscale());
         }
         Optional<ChildEntity> childEntityOptional = childRepository.findById(childId);
         if (!childEntityOptional.isPresent()) {
-            // TODO: Eccezione Custom?
-            throw new IllegalArgumentException("There is no child with ID:" + childId);
+            throw new ChildNotFoundException(childId);
         }
         if (!childId.equals(childDTO.getCodiceFiscale())) {
             Optional<List<UserEntity>> parents = this.userService.userRepository.findAllByChildrenListIsContaining(childId);
@@ -226,16 +241,28 @@ public class ChildService {
         LocalDate date = LocalDate.now();
         ChildDefaultStopResource defaultStopResource = new ChildDefaultStopResource(result.getIdFermataAndata(), result.getIdFermataRitorno(), date.toString());
         this.updateChildStop(result.getCodiceFiscale(), defaultStopResource, mongoTimeService.getMongoZonedDateTimeFromDate(date.toString(), false));
-        this.sendUpdateNotification();
+        this.notificheService.sendUpdateNotification();
         return result;
     }
 
-    private void addChildToParent(ChildDTO childDTO, List<UserEntity> userEntities) {
-        for (UserEntity u : userEntities) {
+    /**
+     * Aggiunta bambino ai genitori indicati
+     *
+     * @param childDTO DTO del bambino da inserire
+     * @param parentsOfChild parenti del bambino
+     */
+    private void addChildToParent(ChildDTO childDTO, List<UserEntity> parentsOfChild) {
+        for (UserEntity u : parentsOfChild) {
             u.getChildrenList().add(childDTO.getCodiceFiscale());
         }
     }
 
+    /**
+     * Cancella il bambino dai genitori indicati
+     *
+     * @param childId codice fiscale dal bambino da eliminare
+     * @param parentsOfChild parenti del bambino
+     */
     private void deleteChildFromParent(String childId, List<UserEntity> parentsOfChild) {
         for (UserEntity u : parentsOfChild) {
             u.getChildrenList().remove(childId);
@@ -243,22 +270,14 @@ public class ChildService {
 
     }
 
-    private void sendUpdateNotification() {
-        Optional<RoleEntity> roleEntity = this.userService.roleRepository.findById("ROLE_SYSTEM-ADMIN");
-        if (roleEntity.isPresent()) {
-            Optional<List<UserEntity>> userEntities = this.userService.userRepository.findAllByRoleListContaining(roleEntity.get());
-            if (userEntities.isPresent()) {
-                for (UserEntity admin : userEntities.get())
-                    this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");
-            }
-        }
-    }
-
+    /**
+     * Cancellazione del bambino dal database e relative prenotazioni
+     * @param childId codice fiscale
+     */
     public void deleteChild(String childId) {
         Optional<ChildEntity> childEntityOptional = this.childRepository.findById(childId);
         if (!childEntityOptional.isPresent()) {
-            // TODO: Eccezione Custom?
-            throw new IllegalArgumentException("There is no child with ID:" + childId);
+            throw new ChildNotFoundException(childId);
         }
         this.childRepository.delete(childEntityOptional.get());
         Optional<List<UserEntity>> parents = this.userService.userRepository.findAllByChildrenListIsContaining(childId);
@@ -267,6 +286,7 @@ public class ChildService {
             this.deleteChildFromParent(childId, parentsOfChild);
             this.userService.userRepository.saveAll(parentsOfChild);
         }
-        this.sendUpdateNotification();
+        this.reservationService.deleteAllChildReservation(childId);
+        this.notificheService.sendUpdateNotification();
     }
 }

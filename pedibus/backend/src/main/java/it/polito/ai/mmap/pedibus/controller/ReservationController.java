@@ -2,7 +2,6 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +35,8 @@ public class ReservationController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private NotificheService notificheService;
 
 
     /**
@@ -117,12 +117,7 @@ public class ReservationController {
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         String idReservation = reservationService.addReservation(reservationDTO);
         reservationDTO.setId(idReservation);
-        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
-        List<UserEntity> parents = childService.getChildParents(reservationDTO.getCfChild());
-        for (UserEntity parent : parents) {
-            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
-        }
-
+        this.notificheService.sendReservationNotification(reservationDTO, false);
         return objectMapper.writeValueAsString(idReservation);
     }
 
@@ -194,12 +189,7 @@ public class ReservationController {
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         reservationService.updateReservation(reservationDTO, reservationId);
-        // TODO: Gestione parenti multipli?
-        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationResource.getVerso()) ? 1 : 0), reservationResource);
-        List<UserEntity> parents = childService.getChildParents(reservationDTO.getCfChild());
-        for (UserEntity parent : parents) {
-            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
-        }
+        this.notificheService.sendReservationNotification(reservationDTO, false);
     }
 
     /**
@@ -214,19 +204,8 @@ public class ReservationController {
         logger.info("Eliminazione reservation" + reservationId);
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         ReservationDTO reservationDTO = reservationService.getReservationCheck(idLinea, dataFormatted, reservationId);
-        ReservationResource reservationResource = ReservationResource.builder()
-                .cfChild(reservationDTO.getCfChild())
-                .idFermata(null)
-                .verso(reservationDTO.getVerso()).build();
-
-
         reservationService.deleteReservation(idLinea, dataFormatted, reservationId);
-        reservationDTO.setIdFermata(null);
-        simpMessagingTemplate.convertAndSend("/reservation/" + data + "/" + idLinea + "/" + ((reservationDTO.getVerso()) ? 1 : 0), reservationResource);
-        List<UserEntity> parents = childService.getChildParents(reservationDTO.getCfChild());
-        for (UserEntity parent : parents) {
-            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" + reservationResource.getCfChild() + "/" + data, reservationDTO);
-        }
+        this.notificheService.sendReservationNotification(reservationDTO, true);
     }
 
     /**

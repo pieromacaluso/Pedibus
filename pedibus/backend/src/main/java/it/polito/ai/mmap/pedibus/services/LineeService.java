@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -136,27 +133,38 @@ public class LineeService {
     /**
      * Aggiunge alla lista di admin di una linea l'user indicato
      *
-     * @param userID
-     * @param idLinea
+     * @param userID email dell'user da aggiungere
+     * @param idLinea id della linea a cui aggiungerlo.
      */
     public void addAdminLine(String userID, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
         ArrayList<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
-            adminList = new ArrayList<>(Arrays.asList(userID));
+            adminList = new ArrayList<>(Collections.singletonList(userID));
         else if (!adminList.contains(userID))
             adminList.add(userID);
-
         lineaEntity.setAdminList(adminList);
         lineaRepository.save(lineaEntity);
     }
 
+    /**
+     * Rimozione dell'utente specificato da tutte le linee di cui è amministratore. Solitamente viene utilizzata appena
+     * prima di una reinizializzazione dei permessi dell'utente sulle linee.
+     *
+     * @param userId indirizzo email dell'utente
+     */
     public void removeAdminFromAllLine(String userId) {
         List<LineaEntity> entityList = lineaRepository.findAll();
         entityList.forEach(lineaEntity -> lineaEntity.getAdminList().remove(userId));
         lineaRepository.saveAll(entityList);
     }
 
+    /**
+     * Rimuove dalla lista di admin di una linea l'user indicato
+     *
+     * @param userID email dell'user da eliminare
+     * @param idLinea id della linea da cui eliminarlo
+     */
     public void delAdminLine(String userID, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
         ArrayList<String> adminList = lineaEntity.getAdminList();
@@ -176,6 +184,11 @@ public class LineeService {
     }
 
 
+    /**
+     * Controlla se l'amministratore è tale per la linea specificata
+     * @param idLinea linea da controllare
+     * @return true se è amministratore, false altrimenti
+     */
     public Boolean isAdminLine(String idLinea) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return getLineaEntityById(idLinea).getAdminList().contains(principal.getUsername()) && this.userService.isAdmin();

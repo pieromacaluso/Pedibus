@@ -42,8 +42,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             DispNotFoundException.class,
             DispNotValidException.class,
             NotificaNotFoundException.class,
-            UserNotFoundException.class,
-            NotificaWrongTypeException.class})
+            NotificaWrongTypeException.class,
+            SysAdminException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
@@ -93,7 +93,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = {
             TokenNotFoundException.class,
             RecoverProcessNotValidException.class,
-            SchoolClosedException.class})
+            SchoolClosedException.class,
+            UserNotFoundException.class,})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())

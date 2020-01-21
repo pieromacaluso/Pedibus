@@ -1,12 +1,14 @@
 package it.polito.ai.mmap.pedibus.exception;
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
+
 public class RecoverProcessNotValidException extends RuntimeException {
 
     /**
      * Constructs a {@code RecoverProcessNotValidException} with no detail message.
      */
     public RecoverProcessNotValidException() {
-        super("Recover Process has ended unexpectedly.");
+        super(PedibusString.RECOVER_FAILED);
     }
 
     /**

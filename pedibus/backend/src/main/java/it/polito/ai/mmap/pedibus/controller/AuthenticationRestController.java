@@ -1,8 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
-import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
-import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
-import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
+import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.services.JwtTokenService;
@@ -16,12 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +28,6 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 public class AuthenticationRestController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     UserService userService;
     @Autowired
@@ -41,6 +36,7 @@ public class AuthenticationRestController {
     JwtTokenService jwtTokenService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * L'utente invia un json contente email e password, le validiamo e controlliamo se l'utente è attivo e la password è corretta.
@@ -85,6 +81,7 @@ public class AuthenticationRestController {
 
     /**
      * TODO controllare da chi è usato questo metodo
+     *
      * @param email
      * @return
      */
@@ -93,9 +90,7 @@ public class AuthenticationRestController {
         try {
             userService.loadUserByUsername(email);
             return true;
-        }
-        catch (UsernameNotFoundException e)
-        {
+        } catch (UserNotFoundException e) {
             return false;
         }
     }
@@ -125,7 +120,7 @@ public class AuthenticationRestController {
     public void recover(@RequestBody String email) {
         try {
             userService.recoverAccount(email);
-        } catch (UsernameNotFoundException ignored) {
+        } catch (UserNotFoundException ignored) {
             logger.error("Tentativo recupero password con mail errata >" + email + "<");
         }
     }
@@ -144,36 +139,29 @@ public class AuthenticationRestController {
             bindingResult.getAllErrors().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
             throw new RecoverProcessNotValidException();
         }
-
         try {
             userService.updateUserPassword(userDTO, randomUUID);
-        } catch (UsernameNotFoundException e) {
+        } catch (UserNotFoundException e) {
             throw new RecoverProcessNotValidException();
         }
 
     }
 
     /**
-     * @param newUserPassDTO
-     * @param bindingResult
-     * @param randomUUID
-     * @Valid delle password
-     * In caso vada tutto bene aggiorna la base dati degli utenti con la nuova password
+     * In caso vada tutto bene aggiorna la base dati degli utenti con la nuova password abilitando l'utente.
      * return 200 – Ok, in caso negativo restituisce 404 – Not found
+     *
+     * @param newUserPassDTO Form creazione nuovo utente, primo accesso
+     * @param bindingResult Binding Result per verificare che i dati siano corretti
+     * @param randomUUID randomUUID relativo all'utente che deve cambiare password
      */
     @PostMapping("/new-user/{randomUUID}")
     public void newUserVerification(@Valid @RequestBody NewUserPassDTO newUserPassDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error("new-user/randomUUID -> " + err.toString()));
-            throw new RecoverProcessNotValidException();
+            throw new TokenProcessException(PedibusString.INVALID_DATA);
         }
-
-        try {
-            userService.updateNewUserPasswordAndEnable(newUserPassDTO, randomUUID);
-        } catch (UsernameNotFoundException e) {
-            throw new RecoverProcessNotValidException();
-        }
-
+        userService.updateNewUserPasswordAndEnable(newUserPassDTO, randomUUID);
     }
 
 

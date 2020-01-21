@@ -79,6 +79,12 @@ public class MongoTimeService {
         return data.after(getStartOfToday()) && data.before(getStartOfTomorrow());
     }
 
+    /**
+     * Generazione di una lista di date sottoforma di stringa che inizia dalla data specificata e si conclude con la data
+     * di fine scuola.
+     * @param dateTime data di inizio
+     * @return lista di date
+     */
     public List<String> generateListOfDateStartingFrom(LocalDate dateTime) {
         LocalDate iDate = LocalDate.from(dateTime);
         LocalDate fineScuolaPlusOne = LocalDate.parse(dataFineScuola).plusDays(1);
@@ -102,12 +108,24 @@ public class MongoTimeService {
         });
     }
 
+    /**
+     * Da String a a Date. Un booleano permette di controllare che la data sia valida per prenotazioni o turni
+     * @param date Stringa nel formato 'yyyy-MM-dd' da convertire
+     * @param checkValidity booleano che abilita il controllo
+     * @return Date ottenuta
+     */
     public Date getMongoZonedDateTimeFromDate(String date, boolean checkValidity) {
         return getDateCheckConstraints(date, checkValidity);
     }
 
     //non mettere dentro getMongoZonedDateTimeFromDate()
     //Se si cambia tipo di eccezione bisogna cambiare un paio di catch
+    /**
+     * Controllo dei vincoli per la data
+     * @param date data da controllare nel formato 'yyyy-MM-hh'
+     * @param checkValidity booleano per attivare o meno i controlli
+     * @return Date ottenuta
+     */
     public Date getDateCheckConstraints(String date, boolean checkValidity) {
         // holiday
         if (holidayList.contains(date) && checkValidity)

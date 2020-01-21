@@ -4,10 +4,13 @@ import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.NotificaNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.NotificaWrongTypeException;
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.NotificaRepository;
+import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispStateResource;
+import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +46,10 @@ public class NotificheService {
     private ChildService childService;
     @Autowired
     private LineeService lineeService;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private MongoTimeService mongoTimeService;
 
     /**
      * Restituisce le notifiche non lette con type
@@ -233,6 +240,36 @@ public class NotificheService {
             return PageableExecutionUtils.getPage(pagedNotifications.stream().map(NotificaDTO::new).collect(Collectors.toList()), pageable, pagedNotifications::getTotalElements);
         } else {
             throw new UnauthorizedUserException("Operazione non autorizzata");
+        }
+    }
+
+    /**
+     * Funzione che si occupa di spedire le notifiche a tutti gli amministratori di sistema che sono avvenuti cambiamenti
+     * nel pannello di anagrafica ed è quindi necessario ricaricarlo.
+     */
+    public void sendUpdateNotification() {
+        Optional<RoleEntity> roleEntity = this.roleRepository.findById("ROLE_SYSTEM-ADMIN");
+        if (roleEntity.isPresent()) {
+            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContaining(roleEntity.get());
+            if (userEntities.isPresent()) {
+                for (UserEntity admin : userEntities.get())
+                    this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");
+            }
+        }
+    }
+
+    public void sendReservationNotification(ReservationDTO res, boolean delete) {
+        ReservationResource reservationResource = ReservationResource.builder()
+                .cfChild(res.getCfChild()).idFermata(res.getIdFermata()).verso(res.getVerso()).build();
+        FermataEntity fermataEntity = this.lineeService.getFermataEntityById(res.getIdFermata());
+        String data = MongoTimeService.dateToString(res.getData());
+        if (delete) res.setIdFermata(null);
+        simpMessagingTemplate.convertAndSend("/reservation/" + data +
+                "/" + fermataEntity.getIdLinea() + "/" + ((res.getVerso()) ? 1 : 0), reservationResource);
+        List<UserEntity> parents = childService.getChildParents(res.getCfChild());
+        for (UserEntity parent : parents) {
+            simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" +
+                    reservationResource.getCfChild() + "/" + data, res);
         }
     }
 }

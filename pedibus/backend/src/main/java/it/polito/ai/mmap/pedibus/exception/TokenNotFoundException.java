@@ -1,12 +1,14 @@
 package it.polito.ai.mmap.pedibus.exception;
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
+
 public class TokenNotFoundException extends RuntimeException {
 
     /**
      * Constructs a {@code TokenNotFoundException} with no detail message.
      */
     public TokenNotFoundException() {
-        super("Token not Found.");
+        super(PedibusString.TOKEN_NOT_FOUND);
     }
 
     /**
