@@ -81,7 +81,7 @@ public class AdminRestController {
      * @return UserEntity dell'utente inserito correttamente
      */
     @PostMapping("/sysadmin/users")
-    public UserEntity insertUser(@Valid @ModelAttribute @RequestBody UserInsertResource userInsertResource, BindingResult bindingResult) {
+    public UserEntity insertUser(@Valid @RequestBody UserInsertResource userInsertResource, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.POST_USER_ERROR);
         }
@@ -95,7 +95,7 @@ public class AdminRestController {
      */
     @PutMapping("/sysadmin/users/{userId}")
     public void updateUser(@PathVariable("userId") String userId,
-                           @Valid @ModelAttribute @RequestBody UserInsertResource userInsertResource,
+                           @Valid @RequestBody UserInsertResource userInsertResource,
                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.PUT_USER_ERROR);
@@ -147,7 +147,7 @@ public class AdminRestController {
      * @return ChildDTO dell'utente inserito correttamente
      */
     @PostMapping("/sysadmin/children")
-    public ChildDTO createChild(@Valid @ModelAttribute @RequestBody ChildDTO childDTO, BindingResult bindingResult) {
+    public ChildDTO createChild(@Valid @RequestBody ChildDTO childDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.POST_CHILD_ERROR);
         }
@@ -164,7 +164,7 @@ public class AdminRestController {
      */
     @PutMapping("/sysadmin/children/{childId}")
     public ChildDTO updateChild(@PathVariable("childId") String childId,
-                                @Valid @ModelAttribute @RequestBody ChildDTO childDTO, BindingResult bindingResult) {
+                                @Valid @RequestBody ChildDTO childDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.PUT_CHILD_ERROR);
         }
