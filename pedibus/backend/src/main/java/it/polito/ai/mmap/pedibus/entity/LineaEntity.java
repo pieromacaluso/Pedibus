@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -19,7 +20,7 @@ public class LineaEntity {
     private String id;
     private String nome;
     private String master;
-    private ArrayList<String> adminList;
+    private Set<String> adminList;
     private ArrayList<Integer> andata;
     private ArrayList<Integer> ritorno;
 

@@ -10,8 +10,8 @@ import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.repository.FermataRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;
 import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import lombok.Data;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -115,7 +115,7 @@ public class LineeService {
     /**
      * Restituisce tutti i nomi delle linee presenti in DB
      *
-     * @return Lista di nomi linee
+     * @return Lista di linee
      */
     public List<String> getAllLinesIds() {
         return lineaRepository.findAll().stream().map(LineaEntity::getId).collect(Collectors.toList());
@@ -134,14 +134,14 @@ public class LineeService {
     /**
      * Aggiunge alla lista di admin di una linea l'user indicato
      *
-     * @param email  email dell'user da aggiungere
+     * @param email   email dell'user da aggiungere
      * @param idLinea id della linea a cui aggiungerlo.
      */
     public void addAdminLine(String email, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
-        ArrayList<String> adminList = lineaEntity.getAdminList();
+        Set<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
-            adminList = new ArrayList<>(Collections.singletonList(email));
+            adminList = new TreeSet<>(Collections.singletonList(email));
         else if (!adminList.contains(email))
             adminList.add(email);
         lineaEntity.setAdminList(adminList);
@@ -155,22 +155,25 @@ public class LineeService {
      * @param userId indirizzo email dell'utente
      */
     public void removeAdminFromAllLine(String userId) {
+        List<LineaEntity> linesMaster = this.getAllLinesMasterMail(userId);
         List<LineaEntity> entityList = lineaRepository.findAll();
-        entityList.forEach(lineaEntity -> lineaEntity.getAdminList().remove(userId));
+        entityList.forEach(lineaEntity -> {
+            if (!linesMaster.contains(lineaEntity)) lineaEntity.getAdminList().remove(userId);
+        });
         lineaRepository.saveAll(entityList);
     }
 
     /**
      * Rimuove dalla lista di admin di una linea l'user indicato
      *
-     * @param email  email dell'user da eliminare
+     * @param email   email dell'user da eliminare
      * @param idLinea id della linea da cui eliminarlo
      */
     public void delAdminLine(String email, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
-        ArrayList<String> adminList = lineaEntity.getAdminList();
+        Set<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
-            adminList = new ArrayList<>(Arrays.asList(email));
+            adminList = new TreeSet<>(Arrays.asList(email));
         else if (adminList.contains(email))
             adminList.remove(email);
 
@@ -199,27 +202,46 @@ public class LineeService {
 
     /**
      * Funzione che permette di verificare se un utente è amministratore master per una determinata linea
+     * <p>
+     * ì     * @param idLinea identificatore della linea
+     *
+     * @return true se è master, falso altrimenti
+     */
+    public boolean isMasterLine(String idLinea) {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity user = this.userService.getUserEntity(principal.getId());
+        LineaEntity lineaEntity = this.getLineaEntityById(idLinea);
+        return lineaEntity.getMaster().equals(user.getUsername());
+    }
+
+    /**
+     * Funzione che permette di verificare se un utente è amministratore master per una determinata linea
      *
      * @param userID  identificatore dell'utente
      * @param idLinea identificatore della linea
      * @return true se è master, falso altrimenti
      */
     public boolean isMasterLine(String userID, String idLinea) {
-        UserEntity user = this.userService.getUserEntity(new ObjectId(userID));
+        UserInsertResource user = this.userService.getUserByEmail(userID);
         LineaEntity lineaEntity = this.getLineaEntityById(idLinea);
-        return lineaEntity.getMaster().equals(user.getUsername());
+        return lineaEntity.getMaster().equals(user.getUserId());
     }
 
     /**
      * Restituisce tutte le linee di cui il principal è admin
+     *
+     * @return Lista di linee di cui è amministratore
      */
-    public List<String> getAllLinesAdminPrincipal() {
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<String> linesIds = this.getAllLinesIds();
-        List<String> adminLinesIds = new ArrayList<>();
-        if (this.userService.isSysAdmin()) return this.getAllLinesIds();
-        for (String lineId :linesIds)
-            if (isMasterLine(principal.getUsername(), lineId) || isAdminLine(lineId)) adminLinesIds.add(lineId);
-        return adminLinesIds;
+    public List<LineaDTO> getAllLinesAdminPrincipal() {
+        List<LineaDTO> lines = this.getAllLinesIds().stream().map(e -> new LineaDTO(this.getLineaEntityById(e), fermataRepository)).collect(Collectors.toList());
+        List<LineaDTO> adminLines = new ArrayList<>();
+        if (this.userService.isSysAdmin()) return lines;
+        for (LineaDTO line : lines)
+            if (isMasterLine(line.getId()) || isAdminLine(line.getId())) adminLines.add(line);
+        return adminLines;
+    }
+
+    public List<LineaEntity> getAllLinesMasterMail(String email) {
+        return this.lineaRepository.findAllByMasterIs(email).orElseGet(ArrayList::new);
     }
 }

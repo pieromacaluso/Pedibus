@@ -139,7 +139,7 @@ public class DataCreationService {
                 LineaDTO lineaDTO = objectMapper.readValue(fileIterator.next(), LineaDTO.class);
                 try {
                     //Se ricarichiamo la linea con lo stesso nome ci ricopiamo gli admin
-                    ArrayList<String> adminList = lineeService.getLineaEntityById(lineaDTO.getId()).getAdminList();
+                    Set<String> adminList = lineeService.getLineaEntityById(lineaDTO.getId()).getAdminList();
                     if (adminList != null)
                         lineaDTO.setAdminList(adminList);
 
@@ -148,7 +148,7 @@ public class DataCreationService {
 //                        lineaDTO.setGuideList(guideList);
 
                 } catch (LineaNotFoundException e) {
-                    lineaDTO.setAdminList(new ArrayList<>());
+                    lineaDTO.setAdminList(new TreeSet<>());
 //                    lineaDTO.setGuideList(new ArrayList<>());
                 }
 

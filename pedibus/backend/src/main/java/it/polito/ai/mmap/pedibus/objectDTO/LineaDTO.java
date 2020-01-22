@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -16,7 +17,7 @@ public class LineaDTO {
     private String id;
     private String nome;
     private String master;
-    private ArrayList<String> adminList;
+    private Set<String> adminList;
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
 

@@ -260,9 +260,18 @@ public class NotificheService {
      * nel pannello di anagrafica ed è quindi necessario ricaricarlo.
      */
     public void sendUpdateNotification() {
-        Optional<RoleEntity> roleEntity = this.roleRepository.findById("ROLE_SYSTEM-ADMIN");
-        if (roleEntity.isPresent()) {
-            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContaining(roleEntity.get());
+        Optional<RoleEntity> roleEntitySys = this.roleRepository.findById("ROLE_SYSTEM-ADMIN");
+        Optional<RoleEntity> roleEntityAdmin = this.roleRepository.findById("ROLE_ADMIN");
+
+        if (roleEntitySys.isPresent()) {
+            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(roleEntitySys.get());
+            if (userEntities.isPresent()) {
+                for (UserEntity admin : userEntities.get())
+                    this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");
+            }
+        }
+        if (roleEntityAdmin.isPresent()) {
+            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(roleEntityAdmin.get());
             if (userEntities.isPresent()) {
                 for (UserEntity admin : userEntities.get())
                     this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");

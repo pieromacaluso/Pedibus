@@ -2,13 +2,11 @@ package it.polito.ai.mmap.pedibus.services;
 
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.*;
-import it.polito.ai.mmap.pedibus.exception.TokenNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.TokenProcessException;
-import it.polito.ai.mmap.pedibus.exception.UserAlreadyPresentException;
-import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
+import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -24,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RoleNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -137,6 +136,11 @@ public class UserService implements UserDetailsService {
     private void insertAdminLine(UserInsertResource userInsertResource) {
         if (userInsertResource.getRoleIdList().contains("ROLE_ADMIN")) {
             userInsertResource.getLineaIdList().forEach(lineaId -> lineeService.addAdminLine(userInsertResource.getUserId(), lineaId));
+        }
+        List<LineaEntity> linesMaster = this.lineeService.getAllLinesMasterMail(userInsertResource.getUserId());
+        if (!linesMaster.isEmpty()) {
+            linesMaster.forEach(lineaEntity -> lineeService.addAdminLine(userInsertResource.getUserId(), lineaEntity.getId()));
+            userInsertResource.getRoleIdList().add("ROLE_ADMIN");
         }
     }
 
@@ -443,5 +447,51 @@ public class UserService implements UserDetailsService {
             newUserTokenRepository.delete(token);
         }
 
+    }
+
+
+    public List<UserInsertResource> getAllGuidesAdmin() throws RoleNotFoundException {
+        List<UserEntity> userEntities =
+                this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(
+                        this.roleRepository.findById("ROLE_GUIDE").orElseThrow(RoleNotFoundException::new))
+                        .orElseGet(ArrayList::new);
+        userEntities.addAll(this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(
+                this.roleRepository.findById("ROLE_ADMIN").orElseThrow(RoleNotFoundException::new))
+                .orElseGet(ArrayList::new));
+        return userEntities.stream().distinct().map(e -> new UserInsertResource(e, this.lineeService.getAdminLineForUser(e.getUsername()))).collect(Collectors.toList());
+    }
+
+    public UserInsertResource getUserByEmail(String email) {
+        UserEntity user = this.userRepository.findByUsername(email).orElseThrow(UserNotFoundException::new);
+        return new UserInsertResource(user, this.lineeService.getAdminLineForUser(user.getUsername()));
+    }
+
+    /**
+     * Un admin di una linea o il system-admin inserisce un utente come admin per una linea, indicando
+     * tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
+     * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione
+     * si troverà i privilegi di admin
+     *
+     * @param permissionResource Linea e booleano
+     * @param mail               email
+     */
+    public void setUserAdmin(PermissionResource permissionResource, String mail) {
+        if ((lineeService.isAdminLine(permissionResource.getIdLinea()) && !lineeService.isMasterLine(mail, permissionResource.getIdLinea()))
+                || this.isSysAdmin()) {
+            UserInsertResource userEntity = this.getUserByEmail(mail);
+            if (permissionResource.isAddOrDel()) {
+                this.addAdmin(userEntity.getUserId());
+                lineeService.addAdminLine(userEntity.getUserId(), permissionResource.getIdLinea());
+                this.notificheService.sendUpdateNotification();
+            } else {
+                lineeService.delAdminLine(userEntity.getUserId(), permissionResource.getIdLinea());
+                userEntity.getLineaIdList().remove(permissionResource.getIdLinea());
+                if (userEntity.getLineaIdList().isEmpty())
+                    this.delAdmin(userEntity.getUserId());
+                this.notificheService.sendUpdateNotification();
+            }
+        } else {
+            throw new PermissionDeniedException();
+        }
     }
 }
