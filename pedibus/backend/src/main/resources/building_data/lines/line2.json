@@ -1,6 +1,7 @@
 {
   "id": "linea2",
   "nome": "Linea 2",
+  "master": "masterlinea2@gmail.com",
   "andata": [
     {
       "id": 101,
