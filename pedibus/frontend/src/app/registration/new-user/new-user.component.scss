@@ -1,16 +1,36 @@
-@import "../registration-component";
-
-.container{
+.container {
   text-align: center;
 }
 
 
-.container-mobile{
+.container-mobile {
   text-align: center;
 }
 
 .forgot {
   margin-bottom: 20px;
 }
+
+mat-form-field {
+  width: 300px;
+}
+
+.form-field {
+  width: 40%;
+  padding: 10px;
+}
+
+.form-field-mobile {
+  width: 100%;
+  padding: 10px;
+}
+
+.main-image {
+  width: 100%;
+  text-align: center;
+  font-size: 10em;
+  height: auto;
+}
+
 
 

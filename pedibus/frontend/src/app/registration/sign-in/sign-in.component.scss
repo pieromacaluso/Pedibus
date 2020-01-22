@@ -4,21 +4,27 @@
 }
 
 .container {
-  width: 60%;
-  height: auto;
-  margin: 10px auto 6px auto;
-  padding-top: 25px;
   text-align: center;
 
 }
 
 .container-mobile {
-  width: 85%;
-  height: auto;
-  margin: 10px auto 6px auto;
-  padding-top: 25px;
   text-align: center;
 
+}
+
+mat-form-field {
+  width: 300px;
+}
+
+.form-field {
+  width: 40%;
+  padding: 10px;
+}
+
+.form-field-mobile {
+  width: 100%;
+  padding: 10px;
 }
 
 .main-image {
@@ -28,17 +34,3 @@
   height: auto;
 }
 
-
-mat-form-field {
-  width: 300px;
-}
-
-.form-field {
-  width: 40%;
-  padding:10px;
-}
-
-.form-field-mobile {
-  width: 100%;
-  padding:10px;
-}

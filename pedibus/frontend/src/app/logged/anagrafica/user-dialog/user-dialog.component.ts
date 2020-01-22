@@ -162,4 +162,17 @@ export class UserDialogComponent implements OnInit, OnDestroy {
       this.userDTOres.lineaIdList = [];
     }
   }
+
+  isMaster(line: StopsByLine) {
+    return line.master === this.userDTOres.userId;
+  }
+
+  isMasterAdmin(linee: Map<string, StopsByLine>) {
+    for (const lineI of Array.from(linee.values())) {
+      if (this.isMaster(lineI)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

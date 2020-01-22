@@ -17,16 +17,16 @@
 
     <h2 class="mat-h2">Ruolo:</h2>
 
-    <section fxLayout="column">
+    <section fxLayout="column" *ngIf="(lines | async) as linee">
       <mat-checkbox class="example-margin" formControlName="user">Utente</mat-checkbox>
       <mat-checkbox class="example-margin" formControlName="guide">Guida</mat-checkbox>
       <mat-checkbox #matCheckboxLine class="example-margin" formControlName="lineAdmin"
-                    (change)="lineAdminChange($event)">Amministratore di Linea
+                    (change)="lineAdminChange($event)" [checked]="isMasterAdmin(linee)" [disabled]="isMasterAdmin(linee)">Amministratore di Linea
       </mat-checkbox>
-      <section fxLayout="column" class="indent" *ngIf="(lines | async) as linee">
-        <mat-checkbox *ngFor="let line of getArray(linee)" [disabled]="!matCheckboxLine.checked"
+      <section fxLayout="column" class="indent">
+        <mat-checkbox *ngFor="let line of getArray(linee)" [disabled]="!matCheckboxLine.checked || isMaster(line)"
                       [checked]="this.userDTOres.lineaIdList.includes(line.id)"
-                      (change)="changeLineList($event, line.id)">{{line.nome}}</mat-checkbox>
+                      (change)="changeLineList($event, line.id)">{{line.nome}}<span class="warn" *ngIf="isMaster(line)"><i>&nbsp;Master</i></span></mat-checkbox>
       </section>
       <mat-checkbox class="example-margin" formControlName="sysAdmin">Amministratore di Sistema</mat-checkbox>
     </section>

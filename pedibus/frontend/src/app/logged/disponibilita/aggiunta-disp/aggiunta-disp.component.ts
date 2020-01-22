@@ -9,15 +9,8 @@ import {Alunno, Fermata, PrenotazioneRequest, StopsByLine} from '../../line-deta
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, Subscription, timer} from 'rxjs';
 import {
   catchError,
-  defaultIfEmpty,
-  delay,
-  distinctUntilChanged,
-  finalize,
   first,
-  flatMap,
-  map,
   mergeMap,
-  retry,
   switchMap,
   tap
 } from 'rxjs/operators';

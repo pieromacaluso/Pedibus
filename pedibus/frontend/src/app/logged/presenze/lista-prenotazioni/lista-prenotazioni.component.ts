@@ -127,7 +127,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       if (newAlunno) {
         const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
         if (oldAlunno) {
-          this.togglePresenza(res.idFermata, newAlunno);
+          // this.togglePresenza(res.idFermata, newAlunno);
         }
       }
     });
