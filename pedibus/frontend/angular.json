@@ -28,6 +28,11 @@
               },
               "src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src"
+              ]
+            },
             "scripts": [],
             "es5BrowserSupport": true
           },

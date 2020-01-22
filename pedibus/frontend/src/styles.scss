@@ -9,6 +9,65 @@ body {
   margin: 0;
 }
 
+/* Utilizzati per visualizzazione contenuto principale */
+.container {
+  width: 60%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding-top: 25px;
+}
+
+.container-mobile {
+  width: 85%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding-top: 25px;
+}
+
+/**
+  Card visualizzazione fermate
+ */
+
+.card-stops {
+  margin: 10px;
+}
+
+.form-top {
+  height: auto;
+  margin: auto;
+}
+
+/**
+  Toolbar e Sidebar
+ */
+mat-toolbar {
+  z-index: 50 !important;
+}
+
+mat-sidenav {
+  background-color: rgba(228, 228, 228, 0.35);
+  color: rgba(0, 0, 0, 0.87);
+  min-width: 200px;
+}
+
+mat-sidenav-content {
+  background-color: #e1f5fe;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/**
+  Visualizzazione JSON
+ */
+
+.json {
+  font-family: 'Fira Code', monospace;
+}
+
 .invisible {
   display: none !important;
 }
@@ -20,6 +79,7 @@ body {
 .accent {
   color: mat-color($pedibus-theme-accent) !important;
 }
+
 .warn {
   color: mat-color($pedibus-theme-warn) !important;
 }
@@ -32,6 +92,7 @@ body {
 .accent-bg {
   background-color: mat-color($pedibus-theme-accent) !important;
 }
+
 .warn-bg {
   background-color: mat-color($pedibus-theme-warn) !important;
 }
@@ -45,3 +106,23 @@ mat-card {
   color: black !important;
 }
 
+div {
+  overflow: inherit;
+}
+
+a {
+  text-decoration: none;
+  font-size: 110%;
+  white-space: normal;
+}
+
+button{
+  font-size: 110%;
+  min-width: min-content;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bolder;
+  color: mat-color($pedibus-theme-primary)
+}

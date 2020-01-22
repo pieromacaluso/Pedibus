@@ -5,19 +5,19 @@
   <ng-container
     *ngIf="!this.data.alunno.presoInCarico && !this.data.alunno.arrivatoScuola && !this.data.alunno.assente">
     <a mat-list-item (click)="selectAction(0)">
-      <span mat-line class="presente">Presente</span>
+      <span mat-line class="text-weight accent">Presente</span>
       <span mat-line>L'alunno è presente alla fermata</span>
     </a>
 
     <a mat-list-item (click)="selectAction(1)">
-      <span mat-line class="assente">Assente</span>
+      <span mat-line class="text-weight warn">Assente</span>
       <span mat-line>L'alunno è assente alla fermata</span>
     </a>
   </ng-container>
 
   <ng-container *ngIf="this.data.alunno.presoInCarico && !this.data.alunno.arrivatoScuola">
     <a mat-list-item (click)="selectAction(2)">
-      <span mat-line class="arrivato">Arrivato a Destinazione</span>
+      <span mat-line class="text-weight primary">Arrivato a Destinazione</span>
       <span mat-line>L'alunno è arrivato a destinazione</span>
     </a>
 

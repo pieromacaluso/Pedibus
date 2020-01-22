@@ -1,8 +1,9 @@
-@import '../app.component.scss';
+@import 'pedibus-theme';
 
 .fixed-header {
   height: 80px;
 }
+
 mat-icon {
   padding-right: 5px;
 }
@@ -18,6 +19,25 @@ mat-icon {
   background-color: red;
   border-radius: 5px;
   font-weight: bold;
+}
 
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.head-menu {
+  background: mat-color($pedibus-theme-primary, default) !important;
+  color: white
+}
+
+.logo {
+  /* Usato per centrarlo manualmente per decentramento Drawer button*/
+  padding: 10px;
+  height: 50px;
+  margin: auto;
+}
+
+.sidenav-container {
+  height: 100%;
 }
 

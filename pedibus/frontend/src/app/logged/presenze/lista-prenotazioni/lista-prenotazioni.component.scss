@@ -1,4 +1,15 @@
-@import "../presenze.component.scss";
+@import 'pedibus-theme';
+
+
+.alunno-presenza {
+  margin-top: 0.5%;
+  margin-right: 0.5%;
+}
+
+.text-weight {
+  font-weight: bold;
+  color: white;
+}
 
 .progress-bar {
   position: fixed;
@@ -32,4 +43,47 @@
 
 .dialog-theme {
   text-align: center;
+}
+
+.cross {
+  /* Usato per centrarlo manualmente per decentramento Drawer button*/
+  height: 27px;
+  width: 27px;
+}
+
+.stop-title {
+  color: mat-color($pedibus-theme-primary, default);
+  margin: 0;
+}
+
+
+.prenotazioni {
+  border-color: mat-color($pedibus-theme-primary, default);
+  border-style: solid;
+  border-width: 0 0 0 2px;
+  padding: 8px;
+  margin: 0 0 0 94px;
+}
+
+.prenotazioni-disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.prenotazioni-mobile {
+  border-color: mat-color($pedibus-theme-primary, default);
+  border-style: solid;
+  border-width: 0 0 0 2px;
+  padding: 8px;
+}
+
+.no-stops {
+  margin-left: 16px;
+  padding: 5px;
+
+}
+
+.stop-clock {
+  color: mat-color($mat-dark-theme-background, default);
+  margin: 0;
 }

@@ -1,4 +1,4 @@
-@import "../turni.component.scss";
+@import 'pedibus-theme';
 
 .header-button {
   vertical-align: center;
@@ -27,12 +27,12 @@
   border-style: solid;
   border-width: 0 0 0 2px;
   padding: 8px;
-
   margin: 0 0 0 94px;
 }
+
 .prenotazioni-disabled {
   opacity: 0.3;
-  pointer-events:none;
+  pointer-events: none;
 }
 
 .prenotazioni-mobile {
@@ -48,16 +48,57 @@
   top: 15px;
   left: 5px;
 }
-.header-stop{
+
+.header-stop {
   flex-wrap: wrap;
   display: flex;
   align-items: center;
 }
 
-.map-button{
+.map-button {
   color: mat-color($pedibus-theme-accent, default);
 }
+
 .mat-card-header .mat-card-title {
   margin-bottom: 0;
+}
+
+.cross {
+  /* Usato per centrarlo manualmente per decentramento Drawer button*/
+  height: 27px;
+  width: 27px;
+}
+
+.stop-title {
+  color: mat-color($pedibus-theme-primary, default);
+  margin: 0;
+}
+
+
+.no-stops {
+  padding: 5px;
+
+}
+.stop-clock {
+  color: mat-color($mat-dark-theme-background, default);
+  margin: 0;
+}
+
+.status {
+  font-weight: bolder;
+}
+.status-ok {
+  font-weight: bolder;
+  color: green !important;
+}
+
+.status-warn {
+  font-weight: bolder;
+  color: orange !important;
+}
+
+.status-nope {
+  font-weight: bolder;
+  color: darkred !important;
 }
 

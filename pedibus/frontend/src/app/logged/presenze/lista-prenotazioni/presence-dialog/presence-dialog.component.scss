@@ -1,13 +1,4 @@
-@import '../../../../../pedibus-theme';
-
-.presente {
-  color: mat-color($pedibus-theme-accent);
-}
-
-.assente {
-  color: mat-color($pedibus-theme-warn);
-}
-
-.arrivato {
-  color: mat-color($pedibus-theme-primary);
+.text-weight {
+  font-weight: bold;
+  color: white;
 }

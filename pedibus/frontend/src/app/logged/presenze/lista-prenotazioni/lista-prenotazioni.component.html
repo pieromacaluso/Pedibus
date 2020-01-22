@@ -84,10 +84,11 @@
             >
               <button
                 mat-stroked-button
-                class="alunno-presenza mat-background-accent"
-                [class.presente]="alunno.presoInCarico"
-                [class.assente]="alunno.assente"
-                [class.arrivato]="alunno.arrivatoScuola"
+                class="alunno-presenza"
+                [class.primary-bg]="alunno.arrivatoScuola"
+                [class.accent-bg]="alunno.presoInCarico && !alunno.arrivatoScuola"
+                [class.warn-bg]="alunno.assente"
+                [class.text-weight]="alunno.presoInCarico || alunno.arrivatoScuola || alunno.assente"
                 [disableRipple]="!canModify()"
 
                 (click)="togglePresenza(res.fermata.id, alunno)"
@@ -204,7 +205,3 @@
     </div>
   </mat-card>
 </ng-template>
-
-
-<!--<div ngClass.lt-md="margin-final">{{prenotazione$|async|json}} {{resource$|async|json}}</div>-->
-
