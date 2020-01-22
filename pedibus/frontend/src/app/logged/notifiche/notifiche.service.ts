@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {environment} from 'src/environments/environment';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {AuthService} from 'src/app/registration/auth.service';
@@ -20,7 +20,7 @@ const mapRoleNotifiche = [
 @Injectable({
   providedIn: 'root'
 })
-export class NotificheService {
+export class NotificheService implements OnInit {
 
   baseURL = environment.baseURL;
   subs: Subscription[] = [];
@@ -80,5 +80,8 @@ export class NotificheService {
   cambiaPagina($event: PageEvent) {
     this.pageIndex = $event.pageIndex;
     this.getNotifiche(this.pageIndex);
+  }
+
+  ngOnInit(): void {
   }
 }

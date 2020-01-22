@@ -5,6 +5,7 @@ import {HeaderService, MenuItem} from './header.service';
 import {Observable} from 'rxjs';
 import {Notifica} from '../logged/notifiche/dtos';
 import {DataShareService} from '../data-share.service';
+import {NotificheService} from '../logged/notifiche/notifiche.service';
 
 @Component({
   selector: 'app-header',
@@ -21,7 +22,7 @@ export class HeaderComponent implements OnInit {
   unReadNotification$: Observable<number>;
 
   constructor(private auth: AuthService, private router: Router, private header: HeaderService,
-              private dataShareService: DataShareService) {
+              private dataShareService: DataShareService, private notificheService: NotificheService) {
     this.userLogged = this.auth.isLoggedIn();
     this.headerMenu$ = this.header.menuAnnounced$;
     this.unReadNotification$ = this.dataShareService.comunicazioniTotal;

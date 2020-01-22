@@ -67,6 +67,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
             this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
           }
         );
+        if (this.bambinoRes) {
+          this.bambinoRes.unsubscribe();
+        }
         this.bambinoRes = this.bambinoService.watchChildReservation(this.bambino.codiceFiscale, this.request.data).subscribe(
           (message) => {
             const reservation: ReservationDTO = JSON.parse(message.body);

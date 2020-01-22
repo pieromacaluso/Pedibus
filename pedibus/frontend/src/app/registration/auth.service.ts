@@ -99,6 +99,7 @@ export class AuthService {
     localStorage.removeItem('id_token');
     localStorage.removeItem('roles');
     localStorage.removeItem('expires_at');
+    this.rxStompService.deactivate();
     const stompConfig: InjectableRxStompConfig = Object.assign({}, myRxStompConfig, {
       connectHeaders: {
         Authentication: ''
@@ -108,7 +109,6 @@ export class AuthService {
       }
     });
     this.rxStompService.configure(stompConfig);
-    this.rxStompService.deactivate();
     this.sessionSource.next(null);
   }
 

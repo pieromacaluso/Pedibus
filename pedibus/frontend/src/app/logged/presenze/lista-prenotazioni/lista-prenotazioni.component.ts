@@ -31,10 +31,8 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   bottomCardTitle: string;
   children: any[] = [];
   private loading: boolean;
-  private handledSub: Subscription;
   private reservationSub: Subscription;
   private firstSub: Subscription;
-  private arrivedSub: Subscription;
 
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
@@ -63,40 +61,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
         }
       }
     );
-
-    // Message Handled
-    this.handledSub = this.syncService.prenotazioneObs$.pipe(
-      tap(() => this.loading = true),
-      switchMap(
-        pren => {
-          return this.rxStompService.watch('/handled' + this.pathSub(pren));
-        }
-      ),
-      tap(() => this.loading = false)
-    ).subscribe(message => {
-      const res = JSON.parse(message.body);
-      console.log('ws', res);
-      // tslint:disable-next-line:max-line-len
-      const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
-      al.presoInCarico = res.isSet;
-    });
-
-    // Message Handled
-    this.arrivedSub = this.syncService.prenotazioneObs$.pipe(
-      tap(() => this.loading = true),
-      switchMap(
-        pren => {
-          return this.rxStompService.watch('/arrived' + this.pathSub(pren));
-        }
-      ),
-      tap(() => this.loading = false)
-    ).subscribe(message => {
-      const res = JSON.parse(message.body);
-      console.log('ws', res);
-      // tslint:disable-next-line:max-line-len
-      const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.find(a => a.codiceFiscale === res.cfChild);
-      al.arrivatoScuola = res.isSet;
-    });
 
     // Message reservation
     this.reservationSub = this.syncService.prenotazioneObs$.pipe(
@@ -284,10 +248,8 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.handledSub.unsubscribe();
     this.reservationSub.unsubscribe();
     this.firstSub.unsubscribe();
-    this.arrivedSub.unsubscribe();
   }
 
   deleteNotReserved(al: AlunnoNotReserved) {
