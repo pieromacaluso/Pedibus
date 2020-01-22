@@ -1,0 +1,36 @@
+<div>
+  <div style="width: 100%" class="primary-bg toolbar-line">
+    <form class="dark-theme primary-bg text-white">
+      <mat-form-field *ngIf="(this.lines$ | async) as lines">
+        <mat-label>Seleziona la linea...</mat-label>
+        <mat-select placeholder=""
+                    class="line-selector" (valueChange)="lineChange($event, lines)">
+
+          <mat-option *ngFor="let line of getArrayLine(lines)" [value]="line.id">{{line.nome}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </div>
+  <div >
+    <mat-tab-group #tabs mat-align-tabs="center" backgroundColor="primary">
+      <mat-tab label="ADMIN">
+        <div class="container" ngClass.lt-md="container-mobile" *ngIf="this.selectedLine && (guide$ |async) as guides">
+          <ng-container *ngFor="let admin of guides" class="container">
+            <app-guide-entry *ngIf="isAlreadyAdmin(admin) && !isSysAdmin(admin)"
+                             [user]="admin" [type]="0"
+                             [interaction]="!isMaster(admin)" [lineID]="selectedLine.id"></app-guide-entry>
+          </ng-container>
+        </div>
+      </mat-tab>
+      <mat-tab label="GUIDE">
+        <div class="container" ngClass.lt-md="container-mobile" *ngIf="this.selectedLine && (guide$ |async) as guides">
+          <ng-container *ngFor="let guide of guides">
+            <app-guide-entry *ngIf="!isAlreadyAdmin(guide)  && !isSysAdmin(guide)"
+                             [user]="guide" [type]="1"
+                             [interaction]="true" [lineID]="selectedLine.id"></app-guide-entry>
+          </ng-container>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

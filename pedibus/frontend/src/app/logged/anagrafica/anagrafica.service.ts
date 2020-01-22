@@ -127,7 +127,7 @@ export class AnagraficaService {
   }
 
 
-  watchUpdates(type: ElementType) {
+  watchUpdates() {
     return this.rxStompService.watch('/user/anagrafica');
   }
 
@@ -136,5 +136,14 @@ export class AnagraficaService {
     this.keywordChildSource.next('');
   }
 
+
+  changeAdmin(user: UserDTO, idLinea: string, addOrDel: boolean) {
+    const bodyReq = {
+      idLinea,
+      addOrDel
+    };
+    return this.httpClient.put<void>(this.baseURL + '/admin/users/' + user.userId, bodyReq).pipe(first());
+
+  }
 
 }

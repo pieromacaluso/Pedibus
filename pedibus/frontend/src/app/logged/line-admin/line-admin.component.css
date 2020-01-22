@@ -1,0 +1,26 @@
+.toolbar-line {
+  margin: 0;
+  text-align: center;
+  fill: whitesmoke;
+}
+
+.line-selector {
+  margin: 0 auto;
+}
+
+.container {
+  width: 60%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding: 0 20px;
+  text-align: center;
+
+}
+.container-mobile {
+  width: 85%;
+  height: auto;
+  margin: 10px auto 6px auto;
+  padding: 0 20px;
+  text-align: center;
+
+}

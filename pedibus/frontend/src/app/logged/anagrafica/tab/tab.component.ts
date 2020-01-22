@@ -36,7 +36,7 @@ export class TabComponent implements OnInit, OnDestroy {
         // TODO: error management
       }
     );
-    this.updatesSub = this.anagraficaService.watchUpdates(this.type).subscribe((res) => {
+    this.updatesSub = this.anagraficaService.watchUpdates().subscribe((res) => {
       this.updateEmit();
     });
   }

@@ -21,6 +21,7 @@ export class HeaderService {
   private turni = {icon: 'verified_user', link: 'turni', title: 'Turni'};
   private signIn = {icon: 'vpn_key', link: 'sign-in', title: 'Sign In'};
   private signUp = {icon: 'person_add', link: 'sign-up', title: 'Sign Up'};
+  private lineAdmin = {icon: 'directions_bus', link: 'line-admin', title: 'Linee'};
 
 
   constructor(private auth: AuthService) {
@@ -36,7 +37,7 @@ export class HeaderService {
         menu.push(this.presenze);
       }
       if (this.auth.getRoles().includes('ROLE_ADMIN')) {
-        menu.push(this.turni);
+        menu.push(this.turni, this.lineAdmin);
       }
       if (this.auth.getRoles().includes('ROLE_GUIDE')) {
         menu.push(this.schedule);

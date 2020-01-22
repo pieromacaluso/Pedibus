@@ -17,6 +17,7 @@ import {Notifica} from './notifiche/dtos';
 import {ChildrenDTO, ReservationDTO} from './genitore/dtos';
 import {UserDTO} from './anagrafica/dtos';
 import {debounceTime, distinctUntilChanged, first, flatMap, map, share, take} from 'rxjs/operators';
+import {Line} from 'tslint/lib/verify/lines';
 
 @Injectable({
   providedIn: 'root'
@@ -253,4 +254,23 @@ export class ApiService {
     return this.httpClient
       .post(this.baseURL + 'sysadmin/users', user).pipe(first());
   }
+
+  getLineAdmin(): Observable<Map<string, StopsByLine>> {
+    return this.httpClient.get<Map<string, StopsByLine>>(this.baseURL + 'admin/lines').pipe(first(),
+      map(
+        (res) => {
+          const lineMap = new Map<string, StopsByLine>();
+          res.forEach((value: StopsByLine) => {
+            lineMap.set(value.id, value);
+          });
+          return lineMap;
+        }
+      ));
+  }
+
+  getGuides() {
+    return this.httpClient.get<UserDTO[]>(this.baseURL + '/admin/guides').pipe(first());
+
+  }
+
 }

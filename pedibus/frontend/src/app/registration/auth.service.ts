@@ -172,11 +172,12 @@ export class AuthService {
       return 'presenze';
     }
     if (this.isAdmin()) {
-      return 'anagrafica';
+      return 'line-admin';
     }
     if (this.isSysAdmin()) {
       return 'anagrafica';
     }
+    return 'line-admin';
   }
 
 

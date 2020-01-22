@@ -1,0 +1,19 @@
+<mat-card fxLayout="row" class="card-user">
+  <div fxLayout="column">
+    <div fxLayout="row">
+      <div class="mat-h2 name-surname primary">{{user.surname}} {{user.name}}</div>
+    </div>
+    <div class="mat-body user">
+      <b>Email:&nbsp;</b>
+      <span>{{user.userId}}</span>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayout.lt-sm="column">
+    <button *ngIf="interaction && isAdmin()" mat-stroked-button color="warn" (click)="deleteAdmin()" >
+      Elimina Amministratore
+    </button>
+    <button *ngIf="interaction && isGuide()" mat-stroked-button  class="primary" color="primary" (click)="addAdmin()">
+      Aggiungi Amministratore
+    </button>
+  </div>
+</mat-card>

@@ -21,10 +21,12 @@ import { NotificheComponent } from './logged/notifiche/notifiche.component';
 import { GenitoreComponent } from './logged/genitore/genitore.component';
 import {AnagraficaComponent} from './logged/anagrafica/anagrafica.component';
 import {NewUserComponent} from './registration/new-user/new-user.component';
+import {LineAdminComponent} from './logged/line-admin/line-admin.component';
 
 const appRoutes: Routes = [
  // {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
+  {path: 'line-admin', component: LineAdminComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'genitore', component: GenitoreComponent, canActivate: [AuthGuard], data: {animation: 'yes'}},
   {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},

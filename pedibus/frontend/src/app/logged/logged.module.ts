@@ -41,6 +41,8 @@ import {EntryChildComponent} from './anagrafica/tab/entry-child/entry-child.comp
 import {ChildDialogComponent} from './anagrafica/child-dialog/child-dialog.component';
 import {UserDialogComponent} from './anagrafica/user-dialog/user-dialog.component';
 import {ConfirmationDialogComponent} from './common/confimation-dialog/confirmation-dialog.component';
+import { LineAdminComponent } from './line-admin/line-admin.component';
+import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.component';
 
 
 @NgModule({
@@ -73,6 +75,8 @@ import {ConfirmationDialogComponent} from './common/confimation-dialog/confirmat
     ChildDialogComponent,
     UserDialogComponent,
     ConfirmationDialogComponent,
+    LineAdminComponent,
+    GuideEntryComponent,
   ],
   imports: [
     CommonModule,
