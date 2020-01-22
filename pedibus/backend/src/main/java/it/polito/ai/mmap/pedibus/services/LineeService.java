@@ -11,6 +11,7 @@ import it.polito.ai.mmap.pedibus.repository.FermataRepository;
 import it.polito.ai.mmap.pedibus.repository.LineaRepository;
 import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
 import lombok.Data;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -133,7 +134,7 @@ public class LineeService {
     /**
      * Aggiunge alla lista di admin di una linea l'user indicato
      *
-     * @param userID email dell'user da aggiungere
+     * @param userID  email dell'user da aggiungere
      * @param idLinea id della linea a cui aggiungerlo.
      */
     public void addAdminLine(String userID, String idLinea) {
@@ -162,7 +163,7 @@ public class LineeService {
     /**
      * Rimuove dalla lista di admin di una linea l'user indicato
      *
-     * @param userID email dell'user da eliminare
+     * @param userID  email dell'user da eliminare
      * @param idLinea id della linea da cui eliminarlo
      */
     public void delAdminLine(String userID, String idLinea) {
@@ -187,11 +188,25 @@ public class LineeService {
 
     /**
      * Controlla se l'amministratore è tale per la linea specificata
+     *
      * @param idLinea linea da controllare
      * @return true se è amministratore, false altrimenti
      */
     public Boolean isAdminLine(String idLinea) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return getLineaEntityById(idLinea).getAdminList().contains(principal.getUsername()) && this.userService.isAdmin();
+    }
+
+    /**
+     * Funzione che permette di verificare se un utente è amministratore master per una determinata linea
+     *
+     * @param userID  identificatore dell'utente
+     * @param idLinea identificatore della linea
+     * @return true se è master, falso altrimenti
+     */
+    public boolean isMasterLine(String userID, String idLinea) {
+        UserEntity user = this.userService.getUserEntity(new ObjectId(userID));
+        LineaEntity lineaEntity = this.getLineaEntityById(idLinea);
+        return lineaEntity.getMaster().equals(user.getUsername());
     }
 }

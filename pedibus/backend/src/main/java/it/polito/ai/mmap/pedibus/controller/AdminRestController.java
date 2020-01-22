@@ -192,7 +192,8 @@ public class AdminRestController {
      */
     @PutMapping("/admin/users/{userID}")
     public void setUserAdmin(@RequestBody PermissionResource permissionResource, @PathVariable("userID") String userID) {
-        if (lineeService.isAdminLine(permissionResource.getIdLinea()) || userService.isSysAdmin()) {
+        if ((lineeService.isAdminLine(permissionResource.getIdLinea()) && !lineeService.isMasterLine(userID, permissionResource.getIdLinea()))
+                || userService.isSysAdmin()) {
             if (permissionResource.isAddOrDel()) {
                 userService.addAdmin(userID);
                 lineeService.addAdminLine(userID, permissionResource.getIdLinea());
