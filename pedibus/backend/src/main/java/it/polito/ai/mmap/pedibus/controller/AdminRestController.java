@@ -12,6 +12,7 @@ import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import it.polito.ai.mmap.pedibus.services.ChildService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.UserService;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -188,21 +189,34 @@ public class AdminRestController {
      * Un admin di una linea o il system-admin inserisce un utente come admin per una linea, indicando
      * tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione
-     * si troverà i privilegi di admin
+     * si troverà i privilegi di admin     * @param permissionResource
+     *
+     * @param userID identificatore utente (no email)
      */
     @PutMapping("/admin/users/{userID}")
     public void setUserAdmin(@RequestBody PermissionResource permissionResource, @PathVariable("userID") String userID) {
         if ((lineeService.isAdminLine(permissionResource.getIdLinea()) && !lineeService.isMasterLine(userID, permissionResource.getIdLinea()))
                 || userService.isSysAdmin()) {
+            UserEntity userEntity = this.userService.getUserEntity(new ObjectId(userID));
             if (permissionResource.isAddOrDel()) {
-                userService.addAdmin(userID);
-                lineeService.addAdminLine(userID, permissionResource.getIdLinea());
+                userService.addAdmin(userEntity.getUsername());
+                lineeService.addAdminLine(userEntity.getUsername(), permissionResource.getIdLinea());
             } else {
-                userService.delAdmin(userID);
-                lineeService.delAdminLine(userID, permissionResource.getIdLinea());
+                userService.delAdmin(userEntity.getUsername());
+                lineeService.delAdminLine(userEntity.getUsername(), permissionResource.getIdLinea());
             }
         } else {
             throw new PermissionDeniedException();
         }
+    }
+
+    /**
+     * TODO: ADMIN MASTER DI LINEA che non può essere declassato e che gestisce. Guarda ISSUE #59
+     * Ritorna le linee di cui il principal è amministratore.
+     *
+     */
+    @GetMapping("/admin/lines")
+    public  List<String> getLineAdmin() {
+        return this.lineeService.getAllLinesAdminPrincipal();
     }
 }

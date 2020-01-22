@@ -134,16 +134,16 @@ public class LineeService {
     /**
      * Aggiunge alla lista di admin di una linea l'user indicato
      *
-     * @param userID  email dell'user da aggiungere
+     * @param email  email dell'user da aggiungere
      * @param idLinea id della linea a cui aggiungerlo.
      */
-    public void addAdminLine(String userID, String idLinea) {
+    public void addAdminLine(String email, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
         ArrayList<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
-            adminList = new ArrayList<>(Collections.singletonList(userID));
-        else if (!adminList.contains(userID))
-            adminList.add(userID);
+            adminList = new ArrayList<>(Collections.singletonList(email));
+        else if (!adminList.contains(email))
+            adminList.add(email);
         lineaEntity.setAdminList(adminList);
         lineaRepository.save(lineaEntity);
     }
@@ -163,16 +163,16 @@ public class LineeService {
     /**
      * Rimuove dalla lista di admin di una linea l'user indicato
      *
-     * @param userID  email dell'user da eliminare
+     * @param email  email dell'user da eliminare
      * @param idLinea id della linea da cui eliminarlo
      */
-    public void delAdminLine(String userID, String idLinea) {
+    public void delAdminLine(String email, String idLinea) {
         LineaEntity lineaEntity = getLineaEntityById(idLinea);
         ArrayList<String> adminList = lineaEntity.getAdminList();
         if (adminList == null)
-            adminList = new ArrayList<>(Arrays.asList(userID));
-        else if (adminList.contains(userID))
-            adminList.remove(userID);
+            adminList = new ArrayList<>(Arrays.asList(email));
+        else if (adminList.contains(email))
+            adminList.remove(email);
 
         lineaEntity.setAdminList(adminList);
         lineaRepository.save(lineaEntity);
@@ -208,5 +208,18 @@ public class LineeService {
         UserEntity user = this.userService.getUserEntity(new ObjectId(userID));
         LineaEntity lineaEntity = this.getLineaEntityById(idLinea);
         return lineaEntity.getMaster().equals(user.getUsername());
+    }
+
+    /**
+     * Restituisce tutte le linee di cui il principal è admin
+     */
+    public List<String> getAllLinesAdminPrincipal() {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<String> linesIds = this.getAllLinesIds();
+        List<String> adminLinesIds = new ArrayList<>();
+        if (this.userService.isSysAdmin()) return this.getAllLinesIds();
+        for (String lineId :linesIds)
+            if (isMasterLine(principal.getUsername(), lineId) || isAdminLine(lineId)) adminLinesIds.add(lineId);
+        return adminLinesIds;
     }
 }

@@ -348,10 +348,10 @@ public class UserService implements UserDetailsService {
     /**
      * Aggiunta privilegio di amministratore di linea
      *
-     * @param userID identificatore utente
+     * @param email email
      */
-    public void addAdmin(String userID) {
-        UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
+    public void addAdmin(String email) {
+        UserEntity userEntity = (UserEntity) loadUserByUsername(email);
         userEntity.getRoleList().add(getRoleEntityById("ROLE_ADMIN"));
         userRepository.save(userEntity);
     }
@@ -359,10 +359,10 @@ public class UserService implements UserDetailsService {
     /**
      * Aggiunta privilegio di amministratore di linea
      *
-     * @param userID Identificatore utente
+     * @param email email dell'utente
      */
-    public void delAdmin(String userID) {
-        UserEntity userEntity = (UserEntity) loadUserByUsername(userID);
+    public void delAdmin(String email) {
+        UserEntity userEntity = (UserEntity) loadUserByUsername(email);
         userEntity.getRoleList().remove(getRoleEntityById("ROLE_ADMIN"));
         userRepository.save(userEntity);
     }
