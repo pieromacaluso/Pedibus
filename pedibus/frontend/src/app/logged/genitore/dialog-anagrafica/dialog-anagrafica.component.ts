@@ -28,10 +28,10 @@ export class DialogAnagraficaComponent implements OnInit {
   ritorno: Fermata[] = [];
   selectedAndata: Fermata;
   selectedRitorno: Fermata;
-  private stopsLocationA: Point[] = [];
-  private stopsDescriptionA: string[] = [];
-  private stopsLocationR: Point[];
-  private stopsDescriptionR: string[];
+  stopsLocationA: Point[] = [];
+  stopsDescriptionA: string[] = [];
+  stopsLocationR: Point[];
+  stopsDescriptionR: string[];
 
   anagraficaForm = this.fb.group({
     andataSelect: ['', [Validators.required]],
@@ -39,9 +39,9 @@ export class DialogAnagraficaComponent implements OnInit {
     andataFermataSelect: [{value: '', disabled: true}, [Validators.required]],
     ritornoFermataSelect: [{value: '', disabled: true}, [Validators.required]],
   });
-  private loading = 0;
-  private selectedLineaAndata: any;
-  private selectedLineaRitorno: any;
+  loading = 0;
+  selectedLineaAndata: any;
+  selectedLineaRitorno: any;
 
   constructor(
     public dialogRef: MatDialogRef<DialogAnagraficaComponent>,

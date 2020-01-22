@@ -15,7 +15,7 @@ export interface MapDialogData {
   styleUrls: ['./map-dialog.component.scss']
 })
 export class MapDialogComponent implements OnInit {
-  private fermata: Observable<Fermata>;
+  fermata: Observable<Fermata>;
 
   constructor(public dialogRef: MatDialogRef<MapDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: MapDialogData,

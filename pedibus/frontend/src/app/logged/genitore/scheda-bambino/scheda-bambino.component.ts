@@ -23,12 +23,12 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   ritorno: ReservationDTO;
   status = 'Non prenotato';
   anagraficaDialog: MatDialogRef<DialogAnagraficaComponent>;
-  private schoolClosed: boolean;
-  private bambinoSub: Subscription;
-  private bambinoRes: Subscription;
-  private andataStop: Observable<Fermata>;
-  private ritornoStop: Observable<Fermata>;
-  private subRequest: Subscription;
+  schoolClosed: boolean;
+  bambinoSub: Subscription;
+  bambinoRes: Subscription;
+  andataStop: Observable<Fermata>;
+  ritornoStop: Observable<Fermata>;
+  subRequest: Subscription;
 
   constructor(private syncService: SyncService, private bambinoService: BambinoService, private dialog: MatDialog) {
   }
