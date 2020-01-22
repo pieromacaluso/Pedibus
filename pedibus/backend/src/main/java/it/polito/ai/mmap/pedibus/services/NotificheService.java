@@ -128,13 +128,15 @@ public class NotificheService {
     /**
      * Elimina una notifica attraverso il suo id. Metodo utilizzato per eliminare una notifica indesiderata mandata da un amministratore o guida.
      *
-     * @param idNotifica
+     * @param idNotifiche elenco delle notifiche da eliminare
      */
-    public void deleteNotificaAdmin(String idNotifica) {
+    public void deleteNotificaAdmin(List<String> idNotifiche) {
         try {
-            NotificaEntity notificaEntity = getNotifica(idNotifica);
-            notificaRepository.delete(notificaEntity);
-            simpMessagingTemplate.convertAndSendToUser(notificaEntity.getUsernameDestinatario(), "/notifiche/trash", notificaEntity);
+            for (String idNotifica : idNotifiche) {
+                NotificaEntity notificaEntity = getNotifica(idNotifica);
+                notificaRepository.delete(notificaEntity);
+                simpMessagingTemplate.convertAndSendToUser(notificaEntity.getUsernameDestinatario(), "/notifiche/trash", notificaEntity);
+            }
         } catch (NotificaNotFoundException ignored) {
             return;
         }
@@ -142,10 +144,11 @@ public class NotificheService {
 
     /**
      * Salva nel db una nuova notifica passata come parametro
+     *
      * @param notificaEntity notifica
      */
     public void addNotifica(NotificaEntity notificaEntity) {
-        notificaRepository.save(notificaEntity);
+        NotificaEntity notificaEntity1 = notificaRepository.save(notificaEntity);
         simpMessagingTemplate.convertAndSendToUser(notificaEntity.getUsernameDestinatario(), "/notifiche", notificaEntity);
         logger.info(PedibusString.NOTIFICATION_SENT);
     }
@@ -237,6 +240,7 @@ public class NotificheService {
 
     /**
      * Restituisce tutte le notifiche non lette di un determinato utente utilizzando paginazione
+     *
      * @param username username dell'utente
      * @param pageable oggeto paginazione
      * @return Pagina di notifiche richiesta
@@ -270,7 +274,8 @@ public class NotificheService {
      * Invio notifiche riguardanti cambiamento prenotazione a chi è interessato. Se `delete` viene settato a true,
      * la notifica inviata avrà l'id della fermata settato a null, quindi si avrà la cancellazione della prenotazione
      * lato frontend
-     * @param res ReservationDTO della prenotazione
+     *
+     * @param res    ReservationDTO della prenotazione
      * @param delete true se la prenotazione è da contrassegnare come eliminata, false se no
      */
     public void sendReservationNotification(ReservationDTO res, boolean delete) {
@@ -280,11 +285,12 @@ public class NotificheService {
         String data = MongoTimeService.dateToString(res.getData());
         if (delete) res.setIdFermata(null);
         simpMessagingTemplate.convertAndSend("/reservation/" + data +
-                "/" + fermataEntity.getIdLinea() + "/" + ((res.getVerso()) ? 1 : 0), reservationResource);
+                "/" + fermataEntity.getIdLinea() + "/" + ((res.getVerso()) ? 1 : 0), res);
         List<UserEntity> parents = childService.getChildParents(res.getCfChild());
         for (UserEntity parent : parents) {
             simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/res/" +
                     reservationResource.getCfChild() + "/" + data, res);
         }
+
     }
 }

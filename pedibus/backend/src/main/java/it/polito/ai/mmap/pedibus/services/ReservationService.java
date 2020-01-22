@@ -287,20 +287,20 @@ public class ReservationService {
             ReservationEntity reservationEntity = getChildReservation(verso, datef, cfChild);
             reservationEntity.setPresoInCarico(isSet);
             reservationEntity.setPresoInCaricoDate(isSet ? MongoTimeService.getNow() : null);
-//            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            this.notificheService.sendReservationNotification(pre,false);
-
             if (isSet) {
                 List<NotificaEntity> notificaEntities = this.notificheService.generateHandledNotification(reservationEntity);
                 for (NotificaEntity notificaEntity : notificaEntities) {
                     notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                    pre.setPresoInCaricoNotifica(notificaEntity.getIdNotifica());
                 }
+                pre.setPresoInCaricoNotifica(notificaEntities.stream().map(NotificaEntity::getIdNotifica).collect(Collectors.toList()));
             } else {
                 notificheService.deleteNotificaAdmin(reservationEntity.getPresoInCaricoNotifica());
             }
             updateReservation(pre, reservationEntity.getId());
+            this.notificheService.sendReservationNotification(pre, false);
+//            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
+
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
             throw new IllegalStateException();
@@ -316,18 +316,19 @@ public class ReservationService {
 //            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            this.notificheService.sendReservationNotification(pre,false);
+            this.notificheService.sendReservationNotification(pre, false);
 
             if (isSet) {
                 List<NotificaEntity> notificaEntities = notificheService.generateAssenteNotification(reservationEntity);
                 for (NotificaEntity notificaEntity : notificaEntities) {
                     notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                    pre.setAssenteNotifica(notificaEntity.getIdNotifica());
                 }
+                pre.setAssenteNotifica(notificaEntities.stream().map(NotificaEntity::getIdNotifica).collect(Collectors.toList()));
             } else {
                 notificheService.deleteNotificaAdmin(reservationEntity.getAssenteNotifica());
             }
             updateReservation(pre, reservationEntity.getId());
+
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
             throw new IllegalStateException();
@@ -363,14 +364,14 @@ public class ReservationService {
                 List<NotificaEntity> notificaEntities = notificheService.generateArrivedNotification(reservationEntity);
                 for (NotificaEntity notificaEntity : notificaEntities) {
                     notificheService.addNotifica(notificaEntity);      //salvataggio notifica
-                    reservationEntity.setArrivatoScuolaNotifica(notificaEntity.getIdNotifica());
                 }
+                reservationEntity.setArrivatoScuolaNotifica(notificaEntities.stream().map(NotificaEntity::getIdNotifica).collect(Collectors.toList()));
             } else {
                 notificheService.deleteNotificaAdmin(reservationEntity.getArrivatoScuolaNotifica());
             }
             logger.info("/arrived/" + data + "/" + idLinea + "/" + verso);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            this.notificheService.sendReservationNotification(pre,false);
+            this.notificheService.sendReservationNotification(pre, false);
 
             updateReservation(pre, reservationEntity.getId());
             return true;
@@ -411,7 +412,7 @@ public class ReservationService {
             reservationEntity.setAssente(false);
             reservationEntity.setAssenteDate(null);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            this.notificheService.sendReservationNotification(pre,false);
+            this.notificheService.sendReservationNotification(pre, false);
             updateReservation(pre, reservationEntity.getId());
         }
     }
@@ -508,7 +509,7 @@ public class ReservationService {
     public void deleteAllChildReservation(String childId) {
         List<ReservationEntity> reservationEntities = this.reservationRepository.findAllByCfChild(childId).orElseGet(ArrayList::new);
 
-        for (ReservationEntity res : reservationEntities){
+        for (ReservationEntity res : reservationEntities) {
             this.notificheService.sendReservationNotification(new ReservationDTO(res), true);
         }
         this.reservationRepository.deleteAllByCfChild(childId);

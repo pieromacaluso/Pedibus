@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,9 +29,9 @@ public class ReservationEntity {
     private Date presoInCaricoDate;
     private Date arrivatoScuolaDate;
     private Date assenteDate;
-    private String presoInCaricoNotifica;
-    private String arrivatoScuolaNotifica;
-    private String assenteNotifica;
+    private List<String> presoInCaricoNotifica;
+    private List<String> arrivatoScuolaNotifica;
+    private List<String> assenteNotifica;
 
     public ReservationEntity(ReservationDTO reservationDTO) {
         cfChild = reservationDTO.getCfChild();

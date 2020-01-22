@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,9 +24,9 @@ public class ReservationDTO {
     private Date presoInCaricoDate;
     private Date arrivatoScuolaDate;
     private Date assenteDate;
-    private String presoInCaricoNotifica;
-    private String arrivatoScuolaNotifica;
-    private String assenteNotifica;
+    private List<String> presoInCaricoNotifica;
+    private List<String> arrivatoScuolaNotifica;
+    private List<String> assenteNotifica;
 
     public ReservationDTO(ReservationResource reservationResource, String idLinea, Date data) {
         this.data = data;
