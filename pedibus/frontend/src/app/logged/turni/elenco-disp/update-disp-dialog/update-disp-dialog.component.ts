@@ -1,11 +1,11 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {AlunniPerFermata, AlunnoNotReserved, Fermata} from '../../../line-details';
-import {DispAllResource} from '../../../api-disp.service';
+import {DispAllResource} from '../../../disponibilita/api-disp.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ApiService} from '../../../api.service';
 import {first} from 'rxjs/operators';
-import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../../api-turni.service';
+import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
 
 
 export interface DialogData {

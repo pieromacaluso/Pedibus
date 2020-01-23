@@ -14,26 +14,22 @@ import {
   MatToolbarModule,
   MAT_DATE_LOCALE
 } from '@angular/material';
-import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
-import {AppRoutingModule} from './app-routing.module';
+import {AppRoutingModule} from './routes/app-routing.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import { HeaderComponent } from './header/header.component';
 import {DatePipe, registerLocaleData} from '@angular/common';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import {HttpExceptionsInterceptor} from './http-exceptions-interceptor';
-import {AuthInterceptor} from './auth-interceptor';
+import {HttpExceptionsInterceptor} from './interceptors/http-exceptions-interceptor';
+import {AuthInterceptor} from './interceptors/auth-interceptor';
 import {InjectableRxStompConfig, RxStompService, rxStompServiceFactory} from '@stomp/ng2-stompjs';
-import {myRxStompConfig} from './my-rx-stomp.config';
-import {LoggedModule} from './logged/logged.module';
+import {myRxStompConfig} from './configuration/my-rx-stomp.config';
 import localeitIT from '@angular/common/locales/it';
+import {UtilitiesModule} from './utilities/utilities.module';
 
 registerLocaleData(localeitIT);
 
 @NgModule({
   declarations: [
-    AppComponent,
-    PageNotFoundComponent,
-    HeaderComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +46,8 @@ registerLocaleData(localeitIT);
     FlexLayoutModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatCardModule
+    MatCardModule,
+    UtilitiesModule,
   ],
   providers: [DatePipe,
     {provide: MAT_DATE_LOCALE, useValue: 'it-IT'},

@@ -30,9 +30,6 @@ import {SchedaBambinoComponent} from './genitore/scheda-bambino/scheda-bambino.c
 import {DialogAnagraficaComponent} from './genitore/dialog-anagrafica/dialog-anagrafica.component';
 import {DialogPrenotazioneComponent} from './genitore/dialog-prenotazione/dialog-prenotazione.component';
 import {AgmCoreModule} from '@agm/core';
-import {StopMapComponent} from './common/stop-map/stop-map.component';
-import {StopsMapComponent} from './common/stops-map/stops-map.component';
-import {MapDialogComponent} from './common/map-dialog/map-dialog.component';
 import {PresenceDialogComponent} from './presenze/lista-prenotazioni/presence-dialog/presence-dialog.component';
 import {AnagraficaComponent} from './anagrafica/anagrafica.component';
 import {TabComponent} from './anagrafica/tab/tab.component';
@@ -40,9 +37,9 @@ import {EntryUserComponent} from './anagrafica/tab/entry-user/entry-user.compone
 import {EntryChildComponent} from './anagrafica/tab/entry-child/entry-child.component';
 import {ChildDialogComponent} from './anagrafica/child-dialog/child-dialog.component';
 import {UserDialogComponent} from './anagrafica/user-dialog/user-dialog.component';
-import {ConfirmationDialogComponent} from './common/confimation-dialog/confirmation-dialog.component';
 import { LineAdminComponent } from './line-admin/line-admin.component';
 import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.component';
+import {UtilitiesModule} from '../utilities/utilities.module';
 
 
 @NgModule({
@@ -64,9 +61,6 @@ import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.compon
     SchedaBambinoComponent,
     DialogAnagraficaComponent,
     DialogPrenotazioneComponent,
-    StopMapComponent,
-    StopsMapComponent,
-    MapDialogComponent,
     PresenceDialogComponent,
     AnagraficaComponent,
     TabComponent,
@@ -74,7 +68,6 @@ import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.compon
     EntryChildComponent,
     ChildDialogComponent,
     UserDialogComponent,
-    ConfirmationDialogComponent,
     LineAdminComponent,
     GuideEntryComponent,
   ],
@@ -101,6 +94,7 @@ import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.compon
     MatTabsModule,
     MatPaginatorModule,
     MatCheckboxModule,
+    UtilitiesModule,
   ],
   exports: [],
   entryComponents: [
@@ -109,11 +103,10 @@ import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.compon
     DialogAnagraficaComponent,
     DialogPrenotazioneComponent,
     UpdateDispDialogComponent,
-    MapDialogComponent,
     PresenceDialogComponent,
     UserDialogComponent,
-    ChildDialogComponent,
-    ConfirmationDialogComponent]
+    ChildDialogComponent
+    ]
 })
 export class LoggedModule {
 }

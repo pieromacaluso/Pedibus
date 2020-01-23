@@ -1,9 +1,9 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
-import {AuthService} from '../../../registration/auth.service';
+import {AuthService} from '../../../auth/auth.service';
 import {MatDialog, MatSnackBar} from '@angular/material';
-import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
+import { RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {Alunno, Fermata, PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, Subscription, timer} from 'rxjs';
@@ -14,10 +14,8 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import {fadeAnimation} from '../../../route-animations';
-import {ApiDispService, DispAllResource, DispTurnoResource} from '../../api-disp.service';
-import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../api-turni.service';
-import {myRxStompConfig} from '../../../my-rx-stomp.config';
+import {ApiDispService, DispAllResource, DispTurnoResource} from '../api-disp.service';
+import {ApiTurniService, TurnoDispResource, TurnoResource} from '../../turni/api-turni.service';
 import {Point} from 'geojson';
 import {FormBuilder, Validators} from '@angular/forms';
 
@@ -26,6 +24,7 @@ import {FormBuilder, Validators} from '@angular/forms';
   templateUrl: './aggiunta-disp.component.html',
   styleUrls: ['./aggiunta-disp.component.scss'],
 })
+
 export class AggiuntaDispComponent implements OnInit, OnDestroy {
 
   @Input() linee: string[];

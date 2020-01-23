@@ -10,7 +10,7 @@ import {Observable, throwError} from 'rxjs';
 import {retry, catchError} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material';
 import {Injectable} from '@angular/core';
-import {AuthService} from './registration/auth.service';
+import {AuthService} from '../auth/auth.service';
 import {Router} from '@angular/router';
 
 @Injectable()

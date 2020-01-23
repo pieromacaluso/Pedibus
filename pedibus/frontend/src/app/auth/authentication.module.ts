@@ -40,4 +40,4 @@ import { NewUserComponent } from './new-user/new-user.component';
         AgmCoreModule
     ]
 })
-export class RegistrationModule { }
+export class AuthenticationModule { }

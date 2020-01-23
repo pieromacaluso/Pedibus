@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LineReservationVerso, Alunno, AlunnoNotReserved, PrenotazioneRequest} from '../../line-details';
 import {SyncService} from '../sync.service';
 import {ApiService} from '../../api.service';
-import {AuthService} from '../../../registration/auth.service';
+import {AuthService} from '../../../auth/auth.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AdminBookDialogComponent} from './admin-book-dialog/admin-book-dialog.component';
 import {MatBottomSheet, MatSnackBar} from '@angular/material';
@@ -11,7 +11,7 @@ import {Observable, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
 import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
 import {catchError, switchMap, tap} from 'rxjs/operators';
-import {MapService} from '../../common/map.service';
+import {MapService} from '../../../utilities/map.service';
 import {ReservationDTO} from '../../genitore/dtos';
 import {PresenceDialogComponent} from './presence-dialog/presence-dialog.component';
 

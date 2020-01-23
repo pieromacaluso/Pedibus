@@ -2,7 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {Notifica} from '../dtos';
 import {NotificheService} from '../notifiche.service';
-import {AuthService} from '../../../registration/auth.service';
+import {AuthService} from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-notifica',

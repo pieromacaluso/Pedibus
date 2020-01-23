@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {DatePipe} from '@angular/common';
-import {DispAllResource} from './api-disp.service';
+import {DispAllResource} from '../disponibilita/api-disp.service';
 
 @Injectable({
   providedIn: 'root'

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subject} from 'rxjs';
-import {AuthService} from '../registration/auth.service';
-import {NotificheService} from '../logged/notifiche/notifiche.service';
+import {AuthService} from '../../auth/auth.service';
+import {NotificheService} from '../../logged/notifiche/notifiche.service';
 
 @Injectable({
   providedIn: 'root'

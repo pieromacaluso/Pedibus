@@ -12,7 +12,7 @@ import {Fermata, StopsByLine} from '../line-details';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {RxStompService} from '@stomp/ng2-stompjs';
-import {ConfirmationDialogComponent} from '../common/confimation-dialog/confirmation-dialog.component';
+import {ConfirmationDialogComponent} from '../../utilities/confimation-dialog/confirmation-dialog.component';
 
 export enum ElementType {
   User,

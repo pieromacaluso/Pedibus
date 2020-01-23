@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from './registration/auth.service';
+import {AuthService} from './auth/auth.service';
 import {Router, RouterOutlet} from '@angular/router';
 import {environment} from '../environments/environment';
-import {HeaderService} from './header/header.service';
-import {fadeAnimation} from './route-animations';
+import {HeaderService} from './utilities/header/header.service';
+import {fadeAnimation} from './routes/route-animations';
 
 @Component({
   selector: 'app-root',

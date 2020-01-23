@@ -1,7 +1,7 @@
 import {Injectable, OnInit} from '@angular/core';
 import {environment} from 'src/environments/environment';
 import {RxStompService} from '@stomp/ng2-stompjs';
-import {AuthService} from 'src/app/registration/auth.service';
+import {AuthService} from 'src/app/auth/auth.service';
 import {DataShareService} from 'src/app/data-share.service';
 import {Subscription} from 'rxjs';
 import {Message} from '@stomp/stompjs';

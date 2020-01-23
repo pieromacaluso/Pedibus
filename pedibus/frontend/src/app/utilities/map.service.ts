@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {ChildrenDTO} from '../genitore/dtos';
+import {ChildrenDTO} from '../logged/genitore/dtos';
 import {Observable} from 'rxjs';
-import {Fermata} from '../line-details';
-import {DialogAnagraficaComponent} from '../genitore/dialog-anagrafica/dialog-anagrafica.component';
+import {Fermata} from '../logged/line-details';
+import {DialogAnagraficaComponent} from '../logged/genitore/dialog-anagrafica/dialog-anagrafica.component';
 import {MapDialogComponent} from './map-dialog/map-dialog.component';
 
 @Injectable({

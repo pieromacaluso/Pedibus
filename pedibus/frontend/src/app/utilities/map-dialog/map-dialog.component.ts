@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {ApiService} from '../../api.service';
-import {Fermata} from '../../line-details';
+import {ApiService} from '../../logged/api.service';
+import {Fermata} from '../../logged/line-details';
 import {Observable} from 'rxjs';
 
 

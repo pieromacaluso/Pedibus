@@ -1,19 +1,19 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
-import {ApiDispService, DispAllResource} from '../../api-disp.service';
-import {AuthService} from '../../../registration/auth.service';
+import {ApiDispService, DispAllResource} from '../../disponibilita/api-disp.service';
+import {AuthService} from '../../../auth/auth.service';
 import {MatDialog, MatDialogRef, MatListOption, MatSelectionList, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {catchError, debounceTime, finalize, first, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {defer, forkJoin, Observable, Subject, Subscription} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
-import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../../api-turni.service';
+import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../api-turni.service';
 import {variable} from '@angular/compiler/src/output/output_ast';
 import {DeleteDialogComponent} from '../../presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
 import {UpdateDispDialogComponent} from './update-disp-dialog/update-disp-dialog.component';
-import {MapService} from '../../common/map.service';
+import {MapService} from '../../../utilities/map.service';
 
 @Component({
   selector: 'app-elenco-disp',

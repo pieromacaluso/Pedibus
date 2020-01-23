@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from '../registration/auth.service';
+import {AuthService} from '../../auth/auth.service';
 import {Router} from '@angular/router';
 import {HeaderService, MenuItem} from './header.service';
 import {Observable} from 'rxjs';
-import {DataShareService} from '../data-share.service';
-import {NotificheService} from '../logged/notifiche/notifiche.service';
+import {DataShareService} from '../../data-share.service';
+import {NotificheService} from '../../logged/notifiche/notifiche.service';
 
 @Component({
   selector: 'app-header',

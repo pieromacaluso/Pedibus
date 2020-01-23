@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {DatePipe} from '@angular/common';
-import {Alunno, PrenotazioneRequest} from './line-details';
-import {TurnoResource} from './api-turni.service';
+import {TurnoResource} from '../turni/api-turni.service';
 
 @Injectable({
   providedIn: 'root'

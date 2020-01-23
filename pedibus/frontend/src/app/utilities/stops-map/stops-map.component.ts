@@ -1,7 +1,7 @@
 import {Component, Directive, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
 import {Point} from 'geojson';
 import {AgmMap} from '@agm/core';
-import {StopsByLine} from '../../line-details';
+import {StopsByLine} from '../../logged/line-details';
 
 
 @Component({

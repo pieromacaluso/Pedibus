@@ -1,27 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterModule, Routes} from '@angular/router';
-import {RegistrationModule} from './registration/registration.module';
-import {LoggedModule} from './logged/logged.module';
+import {AuthenticationModule} from '../auth/authentication.module';
+import {LoggedModule} from '../logged/logged.module';
 import {HttpClientModule} from '@angular/common/http';
 
-import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
-import {PresenzeComponent} from './logged/presenze/presenze.component';
-import {SignUpComponent} from './registration/sign-up/sign-up.component';
-import {SignInComponent} from './registration/sign-in/sign-in.component';
-import {AuthGuard} from './auth.guard';
-import {ForgotPasswordComponent} from './registration/forgot-password/forgot-password.component';
-import {RecoverComponent} from './registration/recover/recover.component';
-import {ConfirmComponent} from './registration/confirm/confirm.component';
-import { DisponibilitaComponent } from './logged/disponibilita/disponibilita.component';
-import { TurniComponent } from './logged/turni/turni.component';
-import { AdminGuard } from './admin.guard';
-import {GuideGuard} from './guide.guard';
-import { NotificheComponent } from './logged/notifiche/notifiche.component';
-import { GenitoreComponent } from './logged/genitore/genitore.component';
-import {AnagraficaComponent} from './logged/anagrafica/anagrafica.component';
-import {NewUserComponent} from './registration/new-user/new-user.component';
-import {LineAdminComponent} from './logged/line-admin/line-admin.component';
+import {PageNotFoundComponent} from '../utilities/page-not-found/page-not-found.component';
+import {PresenzeComponent} from '../logged/presenze/presenze.component';
+import {SignUpComponent} from '../auth/sign-up/sign-up.component';
+import {SignInComponent} from '../auth/sign-in/sign-in.component';
+import {AuthGuard} from '../auth/guards/auth.guard';
+import {ForgotPasswordComponent} from '../auth/forgot-password/forgot-password.component';
+import {RecoverComponent} from '../auth/recover/recover.component';
+import {ConfirmComponent} from '../auth/confirm/confirm.component';
+import { DisponibilitaComponent } from '../logged/disponibilita/disponibilita.component';
+import { TurniComponent } from '../logged/turni/turni.component';
+import { AdminGuard } from '../auth/guards/admin.guard';
+import {GuideGuard} from '../auth/guards/guide.guard';
+import { NotificheComponent } from '../logged/notifiche/notifiche.component';
+import { GenitoreComponent } from '../logged/genitore/genitore.component';
+import {AnagraficaComponent} from '../logged/anagrafica/anagrafica.component';
+import {NewUserComponent} from '../auth/new-user/new-user.component';
+import {LineAdminComponent} from '../logged/line-admin/line-admin.component';
 
 const appRoutes: Routes = [
  // {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
@@ -46,7 +46,7 @@ const appRoutes: Routes = [
   declarations: [],
   imports: [
     CommonModule,
-    RegistrationModule,
+    AuthenticationModule,
     LoggedModule,
     HttpClientModule,
     RouterModule.forRoot(appRoutes)
