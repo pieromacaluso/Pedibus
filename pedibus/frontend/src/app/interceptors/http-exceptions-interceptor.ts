@@ -45,6 +45,14 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
               break;
             case 404:
               break;
+            case 504:
+              this.snackBar.open(
+                'Errore di Rete, Server non disponibile', '', {
+                  duration: 5000,
+                });
+              this.auth.logout();
+              this.router.navigate(['/sign-in']);
+              break;
             default:
               this.snackBar.open(
                 errorMessage, '', {
