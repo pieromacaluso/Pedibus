@@ -514,4 +514,16 @@ public class ReservationService {
         }
         this.reservationRepository.deleteAllByCfChild(childId);
     }
+
+    /**
+     * @param idLinea
+     * @param date
+     * @param verso
+     * @return il dump delle prenotazioni per la terna idLina, data, verso
+     */
+    public ReservationsDump getReservationsDump(String idLinea, Date date, boolean verso) {
+        return new ReservationsDump(date, idLinea, verso,
+                reservationRepository.findAllByIdLineaAndDataAndVerso(idLinea, date, verso),
+                getChildrenNotReserved(date, verso).stream().map(ChildDTO::getCodiceFiscale).collect(Collectors.toList()));
+    }
 }

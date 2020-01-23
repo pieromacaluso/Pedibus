@@ -7,6 +7,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdLineaDataResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
+import it.polito.ai.mmap.pedibus.resources.ReservationsDump;
 import it.polito.ai.mmap.pedibus.services.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -61,6 +62,7 @@ public class ReservationController {
      *
      * @param idLinea id della linea
      * @param data    data in esame
+     * @param verso verso considerato
      * @return GetReservationsidLineaDataVersoResource
      */
 
@@ -71,13 +73,26 @@ public class ReservationController {
     }
 
     /**
+     * Restituisce un oggetto JSON contente il dump delle reservations per la terna indicata
+     *
+     * @param idLinea id della linea
+     * @param data    data in esame
+     * @param verso verso considerato
+     * @return ReservationsDump
+     */
+    @GetMapping("/reservations/dump/{id_linea}/{data}/{verso}")
+    public ReservationsDump getReservationsDump(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
+        logger.info("GET /reservations/dump/" + idLinea + "/" + data + "/" + verso + " è stato contattato");
+        return reservationService.getReservationsDump(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, false), verso);
+    }
+
+    /**
      * Restituisce la lista dei bambini non prenotati per la data(AAAA-MM-GG) e il verso passati.
      *
      * @param data
      * @param verso
      * @return
      */
-
     @GetMapping("/notreservations/{data}/{verso}")
     public List<ChildDTO> getNotReservations(@PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /notreservations/" + data + " è stato contattato");
