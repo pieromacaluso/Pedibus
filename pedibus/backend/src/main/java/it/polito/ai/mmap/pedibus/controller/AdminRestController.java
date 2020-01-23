@@ -184,7 +184,6 @@ public class AdminRestController {
     }
 
     /**
-     * TODO: ADMIN MASTER DI LINEA che non può essere declassato e che gestisce. Guarda ISSUE #59
      * Un admin di una linea o il system-admin inserisce un utente come admin per una linea, indicando
      * tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione
@@ -200,7 +199,6 @@ public class AdminRestController {
     }
 
     /**
-     * TODO: ADMIN MASTER DI LINEA che non può essere declassato e che gestisce. Guarda ISSUE #59
      * Ritorna le linee di cui il principal è amministratore.
      */
     @GetMapping("/admin/lines")
@@ -209,7 +207,6 @@ public class AdminRestController {
     }
 
     /**
-     * TODO: ADMIN MASTER DI LINEA che non può essere declassato e che gestisce. Guarda ISSUE #59
      * Ritorna tutti gli utenti guida di cui il principal è amministratore.
      */
     @GetMapping("/admin/guides")
@@ -218,7 +215,6 @@ public class AdminRestController {
     }
 
     /**
-     * TODO: ADMIN MASTER DI LINEA che non può essere declassato e che gestisce. Guarda ISSUE #59
      * Ritorna tutti gli utenti guida di cui il principal è amministratore.
      */
     @GetMapping("/admin/users")

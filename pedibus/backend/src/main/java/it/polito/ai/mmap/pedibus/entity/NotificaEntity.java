@@ -16,12 +16,6 @@ import java.util.Date;
 @Document(collection = "notifica")
 public class NotificaEntity {
 
-    //todo non funziona nei costruttori, vedere se possibile trovare una soluzione cosi da aver le stringhe solo nelle application properties
-    /*@Value("${notifiche.type.Base}")
-    private String NotBASE;
-    @Value("${notifiche.type.Disponibilita}")
-    private String NotDISPONIBILITA;*/
-
     public enum NotificationType {
         BASE, DISPONIBILITA
     }
@@ -57,35 +51,4 @@ public class NotificaEntity {
         }
         this.data = new Date();
     }
-
-
-//TODO delete
-
-//   public NotificaEntity(NotificaDTO notificaDTO) {
-//        if (notificaDTO.getType().compareTo(NotBASE) == 0) {
-//            if (notificaDTO.getDispID() != null)
-//                throw new NotificaWrongTypeException();
-//            //idNotifica=notificaDTO.getIdNotifica();
-//            this.type = NotBASE;
-//            usernameDestinatario = notificaDTO.getUsernameDestinatario();
-//            msg = notificaDTO.getMsg();
-//            isTouched = notificaDTO.getIsTouched();
-//            dispID = null;
-//            isAck = false;
-//
-//        } else if (notificaDTO.getType().compareTo(NotDISPONIBILITA) == 0) {
-//            if (notificaDTO.getDispID() == null)
-//                throw new NotificaWrongTypeException();
-//            //idNotifica=notificaDTO.getIdNotifica();
-//            this.type = NotDISPONIBILITA;
-//            usernameDestinatario = notificaDTO.getUsernameDestinatario();
-//            msg = notificaDTO.getMsg();
-//            isTouched = notificaDTO.getIsTouched();
-//            dispID = notificaDTO.getDispID();
-//            isAck = notificaDTO.getIsAck();
-//        } else {
-//            throw new NotificaWrongTypeException();
-//        }
-//    }
-
 }

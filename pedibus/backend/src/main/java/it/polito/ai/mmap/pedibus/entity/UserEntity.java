@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -44,8 +45,8 @@ public class UserEntity implements UserDetails {
         username = userDTO.getEmail();
         //todo se si riesce a generare un json con dentro già nome e cogno si può evitare sto pastrocchio, in produzione comunque si toglie tutto (json e costruttore)
         String[] mail_splitted = username.split("@")[0].split("\\.");
-        name = mail_splitted[0];
-        surname = mail_splitted[1];
+        name = StringUtils.capitalize(mail_splitted[0]);
+        surname = StringUtils.capitalize(mail_splitted[1]);
         password = passwordEncoder.encode(userDTO.getPassword());
         isAccountNonExpired = true;
         isAccountNonLocked = true;
