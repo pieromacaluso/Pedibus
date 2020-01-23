@@ -19,7 +19,7 @@ export class LineAdminComponent implements OnInit {
   private updatesSub: Subscription;
   idSelectedLine: any;
   @ViewChild('matSelect', {static: false}) matSelect;
-  private lines: Map<string, StopsByLine>;
+  lines: Map<string, StopsByLine>;
 
   constructor(private apiService: ApiService, private anagraficaService: AnagraficaService) {
   }

@@ -109,7 +109,7 @@ export class AuthService {
       }
     });
     this.rxStompService.configure(stompConfig);
-    this.sessionSource.next(null);
+    this.sessionSource.next('');
   }
 
   isAdmin() {
