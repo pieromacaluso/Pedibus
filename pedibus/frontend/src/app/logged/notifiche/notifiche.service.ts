@@ -33,7 +33,7 @@ export class NotificheService implements OnInit {
               private dataService: DataShareService, private apiService: ApiService) {
     console.log('NOTIFICHE SERVICE STARTS', 'red');
     this.authService.newSession.subscribe((res) => {
-      if (res !== null) {
+      if (res !== '' && this.authService.isLoggedIn()) {
         this.getNotifiche(this.pageIndex);
         if (this.websocketNotification) {
           this.websocketNotification.unsubscribe();

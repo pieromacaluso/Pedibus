@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from '../api.service';
 import {Observable, Subscription} from 'rxjs';
 import {StopsByLine} from '../line-details';
 import {UserDTO} from '../anagrafica/dtos';
-import {MatSelectChange} from '@angular/material';
+import {MatSelect, MatSelectChange} from '@angular/material';
 import {AnagraficaService} from '../anagrafica/anagrafica.service';
-import {tap} from 'rxjs/operators';
+import {finalize, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-line-admin',
@@ -13,17 +13,23 @@ import {tap} from 'rxjs/operators';
   styleUrls: ['./line-admin.component.css']
 })
 export class LineAdminComponent implements OnInit {
-  lines$: Observable<Map<string, StopsByLine>>;
+  // lines$: Observable<Map<string, StopsByLine>>;
   guide$: Observable<UserDTO[]>;
   selectedLine: StopsByLine;
   private updatesSub: Subscription;
   idSelectedLine: any;
+  @ViewChild('matSelect', {static: false}) matSelect;
+  private lines: Map<string, StopsByLine>;
 
   constructor(private apiService: ApiService, private anagraficaService: AnagraficaService) {
   }
 
   ngOnInit() {
-    this.lines$ = this.apiService.getLineAdmin();
+    this.apiService.getLineAdmin().subscribe((res) => {
+      this.lines = res;
+      this.selectedLine = Array.from(res.values())[0];
+      this.matSelect.value = this.selectedLine.id;
+    });
     this.guide$ = this.apiService.getGuides();
     this.updatesSub = this.anagraficaService.watchUpdates().subscribe((res) => {
       this.guide$ = this.apiService.getGuides();

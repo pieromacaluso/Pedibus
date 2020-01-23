@@ -15,7 +15,7 @@ import {BehaviorSubject} from 'rxjs';
 export class AuthService {
 
   baseURL = environment.baseURL;
-  private sessionSource = new BehaviorSubject<string>(null);
+  private sessionSource = new BehaviorSubject<string>('');
   newSession = this.sessionSource.asObservable();
 
   constructor(private httpClient: HttpClient, private rxStompService: RxStompService) {

@@ -1,10 +1,10 @@
 <div>
   <div style="width: 100%" class="primary-bg toolbar-line">
     <form class="dark-theme primary-bg text-white">
-      <mat-form-field *ngIf="(this.lines$ | async) as lines">
+      <mat-form-field *ngIf="this.lines as lines">
         <mat-label>Seleziona la linea...</mat-label>
-        <mat-select placeholder=""
-                    class="line-selector" (valueChange)="lineChange($event, lines)">
+        <mat-select #matSelect placeholder=""
+                    class="line-selector" (valueChange)="lineChange($event, lines)" [value]="getArrayLine(lines)[0].id">
 
           <mat-option *ngFor="let line of getArrayLine(lines)" [value]="line.id">{{line.nome}}</mat-option>
         </mat-select>
