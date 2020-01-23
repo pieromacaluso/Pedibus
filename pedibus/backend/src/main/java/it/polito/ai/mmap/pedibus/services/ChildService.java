@@ -118,11 +118,9 @@ public class ChildService {
                     ReservationDTO reservationDTO = new ReservationDTO(res);
 
                     ReservationDTO oldreservationDTO = new ReservationDTO(res);
-                    oldreservationDTO.setIdFermata(null);
 
                     ReservationEntity oldRes = new ReservationEntity();
                     oldRes.setCfChild(reservationDTO.getCfChild());
-                    oldRes.setIdFermata(null);
 
                     Integer fermata = reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno();
                     String linea = lineeService.getFermataEntityById(reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno()).getIdLinea();
