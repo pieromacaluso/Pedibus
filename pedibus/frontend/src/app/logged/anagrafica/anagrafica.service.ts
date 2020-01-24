@@ -98,7 +98,6 @@ export class AnagraficaService {
     }
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 
@@ -113,7 +112,6 @@ export class AnagraficaService {
     }
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 

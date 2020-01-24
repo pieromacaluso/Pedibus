@@ -32,7 +32,6 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
             // server-side error
             errorMessage = `${error.error.errorMessage}`;
           }
-          console.log(error);
 
           switch (error.status) {
             case 401:

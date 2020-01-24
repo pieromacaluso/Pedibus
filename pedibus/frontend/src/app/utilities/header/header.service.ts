@@ -31,25 +31,25 @@ export class HeaderService {
     const menu: MenuItem[] = [];
     if (this.auth.isLoggedIn()) {
       if (this.auth.getRoles().includes('ROLE_SYSTEM-ADMIN')) {
-        menu.push(this.anagrafica);
-      }
-      if (this.auth.getRoles().includes('ROLE_GUIDE') || this.auth.getRoles().includes('ROLE_ADMIN')) {
-        menu.push(this.presenze);
-      }
-      if (this.auth.getRoles().includes('ROLE_ADMIN')) {
-        menu.push(this.turni, this.lineAdmin);
-      }
-      if (this.auth.getRoles().includes('ROLE_GUIDE')) {
-        menu.push(this.schedule);
-      }
-      if (this.auth.getRoles().includes('ROLE_USER')) {
-        menu.push(this.genitori);
+        menu.push(this.anagrafica, this.presenze, this.turni, this.lineAdmin);
+      } else {
+        if (this.auth.getRoles().includes('ROLE_GUIDE') || this.auth.getRoles().includes('ROLE_ADMIN')) {
+          menu.push(this.presenze);
+        }
+        if (this.auth.getRoles().includes('ROLE_ADMIN')) {
+          menu.push(this.turni, this.lineAdmin);
+        }
+        if (this.auth.getRoles().includes('ROLE_GUIDE')) {
+          menu.push(this.schedule);
+        }
+        if (this.auth.getRoles().includes('ROLE_USER')) {
+          menu.push(this.genitori);
+        }
       }
       menu.push(this.notification);
     } else {
       menu.push(this.signIn);
     }
-    console.log(menu);
 
     this.menuSource.next(menu);
 

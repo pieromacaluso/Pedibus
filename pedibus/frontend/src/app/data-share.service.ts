@@ -20,7 +20,6 @@ export class DataShareService {
 
   updateNotifiche(notifiche: Notifica[]) {
     this.comuArray = notifiche;
-    console.log('comu Array:', this.comuArray);
     this.comunicazioniSource.next(this.comuArray);
   }
 

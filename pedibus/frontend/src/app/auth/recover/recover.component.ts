@@ -42,7 +42,6 @@ export class RecoverComponent implements OnInit {
       }
       if (formValid) {
         this.auth.postNewPassword(this.token, this.model).subscribe((res) => {
-          console.log('new pass:', res);
           this.postStatus = true;
           this.confirmStatus = true;
         }, (error) => {

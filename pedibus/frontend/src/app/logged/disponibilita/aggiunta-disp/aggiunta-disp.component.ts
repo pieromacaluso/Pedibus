@@ -89,7 +89,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       tap(() => this.loading = false),
     ).subscribe(
       res => {
-        console.log(res);
         if (!res) {
           this.changeDisp.next(this.emptyDisp);
           this.changeTurno.next(null);
@@ -106,7 +105,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     // change Disp
     this.changeDisp.asObservable().subscribe(
       res => {
-        console.log('disp', res);
         this.disp = res;
         if (this.disp) {
           this.disp.add = false;
@@ -139,7 +137,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       }),
     ).subscribe(message => {
         const res = JSON.parse(message.body);
-        console.log('DISP', res);
         if (res.disp) {
           this.changeDisp.next(res.disp);
           this.changeTurno.next(res.turno);
@@ -157,7 +154,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       }),
     ).subscribe(message => {
         const res = JSON.parse(message.body);
-        console.log('DISP', res);
         this.disp.isConfirmed = res.isConfirmed;
         this.disp.isAck = res.isAck;
         this.changeDisp.next(this.disp);
@@ -197,7 +193,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
             this.stopsDesc.push(value.nome);
           });
         }
-        console.log('linea', this.linea);
       }
     );
 
@@ -208,7 +203,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       )
     ).subscribe(
       res => {
-        console.log('turno', res);
         this.changeTurno.next(res);
 
       }
@@ -277,7 +271,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     if (!this.turno.isOpen || this.turno.isExpired) {
       return;
     }
-    console.log($event);
     this.selectedFermata = this.p.verso === 'Andata' ?
       this.linea.andata.find((el) => el.id === $event) :
       this.linea.ritorno.find((el) => el.id === $event);

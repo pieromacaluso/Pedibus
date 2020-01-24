@@ -178,9 +178,6 @@ export class ApiService {
       idFermata: data.fermataId,
       verso: idVerso
     };
-
-    console.log('POSTTT:' + nuovaPrenotazione.cfChild + ' ' + nuovaPrenotazione.idFermata + ' ' + nuovaPrenotazione.verso);
-
     return this.postPrenotazione(data.linea, data.data, nuovaPrenotazione);
   }
 

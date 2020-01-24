@@ -27,12 +27,10 @@ export class AuthService {
             Authentication: localStorage.getItem('id_token')
           },
           beforeConnect: () => {
-            console.log('%c called before connect', 'color: blue');
           }
         });
         this.rxStompService.configure(stompConfig);
       }
-      console.log('SETSETTION', 'color:red');
       this.sessionSource.next(localStorage.getItem('id_token'));
     }
   }
@@ -72,11 +70,7 @@ export class AuthService {
   }
 
   private setSession(authResult) {
-    console.log('SETSETTION', 'color:red');
-    console.log(JSON.stringify(jwt_decode(authResult.token)));
     const expiresAt = moment((jwt_decode(authResult.token).exp) * 1000);
-    console.log('expires at: ' + expiresAt);
-    console.log(JSON.stringify(jwt_decode(authResult.token)));
     localStorage.setItem('id_token', authResult.token);
     localStorage.setItem('roles', JSON.stringify(jwt_decode(authResult.token).roles));
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
@@ -85,7 +79,6 @@ export class AuthService {
         Authentication: localStorage.getItem('id_token')
       },
       beforeConnect: () => {
-        console.log('%c called before connect', 'color: blue');
       }
     });
     this.rxStompService.configure(stompConfig);
@@ -105,7 +98,6 @@ export class AuthService {
         Authentication: ''
       },
       beforeConnect: () => {
-        console.log('%c called before connect', 'color: blue');
       }
     });
     this.rxStompService.configure(stompConfig);
@@ -172,12 +164,12 @@ export class AuthService {
       return 'presenze';
     }
     if (this.isAdmin()) {
-      return 'line-admin';
+      return 'presenze';
     }
     if (this.isSysAdmin()) {
       return 'anagrafica';
     }
-    return 'line-admin';
+    return 'genitore';
   }
 
 

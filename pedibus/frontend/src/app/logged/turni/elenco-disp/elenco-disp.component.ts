@@ -70,7 +70,6 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       tap(() => this.loading = false)
     ).subscribe(
       res => {
-        console.log(res);
         this.linea = res[0];
         if (res[1] != null && 'turno' in res[1] && 'listDisp' in res[1]) {
           res[1].turno.opening = false;
@@ -193,7 +192,6 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
         this.listDisp[res.nomeFermata].forEach(
           (disp, iDisp, disps) => {
             if (disp.guideUsername === res.guideUsername) {
-              console.log('change', this.listDisp[res.nomeFermata][iDisp], res);
               this.listDisp[res.nomeFermata][iDisp] = res;
             }
           }
@@ -239,7 +237,6 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   }
 
   statusTurno(checked: boolean) {
-    console.log(this.turno);
     this.turno.opening = true;
     this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, checked).pipe(first()).subscribe(response => {
       this.turno.isOpen = checked;
@@ -251,7 +248,6 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
 
   confermaDisp(disp: DispAllResource) {
     disp.isConfirmed = true;
-    console.log(disp);
     this.apiTurniService.confirmDisp(this.p.linea, this.p.verso, this.p.data, disp).pipe(first()).subscribe(response => {
       this.changeDisp.next(this.listDisp);
     }, (error) => {

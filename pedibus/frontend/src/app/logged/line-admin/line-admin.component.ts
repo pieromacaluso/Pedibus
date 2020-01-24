@@ -37,7 +37,6 @@ export class LineAdminComponent implements OnInit {
   }
 
   lineChange($event: any, lines: Map<string, StopsByLine>) {
-    console.log($event);
     this.selectedLine = lines.get($event);
   }
 

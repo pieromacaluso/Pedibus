@@ -43,7 +43,6 @@ export class NewUserComponent implements OnInit {
       if (formValid) {
 
         this.auth.newUserPasswordChange(this.token, this.model).subscribe((res) => {
-          console.log('new pass:', res);
           this.postStatus = true;
           this.confirmStatus = true;
         }, (error) => {

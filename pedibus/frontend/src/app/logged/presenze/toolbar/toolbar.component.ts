@@ -20,9 +20,7 @@ export class ToolbarComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     if (changes.linee.currentValue) {
-      console.log('A');
       this.richiesta = {linea: this.linee[0], verso: 'Andata', data: new Date()};
       this.richiesta.linea.split('linea');
       this.emitRequest();

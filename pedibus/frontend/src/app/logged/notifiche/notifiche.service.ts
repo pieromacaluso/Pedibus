@@ -31,7 +31,6 @@ export class NotificheService implements OnInit {
 
   constructor(private rxStompService: RxStompService, private authService: AuthService,
               private dataService: DataShareService, private apiService: ApiService) {
-    console.log('NOTIFICHE SERVICE STARTS', 'red');
     this.authService.newSession.subscribe((res) => {
       if (res !== '' && this.authService.isLoggedIn()) {
         this.getNotifiche(this.pageIndex);
@@ -49,31 +48,26 @@ export class NotificheService implements OnInit {
 
   getNotifiche(page: number) {
     const username = this.authService.getUsername();
-    console.log('username:', username);
     this.apiService.getNotificheNonLette(username, page).pipe(take(1)).subscribe((notifiche) => {
       this.dataService.updateNotifiche(notifiche.content);
       this.len = notifiche.totalElements;
       this.dataService.updateTotal(this.len);
-      console.log('nuove notifiche:', notifiche);
-    }, (err) => console.log(err));
+    }, (err) => {});
   }
 
   watchNotifiche() {
     this.websocketNotification = this.rxStompService.watch('/user/notifiche').subscribe(message => {
       this.getNotifiche(this.pageIndex);
-      console.log('nuove notifiche da broker');
     });
     this.websocketNotificationTrash = this.rxStompService.watch('/user/notifiche/trash').subscribe(message => {
       this.getNotifiche(this.pageIndex);
-      console.log('eliminazione notifica da broker');
     });
   }
 
   deleteNotifica(idNotifica: string) {
     this.apiService.deleteNotifica(idNotifica).subscribe((el) => {
-      console.log(el);
       this.getNotifiche(this.pageIndex);
-    }, (err) => console.log(err));
+    }, (err) => {});
   }
 
 

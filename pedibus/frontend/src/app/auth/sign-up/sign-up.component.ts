@@ -66,7 +66,6 @@ export class SignUpComponent implements OnInit {
     } else {
       SignUpComponent.removeError(control.get('password'), 'notMatching');
     }
-    console.log(control.get('password').errors);
     return password && passMatch && password.value !== passMatch.value ? {notMatching: true} : null;
   }
 

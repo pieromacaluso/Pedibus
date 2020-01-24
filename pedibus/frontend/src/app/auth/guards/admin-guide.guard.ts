@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanActivate, Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router} from '@angular/router';
+import { Observable } from 'rxjs';
 import {AuthService} from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AdminGuard implements CanActivate {
+export class AdminGuideGuard implements CanActivate {
 
   constructor(private auth: AuthService, private router: Router) {
   }
@@ -19,7 +19,7 @@ export class AdminGuard implements CanActivate {
       return false;
     }
 
-    if (!(this.auth.isAdmin() || this.auth.isSysAdmin())) {
+    if (!this.auth.isGuide() && !this.auth.isAdmin() && !this.auth.isSysAdmin()) {
       this.router.navigate(['404']);
       return false;
     }

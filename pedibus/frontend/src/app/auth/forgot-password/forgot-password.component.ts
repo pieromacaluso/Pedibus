@@ -33,7 +33,6 @@ export class ForgotPasswordComponent implements OnInit {
     if (event.isTrusted) {
       const formValid = event.target[0].validity.valid;
       if (formValid) {
-        console.log('form valid');
         this.auth.postRecover(this.model.email).subscribe((res) => {
           this.postStatus = true;
           this.confirmStatus = true;

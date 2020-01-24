@@ -60,7 +60,9 @@ export class DialogPrenotazioneComponent implements OnInit {
           });
         }
         this.loading--;
-      }, (error) => console.log(error));
+      }, (error) => {
+        // TODO: ERROR?
+      });
     });
   }
 

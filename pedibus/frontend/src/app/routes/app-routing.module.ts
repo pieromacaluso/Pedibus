@@ -22,13 +22,14 @@ import { GenitoreComponent } from '../logged/genitore/genitore.component';
 import {AnagraficaComponent} from '../logged/anagrafica/anagrafica.component';
 import {NewUserComponent} from '../auth/new-user/new-user.component';
 import {LineAdminComponent} from '../logged/line-admin/line-admin.component';
+import {AdminGuideGuard} from '../auth/guards/admin-guide.guard';
 
 const appRoutes: Routes = [
  // {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'sign-in', component: SignInComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'line-admin', component: LineAdminComponent,  canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'genitore', component: GenitoreComponent, canActivate: [AuthGuard], data: {animation: 'yes'}},
-  {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},
+  {path: 'presenze', component: PresenzeComponent, canActivate: [AuthGuard, AdminGuideGuard], data: { animation: 'yes' }},
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, GuideGuard], data: { animation: 'yes' }},
   {path: 'notifiche', component: NotificheComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard], data: { animation: 'yes' }},

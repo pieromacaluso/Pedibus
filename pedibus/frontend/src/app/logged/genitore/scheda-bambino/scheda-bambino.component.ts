@@ -51,10 +51,8 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
               this.ritornoStop = this.bambinoService.getFermata(this.ritorno.idFermata);
             }
           }
-          console.log(reservation);
         }, (error) => {
           this.schoolClosed = true;
-          console.log(error);
         });
 
         if (this.bambinoSub) {
@@ -106,7 +104,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
         // this.bambino = data.data.child;
         // this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
         // this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
-        this.bambinoService.updateFermate(data.data.child, this.request.data).subscribe((d) => console.log(d), (error) => console.log(error));
+        this.bambinoService.updateFermate(data.data.child, this.request.data).subscribe((d) => {}, (error) => {});
       }
     });
   }
@@ -125,7 +123,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.createReservation(data.line, data.data, data.childId, data.stopId, data.verso)
-            .subscribe((d) => console.log(d), (error) => console.log(error));
+            .subscribe((d) => {}, (error) => {});
         }
       });
   }
@@ -135,7 +133,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.createReservation(data.line, data.data, data.childId, data.stopId, data.verso)
-            .subscribe((d) => console.log(d), (error) => console.log(error));
+            .subscribe((d) => {}, (error) => {});
         }
       });
   }
@@ -145,7 +143,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.updateReservation(data.line, data.data, data.childId, data.stopId, data.verso, this.andata.id)
-            .subscribe((d) => console.log(d), (error) => console.log(error));
+            .subscribe((d) => {}, (error) => {});
         }
       });
   }
@@ -155,18 +153,18 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.updateReservation(data.line, data.data, data.childId, data.stopId, data.verso, this.ritorno.id)
-            .subscribe((d) => console.log(d), (error) => console.log(error));
+            .subscribe((d) => {}, (error) => {});
         }
       });
   }
 
   deleteAndata() {
     this.bambinoService.deleteReservation(this.andata.idLinea, this.request.data, this.andata.id)
-      .subscribe((d) => console.log(d), (error) => console.log(error));
+      .subscribe((d) => {}, (error) => {});
   }
 
   deleteRitorno() {
     this.bambinoService.deleteReservation(this.ritorno.idLinea, this.request.data, this.ritorno.id)
-      .subscribe((d) => console.log(d), (error) => console.log(error));
+      .subscribe((d) => {}, (error) => {});
   }
 }

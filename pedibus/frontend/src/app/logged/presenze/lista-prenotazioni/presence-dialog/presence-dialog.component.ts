@@ -25,7 +25,6 @@ export class PresenceDialogComponent implements OnInit {
   }
 
   onNoClick(): void {
-    console.log('noclick');
     this.dialogRef.close();
   }
 

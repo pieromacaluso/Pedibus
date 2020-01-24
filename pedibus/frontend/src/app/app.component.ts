@@ -24,7 +24,6 @@ export class AppComponent implements OnInit {
 
   constructor(private auth: AuthService, private router: Router, private header: HeaderService) {
     this.userLogged = this.auth.isLoggedIn();
-    console.log('Main URL: ' + window.location.origin);
   }
 
   ngOnInit(): void {

@@ -5,7 +5,6 @@ const prepareBrokerURL = (path: string): string => {
   const hostname = window.location.host;
   const href = 'ws://' + hostname;
   const url = new URL(path, href);
-  console.log('WOW:' + url);
   return url.href;
 };
 
@@ -32,7 +31,7 @@ export const myRxStompConfig: InjectableRxStompConfig = {
   // Will log diagnostics on console
   // It can be quite verbose, not recommended in production
   // Skip this key to stop logging to console
-  debug: (msg: string): void => {
-    console.log(new Date(), msg);
-  }
+  // debug: (msg: string): void => {
+  //   console.log(new Date(), msg);
+  // }
 };

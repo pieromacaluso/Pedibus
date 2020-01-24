@@ -34,13 +34,11 @@ export class AdminBookDialogComponent {
   }
 
   onNoClick(): void {
-    console.log('noclick');
     this.dialogRef.close();
   }
 
 
   submit() {
-    console.log('submit function called');
     if (this.prenotazioneForm.controls.fermataSelect.valid) {
       this.data.fermataId = this.prenotazioneForm.controls.fermataSelect.value;
       this.data.alunno.update = true;
@@ -49,9 +47,7 @@ export class AdminBookDialogComponent {
   }
 
   nuovaPrenotazione(data: DialogData) {
-    console.log('nuovaPrenotazione function called');
     this.apiService.postPrenotazioneDialog(data).subscribe((rese) => {
-      console.log('subscribe in nuovaPrenotazione emmited something');
       data.alunno.update = false;
       this.dialogRef.close();
     }, (error) => {

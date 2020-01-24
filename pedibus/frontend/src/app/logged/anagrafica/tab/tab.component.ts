@@ -25,8 +25,6 @@ export class TabComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('INIT', 'color: red');
-    console.log(this.page);
     this.elements = this.page.content;
     this.len = this.page.totalElements;
     this.anagraficaService.resetKeyword();
@@ -127,7 +125,6 @@ export class TabComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('DESTROY', 'color: red');
     this.keywordSub.unsubscribe();
     this.updatesSub.unsubscribe();
   }

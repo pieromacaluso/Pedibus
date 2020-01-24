@@ -31,11 +31,9 @@ export class UpdateDispDialogComponent {
     private apiService: ApiService,
     private apiTurniService: ApiTurniService,
     private fb: FormBuilder) {
-    console.log(data);
   }
 
   onNoClick(): void {
-    console.log('noclick');
     this.dialogRef.close();
   }
 

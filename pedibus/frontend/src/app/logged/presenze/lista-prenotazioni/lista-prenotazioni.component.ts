@@ -42,7 +42,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       tap(() => this.loading = true),
       switchMap(
         pren => {
-          console.log('ciao', pren);
           this.prenotazione = pren;
           return this.apiService.getPrenotazioneByLineaAndDateAndVerso(pren).pipe(
             catchError((err, caught) => {
@@ -55,7 +54,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       ),
       tap(() => this.loading = false)
     ).subscribe(res => {
-        console.log('first', res);
         if ('alunniPerFermata' in res) {
           this.resource = res;
         }
@@ -140,7 +138,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       this.bottomCardTitle = 'Prenota fermata';
       this.apiService.getChildren().subscribe((childs) => {
         this.children = childs;
-        console.log('children:', childs);
       });
     }
     if (this.authService.getRoles().includes('ROLE_ADMIN')) {
@@ -205,7 +202,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   }
 
   togglePresenza(id: number, alunno: Alunno) {
-    console.log(id, alunno);
     if (this.canModify()) {
       this.dialog.open(PresenceDialogComponent, {
         hasBackdrop: true,
@@ -281,8 +277,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       }
     }
     alunniInCarico = this.sortedAlunni(alunniInCarico);
-    console.log(alunniInCarico);
-
   }
 
   downloadJson() {
@@ -303,5 +297,9 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     document.body.appendChild(element);
     element.click(); // simulate click
     document.body.removeChild(element);
+  }
+
+  enableDownload() {
+    return this.authService.isSysAdmin() || this.authService.isAdmin();
   }
 }

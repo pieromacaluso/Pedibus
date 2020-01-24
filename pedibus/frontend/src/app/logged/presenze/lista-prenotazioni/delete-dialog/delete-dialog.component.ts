@@ -46,10 +46,8 @@ export class DeleteDialogComponent {
   }
 
   deletePrenotazione(data: DialogData) {
-    console.log('delete prenotazione function called');
     this.apiService.deletePrenotazioneGenitore(data.alunno.codiceFiscale, data.linea, data.data, data.verso)
       .subscribe((res) => {
-        console.log('result:', res);
         data.alunno.update = false;
         this.dialogRef.close();
         let afeIndex = 0;
@@ -69,7 +67,7 @@ export class DeleteDialogComponent {
           idParent: '',
           update: false
         });
-      }, (err) => console.log('err:', err));
+      }, (err) => {});
   }
 
 }
