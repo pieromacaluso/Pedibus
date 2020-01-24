@@ -19,6 +19,7 @@
 
 - [Indice](#indice)
 - [Introduzione](#introduzione)
+- [Struttura del Repo](#struttura-del-repo)
 - [Team](#team)
 - [Pedibus](#pedibus)
   - [Indicazioni generali](#indicazioni-generali)
@@ -43,6 +44,11 @@
 # Introduzione
 
 Repository dei laboratori e del progetto finale del corso "Applicazioni Internet" tenuto dal prof. Giovanni Malnati a.a. 2018/2019
+
+# Struttura del Repo
+
+- [Cartella Esercitazioni](esercitazioni)
+- [Progetto Pedibus](pedibus)
 
 # Team
 
