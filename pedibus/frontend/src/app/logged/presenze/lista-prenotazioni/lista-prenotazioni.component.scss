@@ -1,5 +1,10 @@
 @import 'pedibus-theme';
 
+mat-card-header {
+  display: flex;
+  justify-content: flex-start;
+  align-content: center;
+}
 .alunno-presenza {
   margin-top: 0.5%;
   margin-right: 0.5%;
@@ -85,4 +90,9 @@
 .stop-clock {
   color: mat-color($mat-dark-theme-background, default);
   margin: 0;
+}
+
+.download-json {
+  margin: auto 0 auto 10px;
+  color: mat-color($pedibus-theme-primary);
 }

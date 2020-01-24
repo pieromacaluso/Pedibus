@@ -284,4 +284,24 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     console.log(alunniInCarico);
 
   }
+
+  downloadJson() {
+    this.apiService.downloadJson(this.prenotazione).subscribe((res) => {
+      this.downloadFile(res);
+    });
+  }
+
+  downloadFile(data: any) {
+    const sJson = JSON.stringify(data, null, '\t');
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/json;charset=UTF-8,' + encodeURIComponent(sJson));
+    element.setAttribute('download', 'reservations_' +
+      this.prenotazione.linea + '_' +
+      this.prenotazione.verso.toLowerCase() + '_' +
+      this.datePipe.transform(this.prenotazione.data, 'yyyy-MM-dd') + '.json');
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click(); // simulate click
+    document.body.removeChild(element);
+  }
 }

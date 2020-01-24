@@ -273,4 +273,8 @@ export class ApiService {
 
   }
 
+  downloadJson(prenotazione: PrenotazioneRequest) {
+    return this.httpClient.get<any>(this.baseURL + '/reservations/dump/' + prenotazione.linea + '/'
+      + this.datePipe.transform(prenotazione.data, 'yyyy-MM-dd') + '/' + this.versoToBool(prenotazione.verso));
+  }
 }
