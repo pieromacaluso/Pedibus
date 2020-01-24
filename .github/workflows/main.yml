@@ -1,0 +1,15 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Move to Pedibus folder
+      run: cd pedibus
+    - name: Run a multi-line script
+      run: ./appdock2
