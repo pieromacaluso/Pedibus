@@ -1,4 +1,19 @@
-# Applicazioni Internet Lab Project
+<h1 align="center">
+  <a href="https://github.com/pieromacaluso/Pedibus" title="Pedibus Documentation">
+    <img alt="RoomMonitor" src="RoomMonitor/resources/logo.svg" height="200px" />
+  </a>
+  <br/>
+</h1>
+
+<p align="center">
+  Counting people using Wi-Fi devices.
+</p>
+
+<p align="center">
+ <img alt="Languages" src="https://img.shields.io/badge/Languages-C%20|%20C%2B%2B-orange"/>
+ <img alt="Framework" src="https://img.shields.io/badge/Framework-Qt-green"/>
+ <img alt="Status" src="https://img.shields.io/badge/Status-Delivered-green"/>
+</p>
 Repository dei laboratori e del progetto finale del corso "Applicazioni Internet" tenuto dal prof. Giovanni Malnati a.a. 2018/2019
 
 ## Docker Guide
