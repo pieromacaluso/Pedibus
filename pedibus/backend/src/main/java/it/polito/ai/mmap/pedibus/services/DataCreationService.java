@@ -111,10 +111,10 @@ public class DataCreationService {
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(superAdminMail);
         userDTO.setPassword(superAdminPass);
+        HashSet<RoleEntity> adminRoles = new HashSet<>();
+        adminRoles.add(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"));
 
-        RoleEntity role = userService.getRoleEntityById("ROLE_SYSTEM-ADMIN");
-
-        UserEntity userEntity = new UserEntity(userDTO, new HashSet<>(Arrays.asList(role)), passwordEncoder);
+        UserEntity userEntity = new UserEntity(userDTO, adminRoles, passwordEncoder);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
 

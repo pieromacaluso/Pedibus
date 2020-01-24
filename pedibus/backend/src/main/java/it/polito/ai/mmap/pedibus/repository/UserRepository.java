@@ -28,4 +28,10 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
             sort = "{'surname': 1, 'name': 1, 'username': 1}"
     )
     Page<UserEntity> searchByNameSurnameCF(String fromKeywordToRegex, Pageable pageable);
+
+    @Query(
+            value = "{$and: [{$or: [{'name': {$regex : ?0, $options: 'i'}}, {'surname': {$regex : ?0, $options: 'i'}}, {'username': {$regex : ?0, $options: 'i'}}]}, {'username': {$ne: ?1}}]}",
+            sort = "{'surname': 1, 'name': 1, 'username': 1}"
+    )
+    Page<UserEntity> searchByNameSurnameCfNoSysAdmin(String fromKeywordToRegex, String userAdmin, Pageable pageable);
 }

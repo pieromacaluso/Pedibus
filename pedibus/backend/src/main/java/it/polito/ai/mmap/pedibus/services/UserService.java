@@ -59,6 +59,8 @@ public class UserService implements UserDetailsService {
     private String RECOVER_ACCOUNT_SUBJECT;
     @Value("${mail.new_user_account_subject}")
     private String NEW_USER_ACCOUNT_SUBJECT;
+    @Value("${superadmin.email}")
+    private String superAdminMail;
 
     public static String fromKeywordToRegex(String keyword) {
         List<String> keywords = Arrays.asList(keyword.split("\\s+"));
@@ -95,6 +97,11 @@ public class UserService implements UserDetailsService {
      * @return UserEntity dell'utente inserito correttamente
      */
     public UserEntity insertUser(UserInsertResource userInsertResource) {
+        if (userInsertResource.getRoleIdList().contains("ROLE_SYSTEM-ADMIN"))
+            throw new PermissionDeniedException();
+        Optional<UserEntity> u = this.userRepository.findByUsername(userInsertResource.getUserId());
+        if (u.isPresent())
+            throw new UserAlreadyPresentException(userInsertResource.getUserId());
         UserEntity userEntity = new UserEntity(userInsertResource,
                 userInsertResource.getRoleIdList().stream()
                         .map(this::getRoleEntityById)
@@ -115,6 +122,8 @@ public class UserService implements UserDetailsService {
      * @param userInsertResource DTO utente con i nuovi dati.
      */
     public void updateUser(String userId, UserInsertResource userInsertResource) {
+        if(userId.equals(superAdminMail) || userInsertResource.getRoleIdList().contains("ROLE_SYSTEM-ADMIN"))
+            throw new PermissionDeniedException();
         UserEntity userEntity = ((UserEntity) loadUserByUsername(userId));
         userEntity.setName(userInsertResource.getName());
         userEntity.setSurname(userInsertResource.getSurname());
@@ -280,11 +289,10 @@ public class UserService implements UserDetailsService {
      * @param userId email dell'utente da eliminare
      */
     public void deleteUserByUsername(String userId) {
-        Optional<UserEntity> u = this.userRepository.findByUsername(userId);
-        if (!u.isPresent()) {
-            throw new UserNotFoundException();
-        }
-        this.userRepository.deleteById(u.get().getId());
+        UserEntity u = this.userRepository.findByUsername(userId).orElseThrow(UserNotFoundException::new);
+        if (u.getRoleList().contains(getRoleEntityById("ROLE_SYSTEM-ADMIN")))
+            throw new PermissionDeniedException();
+        this.userRepository.deleteById(u.getId());
         this.notificheService.sendUpdateNotification();
     }
 
@@ -408,7 +416,7 @@ public class UserService implements UserDetailsService {
      * @return Pagina utente richiesta
      */
     public Page<UserInsertResource> getAllPagedUsers(Pageable pageable, String keyword) {
-        Page<UserEntity> pagedUsersEntity = userRepository.searchByNameSurnameCF(UserService.fromKeywordToRegex(keyword), pageable);
+        Page<UserEntity> pagedUsersEntity = userRepository.searchByNameSurnameCfNoSysAdmin(UserService.fromKeywordToRegex(keyword), this.superAdminMail, pageable);
         return PageableExecutionUtils.getPage(pagedUsersEntity.stream()
                 .map((e) -> new UserInsertResource(e, this.lineeService.getAdminLineForUser(e.getUsername())))
                 .collect(Collectors.toList()), pageable, pagedUsersEntity::getTotalElements);

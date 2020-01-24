@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.resources.GetReservationsIdDataVersoResource;
@@ -62,7 +63,7 @@ public class ReservationController {
      *
      * @param idLinea id della linea
      * @param data    data in esame
-     * @param verso verso considerato
+     * @param verso   verso considerato
      * @return GetReservationsidLineaDataVersoResource
      */
 
@@ -77,12 +78,12 @@ public class ReservationController {
      *
      * @param idLinea id della linea
      * @param data    data in esame
-     * @param verso verso considerato
+     * @param verso   verso considerato
      * @return ReservationsDump
      */
     @GetMapping("/reservations/dump/{id_linea}/{data}/{verso}")
     public ReservationsDump getReservationsDump(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
-        logger.info("GET /reservations/dump/" + idLinea + "/" + data + "/" + verso + " è stato contattato");
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/reservations/dump/" + idLinea + "/" + data + "/" + verso));
         return reservationService.getReservationsDump(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, false), verso);
     }
 
