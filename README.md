@@ -1,20 +1,20 @@
 <h1 align="center">
   <a href="https://github.com/pieromacaluso/Pedibus" title="Pedibus Documentation">
-    <img alt="RoomMonitor" src="RoomMonitor/resources/logo.svg" height="200px" />
+    <img alt="RoomMonitor" src="pedibus/stuff/img/logo.png" height="100px" />
   </a>
   <br/>
 </h1>
 
 <p align="center">
-  Counting people using Wi-Fi devices.
+  Gestionale per sistema di accompagnamento sicuro per ragazzi con genitori troppo apprensivi.
 </p>
 
 <p align="center">
- <img alt="Languages" src="https://img.shields.io/badge/Languages-C%20|%20C%2B%2B-orange"/>
- <img alt="Framework" src="https://img.shields.io/badge/Framework-Qt-green"/>
- <img alt="Status" src="https://img.shields.io/badge/Status-Delivered-green"/>
+ <img alt="Languages" src="https://img.shields.io/badge/Languages-Java | Typescript | HTML,CSS,JS-orange"/>
+ <img alt="Framework" src="https://img.shields.io/badge/Framework-Spring | Angular-green"/>
+ <img alt="Status" src="https://github.com/pieromacaluso/pedibus/workflows/CI/badge.svg"/>
 </p>
-Repository dei laboratori e del progetto finale del corso "Applicazioni Internet" tenuto dal prof. Giovanni Malnati a.a. 2018/2019
+Repository delle esercitazioni e del progetto finale del corso "Applicazioni Internet" tenuto dal prof. Giovanni Malnati nell' a.a. 2018/2019
 
 ## Docker Guide
 
