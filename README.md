@@ -15,7 +15,9 @@
  <img alt="Status" src="https://github.com/pieromacaluso/pedibus/workflows/CI/badge.svg"/>
 </p>
 
+# Indice
 
+- [Indice](#indice)
 - [Introduzione](#introduzione)
 - [Team](#team)
 - [Pedibus](#pedibus)
