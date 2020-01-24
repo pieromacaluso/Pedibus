@@ -1,5 +1,6 @@
+<ng-container *ngIf="(lines | async) as linee else loading">
 <div class="mat-h2"><span *ngIf="this.data">Modifica </span><span *ngIf="!this.data">Aggiungi </span>Utente</div>
-<mat-dialog-content ngClass.lt-sm="mobile" *ngIf="(lines | async) as linee else loading">
+<mat-dialog-content ngClass.lt-sm="mobile">
   <form #form [formGroup]="profileForm" fxLayout="column">
     <mat-form-field>
       <mat-label>Nome</mat-label>
@@ -64,6 +65,13 @@
   </form>
   <!--  <div>{{this.data.user | json}}</div>-->
 </mat-dialog-content>
+  <div class="bottom-button" >
+    <button [disabled]="!profileForm.valid" mat-raised-button color="primary" (click)="updateUserDialog()">
+      <span *ngIf="this.data">Applica Modifiche</span>
+      <span *ngIf="!this.data">Aggiungi Utente</span>
+    </button>
+  </div>
+</ng-container>
 <ng-template #loading>
   <mat-dialog-content>
     <div class="loading-spinner">
@@ -71,9 +79,4 @@
     </div>
   </mat-dialog-content>
 </ng-template>
-<div class="bottom-button" *ngIf="(lines | async) as linee">
-  <button [disabled]="!profileForm.valid" mat-raised-button color="primary" (click)="updateUserDialog()">
-    <span *ngIf="this.data">Applica Modifiche</span>
-    <span *ngIf="!this.data">Aggiungi Utente</span>
-  </button>
-</div>
+

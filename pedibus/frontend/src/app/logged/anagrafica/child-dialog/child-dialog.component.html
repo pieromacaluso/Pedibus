@@ -1,5 +1,6 @@
-<div class="mat-h2"><span *ngIf="this.data">Modifica </span><span *ngIf="!this.data">Aggiungi </span>Bambino</div>
-<mat-dialog-content ngClass.lt-sm="mobile" *ngIf="(this.observableLines | async) as details else loading">
+<ng-container  *ngIf="(this.observableLines | async) as details else loading">
+  <div class="mat-h2"><span *ngIf="this.data">Modifica </span><span *ngIf="!this.data">Aggiungi </span>Bambino</div>
+<mat-dialog-content ngClass.lt-sm="mobile">
 <form #form [formGroup]="profileForm" fxLayout="column">
   <mat-form-field>
     <mat-label>Nome</mat-label>
@@ -10,6 +11,7 @@
     <mat-label>Cognome</mat-label>
     <input matInput type="text" placeholder="Surname" formControlName="surname" required>
   </mat-form-field>
+
   <mat-form-field>
     <mat-label>Codice Fiscale</mat-label>
     <input matInput type="text" placeholder="CodiceFiscale" formControlName="codiceFiscale" required>
@@ -95,6 +97,7 @@
 
 </form>
 </mat-dialog-content>
+</ng-container>
 <ng-template #loading>
   <mat-dialog-content>
     <div class="loading-spinner">
