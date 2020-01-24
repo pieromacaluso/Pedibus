@@ -1,0 +1,38 @@
+version: '3'
+services:
+  frontend:
+    container_name: frontend
+    restart: always
+    build: ./esercitazione4
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - app
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    #volumes:
+     # - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
+
+  app:
+    container_name: app
+    restart: always
+    build: ./esercitazione3
+#    volumes:
+#      - ./:/app
+#      - ~/.m2:/root/.m2
+    expose:
+      - "8080"
+    ports:
+      - 8080:8080
+      
+    depends_on:
+      - mongodb
