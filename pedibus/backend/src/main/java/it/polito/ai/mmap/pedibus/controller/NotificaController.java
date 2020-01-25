@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import io.swagger.annotations.ApiOperation;
 import it.polito.ai.mmap.pedibus.objectDTO.NotificaDTO;
 import it.polito.ai.mmap.pedibus.services.NotificheService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,18 @@ public class NotificaController {
      * @return Pagina di notifiche
      */
     @GetMapping("/notifiche/all/{username}")
+    @ApiOperation("Restituisce le notifiche non lette di un determinato utente paginandole")
     public Page<NotificaDTO> getPagedNotifications(@PathVariable("username") String username, Pageable pageable) {
         return notificheService.getPagedNotifications(username, pageable);
     }
 
     /**
-     * Elimina la notifica selezionata da un determinato id
+     * Elimina la notifica indicata
      *
      * @param idNotifica id della notifica da eliminare
      */
     @DeleteMapping("/notifiche/{idNotifica}")
+    @ApiOperation("Elimina la notifica indicata")
     public void deleteNotifica(@PathVariable("idNotifica") String idNotifica) {
         notificheService.deleteNotifica(idNotifica);
     }
