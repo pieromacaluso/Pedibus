@@ -1,5 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
@@ -97,6 +99,7 @@ public class AuthenticationRestController {
      * @return true se duplicata, falso altrimenti
      * @deprecated metodo utilizzato in passato dal modulo di registrazione ormai disattivato
      */
+    @Deprecated
     @GetMapping("/register/checkMail/{email}")
     public boolean checkUserMailDuplicate(@PathVariable String email) {
         try {
@@ -113,6 +116,7 @@ public class AuthenticationRestController {
      * @param randomUUID confirmation token
      * @deprecated La registrazione dell'utente avviene ora per vie differenti
      */
+    @Deprecated
     @GetMapping("/confirm/{randomUUID}")
     public void confirm(@PathVariable("randomUUID") String randomUUID) {
         ObjectId id = new ObjectId(randomUUID);
@@ -127,6 +131,7 @@ public class AuthenticationRestController {
      *
      * @param email email specificata
      */
+    @ApiOperation("Richiede l'invio della mail di recupero pw per l'account specificato")
     @PostMapping("/recover")
     public void recover(@RequestBody String email) {
         try {
@@ -144,8 +149,11 @@ public class AuthenticationRestController {
      * @param bindingResult validazione dati
      * @param randomUUID    recover token
      */
+    @ApiOperation("Permette di specificare le nuove credenziali per l'account nel processo di recupero pw")
     @PostMapping("/recover/{randomUUID}")
-    public void recoverVerification(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
+    public void recoverVerification(@ApiParam(name = "userDTO", value = "Le credenzialia aggiornate") @Valid @RequestBody UserDTO userDTO,
+                                    BindingResult bindingResult,
+                                    @ApiParam(name = "randomUUID", value = "Il token inviato per mail") @PathVariable("randomUUID") String randomUUID) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
             throw new RecoverProcessNotValidException();
@@ -165,8 +173,11 @@ public class AuthenticationRestController {
      * @param bindingResult  Binding Result per verificare che i dati siano corretti
      * @param randomUUID     randomUUID relativo all'utente che deve cambiare password
      */
+    @ApiOperation("Permette di attivare un account")
     @PostMapping("/new-user/{randomUUID}")
-    public void newUserVerification(@Valid @RequestBody NewUserPassDTO newUserPassDTO, BindingResult bindingResult, @PathVariable("randomUUID") String randomUUID) {
+    public void newUserVerification(@ApiParam(name = "newuserPassDTO", value = "Contiene la password di default e quella nuova") @Valid @RequestBody NewUserPassDTO newUserPassDTO,
+                                    BindingResult bindingResult,
+                                    @ApiParam(name = "randomUUID", value = "Il token inviato per mail") @PathVariable("randomUUID") String randomUUID) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error("new-user/randomUUID -> " + err.toString()));
             throw new TokenProcessException(PedibusString.INVALID_DATA);
