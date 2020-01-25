@@ -1,5 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
@@ -25,6 +27,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@ApiOperation("Endpoint dedicati al sysadmin")
 public class AdminRestController {
 
     final
@@ -54,13 +57,14 @@ public class AdminRestController {
      * @return Lista di Ruoli sottoforma di stringhe da assegnare agli utenti
      */
     @GetMapping("/sysadmin/roles")
+    @ApiOperation("Restituisce tutti i ruoli disponibili sul database")
     public List<String> getAvailableRole() {
         return userService.getAllRole();
     }
 
 
     /**
-     * Enpoint per ottenere gli user paginati e filtrati attraverso le keywork specificate. Queste possono essere multiple
+     * Enpoint per ottenere gli utenti paginati e filtrati attraverso le keyword specificate. Queste possono essere multiple
      * separate da una serie di spazi. Il servizio si occuperà di andare a splittare la stringa e ad effettuare la query
      * corretta al database.
      *
@@ -70,7 +74,8 @@ public class AdminRestController {
      * @return Pagina contenente una parte degli utenti presenti nel database.
      */
     @GetMapping("/sysadmin/users")
-    public Page<UserInsertResource> getUsers(Pageable pageable, @RequestParam("keyword") String keyword) {
+    @ApiOperation("Restituisce gli utenti paginati e filtrati attraverso le keyword specificate")
+    public Page<UserInsertResource> getUsers(Pageable pageable, @ApiParam(name = "keyword", value = "Filtra gli user restituiti. Possono essere più di una separate da spazi") @RequestParam(name = "keyword") String keyword) {
         return userService.getAllPagedUsers(pageable, keyword);
     }
 
@@ -82,7 +87,9 @@ public class AdminRestController {
      * @return UserEntity dell'utente inserito correttamente
      */
     @PostMapping("/sysadmin/users")
-    public UserEntity insertUser(@Valid @RequestBody UserInsertResource userInsertResource, BindingResult bindingResult) {
+    @ApiOperation("Aggiunge un nuovo utente al database, inviando una mail per attivare l'account")
+    public UserEntity insertUser(@ApiParam(name = "userInsertResource", value = "Contiene i dettagli dell'utente che verrà inserito") @Valid @RequestBody UserInsertResource userInsertResource,
+                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.POST_USER_ERROR);
         }
@@ -90,13 +97,14 @@ public class AdminRestController {
     }
 
     /**
-     * Modifica dei dati di un utente già presente da parte dell'amministratore.
+     * Modifica i dati di un utente già creato, da parte dell'amministratore.
      *
      * @param userInsertResource l'utente i cui dettagli vanno aggiornati
      */
     @PutMapping("/sysadmin/users/{userId}")
-    public void updateUser(@PathVariable("userId") String userId,
-                           @Valid @RequestBody UserInsertResource userInsertResource,
+    @ApiOperation("Modifica i dati di un utente già creato")
+    public void updateUser(@ApiParam(name = "userId", value = "L'ID dell'utente da modificare") @PathVariable("userId") String userId,
+                           @ApiParam(name = "userInsertResource", value = "Contiene i dati aggiornati dell'utente") @Valid @RequestBody UserInsertResource userInsertResource,
                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.PUT_USER_ERROR);
@@ -110,12 +118,13 @@ public class AdminRestController {
      * @param userId email dell'utente da eliminare
      */
     @DeleteMapping("/sysadmin/users/{userId}")
-    public void deleteUser(@PathVariable("userId") String userId) {
+    @ApiOperation("Cancella l'utente specificato")
+    public void deleteUser(@ApiParam(name = "userId", value = "L'ID dell'utente da cancellare") @PathVariable("userId") String userId) {
         userService.deleteUserByUsername(userId);
     }
 
     /**
-     * Enpoint per ottenere i bambini paginati e filtrati attraverso le keywork specificate. Queste possono essere multiple
+     * Enpoint per ottenere i bambini paginati e filtrati attraverso le keyword specificate. Queste possono essere multiple
      * separate da una serie di spazi. Il servizio si occuperà di andare a splittare la stringa e ad effettuare la query
      * corretta al database.
      *
@@ -125,7 +134,8 @@ public class AdminRestController {
      * @return Pagina contenente una parte dei bambini presenti nel database.
      */
     @GetMapping("/sysadmin/children")
-    public Page<ChildDTO> getChildren(Pageable pageable, @RequestParam("keyword") String keyword) {
+    @ApiOperation("Restituisce i bambini paginati e filtrati attraverso le keyword specificate")
+    public Page<ChildDTO> getChildren(Pageable pageable, @ApiParam(name = "keyword", value = "Filtra gli user restituiti. Possono essere più di una separate da spazi") @RequestParam("keyword") String keyword) {
         return childService.getAllPagedChildren(pageable, keyword);
     }
 
@@ -136,7 +146,8 @@ public class AdminRestController {
      * @return ChildDTO
      */
     @GetMapping("/sysadmin/children/{idChild}")
-    public ChildDTO getChild(@PathVariable("idChild") String cfChild) {
+    @ApiOperation("Restituisce il bambino specificato")
+    public ChildDTO getChild(@ApiParam(name = "idChild", value = "Il codice fiscale del bambino") @PathVariable("idChild") String cfChild) {
         return childService.getChildDTOById(cfChild);
     }
 
@@ -148,7 +159,9 @@ public class AdminRestController {
      * @return ChildDTO dell'utente inserito correttamente
      */
     @PostMapping("/sysadmin/children")
-    public ChildDTO createChild(@Valid @RequestBody ChildDTO childDTO, BindingResult bindingResult) {
+    @ApiOperation("Aggiunge un nuovo bambino al database")
+    public ChildDTO createChild(@ApiParam(name = "childDTO", value = "Contiene i dettagli del bambino che verrà inserito") @Valid @RequestBody ChildDTO childDTO,
+                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.POST_CHILD_ERROR);
         }
@@ -157,15 +170,17 @@ public class AdminRestController {
     }
 
     /**
-     * Modifica di un bambino al database da parte di un amministratore.
+     * Modifica di un bambino sul database da parte di un amministratore.
      *
      * @param childId  id del bambino da modificare
      * @param childDTO Dati del bambino da modificare
      * @return ChildDTO del bambino modificato
      */
     @PutMapping("/sysadmin/children/{childId}")
-    public ChildDTO updateChild(@PathVariable("childId") String childId,
-                                @Valid @RequestBody ChildDTO childDTO, BindingResult bindingResult) {
+    @ApiOperation("Modifica i dati di un bambino già creato")
+    public ChildDTO updateChild(@ApiParam(name = "userId", value = "Il codice fiscale del bambino da modificare") @PathVariable("childId") String childId,
+                                @ApiParam(name = "childDTO", value = "Contiene i dati aggiornati del bambino") @Valid @RequestBody ChildDTO childDTO,
+                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.PUT_CHILD_ERROR);
         }
@@ -179,7 +194,8 @@ public class AdminRestController {
      * @param childId codice fiscale del bambino da eliminare
      */
     @DeleteMapping("/sysadmin/children/{childId}")
-    public void deleteChild(@PathVariable("childId") String childId) {
+    @ApiOperation("Cancella il bambino specificato")
+    public void deleteChild(@ApiParam(name = "childId", value = "Il codice fiscale del bambino da cancellare") @PathVariable("childId") String childId) {
         childService.deleteChild(childId);
     }
 
@@ -190,11 +206,13 @@ public class AdminRestController {
      * si troverà i privilegi di admin
      *
      * @param permissionResource Linea e booleano
-     * @param mail               email
+     * @param userId             L'id dell'utente
      */
     @PutMapping("/admin/users/{userID}")
-    public void setUserAdmin(@RequestBody PermissionResource permissionResource, @PathVariable("userID") String mail) {
-        this.userService.setUserAdmin(permissionResource, mail);
+    @ApiOperation("Aggiunge o rimuove il ruolo di admin per un utente")
+    public void setUserAdmin(@ApiParam(name = "permissionResource", value = "Contiene i dettagli dei permessi da assegnare al dato utente") @RequestBody PermissionResource permissionResource,
+                             @ApiParam(name = "userId", value = "L'ID dell'utente") @PathVariable("userID") String userId) {
+        this.userService.setUserAdmin(permissionResource, userId);
 
     }
 
@@ -202,6 +220,7 @@ public class AdminRestController {
      * Ritorna le linee di cui il principal è amministratore.
      */
     @GetMapping("/admin/lines")
+    @ApiOperation("Restituisce le linee di cui è admin il richiedente")
     public List<LineaDTO> getLineAdmin() {
         return this.lineeService.getAllLinesAdminPrincipal();
     }
@@ -209,16 +228,18 @@ public class AdminRestController {
     /**
      * Ritorna tutti gli utenti guida di cui il principal è amministratore.
      */
+    @ApiOperation("Restituisce le guide di cui il richiedente è amministratore")
     @GetMapping("/admin/guides")
     public List<UserInsertResource> getGuideUsers() throws RoleNotFoundException {
         return this.userService.getAllGuidesAdmin();
     }
 
     /**
-     * Ritorna tutti gli utenti guida di cui il principal è amministratore.
+     * Ritorna la guida di cui il principal è amministratore partendo dall'email
      */
     @GetMapping("/admin/users")
-    public UserInsertResource getGuideUsers(@RequestBody String email) throws RoleNotFoundException {
+    @ApiOperation("Ritorna la guida di cui il richiedente è amministratore partendo dall'email")
+    public UserInsertResource getGuideUsers(@ApiParam(name = "email", value = "L'ID della guida") @RequestBody String email) {
         return this.userService.getUserByEmail(email);
     }
 }
