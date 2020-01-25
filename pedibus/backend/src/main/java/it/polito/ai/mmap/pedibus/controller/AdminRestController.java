@@ -16,6 +16,7 @@ import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,27 +30,18 @@ import java.util.List;
 @RestController
 @ApiOperation("Endpoint dedicati al sysadmin")
 public class AdminRestController {
-
-    final
+    @Autowired
     Environment environment;
-    final
+    @Autowired
     UserService userService;
-    final
+    @Autowired
     ChildService childService;
-    final
+    @Autowired
     LineeService lineeService;
-    final
+    @Autowired
     RoleRepository roleRepository;
     // TODO: Logger in tutti gli endpoint
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public AdminRestController(Environment environment, UserService userService, ChildService childService, LineeService lineeService, RoleRepository roleRepository) {
-        this.environment = environment;
-        this.userService = userService;
-        this.childService = childService;
-        this.lineeService = lineeService;
-        this.roleRepository = roleRepository;
-    }
 
     /**
      * Endpoint per ottenere tutti i ruoli disponibili nel database
@@ -204,6 +196,7 @@ public class AdminRestController {
      * tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione
      * si troverà i privilegi di admin
+     * todo mi sembra di capire che non c'è più questa cosa e questa operazione su un utente non salvato su db causa una UserNotFoundException (marcof)
      *
      * @param permissionResource Linea e booleano
      * @param userId             L'id dell'utente
