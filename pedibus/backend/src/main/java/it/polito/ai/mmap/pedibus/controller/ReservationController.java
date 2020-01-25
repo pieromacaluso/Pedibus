@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiOperation;
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
@@ -51,6 +52,7 @@ public class ReservationController {
      */
 
     @GetMapping("/reservations/{id_linea}/{data}")
+    @ApiOperation("Restituisce per ogni fermata di andata e ritorno le persone da prendere/lasciare")
     public GetReservationsIdLineaDataResource getReservations(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data) {
         logger.info("GET /reservations/" + idLinea + "/" + data + " è stato contattato");
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
@@ -68,6 +70,7 @@ public class ReservationController {
      */
 
     @GetMapping("/reservations/verso/{id_linea}/{data}/{verso}")
+    @ApiOperation("Restituisce per ogni fermata di andata o ritorno le persone da prendere/lasciare")
     public GetReservationsIdDataVersoResource getReservationsToward(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /reservations/verso/" + idLinea + "/" + data + "/" + verso + " è stato contattato");
         return reservationService.getReservationsVersoResource(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso);
@@ -81,6 +84,7 @@ public class ReservationController {
      * @param verso   verso considerato
      * @return ReservationsDump
      */
+    @ApiOperation("Restituisce le prenotazioni per una certa id_linea/data/verso")
     @GetMapping("/reservations/dump/{id_linea}/{data}/{verso}")
     public ReservationsDump getReservationsDump(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info(PedibusString.ENDPOINT_CALLED("GET", "/reservations/dump/" + idLinea + "/" + data + "/" + verso));
@@ -94,6 +98,7 @@ public class ReservationController {
      * @param verso
      * @return
      */
+    @ApiOperation("Restituisce i bambini che non hanno prenotazione per una certa data/verso")
     @GetMapping("/notreservations/{data}/{verso}")
     public List<ChildDTO> getNotReservations(@PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info("GET /notreservations/" + data + " è stato contattato");
@@ -110,6 +115,7 @@ public class ReservationController {
      * @param reservationId id reservation
      * @return ReservationDTO
      */
+    @ApiOperation("Restituisce una prenotazione a partire dal suo id")
     @GetMapping("/reservations/{id_linea}/{data}/{reservation_id}")
     public ReservationDTO getReservation(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("reservation_id") ObjectId reservationId) {
         logger.info("/reservations/{id_linea}/{data}/{reservation_id} è stato contattato");
@@ -127,6 +133,7 @@ public class ReservationController {
      * @return identificatore univoco reservation
      */
     @PostMapping("/reservations/{id_linea}/{data}")
+    @ApiOperation("Aggiunge una prenotazione per il bambino indicato")
     public String postReservation(@RequestBody ReservationResource reservationResource, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data) throws JsonProcessingException {
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         logger.info("Nuova Reservation " + reservationResource.toString());
@@ -146,6 +153,7 @@ public class ReservationController {
      * @param data
      * @param cfChild true per indicare che è stato preso, false per annullare
      */
+    @ApiOperation("Permette di indicare la presa in carico di un bambino dalla fermata")
     @PostMapping("/reservations/handled/{idLinea}/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
