@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Classe che mappa da java a json l'oggetto chiesto da GET /lines
+ * Classe che mappa l'oggetto chiesto da GET /lines
  *
  */
 @Data

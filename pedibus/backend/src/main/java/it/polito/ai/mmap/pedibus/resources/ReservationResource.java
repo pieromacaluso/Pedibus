@@ -7,7 +7,7 @@ import org.springframework.hateoas.ResourceSupport;
 
 /**
  * POST /reservations/{nome_linea}/{data}
- * un oggetto JSON contenente:
+ * un oggetto contenente:
  * il nome dell’alunno da trasportare
  * l’identificatore della fermata a cui sale/scende
  * il verso di percorrenza (andata/ritorno)

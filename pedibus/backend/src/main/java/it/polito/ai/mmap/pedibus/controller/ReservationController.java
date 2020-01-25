@@ -42,7 +42,7 @@ public class ReservationController {
 
 
     /**
-     * Restituisce un oggetto JSON contenente due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
+     * Restituisce due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
      * @param idLinea id della linea
@@ -58,7 +58,7 @@ public class ReservationController {
     }
 
     /**
-     * Restituisce un oggetto JSON contenente una lista, riportante, per ogni fermata di andata o ritorno, l’elenco delle
+     * Restituisce una lista, riportante, per ogni fermata di andata o ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
      *
      * @param idLinea id della linea
@@ -74,7 +74,7 @@ public class ReservationController {
     }
 
     /**
-     * Restituisce un oggetto JSON contente il dump delle reservations per la terna indicata
+     * Restituisce il dump delle reservations per la terna indicata
      *
      * @param idLinea id della linea
      * @param data    data in esame
@@ -118,10 +118,10 @@ public class ReservationController {
     }
 
     /**
-     * Invia un oggetto JSON contenente il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
+     * Invia il nome dell’alunno da trasportare, l’identificatore della fermata a cui sale/scende e il verso di percorrenza (andata/ritorno);
      * restituisce un identificatore univoco della reservation creata
      *
-     * @param reservationResource JSON Body Reservation
+     * @param reservationResource Body Reservation
      * @param idLinea             id linea
      * @param data                data in esame
      * @return identificatore univoco reservation
@@ -191,10 +191,10 @@ public class ReservationController {
     }
 
     /**
-     * Invia un oggetto JSON che permette di aggiornare i dati relativi alla reservation indicata.
+     * Permette di aggiornare i dati relativi alla reservation indicata.
      * Il reservation_id ci permette di identificare la reservation da modificare, il body contiene i dati aggiornati.
      *
-     * @param reservationResource JSON Body Reservation
+     * @param reservationResource Body Reservation
      * @param idLinea             id linea
      * @param data                data in esame
      * @param reservationId       id Reservation da aggiornare

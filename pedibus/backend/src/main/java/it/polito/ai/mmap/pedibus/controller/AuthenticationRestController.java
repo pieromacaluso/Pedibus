@@ -45,7 +45,7 @@ public class AuthenticationRestController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * L'utente invia un json contente email e password, le validiamo e controlliamo se l'utente è attivo e la password è corretta.
+     * L'utente invia email e password, le validiamo e controlliamo se l'utente è attivo e la password è corretta.
      * In caso affermativo viene creato un json web token che viene ritornato all'utente, altrimenti restituisce 401-Unauthorized
      *
      * @param userDTO       Form Login Utente
@@ -74,7 +74,7 @@ public class AuthenticationRestController {
     }
 
     /**
-     * L'utente invia un json con le sue nuove credenziali, le validiamo con un validator, se rispettano
+     * L'utente invia le sue nuove credenziali, le validiamo con un validator, se rispettano
      * i criteri lo registriamo e inviamo una mail per l'attivazione dell'account, se no restituiamo un errore
      *
      * @param userDTO       dati utente da registrare

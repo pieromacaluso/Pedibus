@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Classe che mappa da java a json l'oggetto chiesto da GET /reservations/{nome_linea}/{data}
+ * Classe che mappa l'oggetto chiesto da GET /reservations/{nome_linea}/{data}
  */
 @Data
 @NoArgsConstructor
