@@ -1,5 +1,6 @@
 package it.polito.ai.mmap.pedibus.controller;
 
+import io.swagger.annotations.ApiOperation;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
@@ -19,55 +20,48 @@ public class LineeController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * Mapping verso la home dell'applicazione.
-     *
-     * @return home
-     * @deprecated Non più utilizzato
-     */
-    @GetMapping("/")
-    public String home() {
-        return "home";
-    }
-
-    /**
-     * Restituisce una JSON con una lista dei nomi delle lines presenti nel DB.
+     * Restituisce una lista degli id delle lines presenti nel DB.
      *
      * @return Lista nomi Linee nel DB
      */
     @GetMapping("/lines")
+    @ApiOperation("Restituisce gli id delle linee presenti")
     public List<String> getLines() {
         return lineeService.getAllLinesIds();
     }
 
     /**
-     * Restituisce una JSON con una lista dei nomi delle lines presenti nel DB.
+     * Restituisce una lista dei nomi delle lines presenti nel DB.
      *
      * @return Lista nomi Linee nel DB
      */
     @GetMapping("/lines/name")
+    @ApiOperation("Restituisce i nomi delle linee presenti")
     public List<String> getLinesNames() {
         return lineeService.getAllLinesNames();
     }
 
     /**
-     * Restituisce un oggetto JSON contenente due liste, riportanti i dettagli delle fermate di andata e ritorno.
+     * Restituisce due liste, riportanti i dettagli delle fermate di andata e ritorno.
      *
      * @param idLinea id della Linea
      * @return LineaDTO
      */
     @GetMapping("/lines/{id_linea}")
+    @ApiOperation("Restituisce i dettagli delle fermate per la linea specificata")
     public LineaDTO getStopsLine(@PathVariable("id_linea") String idLinea) {
         return lineeService.getLineaDTOById(idLinea);
     }
 
 
     /**
-     * Dato l'id di una fermata restituisce un oggetto JSON contenente la fermata
+     * Dato l'id di una fermata restituisce l'oggetto fermata
      *
      * @param idFermata id della fermata
      * @return FermataDTO
      */
     @GetMapping("/lines/stops/{id_fermata}")
+    @ApiOperation("Restituisce la fermata richiesta")
     public FermataDTO getStopById(@PathVariable("id_fermata") Integer idFermata) {
         return lineeService.getFermataDTOById(idFermata);
     }
