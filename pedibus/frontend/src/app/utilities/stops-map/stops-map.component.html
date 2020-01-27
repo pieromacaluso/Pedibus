@@ -1,4 +1,4 @@
-<agm-map #agmMap *ngIf="this.stops.length === 0" ngClass.lt-sm="map-small" [latitude]="45.07049" [longitude]="7.68682" [zoom]="13" [streetViewControl]="false" [fitBounds]="false" [clickableIcons]="false" (mapDblClick)="recenter(agmMap)">
+<agm-map #agmMap *ngIf="this.stops && this.stops.length === 0" ngClass.lt-sm="map-small" [latitude]="45.07049" [longitude]="7.68682" [zoom]="13" [streetViewControl]="false" [fitBounds]="false" [clickableIcons]="false" (mapDblClick)="recenter(agmMap)">
 
   <ng-container *ngFor="let stop of this.stops; let i=index">
     <agm-marker *ngIf="stop != this.center" [agmFitBounds]="true" [iconUrl]="this.markerBlue"
@@ -15,7 +15,7 @@
   </agm-polyline>
 </agm-map>
 
-<agm-map #agmMap *ngIf="this.stops.length > 0" ngClass.lt-sm="map-small" [streetViewControl]="false" [fitBounds]="true" [clickableIcons]="false" (mapDblClick)="recenter(agmMap)">
+<agm-map #agmMap *ngIf="this.stops && this.stops.length > 0" ngClass.lt-sm="map-small" [streetViewControl]="false" [fitBounds]="true" [clickableIcons]="false" (mapDblClick)="recenter(agmMap)">
 
   <ng-container *ngFor="let stop of this.stops; let i=index">
     <agm-marker *ngIf="stop != this.center" [agmFitBounds]="true" [iconUrl]="this.markerBlue"
