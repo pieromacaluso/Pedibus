@@ -11,12 +11,14 @@
       <b>Ritorno: </b><i>{{(defaultRitorno | async)?.nomeLinea}}
       - {{(defaultRitorno | async)?.nome}} {{(defaultRitorno | async)?.orario}}</i>
     </div>
-    <div class="button-container" *ngIf="isPresentOrFuture()">
+    <div class="button-container">
       <button mat-fab (click)="showAnagraficaDialog()" color="accent">
         <mat-icon>edit</mat-icon>
       </button>
     </div>
   </mat-card-content>
+  <app-date-toolbar (dateEmitter)="changeDate($event)"></app-date-toolbar>
+
 
   <mat-card-content class="res-data" fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
     <div class="column" *ngIf="this.andata && (andataStop|async) as res else noandata">

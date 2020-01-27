@@ -1,0 +1,34 @@
+<!-- TOOLBAR -->
+<div ngClass=" toolbar">
+  <!-- TOOLBAR ROW -->
+  <div fxLayout="row" fxLayoutAlign="space-around center">
+    <!-- DATE CHANGE BUTTON -->
+    <div fxLayoutAlign="space-around">
+      <button type=”button” mat-icon-button (click)="modifyDate(-1);" class="primary">
+          <span class="mat-button-wrapper">
+            <mat-icon class="mat-icon material-icons"
+                      role="img" aria-hidden="true">keyboard_arrow_left</mat-icon>
+          </span>
+      </button>
+    </div>
+    <div fxFlex="70%" fxFlex.lt-sm="70%" class="form-top" fxLayout="row"
+                     fxLayoutAlign="center" fxLayoutAlign.xs="center">
+      <!-- DATEPICKER -->
+      <mat-form-field color="accent" fxFlex="80%">
+        <input class="" matInput (dateChange)="emitRequest()" [matDatepicker]="picker"
+               placeholder="Seleziona data" [(ngModel)]="date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div fxLayoutAlign="space-around" class="primary">
+      <button type=”button” mat-icon-button (click)="modifyDate(1);">
+          <span class="mat-button-wrapper">
+            <mat-icon class="mat-icon material-icons"
+                      role="img" aria-hidden="true">keyboard_arrow_right</mat-icon>
+          </span>
+      </button>
+    </div>
+  </div>
+</div>
+

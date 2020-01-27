@@ -40,6 +40,7 @@ import {UserDialogComponent} from './anagrafica/user-dialog/user-dialog.componen
 import { LineAdminComponent } from './line-admin/line-admin.component';
 import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.component';
 import {UtilitiesModule} from '../utilities/utilities.module';
+import { DateToolbarComponent } from './genitore/scheda-bambino/date-toolbar/date-toolbar.component';
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import {UtilitiesModule} from '../utilities/utilities.module';
     UserDialogComponent,
     LineAdminComponent,
     GuideEntryComponent,
+    DateToolbarComponent,
   ],
   imports: [
     CommonModule,

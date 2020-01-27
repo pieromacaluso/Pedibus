@@ -7,6 +7,7 @@ import {BambinoService} from './bambino.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {DialogAnagraficaComponent} from '../dialog-anagrafica/dialog-anagrafica.component';
 import {environment} from '../../../../environments/environment';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-scheda-bambino',
@@ -32,82 +33,40 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   subRequest: Subscription;
   limitAndata = environment.limitAndata;
   limitRitorno = environment.limitRitorno;
+  date: Date;
 
   constructor(private syncService: SyncService, private bambinoService: BambinoService, private dialog: MatDialog) {
   }
 
   ngOnInit() {
-    this.subRequest = this.syncService.prenotazioneObs$.subscribe((data) => {
-      this.request = data;
-      this.andata = null;
-      this.ritorno = null;
-      // todo: inserire logica di reazione a richiesta qui
-      if (this.bambino && this.request) {
-        this.bambinoService.getStatus(this.bambino, this.request.data).subscribe((reservation) => {
-          this.schoolClosed = false;
-          for (const res of reservation) {
-            if (res.verso) {
-              this.andata = res;
-              this.andataStop = this.bambinoService.getFermata(this.andata.idFermata);
-            } else {
-              this.ritorno = res;
-              this.ritornoStop = this.bambinoService.getFermata(this.ritorno.idFermata);
-            }
-          }
-        }, (error) => {
-          this.schoolClosed = true;
-        });
+    this.changeDate(new Date());
 
-        if (this.bambinoSub) {
-          this.bambinoSub.unsubscribe();
-        }
-        this.bambinoSub = this.bambinoService.watchChild(this.bambino.codiceFiscale).subscribe(
-          (message) => {
-            this.bambino = JSON.parse(message.body);
-            this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
-            this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
-          }
-        );
-        if (this.bambinoRes) {
-          this.bambinoRes.unsubscribe();
-        }
-        this.bambinoRes = this.bambinoService.watchChildReservation(this.bambino.codiceFiscale, this.request.data).subscribe(
-          (message) => {
-            const reservation: ReservationDTO = JSON.parse(message.body);
-            if (reservation.idFermata === null) {
-              if (reservation.verso) {
-                this.andata = null;
-              } else {
-                this.ritorno = null;
-
-              }
-              return;
-            }
-            if (reservation.verso) {
-              this.andata = reservation;
-              this.andataStop = this.bambinoService.getFermata(this.andata.idFermata);
-            } else {
-              this.ritorno = reservation;
-              this.ritornoStop = this.bambinoService.getFermata(this.ritorno.idFermata);
-
-            }
-          }
-        );
+    if (this.bambinoSub) {
+      this.bambinoSub.unsubscribe();
+    }
+    this.bambinoSub = this.bambinoService.watchChild(this.bambino.codiceFiscale).subscribe(
+      (message) => {
+        this.bambino = JSON.parse(message.body);
         this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
         this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
       }
-
-    });
-
+    );
+    this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
+    this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
   }
 
   showAnagraficaDialog() {
     this.bambinoService.openDialog(this.bambino, this.linee, this.defaultAndata, this.defaultRitorno).subscribe((data) => {
       if (data) {
+        let today = moment();
+        if (!this.isOnTime(data.data.orarioAndata) || !this.isOnTime(data.data.orarioRitorno)) {
+          today = moment(today).add(1, 'days');
+        }
+        today.toDate();
         // this.bambino = data.data.child;
         // this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
         // this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
-        this.bambinoService.updateFermate(data.data.child, this.request.data).subscribe((d) => {
+        this.bambinoService.updateFermate(data.data.child, today.toDate()).subscribe((d) => {
         }, (error) => {
         });
       }
@@ -120,11 +79,10 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.bambinoSub.unsubscribe();
-    this.subRequest.unsubscribe();
   }
 
   addAndata() {
-    this.bambinoService.openDialogReservation(this.bambino, true, this.request.data, this.linee, true, this.andata)
+    this.bambinoService.openDialogReservation(this.bambino, true, this.date, this.linee, true, this.andata)
       .subscribe((data) => {
         if (data) {
           this.bambinoService.createReservation(data.line, data.data, data.childId, data.stopId, data.verso)
@@ -136,7 +94,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   }
 
   addRitorno() {
-    this.bambinoService.openDialogReservation(this.bambino, false, this.request.data, this.linee, true, this.ritorno)
+    this.bambinoService.openDialogReservation(this.bambino, false, this.date, this.linee, true, this.ritorno)
       .subscribe((data) => {
         if (data) {
           this.bambinoService.createReservation(data.line, data.data, data.childId, data.stopId, data.verso)
@@ -148,7 +106,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   }
 
   editAndata() {
-    this.bambinoService.openDialogReservation(this.bambino, true, this.request.data, this.linee, false, this.andata)
+    this.bambinoService.openDialogReservation(this.bambino, true, this.date, this.linee, false, this.andata)
       .subscribe((data) => {
         if (data) {
           this.bambinoService.updateReservation(data.line, data.data, data.childId, data.stopId, data.verso, this.andata.id)
@@ -160,7 +118,7 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   }
 
   editRitorno() {
-    this.bambinoService.openDialogReservation(this.bambino, false, this.request.data, this.linee, false, this.ritorno)
+    this.bambinoService.openDialogReservation(this.bambino, false, this.date, this.linee, false, this.ritorno)
       .subscribe((data) => {
         if (data) {
           this.bambinoService.updateReservation(data.line, data.data, data.childId, data.stopId, data.verso, this.ritorno.id)
@@ -172,14 +130,14 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   }
 
   deleteAndata() {
-    this.bambinoService.deleteReservation(this.andata.idLinea, this.request.data, this.andata.id)
+    this.bambinoService.deleteReservation(this.andata.idLinea, this.date, this.andata.id)
       .subscribe((d) => {
       }, (error) => {
       });
   }
 
   deleteRitorno() {
-    this.bambinoService.deleteReservation(this.ritorno.idLinea, this.request.data, this.ritorno.id)
+    this.bambinoService.deleteReservation(this.ritorno.idLinea, this.date, this.ritorno.id)
       .subscribe((d) => {
       }, (error) => {
       });
@@ -187,20 +145,64 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
 
   isPresentOrFuture() {
     const data = new Date();
-    const reqData = this.request.data;
-    return reqData.getFullYear() >= data.getFullYear() && reqData.getMonth() >= data.getMonth() && reqData.getDate() >= data.getDate();
+    const reqData = this.date;
+    data.setHours(0, 0, 0, 0);
+    reqData.setHours(0, 0, 0, 0);
+    return reqData >= data;
   }
 
   isOnTime(orario: string) {
     const date = new Date();
-    const reqData = this.request.data;
-    if (reqData.getFullYear() === date.getFullYear() && reqData.getMonth() === date.getMonth() && reqData.getDate() === date.getDate()) {
-      const ora = +orario.split(':')[0];
-      const min = +orario.split(':')[1];
-      return date.getHours() < ora || (date.getHours() === ora && date.getMinutes() < min);
-    }
-    return true;
-
+    const reqData = this.date;
+    const ora = +orario.split(':')[0];
+    const min = +orario.split(':')[1];
+    reqData.setHours(ora, min, 0, 0);
+    return date < reqData;
   }
 
+  changeDate(date: any) {
+    this.date = date;
+    if (this.bambino) {
+      this.bambinoService.getStatus(this.bambino, date).subscribe((reservation) => {
+        this.schoolClosed = false;
+        for (const res of reservation) {
+          if (res.verso) {
+            this.andata = res;
+            this.andataStop = this.bambinoService.getFermata(this.andata.idFermata);
+          } else {
+            this.ritorno = res;
+            this.ritornoStop = this.bambinoService.getFermata(this.ritorno.idFermata);
+          }
+        }
+      }, (error) => {
+        this.schoolClosed = true;
+      });
+
+      if (this.bambinoRes) {
+        this.bambinoRes.unsubscribe();
+      }
+      this.bambinoRes = this.bambinoService.watchChildReservation(this.bambino.codiceFiscale, date).subscribe(
+        (message) => {
+          const reservation: ReservationDTO = JSON.parse(message.body);
+          if (reservation.idFermata === null) {
+            if (reservation.verso) {
+              this.andata = null;
+            } else {
+              this.ritorno = null;
+
+            }
+            return;
+          }
+          if (reservation.verso) {
+            this.andata = reservation;
+            this.andataStop = this.bambinoService.getFermata(this.andata.idFermata);
+          } else {
+            this.ritorno = reservation;
+            this.ritornoStop = this.bambinoService.getFermata(this.ritorno.idFermata);
+
+          }
+        }
+      );
+    }
+  }
 }

@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Modifica fermate di default</h1>
 <form [formGroup]="anagraficaForm" (ngSubmit)="submit()" *ngIf="this.loading == 0">
   <div>
-    <div mat-dialog-content class="dialog-theme" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
+    <mat-dialog-content class="dialog-theme" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
       <div>
         <!-- FORM CONTENT HERE... -->
         <p class="mat-h2">Andata</p>
@@ -54,8 +54,8 @@
           </mat-select>
         </mat-form-field>
       </div>
-    </div>
-    <div mat-dialog-actions>
+    </mat-dialog-content>
+    <div>
       <button type="submit" mat-raised-button color="primary"
               [disabled]="!anagraficaForm.valid">
         <!-- <mat-progress-bar class="progress-bar-button" *ngIf="data.alunno.update" mode="indeterminate">

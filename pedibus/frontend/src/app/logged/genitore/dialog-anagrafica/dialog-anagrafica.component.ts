@@ -14,6 +14,8 @@ export interface AnagraficaDialogData {
   linee: string[];
   defaultAndata: Observable<Fermata>;
   defaultRitorno: Observable<Fermata>;
+  orarioAndata: string;
+  orarioRitorno: string;
 }
 
 @Component({
@@ -142,6 +144,8 @@ export class DialogAnagraficaComponent implements OnInit {
   submit() {
     this.data.child.idFermataAndata = this.selectedAndata.id;
     this.data.child.idFermataRitorno = this.selectedRitorno.id;
+    this.data.orarioAndata = this.selectedAndata.orario;
+    this.data.orarioRitorno = this.selectedRitorno.orario;
     this.dialogRef.close({data: this.data});
   }
 
