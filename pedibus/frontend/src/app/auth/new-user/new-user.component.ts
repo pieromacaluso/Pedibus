@@ -15,6 +15,9 @@ export class NewUserComponent implements OnInit {
 
   postStatus = false;
   confirmStatus = false;
+  hideOldPassword = true;
+  hidePass = true;
+  hidePassAgain = true;
 
   constructor(private auth: AuthService, private route: ActivatedRoute, private router: Router) {
   }

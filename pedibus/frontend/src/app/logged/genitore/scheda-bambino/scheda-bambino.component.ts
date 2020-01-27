@@ -6,6 +6,7 @@ import {Observable, Subscription} from 'rxjs';
 import {BambinoService} from './bambino.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {DialogAnagraficaComponent} from '../dialog-anagrafica/dialog-anagrafica.component';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-scheda-bambino',
@@ -29,6 +30,8 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   andataStop: Observable<Fermata>;
   ritornoStop: Observable<Fermata>;
   subRequest: Subscription;
+  limitAndata = environment.limitAndata;
+  limitRitorno = environment.limitRitorno;
 
   constructor(private syncService: SyncService, private bambinoService: BambinoService, private dialog: MatDialog) {
   }
@@ -187,4 +190,17 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
     const reqData = this.request.data;
     return reqData.getFullYear() >= data.getFullYear() && reqData.getMonth() >= data.getMonth() && reqData.getDate() >= data.getDate();
   }
+
+  isOnTime(orario: string) {
+    const date = new Date();
+    const reqData = this.request.data;
+    if (reqData.getFullYear() === date.getFullYear() && reqData.getMonth() === date.getMonth() && reqData.getDate() === date.getDate()) {
+      const ora = +orario.split(':')[0];
+      const min = +orario.split(':')[1];
+      return date.getHours() < ora || (date.getHours() === ora && date.getMinutes() < min);
+    }
+    return true;
+
+  }
+
 }

@@ -22,10 +22,10 @@
     <div class="column" *ngIf="this.andata && (andataStop|async) as res else noandata">
       <div class="ar-header">
         <h3>Andata</h3>
-        <button *ngIf="isPresentOrFuture()" class="edit-button" mat-icon-button color="accent" (click)="editAndata()">
+        <button *ngIf="isPresentOrFuture() && isOnTime(res.orario)" class="edit-button" mat-icon-button color="accent" (click)="editAndata()">
           <mat-icon>edit</mat-icon>
         </button>
-        <button *ngIf="isPresentOrFuture()" mat-icon-button color="warn" (click)="deleteAndata()">
+        <button *ngIf="isPresentOrFuture() && isOnTime(res.orario)" mat-icon-button color="warn" (click)="deleteAndata()">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -48,12 +48,12 @@
 
     </div>
     <div class="column" *ngIf="this.ritorno && (ritornoStop|async) as res else noritorno">
-      <div class="ar-header">
+      <div class="ar-header" >
         <h3>Ritorno</h3>
-        <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()" *ngIf="isPresentOrFuture()">
+        <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()" *ngIf="isPresentOrFuture() && isOnTime(res.orario)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="deleteRitorno()" *ngIf="isPresentOrFuture()">
+        <button mat-icon-button color="warn" (click)="deleteRitorno()" *ngIf="isPresentOrFuture() && isOnTime(res.orario)">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -79,7 +79,7 @@
       <div class="column">
         <div class="ar-header">
           <h3>Andata</h3>
-          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()" *ngIf="isPresentOrFuture()">
+          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()" *ngIf="isPresentOrFuture() && isOnTime(limitAndata)">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -90,7 +90,7 @@
       <div class="column">
         <div class="ar-header">
           <h3>Ritorno</h3>
-          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()" *ngIf="isPresentOrFuture()">
+          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()" *ngIf="isPresentOrFuture() && isOnTime(limitRitorno)">
             <mat-icon>add</mat-icon>
           </button>
         </div>

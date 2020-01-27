@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   baseURL: '/api/',
+  limitAndata: '07:00',
+  limitRitorno: '13:45'
   // brokerURL: '/api/'
 };
 

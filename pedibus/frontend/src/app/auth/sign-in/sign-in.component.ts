@@ -13,6 +13,7 @@ export class SignInComponent implements OnInit {
   serverErrors: string;
   forgotLink = '../recover';
   form: FormGroup;
+  hidePass = true;
 
   constructor(private auth: AuthService, private router: Router) {
     this.form = new FormGroup({

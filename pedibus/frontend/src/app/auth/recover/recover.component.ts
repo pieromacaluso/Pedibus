@@ -15,6 +15,8 @@ export class RecoverComponent implements OnInit {
 
   postStatus = false;
   confirmStatus = false;
+  hidePass = true;
+  hidePassAgain = true;
 
   constructor(private auth: AuthService, private route: ActivatedRoute, private router: Router) {
   }

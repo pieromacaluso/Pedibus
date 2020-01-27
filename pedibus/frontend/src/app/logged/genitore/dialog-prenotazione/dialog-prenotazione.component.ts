@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {ApiService} from '../../api.service';
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ChildrenDTO, ReservationDTO} from '../dtos';
 import {Observable} from 'rxjs';
 import {Fermata, PrenotazioneRequest, StopsByLine} from '../../line-details';
@@ -25,9 +25,9 @@ export interface PrenotazioneDialogData {
 })
 export class DialogPrenotazioneComponent implements OnInit {
 
-  prenotazioneForm = this.fb.group({
-    lineSelect: ['', [Validators.required]],
-    stopSelect: ['', [Validators.required]]
+  prenotazioneForm = new FormGroup({
+    lineSelect: new FormControl('', Validators.required),
+    stopSelect: new FormControl('', Validators.required)
   });
   lineData: Map<string, StopsByLine> = new Map<string, StopsByLine>();
   loading = 0;
@@ -103,5 +103,17 @@ export class DialogPrenotazioneComponent implements OnInit {
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  isOnTime(orario: string) {
+    const date = new Date();
+    const reqData = this.data.data;
+    if (reqData.getFullYear() === date.getFullYear() && reqData.getMonth() === date.getMonth() && reqData.getDate() === date.getDate()) {
+      const ora = +orario.split(':')[0];
+      const min = +orario.split(':')[1];
+      return date.getHours() < ora || (date.getHours() === ora && date.getMinutes() < min);
+    }
+    return true;
+
   }
 }

@@ -31,6 +31,8 @@ export class SignUpComponent implements OnInit {
   serverErrors: string;
   success = false;
   form: FormGroup;
+  hidePass = true;
+  hidePassAgain = true;
 
 
   static removeError(control: AbstractControl, error: string) {
