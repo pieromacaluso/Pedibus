@@ -1,14 +1,24 @@
 <mat-card id="prenotazioni" ngClass="container" ngClass.lt-md="container-mobile">
   <mat-progress-bar class="progress-bar-button" *ngIf="showLoading()" mode="indeterminate"></mat-progress-bar>
-  <button mat-button class="close-button" (click)="readNotifica()"><img class="close-icon" [src]="tick"></button>
-
-  <mat-card-content>
-    <div>{{notifica.msg}}</div>
-    <div class="date">
-      <span *ngIf="islessThanAMinute(notifDate)">proprio ora</span>
-      <span *ngIf="islessThanAnHour(notifDate)  && !islessThanAMinute(notifDate)">{{getDiffMin(notifDate)}} <span *ngIf="getDiffMin(notifDate) > 1">minuti</span><span *ngIf="getDiffMin(notifDate) == 1">minuto</span> fa</span>
-      <span *ngIf="islessThanADay(notifDate)  && !islessThanAnHour(notifDate) && !islessThanAMinute(notifDate)">{{getDiffHour(notifDate)}} <span *ngIf="getDiffHour(notifDate) > 1">ore</span><span *ngIf="getDiffHour(notifDate) == 1">ora</span> fa</span>
-      <span *ngIf="!islessThanADay(notifDate)  && !islessThanAnHour(notifDate) && !islessThanAMinute(notifDate)">{{this.notifica.data | date:'medium'}}</span>
+  <mat-card-content fxLayout="row" class="notification-space">
+    <div fxLayout="column">
+      <div>{{notifica.msg}}</div>
+      <div class="date">
+        <span *ngIf="islessThanAMinute(notifDate)">proprio ora</span>
+        <span *ngIf="islessThanAnHour(notifDate)  && !islessThanAMinute(notifDate)">{{getDiffMin(notifDate)}} <span
+          *ngIf="getDiffMin(notifDate) > 1">minuti</span><span
+          *ngIf="getDiffMin(notifDate) == 1">minuto</span> fa</span>
+        <span
+          *ngIf="islessThanADay(notifDate)  && !islessThanAnHour(notifDate) && !islessThanAMinute(notifDate)">{{getDiffHour(notifDate)}}
+          <span *ngIf="getDiffHour(notifDate) > 1">ore</span><span
+            *ngIf="getDiffHour(notifDate) == 1">ora</span> fa</span>
+        <span
+          *ngIf="!islessThanADay(notifDate)  && !islessThanAnHour(notifDate) && !islessThanAMinute(notifDate)">{{this.notifica.data | date:'medium'}}</span>
+      </div>
     </div>
+    <div>
+      <button mat-button class="close-button" (click)="readNotifica()"><img class="close-icon" [src]="tick" alt="chiudi notifica"></button>
+    </div>
+
   </mat-card-content>
 </mat-card>
