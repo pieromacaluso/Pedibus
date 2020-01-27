@@ -26,7 +26,6 @@ export class UserDialogComponent implements OnInit, OnDestroy {
     user: new FormControl(),
     guide: new FormControl( ),
     lineAdmin: new FormControl(),
-    sysAdmin: new FormControl(),
   });
   oldEmail: string;
   childObs: Map<string, Observable<ChildrenDTO>>;
@@ -72,7 +71,6 @@ export class UserDialogComponent implements OnInit, OnDestroy {
         user: this.userDTOres.roleIdList.includes('ROLE_USER'),
         guide: this.userDTOres.roleIdList.includes('ROLE_GUIDE'),
         lineAdmin: this.userDTOres.roleIdList.includes('ROLE_ADMIN'),
-        sysAdmin: this.userDTOres.roleIdList.includes('ROLE_SYSTEM-ADMIN'),
       });
     }
   }
@@ -94,9 +92,7 @@ export class UserDialogComponent implements OnInit, OnDestroy {
     if (this.profileForm.get('lineAdmin').value) {
       user.roleIdList.push('ROLE_ADMIN');
     }
-    if (this.profileForm.get('sysAdmin').value) {
-      user.roleIdList.push('ROLE_SYSTEM-ADMIN');
-    }
+
     if (this.data) {
       this.anagraficaDialogService.updateUser(this.oldEmail, user).subscribe((u) => {
         // TODO: Gestisci successo

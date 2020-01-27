@@ -104,7 +104,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
         // this.bambino = data.data.child;
         // this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
         // this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
-        this.bambinoService.updateFermate(data.data.child, this.request.data).subscribe((d) => {}, (error) => {});
+        this.bambinoService.updateFermate(data.data.child, this.request.data).subscribe((d) => {
+        }, (error) => {
+        });
       }
     });
   }
@@ -123,7 +125,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.createReservation(data.line, data.data, data.childId, data.stopId, data.verso)
-            .subscribe((d) => {}, (error) => {});
+            .subscribe((d) => {
+            }, (error) => {
+            });
         }
       });
   }
@@ -133,7 +137,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.createReservation(data.line, data.data, data.childId, data.stopId, data.verso)
-            .subscribe((d) => {}, (error) => {});
+            .subscribe((d) => {
+            }, (error) => {
+            });
         }
       });
   }
@@ -143,7 +149,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.updateReservation(data.line, data.data, data.childId, data.stopId, data.verso, this.andata.id)
-            .subscribe((d) => {}, (error) => {});
+            .subscribe((d) => {
+            }, (error) => {
+            });
         }
       });
   }
@@ -153,18 +161,30 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         if (data) {
           this.bambinoService.updateReservation(data.line, data.data, data.childId, data.stopId, data.verso, this.ritorno.id)
-            .subscribe((d) => {}, (error) => {});
+            .subscribe((d) => {
+            }, (error) => {
+            });
         }
       });
   }
 
   deleteAndata() {
     this.bambinoService.deleteReservation(this.andata.idLinea, this.request.data, this.andata.id)
-      .subscribe((d) => {}, (error) => {});
+      .subscribe((d) => {
+      }, (error) => {
+      });
   }
 
   deleteRitorno() {
     this.bambinoService.deleteReservation(this.ritorno.idLinea, this.request.data, this.ritorno.id)
-      .subscribe((d) => {}, (error) => {});
+      .subscribe((d) => {
+      }, (error) => {
+      });
+  }
+
+  isPresentOrFuture() {
+    const data = new Date();
+    const reqData = this.request.data;
+    return reqData.getFullYear() >= data.getFullYear() && reqData.getMonth() >= data.getMonth() && reqData.getDate() >= data.getDate();
   }
 }

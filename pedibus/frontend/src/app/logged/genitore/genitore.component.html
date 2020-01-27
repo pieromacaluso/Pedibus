@@ -1,4 +1,5 @@
 <div>
-    <app-toolbar [showVerso]="false" [showLinea]="false" [linee]="linee | async"></app-toolbar>
-    <app-scheda-bambino *ngFor="let figlio of (figli | async)" [bambino]="figlio" [linee]="linee | async"></app-scheda-bambino>
-  </div>
+  <app-toolbar [showVerso]="false" [showLinea]="false" [linee]="linee | async"></app-toolbar>
+  <app-scheda-bambino *ngFor="let figlio of (figli | async)" [bambino]="figlio"
+                      [linee]="linee | async"></app-scheda-bambino>
+</div>

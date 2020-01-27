@@ -26,7 +26,7 @@ export class EntryUserComponent implements OnInit {
   printRole(role: any) {
     switch (role) {
       case RoleType.Admin:
-        return 'Amministratore';
+        return 'Amministratore di Linea';
       case RoleType.User:
         return 'Utente';
       case RoleType.Guide:

@@ -26,4 +26,12 @@ mat-card-content {
   text-align: left !important;
 }
 
+.entry-admin {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 
+.button-admin {
+  margin-top: 10px;
+}

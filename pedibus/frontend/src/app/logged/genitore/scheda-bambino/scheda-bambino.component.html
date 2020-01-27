@@ -11,7 +11,7 @@
       <b>Ritorno: </b><i>{{(defaultRitorno | async)?.nomeLinea}}
       - {{(defaultRitorno | async)?.nome}} {{(defaultRitorno | async)?.orario}}</i>
     </div>
-    <div class="button-container">
+    <div class="button-container" *ngIf="isPresentOrFuture()">
       <button mat-fab (click)="showAnagraficaDialog()" color="accent">
         <mat-icon>edit</mat-icon>
       </button>
@@ -22,10 +22,10 @@
     <div class="column" *ngIf="this.andata && (andataStop|async) as res else noandata">
       <div class="ar-header">
         <h3>Andata</h3>
-        <button class="edit-button" mat-icon-button color="accent" (click)="editAndata()">
+        <button *ngIf="isPresentOrFuture()" class="edit-button" mat-icon-button color="accent" (click)="editAndata()">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="deleteAndata()">
+        <button *ngIf="isPresentOrFuture()" mat-icon-button color="warn" (click)="deleteAndata()">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -50,10 +50,10 @@
     <div class="column" *ngIf="this.ritorno && (ritornoStop|async) as res else noritorno">
       <div class="ar-header">
         <h3>Ritorno</h3>
-        <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()">
+        <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()" *ngIf="isPresentOrFuture()">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="deleteRitorno()">
+        <button mat-icon-button color="warn" (click)="deleteRitorno()" *ngIf="isPresentOrFuture()">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -79,7 +79,7 @@
       <div class="column">
         <div class="ar-header">
           <h3>Andata</h3>
-          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()">
+          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()" *ngIf="isPresentOrFuture()">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -90,7 +90,7 @@
       <div class="column">
         <div class="ar-header">
           <h3>Ritorno</h3>
-          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()">
+          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()" *ngIf="isPresentOrFuture()">
             <mat-icon>add</mat-icon>
           </button>
         </div>
