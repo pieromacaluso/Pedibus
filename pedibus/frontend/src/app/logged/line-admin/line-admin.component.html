@@ -13,7 +13,7 @@
   </div>
   <div >
     <mat-tab-group #tabs mat-align-tabs="center" backgroundColor="primary">
-      <mat-tab label="ADMIN">
+      <mat-tab label="AMMINISTRATORI DI LINEA">
         <div class="container" ngClass.lt-md="container-mobile" *ngIf="this.selectedLine && (guide$ |async) as guides">
           <ng-container *ngFor="let admin of guides" class="container">
             <app-guide-entry *ngIf="isAlreadyAdmin(admin) && !isSysAdmin(admin)"
