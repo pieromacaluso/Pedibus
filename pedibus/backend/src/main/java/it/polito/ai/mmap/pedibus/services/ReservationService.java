@@ -483,6 +483,7 @@ public class ReservationService {
     public void bulkReservation(ChildEntity childEntity) {
         LocalDate dateTime = LocalDate.now();
         List<String> listDate = mongoTimeService.generateListOfDateStartingFrom(dateTime);
+        List<ReservationDTO> listRes = new LinkedList<>();
         for (String data : listDate) {
             ReservationResource reservationResourceA = ReservationResource.builder()
                     .cfChild(childEntity.getCodiceFiscale()).idFermata(childEntity.getIdFermataAndata()).verso(true).build();
@@ -496,9 +497,10 @@ public class ReservationService {
 
             ReservationDTO reservationADTO = new ReservationDTO(reservationResourceA, idLineaA, dataFormatted);
             ReservationDTO reservationRDTO = new ReservationDTO(reservationResourceR, idLineaR, dataFormatted);
-            this.addReservation(reservationADTO);
-            this.addReservation(reservationRDTO);
+            listRes.add(reservationADTO);
+            listRes.add(reservationRDTO);
         }
+        reservationRepository.saveAll(listRes.stream().map(ReservationEntity::new).collect(Collectors.toList()));
     }
 
     /**
