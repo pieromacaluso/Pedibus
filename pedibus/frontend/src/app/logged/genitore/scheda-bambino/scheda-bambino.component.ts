@@ -164,6 +164,10 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
     this.date = date;
     if (this.bambino) {
       this.bambinoService.getStatus(this.bambino, date).subscribe((reservation) => {
+        this.andata = undefined;
+        this.ritorno = undefined;
+        this.andataStop = undefined;
+        this.ritornoStop = undefined;
         this.schoolClosed = false;
         for (const res of reservation) {
           if (res.verso) {

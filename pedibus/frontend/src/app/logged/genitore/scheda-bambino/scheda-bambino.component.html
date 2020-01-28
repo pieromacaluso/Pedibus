@@ -21,67 +21,74 @@
 
 
   <mat-card-content class="res-data" fxLayout="row" fxLayout.lt-sm="column" *ngIf="!this.schoolClosed else closed">
-    <div class="column" *ngIf="this.andata && (andataStop|async) as res else noandata">
-      <div class="ar-header">
-        <h3>Andata</h3>
-        <button *ngIf="isPresentOrFuture() && isOnTime(res.orario)" class="edit-button" mat-icon-button color="accent" (click)="editAndata()">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button *ngIf="isPresentOrFuture() && isOnTime(res.orario)" mat-icon-button color="warn" (click)="deleteAndata()">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-      <div>
-        <div>Linea: {{res.nomeLinea}}</div>
-        <div>Fermata: {{res.nome}}</div>
-        <div>Orario: {{res.orario}}</div>
-        <ng-container *ngIf="!andata.assente">
-          <div>Partenza
-            Effettiva: {{andata.presoInCarico ? (andata.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
-          <div>Arrivo a
-            Scuola: {{andata.arrivatoScuola ? (andata.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
-        </ng-container>
-        <ng-container *ngIf="andata.assente">
-          <div>Contrassegnato
-            Assente: {{andata.assente ? (andata.assenteDate | date:'medium') : "Non disponibile"}}</div>
-        </ng-container>
-      </div>
+    <div class="column" *ngIf="this.andata  else noandata">
+      <div *ngIf="(andataStop|async) as res else loading">
+        <div class="ar-header">
+          <h3>Andata</h3>
+          <button *ngIf="isPresentOrFuture() && isOnTime(res.orario)" class="edit-button" mat-icon-button color="accent"
+                  (click)="editAndata()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button *ngIf="isPresentOrFuture() && isOnTime(res.orario)" mat-icon-button color="warn"
+                  (click)="deleteAndata()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <div>Linea: {{res.nomeLinea}}</div>
+          <div>Fermata: {{res.nome}}</div>
+          <div>Orario: {{res.orario}}</div>
+          <ng-container *ngIf="!andata.assente">
+            <div>Partenza
+              Effettiva: {{andata.presoInCarico ? (andata.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
+            <div>Arrivo a
+              Scuola: {{andata.arrivatoScuola ? (andata.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
+          </ng-container>
+          <ng-container *ngIf="andata.assente">
+            <div>Contrassegnato
+              Assente: {{andata.assente ? (andata.assenteDate | date:'medium') : "Non disponibile"}}</div>
+          </ng-container>
+        </div>
 
-
+      </div>
     </div>
-    <div class="column" *ngIf="this.ritorno && (ritornoStop|async) as res else noritorno">
-      <div class="ar-header" >
-        <h3>Ritorno</h3>
-        <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()" *ngIf="isPresentOrFuture() && isOnTime(res.orario)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteRitorno()" *ngIf="isPresentOrFuture() && isOnTime(res.orario)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-      <div>
-        <div>Linea: {{res.nomeLinea}}</div>
-        <div>Fermata: {{res.nome}}</div>
-        <div>Orario: {{res.orario}}</div>
-        <ng-container *ngIf="!ritorno.assente">
-          <div>Partenza
-            Effettiva: {{ritorno.presoInCarico ? (ritorno.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
-          <div>Arrivo a
-            Scuola: {{ritorno.arrivatoScuola ? (ritorno.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
-        </ng-container>
-        <ng-container *ngIf="ritorno.assente">
-          <div>Contrassegnato
-            Assente: {{ritorno.assente ? (ritorno.assenteDate | date:'medium') : "Non disponibile"}}</div>
-        </ng-container>
-      </div>
+    <div class="column" *ngIf="this.ritorno else noritorno">
+      <div *ngIf="(ritornoStop|async) as res; else loading">
+        <div class="ar-header">
+          <h3>Ritorno</h3>
+          <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()"
+                  *ngIf="isPresentOrFuture() && isOnTime(res.orario)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteRitorno()"
+                  *ngIf="isPresentOrFuture() && isOnTime(res.orario)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <div>Linea: {{res.nomeLinea}}</div>
+          <div>Fermata: {{res.nome}}</div>
+          <div>Orario: {{res.orario}}</div>
+          <ng-container *ngIf="!ritorno.assente">
+            <div>Partenza
+              Effettiva: {{ritorno.presoInCarico ? (ritorno.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
+            <div>Arrivo a
+              Scuola: {{ritorno.arrivatoScuola ? (ritorno.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
+          </ng-container>
+          <ng-container *ngIf="ritorno.assente">
+            <div>Contrassegnato
+              Assente: {{ritorno.assente ? (ritorno.assenteDate | date:'medium') : "Non disponibile"}}</div>
+          </ng-container>
+        </div>
 
-
+      </div>
     </div>
     <ng-template #noandata>
       <div class="column">
         <div class="ar-header">
           <h3>Andata</h3>
-          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()" *ngIf="isPresentOrFuture() && isOnTime(limitAndata)">
+          <button class="add-button" mat-icon-button color="accent" (click)="addAndata()"
+                  *ngIf="isPresentOrFuture() && isOnTime(limitAndata)">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -92,7 +99,8 @@
       <div class="column">
         <div class="ar-header">
           <h3>Ritorno</h3>
-          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()" *ngIf="isPresentOrFuture() && isOnTime(limitRitorno)">
+          <button class="add-button" mat-icon-button color="accent" (click)="addRitorno()"
+                  *ngIf="isPresentOrFuture() && isOnTime(limitRitorno)">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -108,6 +116,14 @@
         Non è possibile effettuare alcuna prenotazione per la data indicata poichè la scuola sarà chiusa.
       </div>
     </mat-card-content>
+  </ng-template>
+
+  <ng-template #loading>
+    <mat-dialog-content>
+      <div class="loading-spinner">
+        <mat-spinner diameter="30"></mat-spinner>
+      </div>
+    </mat-dialog-content>
   </ng-template>
 
 </mat-card>
