@@ -105,13 +105,14 @@ public class ChildService {
                 childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
 
                 childRepository.save(childEntity);
-                // Remove one day
+                // Remove one day todo spostare o riutilizzare cose in mongoTimeService
                 LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).minusDays(1);
                 Date out = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
                 List<UserEntity> parents = this.getChildParents(cfChild);
                 for (UserEntity parent : parents) {
                     this.simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/" + childEntity.getCodiceFiscale(), childEntity);
                 }
+
                 Optional<List<ReservationEntity>> toBeUpdatedCheck = reservationService.reservationRepository.findByCfChildAndDataIsAfter(cfChild, out);
                 List<ReservationEntity> toBeUpdated = toBeUpdatedCheck.orElseGet(ArrayList::new);
                 for (ReservationEntity res : toBeUpdated) {
@@ -119,8 +120,9 @@ public class ChildService {
 
                     ReservationDTO oldreservationDTO = new ReservationDTO(res);
 
-                    ReservationEntity oldRes = new ReservationEntity();
-                    oldRes.setCfChild(reservationDTO.getCfChild());
+                    //todo a cosa servono ?
+//                    ReservationEntity oldRes = new ReservationEntity();
+//                    oldRes.setCfChild(reservationDTO.getCfChild());
 
                     Integer fermata = reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno();
                     String linea = lineeService.getFermataEntityById(reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno()).getIdLinea();
@@ -241,9 +243,8 @@ public class ChildService {
         ChildEntity childEntityNew = new ChildEntity(childDTO);
         childRepository.delete(childEntityOld);
         ChildEntity result = childRepository.save(childEntityNew);
-        LocalDate date = LocalDate.now();
-        ChildDefaultStopResource defaultStopResource = new ChildDefaultStopResource(result.getIdFermataAndata(), result.getIdFermataRitorno(), date.toString());
-        this.updateChildStop(result.getCodiceFiscale(), defaultStopResource, mongoTimeService.getMongoZonedDateTimeFromDate(date.toString(), false));
+        ChildDefaultStopResource defaultStopResource = new ChildDefaultStopResource(result.getIdFermataAndata(), result.getIdFermataRitorno(), MongoTimeService.getNow().toString());
+        this.updateChildStop(result.getCodiceFiscale(), defaultStopResource, MongoTimeService.getNow());
         this.notificheService.sendUpdateNotification();
         return result;
     }
