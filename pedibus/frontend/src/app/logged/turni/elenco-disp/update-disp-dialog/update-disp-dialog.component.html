@@ -3,7 +3,7 @@
   <div mat-dialog-content class="dialog-theme">
     <p class="mat-body">Stai modificando la seguente disponibilità:</p>
     <p class="mat-body"><b>Guida:</b> {{data.disps.guideUsername}}</p>
-    <p class="mat-body"><b>Data:</b> {{data.turno.data}}</p>
+    <p class="mat-body"><b>Data:</b> {{data.turno.data | date:'fullDate'}}</p>
     <p class="mat-body"><b>Linea:</b> {{data.disps.nomeLinea}}</p>
     <p class="mat-body"><b>Verso:</b> {{data.turno.verso ? "Andata" : "Ritorno"}}</p>
     <mat-form-field>
