@@ -9,18 +9,18 @@
       <mat-card-header><h1>Disponibilità</h1></mat-card-header>
       <div id="disp-status" class="no-stops mat-h3">
         <div *ngIf="this.disp.guideUsername else nodisp">
-          <div id="turno-status" class="no-stops mat-h2">
-            Stato del turno:
-            <span [class.status-ok]="this.turno.isOpen && !this.turno.isExpired"
-                  [class.status-warn]="!this.turno.isOpen && !this.turno.isExpired"
-                  [class.status-nope]="this.turno.isExpired">{{this.turno.isExpired ? "Scaduto" : (this.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
-          </div>
           <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap="20px">
             <div *ngIf="(this.fermataDisp|async) as f" fxFlex="50">
               <app-stop-map [lat]="f.location.coordinates[0]" [lng]="f.location.coordinates[1]"
                             [description]="f.nome"></app-stop-map>
             </div>
             <div fxFlex="50">
+              <div id="turno-status" class=" mat-h2">
+                Stato del turno:
+                <span [class.status-ok]="this.turno.isOpen && !this.turno.isExpired"
+                      [class.status-warn]="!this.turno.isOpen && !this.turno.isExpired"
+                      [class.status-nope]="this.turno.isExpired">{{this.turno.isExpired ? "Scaduto" : (this.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
+              </div>
               <div>
                 Linea di {{this.p.verso == 'Andata' ? 'Partenza' : 'Arrivo'}}:
                 <span class="status">{{this.disp.nomeLinea}}</span>
@@ -38,7 +38,8 @@
                                 [ngClass]=" this.disp.isConfirmed ?'status-ok':'status-warn'">{{this.disp.isConfirmed ? "Confermato" : "In attesa di conferma..."}}</span>
                 <div *ngIf="this.disp.isConfirmed">
                   Conferma Ricezione: <span
-                  class="status" [ngClass]=" this.disp.isAck ?'status-ok':'status-warn'">{{this.disp.isAck ? "Comunicata" : "In attesa di conferma..."}}</span>
+                  class="status"
+                  [ngClass]=" this.disp.isAck ?'status-ok':'status-warn'">{{this.disp.isAck ? "Comunicata" : "In attesa di conferma..."}}</span>
                 </div>
               </div>
               <div>
@@ -73,56 +74,66 @@
           <div class="mat-h3">
             Non hai comunicato la tua disponibilità per il tragitto di {{this.p.verso}} in data {{this.p.data | date}}.
           </div>
-          <div class="mat-h2">
-            Inserisci Disponibilità
-          </div>
-          <div fxLayout="row" fxLayout.lt-sm="column">
-            <div *ngIf="this.linee" fxFlex.lt-sm="100%">
-              <mat-form-field color="accent">
-                <mat-label>Seleziona la linea</mat-label>
-                <mat-select *ngIf="this.linee" (selectionChange)="getTurno(lineaSelect.value)" #lineaSelect>
-                  <mat-option *ngFor="let linea of linee" [value]="linea">
-                    <p>{{(linea | fortmatLine)}}</p>
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+          <div fxLayout.lt-sm="column" fxLayout="row" fxLayoutGap="20px">
+            <div fxFlex="30">
+              <div class="mat-h2">
+                Inserisci Disponibilità
+              </div>
+              <div fxLayout="row" fxLayout.lt-sm="column">
+                <div *ngIf="this.linee" fxFlex="100%">
+                  <mat-form-field color="accent" fxFlex="100%">
+                    <mat-label>Seleziona la linea</mat-label>
+                    <mat-select *ngIf="this.linee" (selectionChange)="getTurno(lineaSelect.value)" #lineaSelect>
+                      <mat-option *ngFor="let linea of linee" [value]="linea">
+                        <p>{{(linea | fortmatLine)}}</p>
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div fxLayout="column" *ngIf="this.turno && this.linea">
+                <form [formGroup]="dispForm" (ngSubmit)="addDisp(this.selectedFermataCheck)" fxLayout="column">
+                  <div fxFlex="100%">
+                    <mat-form-field fxFlex="100%">
+                      <mat-label>Fermata {{this.p.verso == 'Andata' ? 'partenza' : 'arrivo'}}:</mat-label>
+                      <mat-select [disabled]="!this.turno.isOpen || this.turno.isExpired" #idFermata
+                                  formControlName="stopSelect" (valueChange)="selectFermata($event.value)"
+                                  (selectionChange)="selectFermata($event.value)"
+                      >
+                        <mat-option
+                          *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)"
+                          [value]="stop.id">{{stop.nome}} {{stop.orario}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <br>
+                  <div fxLayout="column" fxLayout.lt-sm="column" fxFlexAlign.lt-sm="center" class="submit-part">
+                    <div id="turno-status-2" class="mat-body" *ngIf="this.turno && this.linea">
+                  <span [class.status-ok]="this.turno.isOpen && !this.turno.isExpired"
+                        [class.status-warn]="!this.turno.isOpen && !this.turno.isExpired"
+                        [class.status-nope]="this.turno.isExpired">{{this.turno.isExpired ? "Turno Scaduto" : (this.turno.isOpen ? "Turno Aperto" : "Turno Chiuso")}}</span>
+                    </div>
+                    <button type="submit" [disabled]="!this.turno.isOpen || this.turno.isExpired || !dispForm.valid"
+                            mat-raised-button
+                            color="primary">
+                      <mat-progress-bar
+                        class="progress-bar-button"
+                        mode="indeterminate"
+                        *ngIf="this.disp.add"
+                      ></mat-progress-bar>
+                      Invia Disponibilità
+                    </button>
+                  </div>
+
+                </form>
+              </div>
             </div>
-            <div id="turno-status-2" class="no-stops mat-h2" *ngIf="this.turno && this.linea">
-              Stato del turno:
-              <span [class.status-ok]="this.turno.isOpen && !this.turno.isExpired"
-                    [class.status-warn]="!this.turno.isOpen && !this.turno.isExpired"
-                    [class.status-nope]="this.turno.isExpired">{{this.turno.isExpired ? "Scaduto" : (this.turno.isOpen ? "Aperto" : "Chiuso")}}</span>
-            </div>
-          </div>
-          <div fxLayout="row" fxLayout.lt-sm="column" *ngIf="this.turno && this.linea">
-            <form [formGroup]="dispForm" (ngSubmit)="addDisp(this.selectedFermataCheck)">
-              <mat-form-field style="padding-right: 10px">
-                <mat-label>Fermata {{this.p.verso == 'Andata' ? 'partenza' : 'arrivo'}}:</mat-label>
-                <mat-select [disabled]="!this.turno.isOpen || this.turno.isExpired" #idFermata
-                            formControlName="stopSelect" (valueChange)="selectFermata($event.value)"
-                            (selectionChange)="selectFermata($event.value)"
-                >
-                  <mat-option *ngFor="let stop of (this.p.verso == 'Andata' ? this.linea.andata : this.linea.ritorno)"
-                              [value]="stop.id">{{stop.nome}} {{stop.orario}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <button type="submit" [disabled]="!this.turno.isOpen || this.turno.isExpired || !dispForm.valid"
-                      mat-raised-button
-                      color="primary">
-                <mat-progress-bar
-                  class="progress-bar-button"
-                  mode="indeterminate"
-                  *ngIf="this.disp.add"
-                ></mat-progress-bar>
-                Invia Disponibilità
-              </button>
-            </form>
-          </div>
-          <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" *ngIf="this.turno && this.linea">
-            <div fxFlex="100">
-              <app-stops-map [center]="this.selectedFermata ? this.selectedFermata.location : undefined"
-                             [stops]="this.stops" [description]="this.stopsDesc"
-                             (changeStop)="selectFermataIndex($event)"></app-stops-map>
+            <div fxFlex="70" fxFlex.lt-sm="100"fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" *ngIf="this.turno && this.linea">
+              <div fxFlex="100">
+                <app-stops-map [center]="this.selectedFermata ? this.selectedFermata.location : undefined"
+                               [stops]="this.stops" [description]="this.stopsDesc"
+                               (changeStop)="selectFermataIndex($event)"></app-stops-map>
+              </div>
             </div>
           </div>
         </ng-template>

@@ -1,5 +1,6 @@
 <app-header>
   <div [@fadeAnimation]="prepareRoute(outlet)">
     <router-outlet  (activate)="changeOfRoutes()" #outlet="outlet"></router-outlet>
+    <div style="height:80px" fxShow.lt-sm=""></div>
   </div>
 </app-header>
