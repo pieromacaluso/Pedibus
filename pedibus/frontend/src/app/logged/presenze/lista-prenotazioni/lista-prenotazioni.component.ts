@@ -189,7 +189,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   }
 
   canModify() {
-    return this.authService.isAdmin() || this.resource.canModify;
+    return this.authService.isSysAdmin() || this.resource.canModify;
     // return true;
   }
 
