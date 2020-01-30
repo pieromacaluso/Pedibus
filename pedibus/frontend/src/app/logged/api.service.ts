@@ -144,7 +144,7 @@ export class ApiService {
   /**
    * Segnala la presoInCarico di un alunno
    */
-  postRestore(alunno: Alunno, presenza: PrenotazioneRequest,) {
+  postRestore(alunno: Alunno, presenza: PrenotazioneRequest) {
     const idVerso = this.versoToInt(presenza.verso);
     return this.httpClient
       .post(this.baseURL + 'reservations/restore/' + presenza.linea + '/' + idVerso + '/' + this.datePipe
@@ -235,7 +235,7 @@ export class ApiService {
   }
 
   getRoles(): Observable<string[]> {
-    return this.httpClient.get<string[]>(this.baseURL + '/sysadmin/roles',).pipe(first());
+    return this.httpClient.get<string[]>(this.baseURL + '/sysadmin/roles').pipe(first());
 
   }
 
