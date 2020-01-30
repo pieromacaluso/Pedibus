@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.pedibus.controller;
 
 import io.swagger.annotations.ApiOperation;
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.services.LineeService;
@@ -27,6 +28,7 @@ public class LineeController {
     @GetMapping("/lines")
     @ApiOperation("Restituisce gli id delle linee presenti")
     public List<String> getLines() {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/lines"));
         return lineeService.getAllLinesIds();
     }
 
@@ -38,6 +40,7 @@ public class LineeController {
     @GetMapping("/lines/name")
     @ApiOperation("Restituisce i nomi delle linee presenti")
     public List<String> getLinesNames() {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/lines/name"));
         return lineeService.getAllLinesNames();
     }
 
@@ -50,6 +53,7 @@ public class LineeController {
     @GetMapping("/lines/{id_linea}")
     @ApiOperation("Restituisce i dettagli delle fermate per la linea specificata")
     public LineaDTO getStopsLine(@PathVariable("id_linea") String idLinea) {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/lines/"+idLinea));
         return lineeService.getLineaDTOById(idLinea);
     }
 
@@ -63,6 +67,7 @@ public class LineeController {
     @GetMapping("/lines/stops/{id_fermata}")
     @ApiOperation("Restituisce la fermata richiesta")
     public FermataDTO getStopById(@PathVariable("id_fermata") Integer idFermata) {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/lines/stop/"+idFermata));
         return lineeService.getFermataDTOById(idFermata);
     }
 

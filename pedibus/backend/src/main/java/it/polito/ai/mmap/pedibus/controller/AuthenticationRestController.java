@@ -83,6 +83,7 @@ public class AuthenticationRestController {
      */
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/register "+userDTO.getEmail()));
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error(err.toString()));
             throw new RegistrationNotValidException(bindingResult.getAllErrors().stream()
@@ -102,6 +103,7 @@ public class AuthenticationRestController {
     @Deprecated
     @GetMapping("/register/checkMail/{email}")
     public boolean checkUserMailDuplicate(@PathVariable String email) {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/register/checkMail/"+email));
         try {
             userService.loadUserByUsername(email);
             return true;
@@ -119,6 +121,7 @@ public class AuthenticationRestController {
     @Deprecated
     @GetMapping("/confirm/{randomUUID}")
     public void confirm(@PathVariable("randomUUID") String randomUUID) {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/confirm/"+randomUUID));
         ObjectId id = new ObjectId(randomUUID);
         userService.enableUser(id);
     }
@@ -134,6 +137,7 @@ public class AuthenticationRestController {
     @ApiOperation("Richiede l'invio della mail di recupero pw per l'account specificato")
     @PostMapping("/recover")
     public void recover(@RequestBody String email) {
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/recover "+email));
         try {
             userService.recoverAccount(email);
         } catch (UserNotFoundException ignored) {
@@ -154,6 +158,7 @@ public class AuthenticationRestController {
     public void recoverVerification(@ApiParam(name = "userDTO", value = "Le credenzialia aggiornate") @Valid @RequestBody UserDTO userDTO,
                                     BindingResult bindingResult,
                                     @ApiParam(name = "randomUUID", value = "Il token inviato per mail") @PathVariable("randomUUID") String randomUUID) {
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/recover/"+randomUUID));
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error("recover/randomUUID -> " + err.toString()));
             throw new RecoverProcessNotValidException();
@@ -178,6 +183,7 @@ public class AuthenticationRestController {
     public void newUserVerification(@ApiParam(name = "newuserPassDTO", value = "Contiene la password di default e quella nuova") @Valid @RequestBody NewUserPassDTO newUserPassDTO,
                                     BindingResult bindingResult,
                                     @ApiParam(name = "randomUUID", value = "Il token inviato per mail") @PathVariable("randomUUID") String randomUUID) {
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/new-user/"+randomUUID));
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(err -> logger.error("new-user/randomUUID -> " + err.toString()));
             throw new TokenProcessException(PedibusString.INVALID_DATA);
