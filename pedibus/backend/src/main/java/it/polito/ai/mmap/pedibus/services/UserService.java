@@ -122,7 +122,7 @@ public class UserService implements UserDetailsService {
      * @param userInsertResource DTO utente con i nuovi dati.
      */
     public void updateUser(String userId, UserInsertResource userInsertResource) {
-        if(userId.equals(superAdminMail) || userInsertResource.getRoleIdList().contains("ROLE_SYSTEM-ADMIN"))
+        if (userId.equals(superAdminMail) || userInsertResource.getRoleIdList().contains("ROLE_SYSTEM-ADMIN"))
             throw new PermissionDeniedException();
         UserEntity userEntity = ((UserEntity) loadUserByUsername(userId));
         userEntity.setName(userInsertResource.getName());
@@ -131,7 +131,12 @@ public class UserService implements UserDetailsService {
         lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
         insertAdminLine(userInsertResource);
         userEntity.setRoleList(userInsertResource.getRoleIdList().stream().map(this::getRoleEntityById).collect(Collectors.toCollection(HashSet::new)));
-        userEntity.setChildrenList(userInsertResource.getChildIdList());
+
+        if (userInsertResource.getRoleIdList().contains("ROLE_USER"))
+            userEntity.setChildrenList(userInsertResource.getChildIdList());
+        else
+            userEntity.setChildrenList(Collections.emptySet());
+
         userRepository.save(userEntity);
         this.notificheService.sendUpdateNotification();
     }
