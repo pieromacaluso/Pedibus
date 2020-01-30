@@ -112,7 +112,7 @@ a {
   white-space: normal;
 }
 
-button{
+button {
   font-size: 110%;
   min-width: min-content;
 }
@@ -132,4 +132,20 @@ h1 {
 
 mat-dialog-content {
   max-height: 10vw;
+}
+
+.progress-bar-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.loading-hover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #2196f37d;
 }

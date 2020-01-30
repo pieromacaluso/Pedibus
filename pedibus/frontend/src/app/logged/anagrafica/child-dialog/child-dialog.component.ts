@@ -32,6 +32,7 @@ export class ChildDialogComponent implements OnInit {
   arrayLine: StopsByLine[];
   mapLine: Map<string, StopsByLine>;
   private cfOld: string;
+  private addingChild = false;
 
   constructor(
     private anagraficaDialogService: AnagraficaDialogService,
@@ -106,22 +107,29 @@ export class ChildDialogComponent implements OnInit {
   }
 
   addChild() {
-    const child: ChildrenDTO = this.profileForm.value;
-    this.anagraficaDialogService.addChild(child).subscribe((ch) => {
-      // TODO: Gestisci successo
-      this.dialogRef.close();
-    }, error => {
-      // TODO: Gestisci errore.
-    });
+    if (!this.addingChild) {
+      const child: ChildrenDTO = this.profileForm.value;
+      this.addingChild = true;
+      this.anagraficaDialogService.addChild(child).subscribe((ch) => {
+        this.addingChild = false;
+        this.dialogRef.close();
+      }, error => {
+        this.addingChild = false;
+      });
+    }
   }
 
   updateChild() {
-    const child: ChildrenDTO = this.profileForm.value;
-    this.anagraficaDialogService.updateChild(this.cfOld, child).subscribe((ch) => {
-      // TODO: Gestisci successo
-      this.dialogRef.close();
-    }, error => {
-      // TODO: Gestisci errore.
-    });
+    if (!this.addingChild) {
+      const child: ChildrenDTO = this.profileForm.value;
+      this.anagraficaDialogService.updateChild(this.cfOld, child).subscribe((ch) => {
+        // TODO: Gestisci successo
+        this.addingChild = false;
+        this.dialogRef.close();
+      }, error => {
+        // TODO: Gestisci errore.
+        this.addingChild = false;
+      });
+    }
   }
 }

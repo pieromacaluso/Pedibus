@@ -1,4 +1,4 @@
-<ng-container *ngIf="(this.observableLines | async) || (this.lineeObs | async)">
+<ng-container *ngIf="(this.observableLines | async) || (this.lineeObs | async) else loading">
   <div class="mat-h2"><span *ngIf="this.data">Modifica </span><span *ngIf="!this.data">Aggiungi </span>Bambino</div>
   <mat-dialog-content ngClass.lt-sm="mobile">
     <form #form [formGroup]="profileForm" fxLayout="column">
@@ -54,8 +54,9 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <button [disabled]="!profileForm.valid" mat-raised-button color="primary" (click)="updateChild()">Modifica
-          Bambino
+        <button [disabled]="!profileForm.valid" mat-raised-button color="primary" (click)="updateChild()">
+          <mat-progress-bar class="progress-bar-button" *ngIf="this.addingChild" mode="indeterminate"></mat-progress-bar>
+          Modifica Bambino
         </button>
 
       </div>
@@ -99,8 +100,9 @@
 
 
         </div>
-        <button [disabled]="!profileForm.valid" mat-raised-button color="primary" (click)="addChild()">Aggiungi
-          Bambino
+        <button [disabled]="!profileForm.valid" mat-raised-button color="primary" [disableRipple]="this.addingChild" (click)="addChild()">
+          <mat-progress-bar class="progress-bar-button" *ngIf="this.addingChild" mode="indeterminate"></mat-progress-bar>
+          Aggiungi Bambino
         </button>
       </div>
 
@@ -115,5 +117,6 @@
     </div>
   </mat-dialog-content>
 </ng-template>
+
 
 

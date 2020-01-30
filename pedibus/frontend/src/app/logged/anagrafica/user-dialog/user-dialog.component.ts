@@ -24,7 +24,7 @@ export class UserDialogComponent implements OnInit, OnDestroy {
     surname: new FormControl('', Validators.required),
     userId: new FormControl('', [Validators.required, Validators.email]),
     user: new FormControl(),
-    guide: new FormControl( ),
+    guide: new FormControl(),
     lineAdmin: new FormControl(),
   });
   oldEmail: string;
@@ -32,6 +32,7 @@ export class UserDialogComponent implements OnInit, OnDestroy {
   lines: Observable<Map<string, StopsByLine>>;
   childSearchObs: Observable<ChildrenDTO[]>;
   userDTOres: UserDTO;
+  addingUser = false;
 
   constructor(
     private anagraficaDialogService: AnagraficaDialogService,
@@ -76,37 +77,45 @@ export class UserDialogComponent implements OnInit, OnDestroy {
   }
 
   updateUserDialog() {
-    const user: UserDTO = this.userDTOres;
-    user.name = this.profileForm.get('name').value;
-    user.surname = this.profileForm.get('surname').value;
-    user.userId = this.profileForm.get('userId').value;
-    user.childIdList = this.userDTOres.childIdList;
-    user.lineaIdList = this.userDTOres.lineaIdList;
-    user.roleIdList = [];
-    if (this.profileForm.get('user').value) {
-      user.roleIdList.push('ROLE_USER');
-    }
-    if (this.profileForm.get('guide').value) {
-      user.roleIdList.push('ROLE_GUIDE');
-    }
-    if (this.profileForm.get('lineAdmin').value) {
-      user.roleIdList.push('ROLE_ADMIN');
-    }
+    if (!this.addingUser) {
+      this.addingUser = true;
+      const user: UserDTO = this.userDTOres;
+      user.name = this.profileForm.get('name').value;
+      user.surname = this.profileForm.get('surname').value;
+      user.userId = this.profileForm.get('userId').value;
+      user.childIdList = this.userDTOres.childIdList;
+      user.lineaIdList = this.userDTOres.lineaIdList;
+      user.roleIdList = [];
+      if (this.profileForm.get('user').value) {
+        user.roleIdList.push('ROLE_USER');
+      }
+      if (this.profileForm.get('guide').value) {
+        user.roleIdList.push('ROLE_GUIDE');
+      }
+      if (this.profileForm.get('lineAdmin').value) {
+        user.roleIdList.push('ROLE_ADMIN');
+      }
 
-    if (this.data) {
-      this.anagraficaDialogService.updateUser(this.oldEmail, user).subscribe((u) => {
-        // TODO: Gestisci successo
-        this.dialogRef.close();
-      }, error => {
-        // TODO: Gestisci errore.
-      });
-    } else {
-      this.anagraficaDialogService.createUser(user).subscribe((u) => {
-        // TODO: Gestisci successo
-        this.dialogRef.close();
-      }, error => {
-        // TODO: Gestisci errore.
-      });
+      if (this.data) {
+        this.anagraficaDialogService.updateUser(this.oldEmail, user).subscribe((u) => {
+          // TODO: Gestisci successo
+          this.addingUser = false;
+          this.dialogRef.close();
+        }, error => {
+          // TODO: Gestisci errore.
+          this.addingUser = false;
+        });
+      } else {
+        this.anagraficaDialogService.createUser(user).subscribe((u) => {
+          // TODO: Gestisci successo
+          this.addingUser = false;
+
+          this.dialogRef.close();
+        }, error => {
+          this.addingUser = false;
+          // TODO: Gestisci errore.
+        });
+      }
     }
   }
 

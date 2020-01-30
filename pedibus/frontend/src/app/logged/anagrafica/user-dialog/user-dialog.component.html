@@ -72,6 +72,7 @@
     <button
       [disabled]="!profileForm.valid || !(guideCheckBox.checked || utenteCheckBox.checked || matCheckboxLine.checked) || (matCheckboxLine.checked && this.userDTOres.lineaIdList.length == 0)"
       mat-raised-button color="primary" (click)="updateUserDialog()">
+      <mat-progress-bar class="progress-bar-button" mode="indeterminate" *ngIf="this.addingUser"></mat-progress-bar>
       <span *ngIf="this.data">Applica Modifiche</span>
       <span *ngIf="!this.data">Aggiungi Utente</span>
     </button>
