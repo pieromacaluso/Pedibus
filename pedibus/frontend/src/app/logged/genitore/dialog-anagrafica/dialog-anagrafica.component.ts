@@ -1,13 +1,14 @@
-import {Component, OnInit, Inject} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {ApiService} from '../../api.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import {ChildrenDTO} from '../dtos';
 import {Fermata, StopsByLine} from '../../line-details';
-import {BambinoService} from '../scheda-bambino/bambino.service';
 import {forkJoin, Observable} from 'rxjs';
-import {finalize, first, tap} from 'rxjs/operators';
+import {finalize, first} from 'rxjs/operators';
 import {Point} from 'geojson';
+import * as moment from 'moment';
+
 
 export interface AnagraficaDialogData {
   child: ChildrenDTO;
@@ -149,4 +150,7 @@ export class DialogAnagraficaComponent implements OnInit {
     this.dialogRef.close({data: this.data});
   }
 
+  getDateMod() {
+    return moment().add(1, 'days');
+  }
 }

@@ -58,15 +58,11 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
   showAnagraficaDialog() {
     this.bambinoService.openDialog(this.bambino, this.linee, this.defaultAndata, this.defaultRitorno).subscribe((data) => {
       if (data) {
-        let today = moment();
-        if (!this.isOnTime(data.data.orarioAndata) || !this.isOnTime(data.data.orarioRitorno)) {
-          today = moment(today).add(1, 'days');
-        }
-        today.toDate();
+        const tomorrow = moment().add(1, 'days');
         // this.bambino = data.data.child;
         // this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
         // this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
-        this.bambinoService.updateFermate(data.data.child, today.toDate()).subscribe((d) => {
+        this.bambinoService.updateFermate(data.data.child, tomorrow.toDate()).subscribe((d) => {
         }, (error) => {
         });
       }
