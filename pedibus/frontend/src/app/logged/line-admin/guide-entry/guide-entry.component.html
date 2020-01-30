@@ -10,7 +10,7 @@
       </div>
     </div>
     <div fxLayout="row" fxLayout.lt-sm="column" ngClass.lt-sm="button-admin">
-      <button *ngIf="interaction && isAdmin()" mat-stroked-button color="warn" (click)="deleteAdmin()">
+      <button *ngIf="interaction && isAdmin() && !isSelf()" mat-stroked-button color="warn" (click)="deleteAdmin()">
         Revoca privilegio
       </button>
       <button *ngIf="interaction && isGuide()" mat-stroked-button class="primary" color="primary" (click)="addAdmin()">

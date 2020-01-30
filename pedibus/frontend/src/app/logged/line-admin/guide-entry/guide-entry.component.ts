@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {UserDTO} from '../../anagrafica/dtos';
 import {ApiService} from '../../api.service';
 import {AnagraficaService} from '../../anagrafica/anagrafica.service';
+import {AuthService} from '../../../auth/auth.service';
 
 export enum AdminGuide {
   Admin,
@@ -20,7 +21,7 @@ export class GuideEntryComponent implements OnInit {
   @Input() interaction: boolean;
   @Input() lineID: string;
 
-  constructor(private anagraficaService: AnagraficaService) {
+  constructor(private anagraficaService: AnagraficaService, private authService: AuthService) {
   }
 
   ngOnInit() {
@@ -50,5 +51,9 @@ export class GuideEntryComponent implements OnInit {
       }, error => {
         // TODO: gestisci fallimento
       });
+  }
+
+  isSelf() {
+    return this.user.userId === this.authService.getUsername();
   }
 }
