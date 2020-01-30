@@ -219,20 +219,11 @@ public class AdminRestController {
     }
 
     /**
-     * Ritorna tutti gli utenti guida di cui il principal è amministratore.
+     * Restituisce gli utenti che possono essere resi amministratori di linea
      */
-    @ApiOperation("Restituisce le guide di cui il richiedente è amministratore")
-    @GetMapping("/admin/guides")
+    @ApiOperation("Restituisce gli utenti che possono essere resi amministratori di linea")
+    @GetMapping("/admin/users")
     public List<UserInsertResource> getGuideUsers() throws RoleNotFoundException {
         return this.userService.getAllGuidesAdmin();
-    }
-
-    /**
-     * Ritorna la guida di cui il principal è amministratore partendo dall'email
-     */
-    @GetMapping("/admin/users")
-    @ApiOperation("Ritorna la guida di cui il richiedente è amministratore partendo dall'email")
-    public UserInsertResource getGuideUsers(@ApiParam(name = "email", value = "L'ID della guida") @RequestBody String email) {
-        return this.userService.getUserByEmail(email);
     }
 }

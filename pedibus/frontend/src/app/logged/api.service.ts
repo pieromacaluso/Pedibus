@@ -266,8 +266,7 @@ export class ApiService {
   }
 
   getGuides() {
-    return this.httpClient.get<UserDTO[]>(this.baseURL + '/admin/guides').pipe(first());
-
+    return this.httpClient.get<UserDTO[]>(this.baseURL + '/admin/users').pipe(first());
   }
 
   downloadJson(prenotazione: PrenotazioneRequest) {
