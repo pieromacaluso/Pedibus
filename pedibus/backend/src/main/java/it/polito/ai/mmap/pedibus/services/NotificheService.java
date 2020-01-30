@@ -172,12 +172,14 @@ public class NotificheService {
         List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
         FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat hFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         List<NotificaEntity> notificaEntities = new ArrayList<>();
         for (UserEntity parent : parents) {
             notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
-                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato consegnato/a " +
-                            (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getArrivatoScuolaDate()), null));
+                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è arrivato/a " +
+                            (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + hFormat.format(reservationEntity.getArrivatoScuolaDate()) +
+                            " del " + dateFormat.format(reservationEntity.getArrivatoScuolaDate()), null));
         }
         return notificaEntities;
     }
@@ -186,12 +188,14 @@ public class NotificheService {
         List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
         FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat hFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         List<NotificaEntity> notificaEntities = new ArrayList<>();
         for (UserEntity parent : parents) {
             notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
-                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato prelevato/a " +
-                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getPresoInCaricoDate()), null));
+                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato/a preso/a in carico " +
+                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + hFormat.format(reservationEntity.getPresoInCaricoDate()) +
+                    " del " + dateFormat.format(reservationEntity.getPresoInCaricoDate()), null));
         }
         return notificaEntities;
     }
@@ -200,12 +204,14 @@ public class NotificheService {
         List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
         FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat hFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         List<NotificaEntity> notificaEntities = new ArrayList<>();
         for (UserEntity parent : parents) {
             notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
                     childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato segnalato/a come assente alla partenza " +
-                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + simpleDateFormat.format(reservationEntity.getAssenteDate()), null));
+                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + hFormat.format(reservationEntity.getAssenteDate()) +
+                            " del " + dateFormat.format(reservationEntity.getAssenteDate()), null));
         }
         return notificaEntities;
     }
