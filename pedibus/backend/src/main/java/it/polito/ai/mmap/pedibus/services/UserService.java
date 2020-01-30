@@ -485,11 +485,13 @@ public class UserService implements UserDetailsService {
      * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione
      * si troverà i privilegi di admin
      *
+     * Un admin non può togliersi da solo i privilegi
      * @param permissionResource Linea e booleano
      * @param mail               email
      */
     public void setUserAdmin(PermissionResource permissionResource, String mail) {
-        if ((lineeService.isAdminLine(permissionResource.getIdLinea()) && !lineeService.isMasterLine(mail, permissionResource.getIdLinea()))
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ((lineeService.isAdminLine(permissionResource.getIdLinea()) && !lineeService.isMasterLine(mail, permissionResource.getIdLinea()) && !principal.getUsername().equals(mail))
                 || this.isSysAdmin()) {
             UserInsertResource userEntity = this.getUserByEmail(mail);
             if (permissionResource.isAddOrDel()) {
