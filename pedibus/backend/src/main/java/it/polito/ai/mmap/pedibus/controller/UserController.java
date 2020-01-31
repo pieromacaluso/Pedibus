@@ -40,7 +40,7 @@ public class UserController {
     }
 
     /**
-     * Restituisce lo status di un bambino dato data e verso, lo status indica se il bambino è stato preso in carico o è arrivato a scuola
+     * Restituisce lo status di un bambino a partire da data e verso, lo status indica se il bambino è stato preso in carico o è arrivato a scuola
      *
      * @param cfChild codice fiscale
      * @param date    data

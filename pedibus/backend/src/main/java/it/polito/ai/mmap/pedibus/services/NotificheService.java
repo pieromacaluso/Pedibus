@@ -195,7 +195,7 @@ public class NotificheService {
             notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
                     childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato/a preso/a in carico " +
                             (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + hFormat.format(reservationEntity.getPresoInCaricoDate()) +
-                    " del " + dateFormat.format(reservationEntity.getPresoInCaricoDate()), null));
+                            " del " + dateFormat.format(reservationEntity.getPresoInCaricoDate()), null));
         }
         return notificaEntities;
     }
@@ -269,20 +269,8 @@ public class NotificheService {
         Optional<RoleEntity> roleEntitySys = this.roleRepository.findById("ROLE_SYSTEM-ADMIN");
         Optional<RoleEntity> roleEntityAdmin = this.roleRepository.findById("ROLE_ADMIN");
 
-        if (roleEntitySys.isPresent()) {
-            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(roleEntitySys.get());
-            if (userEntities.isPresent()) {
-                for (UserEntity admin : userEntities.get())
-                    this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");
-            }
-        }
-        if (roleEntityAdmin.isPresent()) {
-            Optional<List<UserEntity>> userEntities = this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(roleEntityAdmin.get());
-            if (userEntities.isPresent()) {
-                for (UserEntity admin : userEntities.get())
-                    this.simpMessagingTemplate.convertAndSendToUser(admin.getUsername(), "/anagrafica", "updates");
-            }
-        }
+        roleEntitySys.ifPresent(sysRole -> userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(sysRole).forEach(sysEntity -> this.simpMessagingTemplate.convertAndSendToUser(sysEntity.getUsername(), "/anagrafica", "updates")));
+        roleEntityAdmin.ifPresent(adminRole -> userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(adminRole).forEach(adminEntity -> this.simpMessagingTemplate.convertAndSendToUser(adminEntity.getUsername(), "/anagrafica", "updates")));
     }
 
     /**

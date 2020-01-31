@@ -7,6 +7,4 @@ import java.util.List;
 
 
 public interface RoleRepository extends MongoRepository<RoleEntity, String> {
-//    RoleEntity findByRole(String role);
-//    RoleEntity findRoleEntityByRole(String role);
 }

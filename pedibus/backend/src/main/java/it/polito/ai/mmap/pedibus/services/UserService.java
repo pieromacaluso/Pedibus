@@ -466,11 +466,9 @@ public class UserService implements UserDetailsService {
     public List<UserInsertResource> getAllGuidesAdmin() throws RoleNotFoundException {
         List<UserEntity> userEntities =
                 this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(
-                        this.roleRepository.findById("ROLE_GUIDE").orElseThrow(RoleNotFoundException::new))
-                        .orElseGet(ArrayList::new);
+                        this.roleRepository.findById("ROLE_GUIDE").orElseThrow(RoleNotFoundException::new));
         userEntities.addAll(this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(
-                this.roleRepository.findById("ROLE_ADMIN").orElseThrow(RoleNotFoundException::new))
-                .orElseGet(ArrayList::new));
+                this.roleRepository.findById("ROLE_ADMIN").orElseThrow(RoleNotFoundException::new)));
         return userEntities.stream().distinct().map(e -> new UserInsertResource(e, this.lineeService.getAdminLineForUser(e.getUsername()))).collect(Collectors.toList());
     }
 

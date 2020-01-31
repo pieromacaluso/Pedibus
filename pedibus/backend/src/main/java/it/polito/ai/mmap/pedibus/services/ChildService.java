@@ -90,7 +90,7 @@ public class ChildService {
      *
      * @param cfChild codice fiscale del bambino
      * @param stopRes informazioni sulla nuova fermata da considerare
-     * @param date data di partenza da cui iniziare le modifiche
+     * @param date    data di partenza da cui iniziare le modifiche
      */
     public void updateChildStop(String cfChild, ChildDefaultStopResource stopRes, Date date) {
         Optional<ChildEntity> c = childRepository.findById(cfChild);
@@ -175,13 +175,12 @@ public class ChildService {
 
     /**
      * Ottieni lista parenti dato il codice fiscale del bambino
+     *
      * @param cfChild codice fiscale bambino
      * @return Lista di parenti
      */
     public List<UserEntity> getChildParents(String cfChild) {
-        Optional<List<UserEntity>> userEntities = this.userService.userRepository.findAllByChildrenListIsContaining(cfChild);
-
-        return userEntities.orElseGet(ArrayList::new);
+        return this.userService.userRepository.findAllByChildrenListIsContaining(cfChild);
     }
 
     /**
@@ -218,7 +217,7 @@ public class ChildService {
     /**
      * Funzione di aggiornamento bambino
      *
-     * @param childId id del bambino da modificare
+     * @param childId  id del bambino da modificare
      * @param childDTO dati del bambino aggiornati
      * @return ChildEntity ottenuta
      */
@@ -231,9 +230,8 @@ public class ChildService {
             throw new ChildNotFoundException(childId);
         }
         if (!childId.equals(childDTO.getCodiceFiscale())) {
-            Optional<List<UserEntity>> parents = this.userService.userRepository.findAllByChildrenListIsContaining(childId);
-            if (parents.isPresent()) {
-                List<UserEntity> parentsOfChild = parents.get();
+            List<UserEntity> parentsOfChild = this.userService.userRepository.findAllByChildrenListIsContaining(childId);
+            if (!parentsOfChild.isEmpty()) {
                 this.deleteChildFromParent(childId, parentsOfChild);
                 this.addChildToParent(childDTO, parentsOfChild);
                 this.userService.userRepository.saveAll(parentsOfChild);
@@ -252,7 +250,7 @@ public class ChildService {
     /**
      * Aggiunta bambino ai genitori indicati
      *
-     * @param childDTO DTO del bambino da inserire
+     * @param childDTO       DTO del bambino da inserire
      * @param parentsOfChild parenti del bambino
      */
     private void addChildToParent(ChildDTO childDTO, List<UserEntity> parentsOfChild) {
@@ -264,7 +262,7 @@ public class ChildService {
     /**
      * Cancella il bambino dai genitori indicati
      *
-     * @param childId codice fiscale dal bambino da eliminare
+     * @param childId        codice fiscale dal bambino da eliminare
      * @param parentsOfChild parenti del bambino
      */
     private void deleteChildFromParent(String childId, List<UserEntity> parentsOfChild) {
@@ -276,6 +274,7 @@ public class ChildService {
 
     /**
      * Cancellazione del bambino dal database e relative prenotazioni
+     *
      * @param childId codice fiscale
      */
     public void deleteChild(String childId) {
@@ -284,9 +283,8 @@ public class ChildService {
             throw new ChildNotFoundException(childId);
         }
         this.childRepository.delete(childEntityOptional.get());
-        Optional<List<UserEntity>> parents = this.userService.userRepository.findAllByChildrenListIsContaining(childId);
-        if (parents.isPresent()) {
-            List<UserEntity> parentsOfChild = parents.get();
+        List<UserEntity> parentsOfChild = this.userService.userRepository.findAllByChildrenListIsContaining(childId);
+        if (!parentsOfChild.isEmpty()) {
             this.deleteChildFromParent(childId, parentsOfChild);
             this.userService.userRepository.saveAll(parentsOfChild);
         }

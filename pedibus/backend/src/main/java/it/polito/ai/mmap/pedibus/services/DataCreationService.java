@@ -75,11 +75,11 @@ public class DataCreationService {
         logger.info("Caricamento linee in corso...");
         readPiedibusLines();
         logger.info("Caricamento linee completato.");
-//        makeChildUserReservations();
 
+        //todo eliminare tutto ciò che è correlato alla creazione automatica di utenti o notifiche
         if (environment.getActiveProfiles()[0].equals("prod")) {
             logger.info("Creazione Basi di dati di test in corso...");
-            makeChildUserReservations();
+//            makeChildUserReservations();
             logger.info("Creazione Basi di dati di test completata.");
         } else {
             logger.info("Creazione Basi di dati di test non effettuata con DEV Profile");
@@ -265,7 +265,7 @@ public class DataCreationService {
                     reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea());
                     reservationEntity.setVerso(true);
                     reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
-                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
+                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).stream().findAny().isPresent()) {
                         reservationsList.add(reservationEntity);
                         count++;
                     }
@@ -278,7 +278,7 @@ public class DataCreationService {
                     reservationEntity.setVerso(false);
                     reservationEntity.setIdFermata(childEntity.getIdFermataRitorno());
 
-                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).isPresent()) {
+                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).stream().findAny().isPresent()) {
                         reservationsList.add(reservationEntity);
                         count++;
                     }

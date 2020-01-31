@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface NotificaRepository extends MongoRepository<NotificaEntity, String> {
-    List<NotificaEntity> findAllByUsernameDestinatario(String user);
     Page<NotificaEntity> findAllByUsernameDestinatarioOrderByDataDesc(String user, Pageable pageable);
-    List<NotificaEntity> findAllByUsernameDestinatarioAndIsAckAndIsTouched(String user, boolean isAck, boolean isTouched);
     List<NotificaEntity> findAllByUsernameDestinatarioAndIsAckAndIsTouchedAndAndType(String user, boolean isAck, boolean isTouched, NotificaEntity.NotificationType type);
 }

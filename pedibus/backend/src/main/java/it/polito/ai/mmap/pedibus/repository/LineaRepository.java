@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LineaRepository extends MongoRepository<LineaEntity, String> {
-    Optional<List<LineaEntity>> findAllByAdminListContaining(String username);
-    Optional<List<LineaEntity>> findAllByMasterIs(String username);
+    List<LineaEntity> findAllByAdminListContaining(String username);
+    List<LineaEntity> findAllByMasterIs(String username);
 
 }

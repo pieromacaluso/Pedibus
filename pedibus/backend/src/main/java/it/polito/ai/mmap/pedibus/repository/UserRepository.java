@@ -14,12 +14,11 @@ import java.util.Optional;
 public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
     Optional<UserEntity> findByUsername(String email);
 
-    Optional<List<UserEntity>> findAllByChildrenListIsContaining(String child);
+    List<UserEntity> findAllByChildrenListIsContaining(String child);
 
     Optional<UserEntity> findByUsernameAndIsEnabled(String email, Boolean isEnabled);
 
-    Optional<List<UserEntity>> findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(RoleEntity roleEntity);
-    Optional<List<UserEntity>> findAllByRoleListIn(List<RoleEntity> roleEntity);
+    List<UserEntity> findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(RoleEntity roleEntity);
 
     Optional<UserEntity> findByRoleListContainingAndUsernameAndIsEnabled(RoleEntity roleEntity, String email, Boolean enabled);
 

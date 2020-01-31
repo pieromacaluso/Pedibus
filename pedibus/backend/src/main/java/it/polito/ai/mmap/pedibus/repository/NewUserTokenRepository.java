@@ -8,7 +8,4 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface NewUserTokenRepository extends MongoRepository<NewUserTokenEntity, ObjectId> {
-    Optional<NewUserTokenEntity> findByUserId(ObjectId id);
-    void deleteByUserId(ObjectId id);
-
 }

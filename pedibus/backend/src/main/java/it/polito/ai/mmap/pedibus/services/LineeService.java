@@ -61,8 +61,7 @@ public class LineeService {
      * @return Lista di linea entiny
      */
     public List<LineaEntity> getAdminLineForUser(String username) {
-        Optional<List<LineaEntity>> checkLinea = lineaRepository.findAllByAdminListContaining(username);
-        return checkLinea.orElseGet(ArrayList::new);
+        return lineaRepository.findAllByAdminListContaining(username);
     }
 
     /**
@@ -242,6 +241,6 @@ public class LineeService {
     }
 
     public List<LineaEntity> getAllLinesMasterMail(String email) {
-        return this.lineaRepository.findAllByMasterIs(email).orElseGet(ArrayList::new);
+        return this.lineaRepository.findAllByMasterIs(email);
     }
 }
