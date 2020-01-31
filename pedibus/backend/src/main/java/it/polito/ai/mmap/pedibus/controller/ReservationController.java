@@ -40,25 +40,7 @@ public class ReservationController {
     private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     private NotificheService notificheService;
-
-
-    /**
-     * Restituisce due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle
-     * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
-     *
-     * @param idLinea id della linea
-     * @param data    data in esame
-     * @return GetReservationsIdLineaDataResource
-     */
-
-    @GetMapping("/reservations/{id_linea}/{data}")
-    @ApiOperation("Restituisce per ogni fermata di andata e ritorno le persone da prendere/lasciare")
-    public GetReservationsIdLineaDataResource getReservations(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data) {
-        logger.info("GET /reservations/" + idLinea + "/" + data + " è stato contattato");
-        Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
-        return reservationService.getReservationsResource(idLinea, dataFormatted);
-    }
-
+    
     /**
      * Restituisce una lista, riportante, per ogni fermata di andata o ritorno, l’elenco delle
      * persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
@@ -195,6 +177,14 @@ public class ReservationController {
             logger.info("Child " + cfChild + " is arrived");
     }
 
+    /**
+     * todo specificare utilizzo
+     * @param idLinea
+     * @param verso
+     * @param data
+     * @param cfChild
+     * @throws Exception
+     */
     @PostMapping("/reservations/restore/{idLinea}/{verso}/{data}")
     public void manageRestore(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody String cfChild) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/restore/" + idLinea+"/"+verso+"/"+ data));
@@ -238,7 +228,7 @@ public class ReservationController {
     }
 
     /**
-     * Versione alternativa al metodo precedente
+     * Elimina la reservation associata ai 4 parametri
      *
      * @param codiceFiscale
      * @param idLinea
