@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {ApiService} from '../../api.service';
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ChildrenDTO} from '../dtos';
 import {Fermata, StopsByLine} from '../../line-details';
 import {forkJoin, Observable} from 'rxjs';
@@ -36,12 +36,14 @@ export class DialogAnagraficaComponent implements OnInit {
   stopsLocationR: Point[];
   stopsDescriptionR: string[];
 
-  anagraficaForm = this.fb.group({
-    andataSelect: ['', [Validators.required]],
-    ritornoSelect: ['', [Validators.required]],
-    andataFermataSelect: [{value: '', disabled: true}, [Validators.required]],
-    ritornoFermataSelect: [{value: '', disabled: true}, [Validators.required]],
+
+  anagraficaForm = new FormGroup({
+    andataSelect: new FormControl('', Validators.required),
+    ritornoSelect: new FormControl('', Validators.required),
+    andataFermataSelect: new FormControl({value: '', disabled: true}, Validators.required),
+    ritornoFermataSelect: new FormControl({value: '', disabled: true}, Validators.required),
   });
+
   loading = 0;
   selectedLineaAndata: any;
   selectedLineaRitorno: any;
@@ -88,6 +90,10 @@ export class DialogAnagraficaComponent implements OnInit {
   changeFermateAndata(emit: any) {
     const sameLine = this.selectedLineaAndata === emit;
     this.selectedLineaAndata = emit;
+    this.anagraficaForm.patchValue({
+      andataFermataSelect: undefined
+    });
+    this.selectedAndata = undefined;
     if (!sameLine) {
       this.andata = this.lineData.get(this.selectedLineaAndata).andata;
       this.stopsLocationA = [];
@@ -103,6 +109,10 @@ export class DialogAnagraficaComponent implements OnInit {
   changeFermateRitorno(emit: any) {
     const sameLine = this.selectedLineaRitorno === emit;
     this.selectedLineaRitorno = emit;
+    this.anagraficaForm.patchValue({
+      ritornoFermataSelect: undefined
+    });
+    this.selectedRitorno = undefined;
     if (!sameLine) {
       this.ritorno = this.lineData.get(this.selectedLineaRitorno).ritorno;
       this.stopsLocationR = [];
