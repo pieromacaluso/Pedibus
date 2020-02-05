@@ -81,6 +81,7 @@ public class AuthenticationRestController {
      * @param bindingResult struttura per validazione
      * @deprecated Appartiene a vecchie esercitazioni, non più usato nel progetto finale
      */
+    @Deprecated
     @PostMapping("/register")
     public void register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/register "+userDTO.getEmail()));
