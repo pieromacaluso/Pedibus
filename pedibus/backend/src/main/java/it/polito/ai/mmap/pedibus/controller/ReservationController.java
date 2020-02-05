@@ -208,7 +208,6 @@ public class ReservationController {
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         reservationService.updateReservation(reservationDTO, reservationId);
-        this.notificheService.sendReservationNotification(reservationDTO, false);
     }
 
     /**
