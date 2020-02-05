@@ -76,7 +76,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/users/**").access("hasAnyRole('ADMIN','SYSTEM-ADMIN')")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/admin/lines/**").access("hasAnyRole('ADMIN')")
+                .antMatchers("/admin/lines/**").access("hasAnyRole('ADMIN','SYSTEM-ADMIN')")
                 .and()
                 .authorizeRequests()
                 .antMatchers("/sysadmin/**").access("hasAnyRole('SYSTEM-ADMIN')")

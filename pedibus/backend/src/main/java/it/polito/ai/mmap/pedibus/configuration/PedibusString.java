@@ -37,7 +37,7 @@ public class PedibusString {
     }
 
     public static String CHILD_DUPLICATE(String cf) {
-        return "Bambino con codice fiscale " + cf + "già presente nel database";
+        return "Bambino con codice fiscale " + cf + " già presente nel database";
     }
 
     public static String CHILD_NOT_FOUND(String cf) {

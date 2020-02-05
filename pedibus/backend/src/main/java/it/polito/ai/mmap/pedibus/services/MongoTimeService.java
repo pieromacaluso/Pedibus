@@ -29,12 +29,11 @@ public class MongoTimeService {
 
     @Autowired
     ObjectMapper objectMapper;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Value("${dataInizioScuola}")
     private String dataInzioScuola;
     @Value("${dataFineScuola}")
     private String dataFineScuola;
-
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     private List<String> holidayList;
 
     private static Date parseData(String completeData) {
@@ -47,10 +46,16 @@ public class MongoTimeService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
     }
+
     public static String localDateToString(LocalDate date) {
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
+    }
+
+    public static Date getMongoZonedDateTimeFromDateTimeString(String date, String time) {
+
+        return parseData(date + "T" + time + ":00.001 GMT+00:00");
     }
 
     public static Date getMongoZonedDateTimeFromTime(String time) {
@@ -82,6 +87,7 @@ public class MongoTimeService {
     /**
      * Generazione di una lista di date sottoforma di stringa che inizia dalla data specificata e si conclude con la data
      * di fine scuola.
+     *
      * @param dateTime data di inizio
      * @return lista di date
      */
@@ -94,7 +100,7 @@ public class MongoTimeService {
             try {
                 isValidDate(iDate);
                 listDate.add(iDate.toString());
-            } catch (SchoolClosedException ignored){
+            } catch (SchoolClosedException ignored) {
                 // Ignora questa data, non verrà inserita nella lista
             }
         }
@@ -110,7 +116,8 @@ public class MongoTimeService {
 
     /**
      * Da String a a Date. Un booleano permette di controllare che la data sia valida per prenotazioni o turni
-     * @param date Stringa nel formato 'yyyy-MM-dd' da convertire
+     *
+     * @param date          Stringa nel formato 'yyyy-MM-dd' da convertire
      * @param checkValidity booleano che abilita il controllo
      * @return Date ottenuta
      */
@@ -120,9 +127,11 @@ public class MongoTimeService {
 
     //non mettere dentro getMongoZonedDateTimeFromDate()
     //Se si cambia tipo di eccezione bisogna cambiare un paio di catch
+
     /**
      * Controllo dei vincoli per la data
-     * @param date data da controllare nel formato 'yyyy-MM-hh'
+     *
+     * @param date          data da controllare nel formato 'yyyy-MM-hh'
      * @param checkValidity booleano per attivare o meno i controlli
      * @return Date ottenuta
      */

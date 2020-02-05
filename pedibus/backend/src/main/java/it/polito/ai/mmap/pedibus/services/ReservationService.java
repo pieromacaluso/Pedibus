@@ -3,7 +3,6 @@ package it.polito.ai.mmap.pedibus.services;
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.ChildNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
@@ -79,10 +78,15 @@ public class ReservationService {
      */
     public ReservationEntity updateReservation(ReservationDTO reservationDTO, ObjectId reservationId) {
         ReservationEntity reservationEntity = getReservationEntityById(reservationId);
+        ReservationDTO reservationDTOOld = new ReservationDTO(reservationEntity);
+
         if (isValidReservation(reservationDTO)) {
             reservationEntity.update(reservationDTO);
             ReservationEntity res = reservationRepository.save(reservationEntity);
             reservationDTO.setId(reservationEntity.getId().toString());
+
+            this.notificheService.sendReservationNotification(reservationDTOOld, true);
+            this.notificheService.sendReservationNotification(reservationDTO, false);
             return res;
         } else {
             throw new ReservationNotValidException(PedibusString.UPDATE_RESERVATION_NOT_VALID);
@@ -102,7 +106,7 @@ public class ReservationService {
      *
      * @return True se la reservation è valida, altrimenti False
      */
-    private Boolean isValidReservation(ReservationDTO reservationDTO) {
+    public Boolean isValidReservation(ReservationDTO reservationDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FermataEntity fermataEntity = lineeService.getFermataEntityById(reservationDTO.getIdFermata());
         LineaEntity lineaEntity = lineeService.getLineaEntityById(reservationDTO.getIdLinea());
@@ -164,10 +168,10 @@ public class ReservationService {
         if (principal.getChildrenList().contains(cfChild)) {
             List<ReservationEntity> reservationEntityList = reservationRepository.findByCfChildAndData(cfChild, data);
             return reservationEntityList.stream().map(ReservationDTO::new).collect(Collectors.toList());
-        }
-        else
+        } else
             throw new ChildNotFoundException(cfChild);
     }
+
     /**
      * Restituisce i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
      *
@@ -299,8 +303,6 @@ public class ReservationService {
                 notificheService.deleteNotificaAdmin(reservationEntity.getPresoInCaricoNotifica());
             }
             updateReservation(pre, reservationEntity.getId());
-            this.notificheService.sendReservationNotification(pre, false);
-//            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
             logger.info("/handled/" + data + "/" + idLinea + "/" + verso);
         } else
@@ -314,10 +316,8 @@ public class ReservationService {
             ReservationEntity reservationEntity = getChildReservation(verso, datef, cfChild);
             reservationEntity.setAssente(isSet);
             reservationEntity.setAssenteDate(isSet ? MongoTimeService.getNow() : null);
-//            simpMessagingTemplate.convertAndSend("/handled/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new HandledResource(cfChild, isSet, reservationEntity.getIdFermata()));
 
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            this.notificheService.sendReservationNotification(pre, false);
 
             if (isSet) {
                 List<NotificaEntity> notificaEntities = notificheService.generateAssenteNotification(reservationEntity);
@@ -372,8 +372,6 @@ public class ReservationService {
             }
             logger.info("/arrived/" + data + "/" + idLinea + "/" + verso);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            this.notificheService.sendReservationNotification(pre, false);
-
             updateReservation(pre, reservationEntity.getId());
             return true;
         }
@@ -413,7 +411,6 @@ public class ReservationService {
             reservationEntity.setAssente(false);
             reservationEntity.setAssenteDate(null);
             ReservationDTO pre = new ReservationDTO(reservationEntity);
-            this.notificheService.sendReservationNotification(pre, false);
             updateReservation(pre, reservationEntity.getId());
         }
     }

@@ -62,6 +62,6 @@ public class UserController {
     public void updateChildStop(@PathVariable("cfChild") String cfChild, @RequestBody ChildDefaultStopResource stopRes) {
         logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/children/stops/" + cfChild));
         Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(stopRes.getData(), false);
-        childService.updateChildStop(cfChild, stopRes, dataFormatted);
+        childService.updateChildStop(cfChild, cfChild, stopRes, dataFormatted);
     }
 }
