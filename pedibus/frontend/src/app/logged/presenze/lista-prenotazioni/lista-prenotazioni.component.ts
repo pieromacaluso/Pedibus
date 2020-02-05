@@ -115,18 +115,15 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
           codiceFiscale: oldAlunno.codiceFiscale,
           name: oldAlunno.name,
           surname: oldAlunno.surname,
-          presoInCarico: false,
-          arrivatoScuola: false,
-          assente: false,
+          presoInCarico: res.presoInCarico,
+          arrivatoScuola: res.arrivatoScuola,
+          assente: res.assente,
           update: false
         };
         this.deleteNotReserved(oldAlunno);
       }
       if (newAlunno) {
         const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
-        if (oldAlunno) {
-          // this.togglePresenza(res.idFermata, newAlunno);
-        }
       }
     });
     this.setBottoCardTitle();
