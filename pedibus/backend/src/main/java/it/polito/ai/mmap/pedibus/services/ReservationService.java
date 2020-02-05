@@ -3,7 +3,6 @@ package it.polito.ai.mmap.pedibus.services;
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.ChildNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
@@ -102,7 +101,7 @@ public class ReservationService {
      *
      * @return True se la reservation è valida, altrimenti False
      */
-    private Boolean isValidReservation(ReservationDTO reservationDTO) {
+    public Boolean isValidReservation(ReservationDTO reservationDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FermataEntity fermataEntity = lineeService.getFermataEntityById(reservationDTO.getIdFermata());
         LineaEntity lineaEntity = lineeService.getLineaEntityById(reservationDTO.getIdLinea());
@@ -164,10 +163,10 @@ public class ReservationService {
         if (principal.getChildrenList().contains(cfChild)) {
             List<ReservationEntity> reservationEntityList = reservationRepository.findByCfChildAndData(cfChild, data);
             return reservationEntityList.stream().map(ReservationDTO::new).collect(Collectors.toList());
-        }
-        else
+        } else
             throw new ChildNotFoundException(cfChild);
     }
+
     /**
      * Restituisce i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
      *

@@ -1,11 +1,13 @@
 package it.polito.ai.mmap.pedibus.services;
 
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.ChildAlreadyPresentException;
 import it.polito.ai.mmap.pedibus.exception.ChildNotFoundException;
+import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
@@ -13,6 +15,7 @@ import it.polito.ai.mmap.pedibus.resources.ChildDefaultStopResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
@@ -21,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -46,6 +48,9 @@ public class ChildService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Value("${dataInizioScuola}")
+    private String dataInizioScuola;
+
 
     public static String fromKeywordToRegex(String keyword) {
         List<String> keywords = Arrays.asList(keyword.split("\\s+"));
@@ -88,15 +93,16 @@ public class ChildService {
     /**
      * Metodo che permette di cambiare la fermata di default di un bambino o dal suo genitore o da un System-Admin
      *
-     * @param cfChild codice fiscale del bambino
-     * @param stopRes informazioni sulla nuova fermata da considerare
-     * @param date    data di partenza da cui iniziare le modifiche
+     * @param cfChildNew codice fiscale del bambino
+     * @param cfChildOld
+     * @param stopRes    informazioni sulla nuova fermata da considerare
+     * @param date       data di partenza da cui iniziare le modifiche
      */
-    public void updateChildStop(String cfChild, ChildDefaultStopResource stopRes, Date date) {
-        Optional<ChildEntity> c = childRepository.findById(cfChild);
+    public void updateChildStop(String cfChildNew, String cfChildOld, ChildDefaultStopResource stopRes, Date date) {
+        Optional<ChildEntity> c = childRepository.findById(cfChildNew);
         if (c.isPresent()) {
             UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal.getChildrenList().contains(cfChild) || principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
+            if (principal.getChildrenList().contains(cfChildNew) || principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
                 ChildEntity childEntity = c.get();
 
                 lineeService.getFermataEntityById(stopRes.getIdFermataAndata());
@@ -108,35 +114,44 @@ public class ChildService {
                 // Remove one day todo spostare o riutilizzare cose in mongoTimeService
                 LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).minusDays(1);
                 Date out = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
-                List<UserEntity> parents = this.getChildParents(cfChild);
+                List<UserEntity> parents = this.getChildParents(cfChildNew);
                 for (UserEntity parent : parents) {
                     this.simpMessagingTemplate.convertAndSendToUser(parent.getUsername(), "/child/" + childEntity.getCodiceFiscale(), childEntity);
                 }
 
-                Optional<List<ReservationEntity>> toBeUpdatedCheck = reservationService.reservationRepository.findByCfChildAndDataIsAfter(cfChild, out);
+                Optional<List<ReservationEntity>> toBeUpdatedCheck = reservationService.reservationRepository.findByCfChildAndDataIsAfter(cfChildOld, out);
                 List<ReservationEntity> toBeUpdated = toBeUpdatedCheck.orElseGet(ArrayList::new);
-                for (ReservationEntity res : toBeUpdated) {
-                    ReservationDTO reservationDTO = new ReservationDTO(res);
 
+                // Controllo validità di singolo aggiornamento, gli altri andranno bene per forza
+                if (toBeUpdated.isEmpty()) {
+                    return;
+                }
+                ReservationDTO newReservationDTOCheck = new ReservationDTO(toBeUpdated.get(0));
+                Integer fermata = newReservationDTOCheck.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno();
+                String linea = lineeService.getFermataEntityById(newReservationDTOCheck.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno()).getIdLinea();
+                newReservationDTOCheck.setIdFermata(fermata);
+                newReservationDTOCheck.setIdLinea(linea);
+                newReservationDTOCheck.setCfChild(cfChildNew);
+                if (!this.reservationService.isValidReservation(newReservationDTOCheck)) {
+                    throw new ReservationNotValidException(PedibusString.UPDATE_RESERVATION_NOT_VALID);
+                }
+
+                for (ReservationEntity res : toBeUpdated) {
+                    // Cancellazione vecchia prenotazione
                     ReservationDTO oldreservationDTO = new ReservationDTO(res);
 
-                    //todo a cosa servono ?
-//                    ReservationEntity oldRes = new ReservationEntity();
-//                    oldRes.setCfChild(reservationDTO.getCfChild());
-
-                    Integer fermata = reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno();
-                    String linea = lineeService.getFermataEntityById(reservationDTO.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno()).getIdLinea();
-
-                    reservationDTO.setIdFermata(fermata);
-                    reservationDTO.setIdLinea(linea);
-                    res = reservationService.updateReservation(reservationDTO, res.getId());
+                    res.setIdFermata(fermata);
+                    res.setIdLinea(linea);
+                    res.setCfChild(cfChildNew);
+                    ReservationDTO newReservationDTO = new ReservationDTO(res);
                     this.notificheService.sendReservationNotification(oldreservationDTO, true);
-                    this.notificheService.sendReservationNotification(reservationDTO, false);
+                    this.notificheService.sendReservationNotification(newReservationDTO, false);
                 }
+                this.reservationService.reservationRepository.saveAll(toBeUpdated);
             } else
-                throw new ChildNotFoundException(cfChild);
+                throw new ChildNotFoundException(cfChildNew);
         } else
-            throw new ChildNotFoundException(cfChild);
+            throw new ChildNotFoundException(cfChildNew);
     }
 
     /**
@@ -242,7 +257,7 @@ public class ChildService {
         childRepository.delete(childEntityOld);
         ChildEntity result = childRepository.save(childEntityNew);
         ChildDefaultStopResource defaultStopResource = new ChildDefaultStopResource(result.getIdFermataAndata(), result.getIdFermataRitorno(), MongoTimeService.getNow().toString());
-        this.updateChildStop(result.getCodiceFiscale(), defaultStopResource, MongoTimeService.getNow());
+        this.updateChildStop(result.getCodiceFiscale(), childId, defaultStopResource, MongoTimeService.getMongoZonedDateTimeFromDateTimeString(dataInizioScuola, "05:00"));
         this.notificheService.sendUpdateNotification();
         return result;
     }
