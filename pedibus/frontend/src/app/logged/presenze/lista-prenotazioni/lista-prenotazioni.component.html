@@ -196,7 +196,9 @@
     ></mat-progress-bar>
 
     <div class="no-stops" *ngIf="!showLoading()">
-      Nessuna corsa disponibile con i parametri selezionati
+      <div class="school-closed">
+        Scuola Chiusa
+      </div>
 
     </div>
     <div class="no-stops" *ngIf="showLoading()">
