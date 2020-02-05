@@ -118,9 +118,9 @@ public class Esercitazione2ApplicationTests {
         childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
         childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
 
-        userDTOMap.put("testGenitore", new UserDTO("testGenitore@test.it", "321@%$User", "321@%$User"));
-        userDTOMap.put("testNonGenitore", new UserDTO("testNonGenitore@test.it", "321@%$User", "321@%$User"));
-        userDTOMap.put("testNonno", new UserDTO("testNonno@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testGenitore", new UserDTO("test.Genitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonGenitore", new UserDTO("test.NonGenitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonno", new UserDTO("test.Nonno@test.it", "321@%$User", "321@%$User"));
 
         userEntityMap.put("testGenitore", new UserEntity(userDTOMap.get("testGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder, new HashSet<>(Arrays.asList(childMap.get(0).getCodiceFiscale()))));
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
@@ -340,27 +340,6 @@ public class Esercitazione2ApplicationTests {
         logger.info("PASSED");
     }
 
-    /**
-     * Controlla GET /reservations/{id_linea}/{data} [inutilizzato]
-     *
-     * @throws Exception
-     */
-    @Test
-    public void getReservations() throws Exception {
-        String token = loginAsGenitore();
-        inserimentoReservation(token, true);
-        inserimentoReservation(token, false);
-
-        mockMvc.perform(get("/reservations/" + defLinea.getId() + "/" + mongoTimeService.getOneValidDate(0))
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andDo(document("get-res",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())));
-
-        logger.info("PASSED");
-    }
 
     /**
      * Controlla GET /reservations/verso/{id_linea}/{data}/{verso}
@@ -370,9 +349,9 @@ public class Esercitazione2ApplicationTests {
      */
     @Test
     public void getReservationsTowards() throws Exception {
-        String token = loginAsGenitore();
-        inserimentoReservation(token, true);
-        inserimentoReservation(token, false);
+        inserimentoReservation(null, true);
+        inserimentoReservation(null, false);
+        String token = loginAsNonnoAdmin();
 
         logger.info("Controllo reservation con verso true ...");
         MvcResult result = mockMvc.perform(get("/reservations/verso/" + defLinea.getId() + "/" + mongoTimeService.getOneValidDate(0) + "/true")
@@ -524,12 +503,11 @@ public class Esercitazione2ApplicationTests {
 
     /**
      * Controlla DELETE /reservations/{id_linea}/{data}/{reservation_id} con il reservation_id random/non congruente
-     * todo (marcof) non capisco perchè testiamo che non si possa cancellare un objectId a caso, se casualmente prendiamo quello di una prenotazione dovremmo poterla cancellare, anche il numero a caso mi lascia un po' perplesso
      *
      * @throws Exception
      */
     @Test
-    public void deleteReservation_randomID() throws Exception {
+    public void deleteReservation() throws Exception {
         String token = loginAsSystemAdmin();
 
         LineaEntity lineaEntity = lineaRepository.findAll().get(0);
@@ -538,11 +516,6 @@ public class Esercitazione2ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
-        logger.info("Cancellazione a caso errata con objectID...");
-        mockMvc.perform(delete("/reservations/" + lineaEntity.getId() + "/" + mongoTimeService.getOneValidDate(1000) + "/" + new ObjectId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isInternalServerError());
         logger.info("DONE");
     }
 
