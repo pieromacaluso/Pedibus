@@ -28,7 +28,9 @@ export class LineAdminComponent implements OnInit {
     this.apiService.getLineAdmin().subscribe((res) => {
       this.lines = res;
       this.selectedLine = Array.from(res.values())[0];
-      this.matSelect.value = this.selectedLine.id;
+      if (this.matSelect) {
+        this.matSelect.value = this.selectedLine.id;
+      }
     });
     this.guide$ = this.apiService.getGuides();
     this.updatesSub = this.anagraficaService.watchUpdates().subscribe((res) => {

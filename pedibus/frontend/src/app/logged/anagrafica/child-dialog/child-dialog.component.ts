@@ -122,6 +122,7 @@ export class ChildDialogComponent implements OnInit {
   updateChild() {
     if (!this.addingChild) {
       const child: ChildrenDTO = this.profileForm.value;
+      this.addingChild = true;
       this.anagraficaDialogService.updateChild(this.cfOld, child).subscribe((ch) => {
         // TODO: Gestisci successo
         this.addingChild = false;
