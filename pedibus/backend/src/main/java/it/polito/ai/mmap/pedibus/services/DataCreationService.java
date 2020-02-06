@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.SchoolClosedException;
+import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +32,8 @@ public class DataCreationService {
     ObjectMapper objectMapper;
     @Autowired
     ChildRepository childRepository;
+    @Autowired
+    ChildService childService;
     @Autowired
     LineaRepository lineaRepository;
     @Autowired
@@ -75,15 +74,6 @@ public class DataCreationService {
         logger.info("Caricamento linee in corso...");
         readPiedibusLines();
         logger.info("Caricamento linee completato.");
-
-        //todo eliminare tutto ciò che è correlato alla creazione automatica di utenti o notifiche
-        if (environment.getActiveProfiles()[0].equals("prod")) {
-            logger.info("Creazione Basi di dati di test in corso...");
-//            makeChildUserReservations();
-            logger.info("Creazione Basi di dati di test completata.");
-        } else {
-            logger.info("Creazione Basi di dati di test non effettuata con DEV Profile");
-        }
     }
 
     /**
@@ -168,68 +158,82 @@ public class DataCreationService {
     }
 
     /**
-     * TODO: DA RIVEDERE BENE
-     * crea:
-     * - 100 Child
-     * - 50 genitori con 2 figli        contenuti nel file genitori.json e pw = 1!qwerty1!
-     * - 1 ADMIN (prima linea), 4 ADMIN (prima linea) e GUIDE, 25 GUIDE contenuti nel file nonni_0.json e pw = 1!qwerty1!
-     * - 1 ADMIN (seconda linea), 4 ADMIN (seconda linea) e GUIDE, 25 GUIDE contenuti nel file nonni_1.json e pw = 1!qwerty1!
-     * - 1 reservation/figlio per oggi, domani e dopo domani (andata e ritorno)
-     * @throws IOException Eccezione File
+     * Crea:
+     * - countCreate genitori, ognuno con due figli
+     * - countCreate guide
+     * - 1 admin della linea 1
+     * - 1 admin della linea 2
+     * @param countCreate
+     * @throws IOException
      */
-    public void makeChildUserReservations() throws IOException {
+    public void makeChildUser(int countCreate) throws IOException {
         RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
-        RoleEntity roleSys = userService.getRoleEntityById("ROLE_SYSTEM-ADMIN");
         RoleEntity roleAdmin = userService.getRoleEntityById("ROLE_ADMIN");
         RoleEntity roleGuide = userService.getRoleEntityById("ROLE_GUIDE");
-        reservationRepository.deleteAll();  //TODO delete (? marcof)
-        //userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleAdmin)).collect(Collectors.toList()));
-        //userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> userEntity.getRoleList().contains(roleGuide)).collect(Collectors.toList()));
-        userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(roleSys)).collect(Collectors.toList()));
 
-        childRepository.deleteAll();
-        int count = 0;
 
         List<LineaEntity> lineaEntityList = lineaRepository.findAll();
 
 
-        List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/childEntity.json"), new TypeReference<List<ChildEntity>>() {
+        List<ChildEntity> children = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/childEntity.json"), new TypeReference<List<ChildEntity>>() {
         });
 
-        List<UserEntity> userList = userEntityListConverter("genitori.json", roleUser);
-        Iterator<ChildEntity> childEntityIterable = childList.iterator();
 
-        int i = 0;
-        while (childEntityIterable.hasNext()) {
-            ChildEntity child1 = childEntityIterable.next();
-            ChildEntity child2 = childEntityIterable.next();
-            UserEntity parent = userList.get(i);
+        Iterator<UserEntity> userList = userEntityListConverter("genitori.json", roleUser).iterator();
+        Iterator<ChildEntity> childList = children.iterator();
+        int count = 0;
+        while (count < countCreate) {
+            UserEntity parent = userList.next();
+            while (userRepository.findByUsername(parent.getUsername()).isPresent()) {
+                if (!userList.hasNext())
+                    return;
+                parent = userList.next();
+            }
+
+            ChildEntity child1 = childList.next();
+            while (childRepository.findById(child1.getCodiceFiscale()).isPresent()) {
+                if (!childList.hasNext())
+                    return;
+                child1 = childList.next();
+            }
+
+            ChildEntity child2 = childList.next();
+            while (childRepository.findById(child2.getCodiceFiscale()).isPresent()) {
+                if (!childList.hasNext())
+                    return;
+                child2 = childList.next();
+            }
+
+            child1.setSurname(parent.getSurname());
+            child2.setSurname(parent.getSurname());
             parent.setChildrenList(new HashSet<>(Arrays.asList(child1.getCodiceFiscale(), child2.getCodiceFiscale())));
             parent.setEnabled(true);
 
-            parent = userRepository.save(parent); //per avere l'objectId
+            userRepository.save(parent);
+            childService.createChild(new ChildDTO(child1));
+            childService.createChild(new ChildDTO(child2));
 
-            userList.set(i, parent);
-            // Rimosso parent id da Child
-//            child1.setIdParent(parent.getId());
-//            child2.setIdParent(parent.getId());
-
-            i++;
+            count++;
         }
-        childRepository.saveAll(childList);
-        logger.info("Tutti i genitori e i figli caricati");
+        logger.info(count + " genitori caricati, con due figli ognuno.");
 
         LinkedList<UserEntity> listNonni = new LinkedList<>();
-        for (i = 0; i <= 1; i++) {
+        for (int i = 0; i <= 1; i++) {
             count = 0;
-            for (UserEntity nonno : userEntityListConverter("nonni_" + i + ".json", roleGuide)) {
+            Iterator<UserEntity> nonniList = userEntityListConverter("nonni_" + i + ".json", roleGuide).iterator();
+            while (count < countCreate + 1) {
+                UserEntity nonno = nonniList.next();
+                while (userRepository.findByUsername(nonno.getUsername()).isPresent()) {
+                    if (!userList.hasNext())
+                        return;
+                    nonno = nonniList.next();
+                }
                 nonno.setEnabled(true);
 
-                if (count < 5) {
+                if (count < 1) {
                     LineaEntity lineaEntity = lineaEntityList.get(i);
                     nonno.getRoleList().add(roleAdmin);
-                    if (count < 1)
-                        nonno.getRoleList().remove(roleGuide);
+                    nonno.getRoleList().remove(roleGuide);
 
                     if (!lineaEntity.getAdminList().contains(nonno.getUsername()))
                         lineaEntity.getAdminList().add(nonno.getUsername());
@@ -242,55 +246,7 @@ public class DataCreationService {
         }
 
         userRepository.saveAll(listNonni);
-        logger.info(count * i + " nonni caricati");
-
-        i = 0;
-        count = 0;
-        List<ReservationEntity> reservationsList = new LinkedList<>();
-        ReservationEntity reservationEntity;
-        String dateChecked;
-        int dayCount = 0;
-        for (int day = 0; day < 120 && dayCount < 3; day++) {
-            try {
-                dateChecked = mongoTimeService.isValidDate(LocalDate.now().plus(day, ChronoUnit.DAYS));
-                dayCount++;
-                childEntityIterable = childList.iterator();
-                while (childEntityIterable.hasNext()) {
-                    ChildEntity childEntity = childEntityIterable.next();
-
-                    //andata
-                    reservationEntity = new ReservationEntity();
-                    reservationEntity.setCfChild(childEntity.getCodiceFiscale());
-                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked, true));
-                    reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataAndata()).getIdLinea());
-                    reservationEntity.setVerso(true);
-                    reservationEntity.setIdFermata(childEntity.getIdFermataAndata());
-                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).stream().findAny().isPresent()) {
-                        reservationsList.add(reservationEntity);
-                        count++;
-                    }
-
-                    //ritorno
-                    reservationEntity = new ReservationEntity();
-                    reservationEntity.setCfChild(childEntity.getCodiceFiscale());
-                    reservationEntity.setData(mongoTimeService.getMongoZonedDateTimeFromDate(dateChecked.toString(), true));
-                    reservationEntity.setIdLinea(lineeService.getFermataEntityById(childEntity.getIdFermataRitorno()).getIdLinea());
-                    reservationEntity.setVerso(false);
-                    reservationEntity.setIdFermata(childEntity.getIdFermataRitorno());
-
-                    if (!reservationRepository.findByCfChildAndData(reservationEntity.getCfChild(), reservationEntity.getData()).stream().findAny().isPresent()) {
-                        reservationsList.add(reservationEntity);
-                        count++;
-                    }
-                    i++;
-                }
-
-            } catch (SchoolClosedException ignored) {
-            }
-        }
-
-        reservationRepository.saveAll(reservationsList);
-        logger.info(count + " reservations per oggi, domani e dopodomani caricate");
+        logger.info(count * 2 + " nonni caricati");
     }
 
 
@@ -302,18 +258,29 @@ public class DataCreationService {
         return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Arrays.asList(roleEntity)), passwordEncoder)).collect(Collectors.toList());
     }
 
-    /**
-     * TODO: RIVEDERE BENE
-     * Genera automaticamente 101 notifiche di tipo base destinate al primo degli user nel db
-     * @throws IOException Eccezione File
-     */
-    public void makeNotifications() throws IOException{
-        if(userService.getAllUsers().size()>0){
-            String dest=userService.getAllUsers().get(0).getUsername();
-            for(int i=0;i<101;i++){
-                NotificaEntity notificaEntity=new NotificaEntity(NotificaEntity.NotificationType.BASE,dest,"Notifica "+i,null);
-                notificheService.addNotifica(notificaEntity);
-            }
+    private List<String> getCfList() throws IOException {
+        List<String> res = new LinkedList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(
+                ResourceUtils.getFile("classpath:building_data/people/cf.txt")));
+        String line = reader.readLine();
+        while (line != null) {
+            res.add(line);
+            line = reader.readLine();
         }
+        reader.close();
+        return res;
+    }
+
+    public List<ChildEntity> transform() throws IOException {
+        List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/childEntity_base.json"), new TypeReference<List<ChildEntity>>() {
+        });
+        Iterator<String> cfList = getCfList().iterator();
+
+        childList.forEach(childEntity -> {
+            childEntity.setCodiceFiscale(cfList.next());
+            System.out.println(childEntity);
+        });
+
+        return childList;
     }
 }

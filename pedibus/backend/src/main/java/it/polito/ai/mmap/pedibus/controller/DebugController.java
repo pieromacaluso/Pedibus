@@ -2,19 +2,24 @@ package it.polito.ai.mmap.pedibus.controller;
 
 
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
+import it.polito.ai.mmap.pedibus.entity.ChildEntity;
 import it.polito.ai.mmap.pedibus.repository.ChildRepository;
 import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.services.DataCreationService;
+import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Profile("dev")
 @RestController
@@ -28,6 +33,8 @@ public class DebugController {
     @Autowired
     ReservationRepository reservationRepository;
     @Autowired
+    UserService userService;
+    @Autowired
     DataCreationService dataCreationService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -37,9 +44,9 @@ public class DebugController {
     @PostMapping("/debug/delete")
     public void deleteAll() {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/debug/delete"));
-        userRepository.deleteAll();
-        childRepository.deleteAll();
         reservationRepository.deleteAll();
+        userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))).collect(Collectors.toList()));
+        childRepository.deleteAll();
         logger.info(PedibusString.ALL_DELETED);
     }
 
@@ -49,20 +56,14 @@ public class DebugController {
      *
      * @throws IOException Eccezione lettura da file
      */
-    @PostMapping("/debug/make")
-    public void makeChildUserReservations() throws IOException {
-        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/debug/make"));
-        dataCreationService.makeChildUserReservations();
+    @PostMapping("/debug/make/{countCreate}")
+    public void makeChildUserReservations(@PathVariable("countCreate") int countCreate) throws IOException {
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/debug/make/" + countCreate));
+        dataCreationService.makeChildUser(countCreate);
     }
 
-    /**
-     * Endpoint di debug, genera notifiche fittizie
-     *
-     * @throws IOException Eccezione File
-     */
-    @PostMapping("/debug/make/notifications")
-    public void makeNotifications() throws IOException {
-        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/debug/make/notifications"));
-        dataCreationService.makeNotifications();
+    @PostMapping("/debug/transform")
+    public List<ChildEntity> debug() throws IOException {
+        return dataCreationService.transform();
     }
 }
