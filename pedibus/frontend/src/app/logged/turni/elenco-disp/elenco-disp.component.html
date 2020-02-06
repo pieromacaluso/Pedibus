@@ -122,7 +122,9 @@
 
 <ng-template #loadingDiv>
   <mat-card-header *ngIf="showLoading()"><h1>Caricamento in corso...</h1></mat-card-header>
-  <mat-card-header *ngIf="!showLoading()"><h1>Non ci sono turni in questa giornata</h1></mat-card-header>
+  <div *ngIf="!showLoading()"> <div class=" school-closed">
+    Scuola Chiusa
+  </div></div>
 
 </ng-template>
 

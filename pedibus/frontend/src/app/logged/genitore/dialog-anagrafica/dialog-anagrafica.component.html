@@ -57,7 +57,7 @@
     </mat-dialog-content>
     <div class="right-actions">
       <button type="submit" mat-raised-button color="primary"
-              [disabled]="!anagraficaForm.valid">
+              [disabled]="!anagraficaForm.valid || !this.selectedAndata || !this.selectedRitorno">
         <!-- <mat-progress-bar class="progress-bar-button" *ngIf="data.alunno.update" mode="indeterminate">
         </mat-progress-bar> -->
         Modifica da {{getDateMod() | date:'shortDate' }} in poi

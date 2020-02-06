@@ -41,7 +41,6 @@ export class DialogPrenotazioneComponent implements OnInit {
     public dialogRef: MatDialogRef<DialogPrenotazioneComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PrenotazioneDialogData,
     private apiService: ApiService,
-    private fb: FormBuilder
   ) {
 
   }
@@ -76,7 +75,12 @@ export class DialogPrenotazioneComponent implements OnInit {
     });
   }
 
+
   changeFermate(value: any) {
+    this.selectedStop = undefined;
+    this.prenotazioneForm.patchValue({
+      stopSelect: undefined
+    });
     const sameLine = this.selectedLine === value;
     this.selectedLine = value;
     if (!sameLine) {

@@ -123,6 +123,14 @@ h1 {
   color: mat-color($pedibus-theme-primary)
 }
 
+.school-closed {
+  font-family: 'Montserrat', sans-serif;
+  color: #f57c00;
+  font-weight: bolder;
+  text-align: center;
+  font-size: 24px;
+}
+
 .loading-spinner {
   display: flex;
   justify-content: space-around;
