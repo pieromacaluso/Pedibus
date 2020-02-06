@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,9 +42,9 @@ public class DebugController {
     /**
      * Endpoint di debug, cancella tutto dal database
      */
-    @PostMapping("/debug/delete")
+    @GetMapping("/debug/delete")
     public void deleteAll() {
-        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/debug/delete"));
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/debug/delete"));
         reservationRepository.deleteAll();
         userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))).collect(Collectors.toList()));
         childRepository.deleteAll();
@@ -52,13 +53,18 @@ public class DebugController {
 
 
     /**
-     * Endpoint di debug, genera dati fittizi
+     * Si può chiamare ripetutamente e creerà nuovi dati
+     * Genera:
+     * - countCreate genitori, ognuno con due figli
+     * - 2*countCreate guide
+     * - 1 admin della linea 1
+     * - 1 admin della linea 2
      *
      * @throws IOException Eccezione lettura da file
      */
-    @PostMapping("/debug/make/{countCreate}")
-    public void makeChildUserReservations(@PathVariable("countCreate") int countCreate) throws IOException {
-        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/debug/make/" + countCreate));
+    @GetMapping("/debug/make/{countCreate}")
+    public void makeChildUser(@PathVariable("countCreate") int countCreate) throws IOException {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/debug/make/" + countCreate));
         dataCreationService.makeChildUser(countCreate);
     }
 

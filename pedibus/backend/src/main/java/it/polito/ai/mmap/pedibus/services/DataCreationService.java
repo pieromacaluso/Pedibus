@@ -107,15 +107,6 @@ public class DataCreationService {
         UserEntity userEntity = new UserEntity(userDTO, adminRoles, passwordEncoder);
         userEntity.setEnabled(true);
         userRepository.save(userEntity);
-
-// TODO dovrebbe essere una rimanenza di qualcosa che non serve più (marcof)
-
-//        check = userRepository.findByUsername(superAdminMail);      //rileggo per poter leggere l'objectId e salvarlo come string
-//        if (check.isPresent()) {
-//            userEntity = check.get();
-//            userRepository.save(userEntity);
-//            logger.info("SuperAdmin configurato ed abilitato.");
-//        }
     }
 
 
@@ -157,15 +148,6 @@ public class DataCreationService {
         }
     }
 
-    /**
-     * Crea:
-     * - countCreate genitori, ognuno con due figli
-     * - countCreate guide
-     * - 1 admin della linea 1
-     * - 1 admin della linea 2
-     * @param countCreate
-     * @throws IOException
-     */
     public void makeChildUser(int countCreate) throws IOException {
         RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
         RoleEntity roleAdmin = userService.getRoleEntityById("ROLE_ADMIN");
@@ -173,15 +155,46 @@ public class DataCreationService {
 
 
         List<LineaEntity> lineaEntityList = lineaRepository.findAll();
+        Iterator<UserEntity> userList = userEntityListConverter("genitori.json", roleUser).iterator();
 
 
-        List<ChildEntity> children = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/childEntity.json"), new TypeReference<List<ChildEntity>>() {
+        LinkedList<UserEntity> listNonni = new LinkedList<>();
+        int count = 0;
+        for (int i = 0; i <= 1; i++) {
+            count = 0;
+            Iterator<UserEntity> nonniList = userEntityListConverter("nonni_" + i + ".json", roleGuide).iterator();
+            while (count < countCreate + 1) {
+                UserEntity nonno = nonniList.next();
+                while (userRepository.findByUsername(nonno.getUsername()).isPresent()) {
+                    if (!userList.hasNext())
+                        return;
+                    nonno = nonniList.next();
+                }
+                nonno.setEnabled(true);
+
+                if (count < 1) {
+                    LineaEntity lineaEntity = lineaEntityList.get(i);
+                    nonno.getRoleList().add(roleAdmin);
+                    nonno.getRoleList().remove(roleGuide);
+
+                    if (!lineaEntity.getAdminList().contains(nonno.getUsername()))
+                        lineaEntity.getAdminList().add(nonno.getUsername());
+                    lineaRepository.save(lineaEntity);
+                }
+                listNonni.add(nonno);
+
+                count++;
+            }
+        }
+        userRepository.saveAll(listNonni);
+        logger.info(count * 2 + " nonni caricati");
+
+        List<ChildEntity> children = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/debug/childEntity.json"), new TypeReference<List<ChildEntity>>() {
         });
 
 
-        Iterator<UserEntity> userList = userEntityListConverter("genitori.json", roleUser).iterator();
         Iterator<ChildEntity> childList = children.iterator();
-        int count = 0;
+        count = 0;
         while (count < countCreate) {
             UserEntity parent = userList.next();
             while (userRepository.findByUsername(parent.getUsername()).isPresent()) {
@@ -209,59 +222,29 @@ public class DataCreationService {
             parent.setChildrenList(new HashSet<>(Arrays.asList(child1.getCodiceFiscale(), child2.getCodiceFiscale())));
             parent.setEnabled(true);
 
-            userRepository.save(parent);
             childService.createChild(new ChildDTO(child1));
             childService.createChild(new ChildDTO(child2));
+            userRepository.save(parent);
 
             count++;
         }
         logger.info(count + " genitori caricati, con due figli ognuno.");
 
-        LinkedList<UserEntity> listNonni = new LinkedList<>();
-        for (int i = 0; i <= 1; i++) {
-            count = 0;
-            Iterator<UserEntity> nonniList = userEntityListConverter("nonni_" + i + ".json", roleGuide).iterator();
-            while (count < countCreate + 1) {
-                UserEntity nonno = nonniList.next();
-                while (userRepository.findByUsername(nonno.getUsername()).isPresent()) {
-                    if (!userList.hasNext())
-                        return;
-                    nonno = nonniList.next();
-                }
-                nonno.setEnabled(true);
-
-                if (count < 1) {
-                    LineaEntity lineaEntity = lineaEntityList.get(i);
-                    nonno.getRoleList().add(roleAdmin);
-                    nonno.getRoleList().remove(roleGuide);
-
-                    if (!lineaEntity.getAdminList().contains(nonno.getUsername()))
-                        lineaEntity.getAdminList().add(nonno.getUsername());
-                    lineaRepository.save(lineaEntity);
-                }
-                listNonni.add(nonno);
-
-                count++;
-            }
-        }
-
-        userRepository.saveAll(listNonni);
-        logger.info(count * 2 + " nonni caricati");
     }
 
 
     private List<UserEntity> userEntityListConverter(String fileName, RoleEntity roleEntity) throws IOException {
 
-        List<UserDTO> userList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/" + fileName), new TypeReference<List<UserDTO>>() {
+        List<UserDTO> userList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/debug/" + fileName), new TypeReference<List<UserDTO>>() {
         });
 
-        return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Arrays.asList(roleEntity)), passwordEncoder)).collect(Collectors.toList());
+        return userList.stream().map(userDTO -> new UserEntity(userDTO, new HashSet<>(Collections.singletonList(roleEntity)), passwordEncoder)).collect(Collectors.toList());
     }
 
     private List<String> getCfList() throws IOException {
         List<String> res = new LinkedList<>();
         BufferedReader reader = new BufferedReader(new FileReader(
-                ResourceUtils.getFile("classpath:building_data/people/cf.txt")));
+                ResourceUtils.getFile("classpath:building_data/debug/cf.txt")));
         String line = reader.readLine();
         while (line != null) {
             res.add(line);
@@ -272,7 +255,7 @@ public class DataCreationService {
     }
 
     public List<ChildEntity> transform() throws IOException {
-        List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/people/childEntity_base.json"), new TypeReference<List<ChildEntity>>() {
+        List<ChildEntity> childList = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/debug/childEntity_base.json"), new TypeReference<List<ChildEntity>>() {
         });
         Iterator<String> cfList = getCfList().iterator();
 
