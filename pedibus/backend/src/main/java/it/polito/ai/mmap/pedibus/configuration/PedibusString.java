@@ -2,6 +2,9 @@ package it.polito.ai.mmap.pedibus.configuration;
 
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 
+/**
+ * Classe dedicata alle stringhe presenti nel sistema
+ */
 public class PedibusString {
 
     public static final String TOKEN_NOT_FOUND = "Token non trovato";

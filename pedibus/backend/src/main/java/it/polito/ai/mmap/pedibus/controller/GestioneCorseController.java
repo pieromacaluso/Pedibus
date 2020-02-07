@@ -47,7 +47,7 @@ public class GestioneCorseController {
     public DispAllResource addDisp(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody Integer idFermata) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/disp/"+idLinea+"/"+verso+"/"+data));
         DispTurnoResource dispTurnoResource = gestioneCorseService.addDisp(new DispDTO(idFermata, new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso)));
-        simpMessagingTemplate.convertAndSend("/dispws-add/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource.getDisp());
+        simpMessagingTemplate.convertAndSend("/dispws/add/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource.getDisp());
         simpMessagingTemplate.convertAndSendToUser(dispTurnoResource.getDisp().getGuideUsername(), "/dispws/" + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispTurnoResource);
         return dispTurnoResource.getDisp();
     }
@@ -62,7 +62,7 @@ public class GestioneCorseController {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/disp/"+idDisp));
         DispTurnoResource res = gestioneCorseService.updateDisp(idDisp, disp);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        simpMessagingTemplate.convertAndSend("/dispws-up/" + dateFormat.format(res.getTurno().getData()) + "/" + res.getTurno().getIdLinea() + "/" + ((res.getTurno().getVerso()) ? 1 : 0), res.getDisp());
+        simpMessagingTemplate.convertAndSend("/dispws/up/" + dateFormat.format(res.getTurno().getData()) + "/" + res.getTurno().getIdLinea() + "/" + ((res.getTurno().getVerso()) ? 1 : 0), res.getDisp());
         simpMessagingTemplate.convertAndSendToUser(res.getDisp().getGuideUsername(), "/dispws/" + dateFormat.format(res.getTurno().getData()) + "/" + res.getTurno().getIdLinea() + "/" + ((res.getTurno().getVerso()) ? 1 : 0), res);
         return res.getDisp();
     }
@@ -78,7 +78,7 @@ public class GestioneCorseController {
         DispAllResource deleted = gestioneCorseService.deleteDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso));
         simpMessagingTemplate.convertAndSend("/dispws/" + deleted.getGuideUsername() + "/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
         simpMessagingTemplate.convertAndSendToUser(deleted.getGuideUsername(), "/dispws/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), new DispTurnoResource());
-        simpMessagingTemplate.convertAndSend("/dispws-del/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), deleted);
+        simpMessagingTemplate.convertAndSend("/dispws/del/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), deleted);
     }
 
     /**
@@ -143,8 +143,8 @@ public class GestioneCorseController {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/turno/disp/"+idLinea+"/"+verso+"/"+data));
         gestioneCorseService.setAllTurnoDisp(new TurnoDTO(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, true), verso), dispResource);
         DispStateResource state = new DispStateResource(dispResource);
-        simpMessagingTemplate.convertAndSendToUser(dispResource.getGuideUsername(), "/dispws-status/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
-        simpMessagingTemplate.convertAndSend("/dispws-status/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispResource);
+        simpMessagingTemplate.convertAndSendToUser(dispResource.getGuideUsername(), "/dispws/status/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), state);
+        simpMessagingTemplate.convertAndSend("/dispws/status/" + data + "/" + idLinea + "/" + ((verso) ? 1 : 0), dispResource);
     }
 
     /**

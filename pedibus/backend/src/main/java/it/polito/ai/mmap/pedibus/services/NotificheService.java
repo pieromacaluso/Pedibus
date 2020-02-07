@@ -224,8 +224,8 @@ public class NotificheService {
         if (turnoCheck.isPresent()) {
             TurnoEntity turnoEntity = turnoCheck.get();
             DispStateResource state = new DispStateResource(d);
-            simpMessagingTemplate.convertAndSendToUser(dispEntity.getGuideUsername(), "/dispws-status" + "/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), state);
-            simpMessagingTemplate.convertAndSend("/dispws-status/" + "/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), d);
+            simpMessagingTemplate.convertAndSendToUser(dispEntity.getGuideUsername(), "/dispws/status" + "/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), state);
+            simpMessagingTemplate.convertAndSend("/dispws/status/" + "/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), d);
         }
     }
 

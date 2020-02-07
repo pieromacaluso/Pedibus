@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -29,12 +28,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-
     /**
      * Si specifica come si accede alle risorse
      *
-     * @param http
-     * @throws Exception
+     * @param http oggetto HttpSecurity
+     * @throws Exception eccezione
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -121,8 +119,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     /**
      * Invece di usare il service standard usiamo un UserDetailsService da noi definito
      *
-     * @param builder
-     * @throws Exception
+     * @param builder AuthenticationManagerBuilder
+     * @throws Exception eccezione
      */
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
@@ -134,7 +132,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-
-
 }

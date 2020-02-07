@@ -4,26 +4,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 
-import static org.springframework.messaging.simp.SimpMessageType.MESSAGE;
-import static org.springframework.messaging.simp.SimpMessageType.SUBSCRIBE;
-
 @Configuration
 public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
-        // TODO: modifiche per autenticazione
         messages
-//                .nullDestMatcher().authenticated()
-//                .simpSubscribeDestMatchers("/*").permitAll()
-//                .simpDestMatchers("/app/**").hasRole("USER")
-//                .simpSubscribeDestMatchers("/user/**", "/topic/friends/*").hasRole("USER")
-//                .simpTypeMatchers(MESSAGE, SUBSCRIBE).denyAll()
-                //.simpSubscribeDestMatchers("/admin/**").hasRole("ADMIN")
-//                .anyMessage().authenticated();
-        .anyMessage().authenticated();
-
+                .simpSubscribeDestMatchers("/reservation/**").hasAnyRole("ADMIN", "SYSTEM-ADMIN", "GUIDE")
+                .simpSubscribeDestMatchers("/dispws/**").hasAnyRole("ADMIN", "SYSTEM-ADMIN", "GUIDE")
+                .simpSubscribeDestMatchers("/turnows/**").hasAnyRole("ADMIN", "SYSTEM-ADMIN", "GUIDE")
+                .simpSubscribeDestMatchers("/notifiche/**").hasRole("ADMIN")
+                .simpSubscribeDestMatchers("/child/**").hasRole("USER")
+                .simpSubscribeDestMatchers("/anagrafica/**").hasAnyRole("ADMIN", "SYSTEM-ADMIN")
+                .anyMessage().authenticated();
     }
+
     @Override
     protected boolean sameOriginDisabled() {
         return true;

@@ -2,7 +2,6 @@ package it.polito.ai.mmap.pedibus.configuration;
 
 import it.polito.ai.mmap.pedibus.filter.JwtTokenFilter;
 import it.polito.ai.mmap.pedibus.services.JwtTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -19,7 +18,7 @@ public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) {
         JwtTokenFilter customFilter = new JwtTokenFilter(jwtTokenService);
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
