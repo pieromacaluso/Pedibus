@@ -12,7 +12,7 @@ export class TurniComponent implements OnInit {
   linee$: Observable<string[]>;
 
   constructor(private mongoService: ApiService) {
-    this.linee$ = this.mongoService.getLinee();
+    this.linee$ = this.mongoService.getLineeFiltered();
 
   }
 

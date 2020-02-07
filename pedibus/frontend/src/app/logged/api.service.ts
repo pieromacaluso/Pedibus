@@ -72,6 +72,10 @@ export class ApiService {
     return this.httpClient.get<string[]>(this.baseURL + 'lines');
   }
 
+  getLineeFiltered(): Observable<string[]> {
+    return this.httpClient.get<string[]>(this.baseURL + 'lines/filtered');
+  }
+
   getStopsByLine(idLinea: string): Observable<StopsByLine> {
     return this.httpClient.get<StopsByLine>(this.baseURL + 'lines/' + idLinea);
   }

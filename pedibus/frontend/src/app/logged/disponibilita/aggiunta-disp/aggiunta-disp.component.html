@@ -35,11 +35,17 @@
               </div>
               <div>
                 Conferma: <span class="status"
-                                [ngClass]=" this.disp.isConfirmed ?'status-ok':'status-warn'">{{this.disp.isConfirmed ? "Confermato" : "In attesa di conferma..."}}</span>
+                                [ngClass]=" this.disp.isConfirmed ?'status-ok':'status-warn'">
+                <ng-container *ngIf="this.disp.isConfirmed"><mat-icon>done</mat-icon></ng-container>
+                <ng-container *ngIf="!this.disp.isConfirmed">In attesa</ng-container>
+              </span>
                 <div *ngIf="this.disp.isConfirmed">
                   Conferma Ricezione: <span
                   class="status"
-                  [ngClass]=" this.disp.isAck ?'status-ok':'status-warn'">{{this.disp.isAck ? "Comunicata" : "In attesa di conferma..."}}</span>
+                  [ngClass]=" this.disp.isAck ?'status-ok':'status-warn'">
+                  <ng-container *ngIf="this.disp.isAck"><mat-icon>done</mat-icon></ng-container>
+                <ng-container *ngIf="!this.disp.isAck">In attesa</ng-container>
+                </span>
                 </div>
               </div>
               <div>
@@ -128,7 +134,8 @@
                 </form>
               </div>
             </div>
-            <div fxFlex="70" fxFlex.lt-sm="100"fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px" *ngIf="this.turno && this.linea">
+            <div fxFlex="70" fxFlex.lt-sm="100" fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="10px"
+                 *ngIf="this.turno && this.linea">
               <div fxFlex="100">
                 <app-stops-map [center]="this.selectedFermata ? this.selectedFermata.location : undefined"
                                [stops]="this.stops" [description]="this.stopsDesc"
@@ -145,7 +152,11 @@
 
 <ng-template #loadingDiv>
   <mat-card-header *ngIf="showLoading()"><h1>Caricamento in corso...</h1></mat-card-header>
-  <mat-card-header *ngIf="!showLoading()"><h1>Non ci sono turni in questa giornata</h1></mat-card-header>
+  <mat-card-header *ngIf="!showLoading()">
+    <div class="column-single school-closed">
+      Scuola Chiusa
+    </div>
+  </mat-card-header>
 </ng-template>
 
 <ng-template #notAuthorized>
