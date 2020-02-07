@@ -23,6 +23,12 @@ public class PedibusString {
     public static final String PUT_USER_ERROR = "Problemi nell'aggiornamento dell'utente, ricontrolla i dati";
     public static final String USER_NOT_FOUND = "Utente Non Trovato";
     public static final String UPDATE_RESERVATION_NOT_VALID = "Aggiornamento reservation non valida";
+    public static final String TURNO_EXPIRED = "Il turno è chiuso e scaduto";
+    public static final String TURNO_CLOSED = "Il turno è chiuso";
+    public static final String DISP_DUPLICATE = "Disponibilità già presente";
+    public static final String TURNO_NOT_FOUND = "Turno non trovato";
+    public static final String DISP_NOT_FOUND = "Disponibilità non trovata";
+
 
     public static String NEW_USER_MAIL(String href, UserEntity userEntity) {
         return "<p>Il tuo account è stato appena creato con le seguenti credenziali:</p>" +

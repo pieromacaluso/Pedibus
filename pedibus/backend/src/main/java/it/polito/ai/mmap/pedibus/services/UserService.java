@@ -192,6 +192,7 @@ public class UserService implements UserDetailsService {
      * @throws UserAlreadyPresentException Eccezione utente già presente
      * @deprecated Flusso di registrazione usato nelle registrazioni
      */
+    @Deprecated
     public void registerUser(UserDTO userDTO) throws UserAlreadyPresentException {
         UserEntity userEntity;
         Optional<UserEntity> check = userRepository.findByUsername(userDTO.getEmail());
@@ -235,14 +236,11 @@ public class UserService implements UserDetailsService {
      * @param randomUUID token di conferma
      * @deprecated Flusso di conferma non più utilizzato
      */
+    @Deprecated
     public void enableUser(ObjectId randomUUID) {
         Optional<ActivationTokenEntity> checkToken = activationTokenRepository.findById(randomUUID);
         ActivationTokenEntity token;
-        if (checkToken.isPresent()) {
-            token = checkToken.get();
-        } else {
-            throw new TokenNotFoundException();
-        }
+        token = checkToken.orElseThrow(TokenNotFoundException::new);
 
         Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
         UserEntity userEntity;
@@ -271,21 +269,12 @@ public class UserService implements UserDetailsService {
     public void updateUserPassword(UserDTO userDTO, String randomUUID) {
         ObjectId idToken = new ObjectId(randomUUID);
         Optional<RecoverTokenEntity> checkToken = recoverTokenRepository.findById(idToken);
-        if (checkToken.isPresent()) {
-            RecoverTokenEntity token = checkToken.get();
-            Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
-            if (checkUser.isPresent()) {
-                UserEntity userEntity = checkUser.get();
-                userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-                userRepository.save(userEntity);
-                recoverTokenRepository.delete(token);
-            } else {
-                throw new UserNotFoundException();
-            }
-
-        } else {
-            throw new TokenNotFoundException();
-        }
+        RecoverTokenEntity token = checkToken.orElseThrow(TokenNotFoundException::new);
+        Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
+        UserEntity userEntity = checkUser.orElseThrow(UserNotFoundException::new);
+        userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userRepository.save(userEntity);
+        recoverTokenRepository.delete(token);
     }
 
     /**
@@ -437,18 +426,10 @@ public class UserService implements UserDetailsService {
     public void updateNewUserPasswordAndEnable(NewUserPassDTO newUserPassDTO, String randomUUID) {
         Optional<NewUserTokenEntity> checkToken = newUserTokenRepository.findById(new ObjectId(randomUUID));
         NewUserTokenEntity token;
-        if (checkToken.isPresent()) {
-            token = checkToken.get();
-        } else {
-            throw new TokenNotFoundException();
-        }
+        token = checkToken.orElseThrow(TokenNotFoundException::new);
         Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
         UserEntity userEntity;
-        if (checkUser.isPresent()) {
-            userEntity = checkUser.get();
-        } else {
-            throw new TokenNotFoundException();
-        }
+        userEntity = checkUser.orElseThrow(TokenNotFoundException::new);
         if (!passwordEncoder.matches(newUserPassDTO.getOldPassword(), userEntity.getPassword())) {
             throw new TokenProcessException();
         }
@@ -480,10 +461,8 @@ public class UserService implements UserDetailsService {
     /**
      * Un admin di una linea o il system-admin inserisce un utente come admin per una linea, indicando
      * tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
-     * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione
-     * si troverà i privilegi di admin
-     *
      * Un admin non può togliersi da solo i privilegi
+     *
      * @param permissionResource Linea e booleano
      * @param mail               email
      */

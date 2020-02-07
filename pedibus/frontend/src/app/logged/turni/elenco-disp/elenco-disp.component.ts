@@ -119,7 +119,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     this.dispAddSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
-        return this.rxStompService.watch('/dispws-add' + '/' + this.pathSub(pren));
+        return this.rxStompService.watch('/dispws/add' + '/' + this.pathSub(pren));
       }),
       tap(() => this.loading = false),
     ).subscribe(message => {
@@ -135,7 +135,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     this.dispDelSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
-        return this.rxStompService.watch('/dispws-del' + '/' + this.pathSub(pren));
+        return this.rxStompService.watch('/dispws/del' + '/' + this.pathSub(pren));
       }),
       tap(() => this.loading = false),
     ).subscribe(message => {
@@ -154,7 +154,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     this.dispUpSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
-        return this.rxStompService.watch('/dispws-up' + '/' + this.pathSub(pren));
+        return this.rxStompService.watch('/dispws/up' + '/' + this.pathSub(pren));
       }),
       tap(() => this.loading = false),
     ).subscribe(message => {
@@ -184,7 +184,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       tap(() => this.loading = true),
       switchMap(pren => {
         this.p = pren;
-        return this.rxStompService.watch('/dispws-status' + '/' + this.pathSub(pren));
+        return this.rxStompService.watch('/dispws/status' + '/' + this.pathSub(pren));
       }),
       tap(() => this.loading = false),
     ).subscribe(message => {

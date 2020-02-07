@@ -1,11 +1,13 @@
 package it.polito.ai.mmap.pedibus.exception;
 
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
+
 public class DispNotFoundException extends RuntimeException {
     /**
      * Constructs a {@code DispNotFoundException} with no detail message.
      */
     public DispNotFoundException() {
-        super();
+        super(PedibusString.DISP_NOT_FOUND);
     }
 
     /**

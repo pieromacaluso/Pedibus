@@ -40,7 +40,6 @@ public class AdminRestController {
     LineeService lineeService;
     @Autowired
     RoleRepository roleRepository;
-    // TODO: Logger in tutti gli endpoint
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -51,10 +50,9 @@ public class AdminRestController {
     @GetMapping("/sysadmin/roles")
     @ApiOperation("Restituisce tutti i ruoli disponibili sul database")
     public List<String> getAvailableRole() {
-        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/roles" ));
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/roles"));
         return userService.getAllRole();
     }
-
 
     /**
      * Enpoint per ottenere gli utenti paginati e filtrati attraverso le keyword specificate. Queste possono essere multiple
@@ -69,7 +67,7 @@ public class AdminRestController {
     @GetMapping("/sysadmin/users")
     @ApiOperation("Restituisce gli utenti paginati e filtrati attraverso le keyword specificate")
     public Page<UserInsertResource> getUsers(Pageable pageable, @ApiParam(name = "keyword", value = "Filtra gli user restituiti. Possono essere più di una separate da spazi") @RequestParam(name = "keyword") String keyword) {
-        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/users?heyword="+keyword ));
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/users?heyword=" + keyword));
         return userService.getAllPagedUsers(pageable, keyword);
     }
 
@@ -84,7 +82,7 @@ public class AdminRestController {
     @ApiOperation("Aggiunge un nuovo utente al database, inviando una mail per attivare l'account")
     public UserEntity insertUser(@ApiParam(name = "userInsertResource", value = "Contiene i dettagli dell'utente che verrà inserito") @Valid @RequestBody UserInsertResource userInsertResource,
                                  BindingResult bindingResult) {
-        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/sysadmin/users "+ userInsertResource.getUserId() ));
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/sysadmin/users " + userInsertResource.getUserId()));
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.POST_USER_ERROR);
         }
@@ -101,7 +99,7 @@ public class AdminRestController {
     public void updateUser(@ApiParam(name = "userId", value = "L'ID dell'utente da modificare") @PathVariable("userId") String userId,
                            @ApiParam(name = "userInsertResource", value = "Contiene i dati aggiornati dell'utente") @Valid @RequestBody UserInsertResource userInsertResource,
                            BindingResult bindingResult) {
-        logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/sysadmin/users/"+ userId ));
+        logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/sysadmin/users/" + userId));
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.PUT_USER_ERROR);
         }
@@ -116,7 +114,7 @@ public class AdminRestController {
     @DeleteMapping("/sysadmin/users/{userId}")
     @ApiOperation("Cancella l'utente specificato")
     public void deleteUser(@ApiParam(name = "userId", value = "L'ID dell'utente da cancellare") @PathVariable("userId") String userId) {
-        logger.info(PedibusString.ENDPOINT_CALLED("DELETE", "/sysadmin/users/"+ userId ));
+        logger.info(PedibusString.ENDPOINT_CALLED("DELETE", "/sysadmin/users/" + userId));
         userService.deleteUserByUsername(userId);
     }
 
@@ -132,8 +130,10 @@ public class AdminRestController {
      */
     @GetMapping("/sysadmin/children")
     @ApiOperation("Restituisce i bambini paginati e filtrati attraverso le keyword specificate")
-    public Page<ChildDTO> getChildren(Pageable pageable, @ApiParam(name = "keyword", value = "Filtra gli user restituiti. Possono essere più di una separate da spazi") @RequestParam("keyword") String keyword) {
-        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/children?keyword="+keyword));
+    public Page<ChildDTO> getChildren(Pageable pageable,
+                                      @ApiParam(name = "keyword", value = "Filtra gli user restituiti. Possono essere più di una separate da spazi")
+                                      @RequestParam("keyword") String keyword) {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/children?keyword=" + keyword));
         return childService.getAllPagedChildren(pageable, keyword);
     }
 
@@ -146,7 +146,7 @@ public class AdminRestController {
     @GetMapping("/sysadmin/children/{idChild}")
     @ApiOperation("Restituisce il bambino specificato")
     public ChildDTO getChild(@ApiParam(name = "idChild", value = "Il codice fiscale del bambino") @PathVariable("idChild") String cfChild) {
-        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/children/"+cfChild));
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/sysadmin/children/" + cfChild));
         return childService.getChildDTOById(cfChild);
     }
 
@@ -161,7 +161,7 @@ public class AdminRestController {
     @ApiOperation("Aggiunge un nuovo bambino al database")
     public ChildDTO createChild(@ApiParam(name = "childDTO", value = "Contiene i dettagli del bambino che verrà inserito") @Valid @RequestBody ChildDTO childDTO,
                                 BindingResult bindingResult) {
-        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/sysadmin/children "+childDTO.getCodiceFiscale()));
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/sysadmin/children " + childDTO.getCodiceFiscale()));
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.POST_CHILD_ERROR);
         }
@@ -181,7 +181,7 @@ public class AdminRestController {
     public ChildDTO updateChild(@ApiParam(name = "userId", value = "Il codice fiscale del bambino da modificare") @PathVariable("childId") String childId,
                                 @ApiParam(name = "childDTO", value = "Contiene i dati aggiornati del bambino") @Valid @RequestBody ChildDTO childDTO,
                                 BindingResult bindingResult) {
-        logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/sysadmin/children/"+childId));
+        logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/sysadmin/children/" + childId));
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.PUT_CHILD_ERROR);
         }
@@ -197,16 +197,13 @@ public class AdminRestController {
     @DeleteMapping("/sysadmin/children/{childId}")
     @ApiOperation("Cancella il bambino specificato")
     public void deleteChild(@ApiParam(name = "childId", value = "Il codice fiscale del bambino da cancellare") @PathVariable("childId") String childId) {
-        logger.info(PedibusString.ENDPOINT_CALLED("DELETE", "/sysadmin/children/"+childId));
+        logger.info(PedibusString.ENDPOINT_CALLED("DELETE", "/sysadmin/children/" + childId));
         childService.deleteChild(childId);
     }
 
     /**
      * Un admin di una linea o il system-admin inserisce un utente come admin per una linea, indicando
      * tramite PermissionResource.addOrDel se aggiungere(true) o eliminare(false) il permesso
-     * Questo utente può essere già registrato o no e quando passerà attraverso il processo di registrazione
-     * si troverà i privilegi di admin
-     * todo mi sembra di capire che non c'è più questa cosa e questa operazione su un utente non salvato su db causa una UserNotFoundException (marcof)
      *
      * @param permissionResource Linea e booleano
      * @param userId             L'id dell'utente
@@ -215,7 +212,7 @@ public class AdminRestController {
     @ApiOperation("Aggiunge o rimuove il ruolo di admin per un utente")
     public void setUserAdmin(@ApiParam(name = "permissionResource", value = "Contiene i dettagli dei permessi da assegnare al dato utente") @RequestBody PermissionResource permissionResource,
                              @ApiParam(name = "userId", value = "L'ID dell'utente") @PathVariable("userID") String userId) {
-        logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/admin/users/"+userId));
+        logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/admin/users/" + userId));
         this.userService.setUserAdmin(permissionResource, userId);
 
     }

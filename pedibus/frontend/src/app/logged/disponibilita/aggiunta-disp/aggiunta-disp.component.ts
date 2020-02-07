@@ -150,7 +150,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     // WebSocket Disponibilità status
     this.dispStatusSub = this.changeLinea.asObservable().pipe(
       switchMap(linea => {
-        return this.rxStompService.watch('/user/dispws-status' + this.pathSub(this.p));
+        return this.rxStompService.watch('/user/dispws/status' + this.pathSub(this.p));
       }),
     ).subscribe(message => {
         const res = JSON.parse(message.body);

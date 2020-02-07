@@ -4,18 +4,14 @@ import it.polito.ai.mmap.pedibus.entity.DispEntity;
 import it.polito.ai.mmap.pedibus.entity.NotificaEntity;
 import it.polito.ai.mmap.pedibus.entity.TurnoEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
-import it.polito.ai.mmap.pedibus.exception.DispNotFoundException;
-import it.polito.ai.mmap.pedibus.exception.PermissionDeniedException;
+import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.DispDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.TurnoDTO;
 import it.polito.ai.mmap.pedibus.repository.DispRepository;
 import it.polito.ai.mmap.pedibus.repository.TurnoRepository;
-import it.polito.ai.mmap.pedibus.resources.DispAllResource;
-import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
-import it.polito.ai.mmap.pedibus.resources.TurnoDispResource;
-import it.polito.ai.mmap.pedibus.resources.TurnoResource;
+import it.polito.ai.mmap.pedibus.resources.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,10 +92,7 @@ public class GestioneCorseService {
      */
     private DispEntity getDispEntitybyId(String idDisp) throws DispNotFoundException {
         Optional<DispEntity> checkDisp = dispRepository.findByDispId(idDisp);
-        if (checkDisp.isPresent())
-            return checkDisp.get();
-        else
-            throw new DispNotFoundException("Disponibilità non trovata");
+        return checkDisp.orElseThrow(DispNotFoundException::new);
     }
 
     /**
@@ -164,9 +157,9 @@ public class GestioneCorseService {
             TurnoEntity turnoEntity = getTurnoEntity(dispDTO.getTurnoDTO());
 
             if (turnoEntity.getIsExpired())
-                throw new IllegalArgumentException("Il turno è chiuso e scaduto"); //TODO eccezione custom (?)
+                throw new TurnoExpiredException();
             if (!turnoEntity.getIsOpen())
-                throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
+                throw new TurnoClosedException();
             if (!this.userService.isGuide())
                 throw new PermissionDeniedException();
 
@@ -176,9 +169,12 @@ public class GestioneCorseService {
                     lineeService.getFermataEntityById(dispEntity.getIdFermata()),
                     lineeService.getLineaEntityById(dispEntity.getIdLinea()));
             TurnoResource t = new TurnoResource(turnoEntity);
-            return new DispTurnoResource(d, t);
+            DispTurnoResource res = new DispTurnoResource(d, t);
+            simpMessagingTemplate.convertAndSend("/dispws/add/" + MongoTimeService.dateToString(dispDTO.getTurnoDTO().getData()) + "/" + dispDTO.getTurnoDTO().getIdLinea() + "/" + ((dispDTO.getTurnoDTO().getVerso()) ? 1 : 0), res.getDisp());
+            simpMessagingTemplate.convertAndSendToUser(res.getDisp().getGuideUsername(), "/dispws/" + "/" + dispDTO.getTurnoDTO().getData() + "/" + dispDTO.getTurnoDTO().getIdLinea() + "/" + ((dispDTO.getTurnoDTO().getVerso()) ? 1 : 0), res);
+            return res;
         } else
-            throw new IllegalArgumentException("Disponibilità già presente");
+            throw new DispAlreadyPresentException();
     }
 
     /**
@@ -189,11 +185,8 @@ public class GestioneCorseService {
      */
     public DispTurnoResource updateDisp(String idDisp, DispAllResource disp) {
         DispEntity e = getDispEntitybyId(idDisp);
-
         Optional<TurnoEntity> turnoCheck = turnoRepository.findByTurnoId(e.getTurnoId());
-        if (!turnoCheck.isPresent()) throw new IllegalArgumentException("Turno non trovata");
-        TurnoEntity t = turnoCheck.get();
-
+        TurnoEntity t = turnoCheck.orElseThrow(TurnoNotFoundException::new);
         if (!t.getIsExpired()) {
             e.setIdFermata(disp.getIdFermata());
             dispRepository.save(e);
@@ -202,29 +195,32 @@ public class GestioneCorseService {
             DispAllResource res_d = new DispAllResource(e,
                     lineeService.getFermataEntityById(e.getIdFermata()),
                     lineeService.getLineaEntityById(e.getIdLinea()));
-            return new DispTurnoResource(res_d, res_t);
+            DispTurnoResource res = new DispTurnoResource(res_d, res_t);
+            simpMessagingTemplate.convertAndSend("/dispws/up/" + MongoTimeService.dateToString(res.getTurno().getData()) + "/" + res.getTurno().getIdLinea() + "/" + ((res.getTurno().getVerso()) ? 1 : 0), res.getDisp());
+            simpMessagingTemplate.convertAndSendToUser(res.getDisp().getGuideUsername(), "/dispws/" + MongoTimeService.dateToString(res.getTurno().getData()) + "/" + res.getTurno().getIdLinea() + "/" + ((res.getTurno().getVerso()) ? 1 : 0), res);
+            return res;
         } else
-            throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
+            throw new TurnoExpiredException();
 
     }
 
     /**
      * Cancella la disponibilità per la persona loggata, a patto che esista
      *
-     * @param turnoDTO
+     * @param turnoDTO turno da cui cancellare disponibilità
      */
-    public DispAllResource deleteDisp(TurnoDTO turnoDTO) {
+    public void deleteDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         DispEntity dispEntity = getDispEntity(turnoDTO, principal.getUsername());
         DispAllResource d = new DispAllResource(dispEntity,
                 lineeService.getFermataEntityById(dispEntity.getIdFermata()),
                 lineeService.getLineaEntityById(dispEntity.getIdLinea()));
         if (getTurnoEntity(turnoDTO).getIsOpen() && !getTurnoEntity(turnoDTO).getIsExpired()) {
             dispRepository.delete(dispEntity);
-            return d;
+            simpMessagingTemplate.convertAndSendToUser(d.getGuideUsername(), "/dispws/" + MongoTimeService.dateToString(turnoDTO.getData()) + "/" + turnoDTO.getIdLinea() + "/" + ((turnoDTO.getVerso()) ? 1 : 0), new DispTurnoResource());
+            simpMessagingTemplate.convertAndSend("/dispws/del/" + MongoTimeService.dateToString(turnoDTO.getData()) + "/" + turnoDTO.getIdLinea() + "/" + ((turnoDTO.getVerso()) ? 1 : 0), d);
         } else
-            throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
+            throw new TurnoClosedException();
     }
 
     /**
@@ -265,11 +261,14 @@ public class GestioneCorseService {
                 dispEntity = dispRepository.save(dispEntity);
                 NotificaEntity notificaEntity = this.notificheService.generateDispNotification(dispEntity);
                 notificheService.addNotifica(notificaEntity);      //salvataggio e invio notifica
+                DispStateResource state = new DispStateResource(dispAllResource);
+                simpMessagingTemplate.convertAndSendToUser(dispAllResource.getGuideUsername(), "/dispws/status/" + MongoTimeService.dateToString(turnoDTO.getData()) + "/" + turnoDTO.getIdLinea() + "/" + ((turnoDTO.getVerso()) ? 1 : 0), state);
+                simpMessagingTemplate.convertAndSend("/dispws/status/" + MongoTimeService.dateToString(turnoDTO.getData()) + "/" + turnoDTO.getIdLinea() + "/" + ((turnoDTO.getVerso()) ? 1 : 0), dispAllResource);
                 //todo messaggio per aggiornare l'interfaccia admin, quando arrivato a scuola friz tutti gli utenti
             } else
-                throw new IllegalArgumentException("Il turno è scaduto"); //TODO eccezione custom (?)
+                throw new TurnoExpiredException();
         } else
-            throw new IllegalArgumentException("Il turno deve essere chiuso"); //TODO eccezione custom (?)
+            throw new TurnoClosedException();
     }
 
     /**
@@ -278,15 +277,16 @@ public class GestioneCorseService {
      * @param turnoDTO
      * @param isOpen
      */
-    public TurnoEntity setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
+    public void setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
         if (lineeService.isAdminLine(turnoDTO.getIdLinea()) || userService.isSysAdmin()) {
             TurnoEntity turnoEntity = getTurnoEntity(turnoDTO);
             if (!turnoEntity.getIsExpired()) {
                 turnoEntity.setIsOpen(isOpen);
                 turnoRepository.save(turnoEntity);
-                return turnoEntity;
+                TurnoResource tr = new TurnoResource(turnoEntity);
+                simpMessagingTemplate.convertAndSend("/turnows/" + MongoTimeService.dateToString(tr.getData()) + "/" + tr.getIdLinea() + "/" + ((tr.getVerso()) ? 1 : 0), tr);
             } else
-                throw new PermissionDeniedException("Il turno è scaduto");
+                throw new TurnoExpiredException();
         } else
             throw new PermissionDeniedException();
     }
