@@ -68,6 +68,19 @@ public class DebugController {
         dataCreationService.makeChildUser(countCreate);
     }
 
+    /**
+     * Si può chiamare ripetutamente e creerà nuovi dati
+     * Genera:
+     * - countCreate genitori, ognuno con due figli
+     *
+     * @throws IOException Eccezione lettura da file
+     */
+    @GetMapping("/debug/make/child/{countCreate}")
+    public void makeChild(@PathVariable("countCreate") int countCreate) throws IOException {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/debug/make/child/" + countCreate));
+        dataCreationService.makeChild(countCreate);
+    }
+
     @PostMapping("/debug/transform")
     public List<ChildEntity> debug() throws IOException {
         return dataCreationService.transform();

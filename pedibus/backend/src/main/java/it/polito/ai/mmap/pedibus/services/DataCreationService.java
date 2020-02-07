@@ -155,9 +155,6 @@ public class DataCreationService {
 
 
         List<LineaEntity> lineaEntityList = lineaRepository.findAll();
-        Iterator<UserEntity> userList = userEntityListConverter("genitori.json", roleUser).iterator();
-
-
         LinkedList<UserEntity> listNonni = new LinkedList<>();
         int count = 0;
         for (int i = 0; i <= 1; i++) {
@@ -166,7 +163,7 @@ public class DataCreationService {
             while (count < countCreate + 1) {
                 UserEntity nonno = nonniList.next();
                 while (userRepository.findByUsername(nonno.getUsername()).isPresent()) {
-                    if (!userList.hasNext())
+                    if (!nonniList.hasNext())
                         return;
                     nonno = nonniList.next();
                 }
@@ -189,12 +186,18 @@ public class DataCreationService {
         userRepository.saveAll(listNonni);
         logger.info(count * 2 + " nonni caricati");
 
+        makeChild(countCreate);
+    }
+
+    public void makeChild(int countCreate) throws IOException {
+        RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
+        Iterator<UserEntity> userList = userEntityListConverter("genitori.json", roleUser).iterator();
         List<ChildEntity> children = objectMapper.readValue(ResourceUtils.getFile("classpath:building_data/debug/childEntity.json"), new TypeReference<List<ChildEntity>>() {
         });
 
 
         Iterator<ChildEntity> childList = children.iterator();
-        count = 0;
+        int count = 0;
         while (count < countCreate) {
             UserEntity parent = userList.next();
             while (userRepository.findByUsername(parent.getUsername()).isPresent()) {
@@ -229,9 +232,7 @@ public class DataCreationService {
             count++;
         }
         logger.info(count + " genitori caricati, con due figli ognuno.");
-
     }
-
 
     private List<UserEntity> userEntityListConverter(String fileName, RoleEntity roleEntity) throws IOException {
 
@@ -266,4 +267,6 @@ public class DataCreationService {
 
         return childList;
     }
+
+
 }
