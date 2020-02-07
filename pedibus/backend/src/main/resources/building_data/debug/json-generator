@@ -7,8 +7,8 @@ userDTO
   {
     'repeat(100)': {
       email: '{{firstName()}}'+'.'+'{{surname()}}'+'@test.it',
-      password: "1!qwerty1!",
-      passMatch: "1!qwerty1!",
+      password: "12345@Sys",
+      passMatch: "12345@Sys",
     }
   }
 ]
@@ -18,11 +18,14 @@ childEntity
 [
   {
     'repeat(100)': {
-      codiceFiscale: 'cf-{{objectId()}}',
+      codiceFiscale: '',
       name: '{{firstName()}}',
-      surname: '{{surname()}}',
-      idFermataDefault: '{{integer(1, 8)}}',
-      idParent: '{{objectId()}}'
+      idFermataAndata: '{{integer(1, 4)}}',
+      idFermataRitorno: '{{integer(5, 8)}}'
     }
   }
 ]
+
+
+cf from regex
+https://onlinerandomtools.com/generate-random-data-from-regexp
