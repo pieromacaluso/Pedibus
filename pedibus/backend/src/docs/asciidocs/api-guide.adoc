@@ -107,21 +107,6 @@ include::{snippets}/delete-res-alt/http-request.adoc[]
 
 include::{snippets}/delete-res-alt/curl-request.adoc[]
 
-=== Prenotazioni per linea&data
-
-`GET /reservations/{id_linea}/{data}` Restituisce due liste, riportanti, per ogni fermata di andata e ritorno, l’elenco delle persone che devono essere prese in carico o lasciate in corrispondenza della fermata.
-
-==== Example Request
-
-include::{snippets}/get-res/http-request.adoc[]
-
-==== CURL request
-
-include::{snippets}/get-res/curl-request.adoc[]
-
-==== Example Response body
-
-include::{snippets}/get-res/response-body.adoc[]
 
 === Prenotazioni per linea&data&verso
 
@@ -341,41 +326,6 @@ include::{snippets}/get-notifiche/curl-request.adoc[]
 ==== Example Response body
 
 include::{snippets}/get-notifiche/response-body.adoc[]
-
-
-=== Lista notifiche Base non lette
-
-`GET /notifiche/base/{username}` is used to retrive the notifications
-
-==== Example Request
-
-include::{snippets}/get-notifiche-base/http-request.adoc[]
-
-==== CURL request
-
-include::{snippets}/get-notifiche-base/curl-request.adoc[]
-
-==== Example Response body
-
-include::{snippets}/get-notifiche-base/response-body.adoc[]
-
-
-=== Lista notifiche Disponibilità non lette
-
-`GET /notifiche/disp/{username}` is used to retrive the notifications
-
-==== Example Request
-
-include::{snippets}/get-notifiche-disp/http-request.adoc[]
-
-==== CURL request
-
-include::{snippets}/get-notifiche-disp/curl-request.adoc[]
-
-==== Example Response body
-
-include::{snippets}/get-notifiche-disp/response-body.adoc[]
-
 
 === Elimina una notifica
 
