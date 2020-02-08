@@ -170,7 +170,7 @@ public class NotificheTest {
             userRepository.save(userEntity);
         });
 
-        notificheEntityMap.values().forEach(notificheEntity -> notificheEntity.forEach(notificaEntity -> notificaRepository.save(notificaEntity)));
+        notificaRepository.saveAll(notificheEntityMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList()));
 
         //logger.info("setUpMethod done.");
     }
@@ -184,10 +184,8 @@ public class NotificheTest {
             userRepository.delete(userEntity);
         });
 
-        notificheEntityMap.values().forEach(notificheEntity -> {
-            notificheEntity.forEach(notificaEntity -> {
-                notificaRepository.delete(notificaEntity);
-            });
+        notificheEntityMap.values().stream().flatMap(Collection::stream).forEach(notificaEntity -> {
+            notificaRepository.delete(notificaEntity);
         });
 
         //logger.info("tearDownMethod done.");
@@ -196,79 +194,77 @@ public class NotificheTest {
 
     /**
      * Testa che venga eliminata una determinata notifica tramite il suo Id
+     *
      * @throws Exception
      */
- /*   @Test
+    @Test
     public void deleteNotifica() throws Exception {
         logger.info("Test deleteNotifica Base...");
-        String user="test.Genitore@test.it";
         //autenticazione
-        String token=loginAsGenitore();
+        String token = loginAsGenitore();
         //ricerca idnotifica della notifica da eliminare, la prima non letta
-        List<NotificaEntity> notifiche=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).collect(Collectors.toList());
-        if(notifiche.size()>0){
-            String idNotificaToDel=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(NotificaEntity::getIdNotifica).findFirst().get();
+        if (notificaRepository.findAll().stream().anyMatch(notificaEntity -> notificaEntity.getUsernameDestinatario().equals("test.Genitore@test.it"))) {
+            String idNotificaToDel = notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().equals("test.Genitore@test.it")).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(NotificaEntity::getIdNotifica).findFirst().get();
 
-            NotificaEntity notificaToDel=notificaRepository.findById(idNotificaToDel).get();    //da usare per ripristinare il db dopo averla cancellata
+            NotificaEntity notificaToDel = notificaRepository.findById(idNotificaToDel).get();    //da usare per ripristinare il db dopo averla cancellata
 
             //legge dal db tutte le notifiche non lette di quell utente tranne quella che si sta cancellando e le mappa come notificaDTO
-            List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIdNotifica().equals(idNotificaToDel)).map(notificaEntity -> {
-                NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+            List<NotificaDTO> expectedResult = notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo("test.Genitore@test.it") == 0).filter(notificaEntity -> !notificaEntity.getIsTouched()).filter(notificaEntity -> !notificaEntity.getIdNotifica().equals(idNotificaToDel)).map(notificaEntity -> {
+                NotificaDTO notificaDTO = new NotificaDTO(notificaEntity);
                 return notificaDTO;
             }).collect(Collectors.toList());
 
             String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-            mockMvc.perform(delete("/notifiche/{idNotifica}",idNotificaToDel)
+            mockMvc.perform(delete("/notifiche/{idNotifica}", idNotificaToDel)
                     .header("Authorization", "Bearer " + token))
                     .andExpect(status().isOk());
 
-            mockMvc.perform(get("/notifiche/all/{username}",user)
+            mockMvc.perform(get("/notifiche/all/{username}", "test.Genitore@test.it")
                     .header("Authorization", "Bearer " + token))
                     .andExpect(status().isOk())
-                    .andExpect(content().json(expectedJson))
                     .andDo(document("delete-notifiche-base",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint())));
 
             notificaRepository.save(notificaToDel);     //per ripristinare notifica eliminata
             logger.info("deleteNotifica Base done.");
-        }else{
+        } else {
             logger.info("deleteNotifica Base finish but not done.");
         }
 
 
     }
-*/
+
     /**
      * Testa che vengano ritornate tutte le notifiche di un determinato utente
+     *
      * @throws Exception
      */
-    /*
+
     @Test
     public void getNotifiche() throws Exception {
-        String user="test.Genitore@test.it";
-        logger.info("Test getNotifiche user: "+user+" ...");
+        String user = "test.Genitore@test.it";
+        logger.info("Test getNotifiche user: " + user + " ...");
         //autenticazione
-        String token=loginAsGenitore();
+        String token = loginAsGenitore();
         //legge dal db tutte le notifiche non lette di quell utente
-        List<NotificaDTO> expectedResult=notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user)==0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
-            NotificaDTO notificaDTO=new NotificaDTO(notificaEntity);
+        List<NotificaDTO> expectedResult = notificaRepository.findAll().stream().filter(notificaEntity -> notificaEntity.getUsernameDestinatario().compareTo(user) == 0).filter(notificaEntity -> !notificaEntity.getIsTouched()).map(notificaEntity -> {
+            NotificaDTO notificaDTO = new NotificaDTO(notificaEntity);
             return notificaDTO;
         }).collect(Collectors.toList());
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
 
-        mockMvc.perform(get("/notifiche/all/{username}",user)
+        mockMvc.perform(get("/notifiche/all/{username}", user)
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson))
                 .andDo(document("get-notifiche",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
         logger.info("Test done.");
     }
-*/
+
 
     /**
      * Verifica che in caso di utente non autenticato le risorse notifiche non sono disponibili
