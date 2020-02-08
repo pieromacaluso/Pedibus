@@ -93,7 +93,7 @@ public class NotificheTest {
     PasswordEncoder passwordEncoder;
 
     @Value("${notifiche.type.Base}")
-     private String NotBase;
+    private String NotBase;
     @Value("${notifiche.type.Disponibilita}")
     private String NotDisponibilita;
 
@@ -101,7 +101,7 @@ public class NotificheTest {
     Map<Integer, ChildEntity> childMap = new HashMap<>();
     Map<String, UserDTO> userDTOMap = new HashMap<>();
     Map<String, UserEntity> userEntityMap = new HashMap<>();
-    Map<String,ArrayList<NotificaEntity>> notificheEntityMap = new HashMap<>();        //Per ogni utente, una lista delle sue notifiche
+    Map<String, ArrayList<NotificaEntity>> notificheEntityMap = new HashMap<>();        //Per ogni utente, una lista delle sue notifiche
     RoleEntity roleUser;
     RoleEntity roleAdmin;
     RoleEntity roleGuide;
@@ -129,23 +129,23 @@ public class NotificheTest {
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
         userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
-        ArrayList<NotificaEntity> notificaEntitiesGenitore=new ArrayList<>();
-        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Genitore@test.it","msg1",null));
-        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Genitore@test.it","msg2",null));
+        ArrayList<NotificaEntity> notificaEntitiesGenitore = new ArrayList<>();
+        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.Genitore@test.it", "msg1", null));
+        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.Genitore@test.it", "msg2", null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testGenitore@test.it","msg3",false,xxx,xxx)); //todo aggiungere una mappa di disponibilità
-        notificheEntityMap.put("testGenitore",notificaEntitiesGenitore);
+        notificheEntityMap.put("testGenitore", notificaEntitiesGenitore);
 
-        ArrayList<NotificaEntity> notificaEntitiesNonGenitore=new ArrayList<>();
-        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.NonGenitore@test.it","msg1",null));
-        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.NonGenitore@test.it","msg1",null));
+        ArrayList<NotificaEntity> notificaEntitiesNonGenitore = new ArrayList<>();
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.NonGenitore@test.it", "msg1", null));
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.NonGenitore@test.it", "msg1", null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonGenitore@test.it","msg3",false,xxx,xxx));
-        notificheEntityMap.put("testNonGenitore",notificaEntitiesNonGenitore);
+        notificheEntityMap.put("testNonGenitore", notificaEntitiesNonGenitore);
 
-        ArrayList<NotificaEntity> notificaEntitiesNonno=new ArrayList<>();
-        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Nonno@test.it","msg1",null));
-        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Nonno@test.it","msg1",null));
+        ArrayList<NotificaEntity> notificaEntitiesNonno = new ArrayList<>();
+        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.Nonno@test.it", "msg1", null));
+        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.Nonno@test.it", "msg1", null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonno@test.it","msg3",false,xxx,xxx));
-        notificheEntityMap.put("testNonno",notificaEntitiesNonno);
+        notificheEntityMap.put("testNonno", notificaEntitiesNonno);
 
         //logger.info("PostInit done");
 
@@ -198,7 +198,7 @@ public class NotificheTest {
      * Testa che venga eliminata una determinata notifica tramite il suo Id
      * @throws Exception
      */
-    @Test
+ /*   @Test
     public void deleteNotifica() throws Exception {
         logger.info("Test deleteNotifica Base...");
         String user="test.Genitore@test.it";
@@ -239,11 +239,12 @@ public class NotificheTest {
 
 
     }
-
+*/
     /**
      * Testa che vengano ritornate tutte le notifiche di un determinato utente
      * @throws Exception
      */
+    /*
     @Test
     public void getNotifiche() throws Exception {
         String user="test.Genitore@test.it";
@@ -267,17 +268,19 @@ public class NotificheTest {
                         preprocessResponse(prettyPrint())));
         logger.info("Test done.");
     }
+*/
 
     /**
      * Verifica che in caso di utente non autenticato le risorse notifiche non sono disponibili
+     *
      * @throws Exception
      */
     @Test
     public void getNotificheNotAccess() throws Exception {
-        String user="test.Genitore@test.it";
-        logger.info("Test getNotificheNotAccess user: "+user+" ...");
+        String user = "test.Genitore@test.it";
+        logger.info("Test getNotificheNotAccess user: " + user + " ...");
 
-        mockMvc.perform(get("/notifiche/all/{username}",user))
+        mockMvc.perform(get("/notifiche/all/{username}", user))
                 .andExpect(status().isUnauthorized())
                 .andDo(document("get-notifiche-notAccess",
                         preprocessRequest(prettyPrint()),
@@ -285,7 +288,6 @@ public class NotificheTest {
 
         logger.info("Test done.");
     }
-
 
 
     private String loginAsGenitore() throws Exception {
