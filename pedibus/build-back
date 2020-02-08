@@ -2,5 +2,4 @@
 
 # 1. build backend
 cd backend/
-./mvnw clean install -Pprod -Dmaven.test.skip=true
-
+./mvnw clean install -Pprod
