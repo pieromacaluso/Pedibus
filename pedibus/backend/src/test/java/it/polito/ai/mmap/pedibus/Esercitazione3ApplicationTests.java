@@ -2,17 +2,12 @@ package it.polito.ai.mmap.pedibus;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polito.ai.mmap.pedibus.entity.ActivationTokenEntity;
-import it.polito.ai.mmap.pedibus.entity.LineaEntity;
-import it.polito.ai.mmap.pedibus.entity.RecoverTokenEntity;
-import it.polito.ai.mmap.pedibus.entity.UserEntity;
+import it.polito.ai.mmap.pedibus.entity.*;
+import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
-import it.polito.ai.mmap.pedibus.repository.ActivationTokenRepository;
-import it.polito.ai.mmap.pedibus.repository.LineaRepository;
-import it.polito.ai.mmap.pedibus.repository.RecoverTokenRepository;
-import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.services.LineeService;
+import it.polito.ai.mmap.pedibus.services.MongoTimeService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,8 +29,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.List;
-import java.util.Optional;
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -85,13 +81,70 @@ public class Esercitazione3ApplicationTests {
 
     private String mailTest = "appmmap@pieromacaluso.com";
 
+
+    @Autowired
+    ChildRepository childRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    FermataRepository fermataRepository;
+
+    @Autowired
+    ReservationRepository reservationRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    MongoTimeService mongoTimeService;
+
+
+    Map<Integer, ChildEntity> childMap = new HashMap<>();
+    Map<String, UserDTO> userDTOMap = new HashMap<>();
+    Map<String, UserEntity> userEntityMap = new HashMap<>();
+    RoleEntity roleUser;
+    RoleEntity roleAdmin;
+    LineaEntity defLinea;
+
+    @PostConstruct
+    public void postInit() {
+        defLinea = lineaRepository.findAll().get(0);
+        roleUser = roleRepository.findById("ROLE_USER").get();
+        roleAdmin = roleRepository.findById("ROLE_ADMIN").get();
+        childMap.put(0, new ChildEntity("RSSMRA30A01H501I", "Mario", "Rossi"));
+        childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
+        childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
+
+        userDTOMap.put("testGenitore", new UserDTO("test.Genitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonGenitore", new UserDTO("test.NonGenitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonno", new UserDTO("test.Nonno@test.it", "321@%$User", "321@%$User"));
+
+        userEntityMap.put("testGenitore", new UserEntity(userDTOMap.get("testGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder, new HashSet<>(Arrays.asList(childMap.get(0).getCodiceFiscale()))));
+        userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
+        userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin)), passwordEncoder));
+
+    }
+
     @Before
     public void setUpMethod() {
+
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .apply(documentationConfiguration(this.restDocumentation))
                 .alwaysDo(document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint())))
                 .build();
+
+        childRepository.saveAll(childMap.values());
+        userEntityMap.values().forEach(userEntity -> {
+            userEntity.setEnabled(true);
+            if (userEntity.getRoleList().contains(roleAdmin)) {
+                logger.info("Il nonno" + userEntity.getUsername() + " sarà admin della linea: " + defLinea.getId());
+                lineeService.addAdminLine(userEntity.getUsername(), defLinea.getId());
+            }
+            userRepository.save(userEntity);
+        });
     }
 
     @After
@@ -106,6 +159,18 @@ public class Esercitazione3ApplicationTests {
         List<LineaEntity> lineaEntityList = lineaRepository.findAll();
         lineaEntityList.forEach(lineaEntity -> lineaEntity.getAdminList().remove(mailTest));
         lineaRepository.saveAll(lineaEntityList);
+
+
+        childMap.values().forEach(childEntity ->
+        {
+            reservationRepository.deleteAllByCfChild(childEntity.getCodiceFiscale());
+            childRepository.delete(childEntity);
+        });
+        userEntityMap.values().forEach(userEntity -> {
+            if (userEntity.getRoleList().contains(roleAdmin))
+                lineeService.delAdminLine(userEntity.getUsername(), defLinea.getId());
+            userRepository.delete(userEntity);
+        });
     }
 
     /**
@@ -163,136 +228,6 @@ public class Esercitazione3ApplicationTests {
     }
 
     /**
-     * Controlla POST /register con dati corretti
-     *
-     * @throws Exception
-     */
-    @Test
-    public void postRegister_correct() throws Exception {
-        logger.info("Test POST /register ...");
-        UserDTO user = new UserDTO();
-        user.setEmail(mailTest);
-        user.setPassword("321@User");
-        user.setPassMatch("321@User");
-
-        String json1 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
-                .andExpect(status().isOk());
-
-        logger.info("PASSED");
-    }
-
-    /**
-     * Controlla POST /register con un utente duplicato
-     *
-     * @throws Exception
-     */
-    @Test
-    public void postRegister_duplicate() throws Exception {
-        logger.info("Test POST /register duplicate ...");
-        UserDTO user = new UserDTO();
-        user.setEmail(mailTest);
-        user.setPassword("321@User");
-        user.setPassMatch("321@User");
-
-        String json1 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
-                .andExpect(status().isOk());
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
-                .andExpect(status().isInternalServerError());
-
-        logger.info("PASSED");
-    }
-
-    /**
-     * Controlla POSt /register con pw che non matchano, email non valida, pw troppo corta
-     *
-     * @throws Exception
-     */
-    @Test
-    public void postRegister_incorrect() throws Exception {
-        logger.info("Test POST /register incorrect ...");
-        UserDTO user = new UserDTO();
-        logger.info("Passwords does not match ...");
-
-        user.setEmail(mailTest);
-        user.setPassword("321@User");
-        user.setPassMatch("12345678");
-
-        String json1 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
-                .andExpect(status().isInternalServerError());
-
-        logger.info("Password not valid ...");
-
-        user.setEmail(mailTest);
-        user.setPassword("1");
-        user.setPassMatch("1");
-        String json2 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json2))
-                .andExpect(status().isInternalServerError());
-
-        logger.info("Email not valid ...");
-        user.setEmail("appmmappieromacaluso.com");
-        user.setPassword("321@User");
-        user.setPassMatch("321@User");
-        String json3 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json3))
-                .andExpect(status().isInternalServerError());
-
-        logger.info("PASSED");
-    }
-
-    /**
-     * Controlla GET /confirm/{randomUUID} con dati corretti
-     *
-     * @throws Exception
-     */
-    @Test
-    public void getConfirmRandomUUID_correct() throws Exception {
-        logger.info("Test GET /confirm/{randomUUID} correct ...");
-        UserDTO user = new UserDTO();
-        user.setEmail(mailTest);
-        user.setPassword("321@User");
-        user.setPassMatch("321@User");
-
-        String json1 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
-                .andExpect(status().isOk());
-
-        Optional<UserEntity> checkUser = userRepository.findByUsername(mailTest);
-        assert checkUser.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(checkUser.get().getId());
-        assert activationCheck.isPresent();
-        String UUID = activationCheck.get().getId().toString();
-        mockMvc.perform(get("/confirm/" + UUID))
-                .andExpect(status().isOk());
-
-        logger.info("PASSED");
-    }
-
-    /**
-     * Controlla GET /confirm/{randomUUID} con un UUID non appartente a nessuno
-     *
-     * @throws Exception
-     */
-    @Test
-    public void getConfirmRandomUUID_incorrect() throws Exception {
-        logger.info("Test GET /confirm/{randomUUID} incorrect ...");
-
-        mockMvc.perform(get("/confirm/123456789"))
-                .andExpect(status().isNotFound());
-
-        logger.info("PASSED");
-    }
-
-    /**
      * Controlla che POST /recover risponda sempre 200 come da specifiche
      *
      * @throws Exception
@@ -300,111 +235,36 @@ public class Esercitazione3ApplicationTests {
     @Test
     public void postRecover_always200() throws Exception {
         logger.info("Test POST /recover");
-        String email = mailTest;
-        UserDTO user = new UserDTO();
-        user.setEmail(email);
-        user.setPassword("321@User");
-        user.setPassMatch("321@User");
 
-        String json1 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
+        String token = loginAsGenitore();
+        UserDTO userDTO = userDTOMap.get("testGenitore");
+        mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(userDTO.getEmail()))
                 .andExpect(status().isOk());
 
-        Optional<UserEntity> check = userRepository.findByUsername(mailTest);
-        assert check.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(check.get().getId());
-        assert activationCheck.isPresent();
-        String UUID = activationCheck.get().getId().toString();
-        mockMvc.perform(get("/confirm/" + UUID))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
-                .andExpect(status().isOk());
-
-        Optional<RecoverTokenEntity> recoverCheck = recoverTokenRepository.findByUserId(check.get().getId());
+        UserEntity userEntity = userRepository.findByUsername(userDTO.getEmail()).get();
+        Optional<RecoverTokenEntity> recoverCheck = recoverTokenRepository.findByUserId(userEntity.getId());
         assert recoverCheck.isPresent();
-        UUID = recoverCheck.get().getId().toString();
+        String UUID = recoverCheck.get().getId().toString();
         UserDTO user1 = new UserDTO();
-        user1.setPassword("12345@User");
-        user1.setPassMatch("12345@User");
+        user1.setPassword("123456@User");
+        user1.setPassMatch("123456@User");
         String json2 = objectMapper.writeValueAsString(user1);
         mockMvc.perform(post("/recover/" + UUID).contentType(MediaType.APPLICATION_JSON).content(json2))
                 .andExpect(status().isOk());
 
-        user.setPassword("12345@User");
-        String json3 = objectMapper.writeValueAsString(user);
+        userDTO.setPassword("123456@User");
+        String json3 = objectMapper.writeValueAsString(userDTO);
 
         mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json3))
                 .andExpect(status().isOk());
 
-        email = "ciao";
+        String email = "random";
         mockMvc.perform(post("/recover").contentType(MediaType.APPLICATION_JSON).content(email))
                 .andExpect(status().isOk());
 
         logger.info("PASSED");
     }
 
-    /**
-     * Controlla che GET /admin/users sia accessibile solo all'admin
-     *
-     * @throws Exception
-     */
-    @Test
-    public void getUserTest() throws Exception {
-        logger.info("Test GET /admin/users");
-        // No user --> Unauthorized
-        mockMvc.perform(get("/admin/users"))
-                .andExpect(status().isUnauthorized());
-
-        // User with no rights --> Forbidden
-        String email = mailTest;
-        UserDTO user = new UserDTO();
-        user.setEmail(email);
-        user.setPassword("321@User");
-        user.setPassMatch("321@User");
-
-        String json1 = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json1))
-                .andExpect(status().isOk());
-
-        Optional<UserEntity> check = userRepository.findByUsername(mailTest);
-        assert check.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(check.get().getId());
-        assert activationCheck.isPresent();
-        String UUID = activationCheck.get().getId().toString();
-        mockMvc.perform(get("/confirm/" + UUID))
-                .andExpect(status().isOk());
-
-        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json1))
-                .andExpect(status().isOk()).andReturn();
-        JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
-        // No user --> Unauthorized
-        mockMvc.perform(get("/admin/users")
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isForbidden());
-
-        // User authorized --> 200 OK
-        user = new UserDTO();
-        user.setEmail(superAdminMail);
-        user.setPassword(superAdminPass);
-        String json = objectMapper.writeValueAsString(user);
-
-        result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        node = objectMapper.readTree(result.getResponse().getContentAsString());
-        token = node.get("token").asText();
-
-        // No user --> Unauthorized
-        mockMvc.perform(get("/admin/users")
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-
-        logger.info("PASSED");
-    }
 
     /**
      * Controlla PUT /admin/users/{userID}
@@ -418,87 +278,60 @@ public class Esercitazione3ApplicationTests {
         // SYS-ADMIN
 
         UserDTO user = new UserDTO();
+        String token = loginAsSystemAdmin();
+
+
+
+        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
+        PermissionResource perm = new PermissionResource();
+        perm.setIdLinea(lineaEntity.getId());
+        perm.setAddOrDel(true);
+        String json = objectMapper.writeValueAsString(perm);
+
+        mockMvc.perform(put("/admin/users/" + userDTOMap.get("testGenitore").getEmail())
+                .contentType(MediaType.APPLICATION_JSON).content(json)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(put("/admin/users/" + userDTOMap.get("testGenitore").getEmail())
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isUnauthorized());
+
+        assert lineaRepository.findById(lineaEntity.getId()).get().getAdminList().contains(userDTOMap.get("testGenitore").getEmail());
+
+        perm.setAddOrDel(false);
+        json = objectMapper.writeValueAsString(perm);
+        mockMvc.perform(put("/admin/users/" + userDTOMap.get("testGenitore").getEmail())
+                .contentType(MediaType.APPLICATION_JSON).content(json)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        mockMvc.perform(put("/admin/users/" + userDTOMap.get("testGenitore").getEmail())
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isUnauthorized());
+
+        assert !lineaRepository.findById(lineaEntity.getId()).get().getAdminList().contains(userDTOMap.get("testGenitore").getEmail());
+
+        logger.info("PASSED");
+
+    }
+
+
+    private String loginAsGenitore() throws Exception {
+        String json = objectMapper.writeValueAsString(userDTOMap.get("testGenitore"));
+        MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk()).andReturn();
+        return objectMapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
+    }
+
+    private String loginAsSystemAdmin() throws Exception {
+
+        UserDTO user = new UserDTO();
         user.setEmail(superAdminMail);
         user.setPassword(superAdminPass);
         String json = objectMapper.writeValueAsString(user);
         MvcResult result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk()).andReturn();
         JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
-        String token = node.get("token").asText();
-
-        // USER-TEST
-        String email = mailTest;
-        user = new UserDTO();
-        user.setEmail(email);
-        user.setPassword("321@User");
-        user.setPassMatch("321@User");
-
-        json = objectMapper.writeValueAsString(user);
-
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk());
-
-        Optional<UserEntity> check = userRepository.findByUsername(mailTest);
-        assert check.isPresent();
-        Optional<ActivationTokenEntity> activationCheck = activationTokenRepository.findByUserId(check.get().getId());
-        assert activationCheck.isPresent();
-        String UUID = activationCheck.get().getId().toString();
-        mockMvc.perform(get("/confirm/" + UUID))
-                .andExpect(status().isOk());
-
-        LineaEntity lineaEntity = lineaRepository.findAll().get(0);
-        PermissionResource perm = new PermissionResource();
-        perm.setIdLinea(lineaEntity.getId());
-        perm.setAddOrDel(true);
-        json = objectMapper.writeValueAsString(perm);
-
-        mockMvc.perform(put("/admin/users/" + mailTest)
-                .contentType(MediaType.APPLICATION_JSON).content(json)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(put("/admin/users/" + mailTest)
-                .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isUnauthorized());
-
-        assert lineaRepository.findById(lineaEntity.getId()).get().getAdminList().contains(mailTest);
-
-        perm.setAddOrDel(false);
-        json = objectMapper.writeValueAsString(perm);
-        mockMvc.perform(put("/admin/users/" + mailTest)
-                .contentType(MediaType.APPLICATION_JSON).content(json)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-        mockMvc.perform(put("/admin/users/" + mailTest)
-                .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isUnauthorized());
-
-        assert !lineaRepository.findById(lineaEntity.getId()).get().getAdminList().contains(mailTest);
-
-
-        user.setEmail(mailTest);
-        user.setPassword("321@User");
-        json = objectMapper.writeValueAsString(user);
-        result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk()).andReturn();
-        node = objectMapper.readTree(result.getResponse().getContentAsString());
-        token = node.get("token").asText();
-
-        perm.setAddOrDel(false);
-        json = objectMapper.writeValueAsString(perm);
-        mockMvc.perform(put("/admin/users/" + mailTest)
-                .contentType(MediaType.APPLICATION_JSON).content(json)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isForbidden());
-
-        perm.setAddOrDel(true);
-        json = objectMapper.writeValueAsString(perm);
-        mockMvc.perform(put("/admin/users/" + mailTest)
-                .contentType(MediaType.APPLICATION_JSON).content(json)
-                .header("Authorization", "Bearer " + token))
-                .andExpect(status().isForbidden());
-
-        logger.info("PASSED");
-
+        return node.get("token").asText();
     }
 }
