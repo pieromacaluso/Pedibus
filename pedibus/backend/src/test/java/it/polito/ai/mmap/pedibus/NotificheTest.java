@@ -184,9 +184,7 @@ public class NotificheTest {
             userRepository.delete(userEntity);
         });
 
-        notificheEntityMap.values().stream().flatMap(Collection::stream).forEach(notificaEntity -> {
-            notificaRepository.delete(notificaEntity);
-        });
+        userDTOMap.values().forEach(userDTO -> notificaRepository.deleteAllByUsernameDestinatario(userDTO.getEmail()));
 
         //logger.info("tearDownMethod done.");
     }
