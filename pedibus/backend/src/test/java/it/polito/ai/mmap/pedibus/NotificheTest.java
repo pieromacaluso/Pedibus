@@ -121,29 +121,29 @@ public class NotificheTest {
         childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
         childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
 
-        userDTOMap.put("testGenitore", new UserDTO("testGenitore@test.it", "321@%$User", "321@%$User"));
-        userDTOMap.put("testNonGenitore", new UserDTO("testNonGenitore@test.it", "321@%$User", "321@%$User"));
-        userDTOMap.put("testNonno", new UserDTO("testNonno@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testGenitore", new UserDTO("test.Genitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonGenitore", new UserDTO("test.NonGenitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonno", new UserDTO("test.Nonno@test.it", "321@%$User", "321@%$User"));
 
         userEntityMap.put("testGenitore", new UserEntity(userDTOMap.get("testGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder, new HashSet<>(Arrays.asList(childMap.get(0).getCodiceFiscale()))));
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
         userEntityMap.put("testNonno", new UserEntity(userDTOMap.get("testNonno"), new HashSet<>(Arrays.asList(roleAdmin, roleGuide)), passwordEncoder));
 
         ArrayList<NotificaEntity> notificaEntitiesGenitore=new ArrayList<>();
-        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testGenitore@test.it","msg1",null));
-        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testGenitore@test.it","msg2",null));
+        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Genitore@test.it","msg1",null));
+        notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Genitore@test.it","msg2",null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testGenitore@test.it","msg3",false,xxx,xxx)); //todo aggiungere una mappa di disponibilità
         notificheEntityMap.put("testGenitore",notificaEntitiesGenitore);
 
         ArrayList<NotificaEntity> notificaEntitiesNonGenitore=new ArrayList<>();
-        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonGenitore@test.it","msg1",null));
-        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonGenitore@test.it","msg1",null));
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.NonGenitore@test.it","msg1",null));
+        notificaEntitiesNonGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.NonGenitore@test.it","msg1",null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonGenitore@test.it","msg3",false,xxx,xxx));
         notificheEntityMap.put("testNonGenitore",notificaEntitiesNonGenitore);
 
         ArrayList<NotificaEntity> notificaEntitiesNonno=new ArrayList<>();
-        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonno@test.it","msg1",null));
-        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"testNonno@test.it","msg1",null));
+        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Nonno@test.it","msg1",null));
+        notificaEntitiesNonno.add(new NotificaEntity(NotificaEntity.NotificationType.BASE,"test.Nonno@test.it","msg1",null));
         //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testNonno@test.it","msg3",false,xxx,xxx));
         notificheEntityMap.put("testNonno",notificaEntitiesNonno);
 
@@ -201,7 +201,7 @@ public class NotificheTest {
     @Test
     public void deleteNotifica() throws Exception {
         logger.info("Test deleteNotifica Base...");
-        String user="testGenitore@test.it";
+        String user="test.Genitore@test.it";
         //autenticazione
         String token=loginAsGenitore();
         //ricerca idnotifica della notifica da eliminare, la prima non letta
@@ -246,7 +246,7 @@ public class NotificheTest {
      */
     @Test
     public void getNotifiche() throws Exception {
-        String user="testGenitore@test.it";
+        String user="test.Genitore@test.it";
         logger.info("Test getNotifiche user: "+user+" ...");
         //autenticazione
         String token=loginAsGenitore();
@@ -274,7 +274,7 @@ public class NotificheTest {
      */
     @Test
     public void getNotificheNotAccess() throws Exception {
-        String user="testGenitore@test.it";
+        String user="test.Genitore@test.it";
         logger.info("Test getNotificheNotAccess user: "+user+" ...");
 
         mockMvc.perform(get("/notifiche/all/{username}",user))

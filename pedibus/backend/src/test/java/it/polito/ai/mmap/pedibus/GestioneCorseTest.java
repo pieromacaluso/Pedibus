@@ -116,7 +116,7 @@ public class GestioneCorseTest {
     @PostConstruct
     public void postInit() {
         // necessario per trovare un turno che sia valido (vacanza,weekend ecc)
-        daysDef = mongoTimeService.getOneValidDate(0);
+        daysDef = mongoTimeService.getOneValidDate(80);
         lineaDef = lineaRepository.findAll().get(0);
         Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(lineaDef.getId(), mongoTimeService.getMongoZonedDateTimeFromDate(daysDef, true), versoDef);
         if (checkTurno.isPresent())
@@ -131,9 +131,9 @@ public class GestioneCorseTest {
         childMap.put(1, new ChildEntity("SNDPTN80C15H501C", "Sandro", "Pertini"));
         childMap.put(2, new ChildEntity("CLLCRL80A01H501D", "Carlo", "Collodi"));
 
-        userDTOMap.put("testGenitore", new UserDTO("testGenitore@test.it", "321@%$User", "321@%$User"));
-        userDTOMap.put("testNonGenitore", new UserDTO("testNonGenitore@test.it", "321@%$User", "321@%$User"));
-        userDTOMap.put("testNonno", new UserDTO("testNonno@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testGenitore", new UserDTO("test.Genitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonGenitore", new UserDTO("test.NonGenitore@test.it", "321@%$User", "321@%$User"));
+        userDTOMap.put("testNonno", new UserDTO("test.Nonno@test.it", "321@%$User", "321@%$User"));
 
         userEntityMap.put("testGenitore", new UserEntity(userDTOMap.get("testGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder, new HashSet<>(Arrays.asList(childMap.get(0).getCodiceFiscale()))));
         userEntityMap.put("testNonGenitore", new UserEntity(userDTOMap.get("testNonGenitore"), new HashSet<>(Arrays.asList(roleUser)), passwordEncoder));
