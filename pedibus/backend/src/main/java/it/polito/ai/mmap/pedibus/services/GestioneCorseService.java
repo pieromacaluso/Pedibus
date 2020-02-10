@@ -303,6 +303,7 @@ public class GestioneCorseService {
             dispEntity.setIsAck(true);
             dispRepository.save(dispEntity);
             this.notificheService.sendNotificheDisp(dispEntity);
+            this.notificheService.deleteNotificaDisp(dispEntity.getDispId());
         } else {
             //todo else questa guida non era stata confermata per quel turno, quindi non dovrebbe mandare l'ack: ignoriamo o segnaliamo errore ?
             throw new IllegalArgumentException("La guida non ha la facoltà di confermare la ricezione.");

@@ -105,9 +105,9 @@ public class ChildService {
             if (principal.getChildrenList().contains(cfChildNew) || principal.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))) {
                 ChildEntity childEntity = c.get();
 
-                lineeService.getFermataEntityById(stopRes.getIdFermataAndata());
+//                lineeService.getFermataEntityById(stopRes.getIdFermataAndata());
                 childEntity.setIdFermataAndata(stopRes.getIdFermataAndata());
-                lineeService.getFermataEntityById(stopRes.getIdFermataRitorno());
+//                lineeService.getFermataEntityById(stopRes.getIdFermataRitorno());
                 childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
 
                 childRepository.save(childEntity);
@@ -127,10 +127,12 @@ public class ChildService {
                     return;
                 }
                 ReservationDTO newReservationDTOCheck = new ReservationDTO(toBeUpdated.get(0));
-                Integer fermata = newReservationDTOCheck.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno();
-                String linea = lineeService.getFermataEntityById(newReservationDTOCheck.getVerso() ? stopRes.getIdFermataAndata() : stopRes.getIdFermataRitorno()).getIdLinea();
-                newReservationDTOCheck.setIdFermata(fermata);
-                newReservationDTOCheck.setIdLinea(linea);
+                Integer fermataAndata = stopRes.getIdFermataAndata();
+                Integer fermataRitorno = stopRes.getIdFermataRitorno();
+                String lineaAndata = lineeService.getFermataEntityById(stopRes.getIdFermataAndata()).getIdLinea();
+                String lineaRitorno = lineeService.getFermataEntityById(stopRes.getIdFermataRitorno()).getIdLinea();
+                newReservationDTOCheck.setIdFermata(newReservationDTOCheck.getVerso() ? fermataAndata : fermataRitorno);
+                newReservationDTOCheck.setIdLinea(newReservationDTOCheck.getVerso() ? lineaAndata : lineaRitorno);
                 newReservationDTOCheck.setCfChild(cfChildNew);
                 if (!this.reservationService.isValidReservation(newReservationDTOCheck)) {
                     throw new ReservationNotValidException(PedibusString.UPDATE_RESERVATION_NOT_VALID);
@@ -140,8 +142,8 @@ public class ChildService {
                     // Cancellazione vecchia prenotazione
                     ReservationDTO oldreservationDTO = new ReservationDTO(res);
 
-                    res.setIdFermata(fermata);
-                    res.setIdLinea(linea);
+                    res.setIdFermata(oldreservationDTO.getVerso() ? fermataAndata : fermataRitorno);
+                    res.setIdLinea(oldreservationDTO.getVerso() ? lineaAndata : lineaRitorno);
                     res.setCfChild(cfChildNew);
                     ReservationDTO newReservationDTO = new ReservationDTO(res);
                     this.notificheService.sendReservationNotification(oldreservationDTO, true);

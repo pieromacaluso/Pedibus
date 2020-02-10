@@ -388,6 +388,11 @@ public class UserService implements UserDetailsService {
         return principal.getRoleList().contains(getRoleEntityById("ROLE_GUIDE"));
     }
 
+    public boolean isUser() {
+        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getRoleList().contains(getRoleEntityById("ROLE_USER"));
+    }
+
     /**
      * Metodo da usare in altri service in modo da non dover fare sempre i controlli
      *
@@ -486,4 +491,5 @@ public class UserService implements UserDetailsService {
             throw new PermissionDeniedException();
         }
     }
+
 }

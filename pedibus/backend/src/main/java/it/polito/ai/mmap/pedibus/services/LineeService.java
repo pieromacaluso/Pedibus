@@ -240,6 +240,20 @@ public class LineeService {
         return adminLines;
     }
 
+    /**
+     * Restituisce tutte le linee di cui il principal è admin
+     *
+     * @return Lista di linee di cui è amministratore
+     */
+    public List<String> getAllLinesPrincipal() {
+        List<String> lines = this.getAllLinesIds();
+        List<String> adminLines = new ArrayList<>();
+        if (this.userService.isSysAdmin()) return lines;
+        for (String line : lines)
+            if (isMasterLine(line) || isAdminLine(line)) adminLines.add(line);
+        return adminLines;
+    }
+
     public List<LineaEntity> getAllLinesMasterMail(String email) {
         return this.lineaRepository.findAllByMasterIs(email);
     }

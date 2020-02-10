@@ -33,6 +33,18 @@ public class LineeController {
     }
 
     /**
+     * Restituisce una lista degli id delle lines presenti nel DB.
+     *
+     * @return Lista nomi Linee nel DB
+     */
+    @GetMapping("/lines/filtered")
+    @ApiOperation("Restituisce gli id delle linee presenti")
+    public List<String> getLinesFiltered() {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/lines/filtered"));
+        return lineeService.getAllLinesPrincipal();
+    }
+
+    /**
      * Restituisce una lista dei nomi delle lines presenti nel DB.
      *
      * @return Lista nomi Linee nel DB

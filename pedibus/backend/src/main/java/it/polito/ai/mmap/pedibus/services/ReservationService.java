@@ -341,8 +341,7 @@ public class ReservationService {
 
         //todo (marcof) io terrei solo il ruolo di guida per gestire la manage e la handle, quello di admin invece concerne la gestione delle disp, turni ecc
         //TODO : Decommenta per consegna
-        return ((lineeService.isAdminLine(idLinea) || gestioneCorseService.isGuideConfirmed(idLinea, date, verso)) /*&& MongoTimeService.isToday(date)*/);
-
+        return ((lineeService.isAdminLine(idLinea) || gestioneCorseService.isGuideConfirmed(idLinea, date, verso)) && MongoTimeService.isToday(date));
     }
 
     /**

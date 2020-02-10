@@ -13,6 +13,7 @@ import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispStateResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import lombok.Data;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -295,5 +296,14 @@ public class NotificheService {
                     reservationResource.getCfChild() + "/" + data, res);
         }
 
+    }
+
+    public void deleteNotificaDisp(ObjectId dispId) {
+        Optional<NotificaEntity> notificaCheck = this.notificaRepository.findByDispID(dispId);
+        if (notificaCheck.isPresent()) {
+            NotificaEntity notificaEntity = notificaCheck.get();
+            this.notificaRepository.deleteByDispID(dispId);
+            simpMessagingTemplate.convertAndSendToUser(notificaEntity.getUsernameDestinatario(), "/notifiche/trash", notificaCheck);
+        }
     }
 }
