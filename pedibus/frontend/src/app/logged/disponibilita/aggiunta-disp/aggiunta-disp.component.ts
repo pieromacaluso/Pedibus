@@ -243,6 +243,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     this.disp.delete = true;
     this.apiDispService.delDisp(this.p.linea, this.disp.idFermata.toString(), this.p.verso, this.p.data).subscribe(response => {
       this.changeDisp.next(this.emptyDisp);
+      this.changeLinea.next(this.selectedLine);
       this.changeTurno.next(null);
     }, (error) => {
       // TODO: errore aggiunta disponibilità

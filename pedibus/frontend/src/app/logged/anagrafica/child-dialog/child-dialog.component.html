@@ -20,7 +20,7 @@
           <mat-form-field>
             <mat-label>Linea Andata</mat-label>
             <mat-select #selectAndata placeholder="Linea Andata" formControlName="idLineaAndata" required
-                        [value]="details.andata.id">
+                        [value]="details.andata.id" (valueChange)="changeAndata(details, $event)">
               <mat-option *ngFor="let line of getLines(details.lines)" [value]="line.id">{{line.nome}}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -39,8 +39,8 @@
           <mat-form-field>
             <mat-label>Linea Ritorno</mat-label>
             <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required
-                        [value]="details.ritorno.id">
-              <mat-option *ngFor="let line of getLines(details.lines)" [value]="line.id">{{line.nome}}</mat-option>
+                        [value]="details.ritorno.id"  (valueChange)="changeRitorno(details, $event)">
+              <mat-option *ngFor="let line of getLines(details.lines)" [value]="line.id" >{{line.nome}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
@@ -82,7 +82,7 @@
         <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="5px">
           <mat-form-field>
             <mat-label>Linea Ritorno</mat-label>
-            <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required>
+            <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required (valueChange)="changeRitorno(details, $event)">
               <mat-option *ngFor="let line of getLines(details)" [value]="line.id">{{line.nome}}</mat-option>
             </mat-select>
           </mat-form-field>
