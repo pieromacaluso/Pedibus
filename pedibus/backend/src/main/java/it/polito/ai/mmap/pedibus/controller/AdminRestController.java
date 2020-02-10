@@ -165,6 +165,7 @@ public class AdminRestController {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.POST_CHILD_ERROR);
         }
+        childDTO.setCodiceFiscale(childDTO.getCodiceFiscale().toUpperCase());
         ChildEntity childEntity = childService.createChild(childDTO);
         return new ChildDTO(childEntity);
     }
@@ -185,6 +186,7 @@ public class AdminRestController {
         if (bindingResult.hasErrors()) {
             throw new SysAdminException(PedibusString.PUT_CHILD_ERROR);
         }
+        childDTO.setCodiceFiscale(childDTO.getCodiceFiscale().toUpperCase());
         ChildEntity childEntity = childService.updateChild(childId, childDTO);
         return new ChildDTO(childEntity);
     }
