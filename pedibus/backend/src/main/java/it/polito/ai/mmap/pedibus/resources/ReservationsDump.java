@@ -15,14 +15,14 @@ public class ReservationsDump {
     private String idLinea;
     private boolean verso;
     List<Reservation> reservationList;
-    List<String> cfAbsentChild;
+    List<String> cfNotReservedChild;
 
-    public ReservationsDump(Date data, String idLinea, boolean verso, List<ReservationEntity> reservationEntityList, List<String> cfAbsentChild) {
+    public ReservationsDump(Date data, String idLinea, boolean verso, List<ReservationEntity> reservationEntityList, List<String> cfNotReservedChild) {
         this.data = data;
         this.idLinea = idLinea;
         this.verso = verso;
         reservationList = reservationEntityList.stream().map(Reservation::new).collect(Collectors.toList());
-        this.cfAbsentChild = cfAbsentChild;
+        this.cfNotReservedChild = cfNotReservedChild;
     }
 
     @Data
