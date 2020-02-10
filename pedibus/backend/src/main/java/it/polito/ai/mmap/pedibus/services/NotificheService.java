@@ -238,11 +238,10 @@ public class NotificheService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         return new NotificaEntity(NotificaEntity.NotificationType.DISPONIBILITA, dispEntity.getGuideUsername(),
-                "La tua disponibilità per la corsa di " + (turnoEntity.getVerso() ? "andata" : "ritorno") + " del "
-                        + simpleDateFormat.format(turnoEntity.getData()) + " "
-                        + (turnoEntity.getVerso() ? "con partenza d" : "con arrivo ")
-                        + "alla fermata " + fermataEntity.getName() + " della " + lineaEntity.getNome()
-                        + " alle ore " + fermataEntity.getOrario() + " è stata confermata", dispEntity.getDispId());
+                "La tua disponibilità per il " + simpleDateFormat.format(turnoEntity.getData())
+                        + (turnoEntity.getVerso() ? " dalla " : " fino alla ") + "fermata " + fermataEntity.getName()
+                        + " (" + lineaEntity.getNome() + " - " + fermataEntity.getOrario() + ") è stata confermata."
+                , dispEntity.getDispId());
     }
 
     /**

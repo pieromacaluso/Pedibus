@@ -102,12 +102,12 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> u = this.userRepository.findByUsername(userInsertResource.getUserId());
         if (u.isPresent())
             throw new UserAlreadyPresentException(userInsertResource.getUserId());
+        lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
+        insertAdminLine(userInsertResource);
         UserEntity userEntity = new UserEntity(userInsertResource,
                 userInsertResource.getRoleIdList().stream()
                         .map(this::getRoleEntityById)
                         .collect(Collectors.toCollection(HashSet::new)), passwordEncoder);
-        lineeService.removeAdminFromAllLine(userInsertResource.getUserId());
-        insertAdminLine(userInsertResource);
         userEntity = userRepository.save(userEntity);
         this.notificheService.sendUpdateNotification();
         this.firstAccount(userEntity);
