@@ -1,9 +1,9 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {SyncService} from '../../presenze/sync.service';
 import {ApiService} from '../../api.service';
 import {AuthService} from '../../../auth/auth.service';
 import {MatDialog, MatSnackBar} from '@angular/material';
-import { RxStompService} from '@stomp/ng2-stompjs';
+import {RxStompService} from '@stomp/ng2-stompjs';
 import {DatePipe} from '@angular/common';
 import {Alunno, Fermata, PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {concat, defer, EMPTY, forkJoin, Observable, Subject, Subscription, timer} from 'rxjs';
@@ -65,6 +65,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
   });
   private fermataDisp: Observable<Fermata>;
   private mainSub: Subscription;
+  selectedLine: string;
 
   constructor(private syncService: SyncService, private apiService: ApiService, private apiDispService: ApiDispService,
               private apiTurniService: ApiTurniService,
@@ -76,6 +77,8 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       tap(() => this.loading = true),
       switchMap(pren => {
         this.p = pren;
+        this.selectedLine = pren.linea;
+        this.p.linea = pren.linea;
         return this.apiDispService.getDisp(pren.verso, pren.data).pipe(
           catchError((err, caught) => {
             this.changeDisp.next(null);
@@ -84,7 +87,6 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
             return null;
           })
         );
-
       }),
       tap(() => this.loading = false),
     ).subscribe(
@@ -92,6 +94,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
         if (!res) {
           this.changeDisp.next(this.emptyDisp);
           this.changeTurno.next(null);
+          this.changeLinea.next(this.selectedLine);
         } else {
           if ('turno' in res) {
             this.changeDisp.next(res.disp);
@@ -290,7 +293,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       this.linea.ritorno[index];
     this.selectedFermataCheck = this.selectedFermata.id;
     this.dispForm.patchValue({
-      stopSelect: this.selectedFermataCheck
+        stopSelect: this.selectedFermataCheck
       }
     );
   }

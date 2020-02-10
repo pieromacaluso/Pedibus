@@ -152,7 +152,7 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   }
 
   openDialog(alu: AlunnoNotReserved) {
-    if (this.canModify() || (this.authService.isUser() && (this.children.find((c) => c.codiceFiscale === alu.codiceFiscale)))) {
+    if (this.canModify()) {
 
       this.dialog.closeAll();
 
@@ -223,24 +223,25 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   }
 
   sortedNotReserved(alu: AlunnoNotReserved[]) {
-    if (this.authService.getRoles().includes('ROLE_USER')) {
-      // todo: 1. get children, 2. filtra, 3. ordina
-      return alu.filter((a) => this.children.find((c) => c.codiceFiscale === a.codiceFiscale))
-        .sort((a, b) => {
-          return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
-        });
-
-    } else {
-      return alu.sort((a, b) => {
-        return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
-      });
-    }
+    // if (this.authService.getRoles().includes('ROLE_USER')) {
+    //   // todo: 1. get children, 2. filtra, 3. ordina
+    //   return alu.filter((a) => this.children.find((c) => c.codiceFiscale === a.codiceFiscale))
+    //     .sort((a, b) => {
+    //       return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
+    //     });
+    //
+    // } else {
+    return alu.sort((a, b) => {
+      return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
+    });
+    // }
   }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy(): void {
+    console.log("DISTRUZIONE");
     this.reservationSub.unsubscribe();
     this.firstSub.unsubscribe();
   }

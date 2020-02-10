@@ -106,7 +106,7 @@ export class ApiService {
     return this.httpClient.get<string[]>(this.baseURL + 'lines/name');
   }
 
-  getPrenotazioneByLineaAndDateAndVerso(p: PrenotazioneRequest) {
+  getPrenotazioneByLineaAndDateAndVerso(p: PrenotazioneRequest): Observable<LineReservationVerso> {
     const idVerso = this.versoToInt(p.verso);
     return this.httpClient.get<LineReservationVerso>(this.baseURL + 'reservations/verso/' + p.linea + '/' +
       this.datePipe.transform(p.data, 'yyyy-MM-dd') + '/' + idVerso);

@@ -37,14 +37,14 @@
                 Conferma: <span class="status"
                                 [ngClass]=" this.disp.isConfirmed ?'status-ok':'status-warn'">
                 <ng-container *ngIf="this.disp.isConfirmed"><mat-icon>done</mat-icon></ng-container>
-                <ng-container *ngIf="!this.disp.isConfirmed">In attesa</ng-container>
+                <ng-container *ngIf="!this.disp.isConfirmed">In attesa...</ng-container>
               </span>
                 <div *ngIf="this.disp.isConfirmed">
                   Conferma Ricezione: <span
                   class="status"
                   [ngClass]=" this.disp.isAck ?'status-ok':'status-warn'">
                   <ng-container *ngIf="this.disp.isAck"><mat-icon>done</mat-icon></ng-container>
-                <ng-container *ngIf="!this.disp.isAck">In attesa</ng-container>
+                <ng-container *ngIf="!this.disp.isAck">In attesa...</ng-container>
                 </span>
                 </div>
               </div>
@@ -78,7 +78,7 @@
 
         <ng-template #nodisp>
           <div class="mat-h3">
-            Non hai comunicato la tua disponibilità per il tragitto di {{this.p.verso}} in data {{this.p.data | date}}.
+            Non hai comunicato la tua disponibilità per questo turno.
           </div>
           <div fxLayout.lt-sm="column" fxLayout="row" fxLayoutGap="20px">
             <div fxFlex="30">
@@ -89,7 +89,7 @@
                 <div *ngIf="this.linee" fxFlex="100%">
                   <mat-form-field color="accent" fxFlex="100%">
                     <mat-label>Seleziona la linea</mat-label>
-                    <mat-select *ngIf="this.linee" (selectionChange)="getTurno(lineaSelect.value)" #lineaSelect>
+                    <mat-select *ngIf="this.linee" (selectionChange)="getTurno(lineaSelect.value)" #lineaSelect [(value)]="selectedLine">
                       <mat-option *ngFor="let linea of linee" [value]="linea">
                         <p>{{(linea | fortmatLine)}}</p>
                       </mat-option>
