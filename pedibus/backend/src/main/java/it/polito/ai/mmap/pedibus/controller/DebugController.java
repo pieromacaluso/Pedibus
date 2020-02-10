@@ -81,7 +81,12 @@ public class DebugController {
         dataCreationService.makeChild(countCreate);
     }
 
-    @PostMapping("/debug/transform")
+    /**
+     * Unisce il json dei bimbi (childEntity_base.json) alla lista di cf (cf.txt)
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/debug/transform")
     public List<ChildEntity> debug() throws IOException {
         return dataCreationService.transform();
     }

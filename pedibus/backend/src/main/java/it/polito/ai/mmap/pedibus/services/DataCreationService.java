@@ -262,7 +262,6 @@ public class DataCreationService {
 
         childList.forEach(childEntity -> {
             childEntity.setCodiceFiscale(cfList.next());
-            System.out.println(childEntity);
         });
 
         return childList;
