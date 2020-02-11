@@ -84,8 +84,7 @@ public class DataCreationService {
         }
     }
 
-    public void deleteAll()
-    {
+    public void deleteAll() {
         reservationRepository.deleteAll();
         userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))).collect(Collectors.toList()));
         childRepository.deleteAll();
@@ -214,40 +213,45 @@ public class DataCreationService {
 
         Iterator<ChildEntity> childList = children.iterator();
         int count = 0;
-        while (count < countCreate) {
-            UserEntity parent = userList.next();
-            while (userRepository.findByUsername(parent.getUsername()).isPresent()) {
-                if (!userList.hasNext())
-                    return;
-                parent = userList.next();
+        try {
+            while (count < countCreate) {
+                UserEntity parent = userList.next();
+                while (userRepository.findByUsername(parent.getUsername()).isPresent()) {
+                    if (!userList.hasNext())
+                        return;
+                    parent = userList.next();
+                }
+
+                ChildEntity child1 = childList.next();
+                while (childRepository.findById(child1.getCodiceFiscale()).isPresent()) {
+                    if (!childList.hasNext())
+                        return;
+                    child1 = childList.next();
+                }
+
+                ChildEntity child2 = childList.next();
+                while (childRepository.findById(child2.getCodiceFiscale()).isPresent()) {
+                    if (!childList.hasNext())
+                        return;
+                    child2 = childList.next();
+                }
+
+                child1.setSurname(parent.getSurname());
+                child2.setSurname(parent.getSurname());
+                parent.setChildrenList(new HashSet<>(Arrays.asList(child1.getCodiceFiscale(), child2.getCodiceFiscale())));
+                parent.setEnabled(true);
+
+                childService.createChild(new ChildDTO(child1));
+                childService.createChild(new ChildDTO(child2));
+                userRepository.save(parent);
+
+                count++;
             }
+        } catch (Exception ignored) {
+        } finally {
+            logger.info(count + " genitori caricati, con due figli ognuno.");
 
-            ChildEntity child1 = childList.next();
-            while (childRepository.findById(child1.getCodiceFiscale()).isPresent()) {
-                if (!childList.hasNext())
-                    return;
-                child1 = childList.next();
-            }
-
-            ChildEntity child2 = childList.next();
-            while (childRepository.findById(child2.getCodiceFiscale()).isPresent()) {
-                if (!childList.hasNext())
-                    return;
-                child2 = childList.next();
-            }
-
-            child1.setSurname(parent.getSurname());
-            child2.setSurname(parent.getSurname());
-            parent.setChildrenList(new HashSet<>(Arrays.asList(child1.getCodiceFiscale(), child2.getCodiceFiscale())));
-            parent.setEnabled(true);
-
-            childService.createChild(new ChildDTO(child1));
-            childService.createChild(new ChildDTO(child2));
-            userRepository.save(parent);
-
-            count++;
         }
-        logger.info(count + " genitori caricati, con due figli ognuno.");
     }
 
     private List<UserEntity> userEntityListConverter(String fileName, RoleEntity roleEntity) throws IOException {
