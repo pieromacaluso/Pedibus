@@ -24,6 +24,7 @@ import {NewUserComponent} from '../auth/new-user/new-user.component';
 import {LineAdminComponent} from '../logged/line-admin/line-admin.component';
 import {AdminGuideGuard} from '../auth/guards/admin-guide.guard';
 import {NotAuthGuard} from '../auth/guards/not-auth.guard';
+import {SysAdminGuard} from '../auth/guards/sys-admin.guard';
 
 const appRoutes: Routes = [
   // {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
@@ -34,7 +35,7 @@ const appRoutes: Routes = [
   {path: 'disponibilita', component: DisponibilitaComponent, canActivate: [AuthGuard, GuideGuard], data: {animation: 'yes'}},
   {path: 'notifiche', component: NotificheComponent, canActivate: [AuthGuard], data: {animation: 'yes'}},
   {path: 'turni', component: TurniComponent, canActivate: [AuthGuard, AdminGuard], data: {animation: 'yes'}},
-  {path: 'anagrafica', component: AnagraficaComponent, canActivate: [AdminGuard], data: {animation: 'yes'}},
+  {path: 'anagrafica', component: AnagraficaComponent, canActivate: [SysAdminGuard], data: {animation: 'yes'}},
   {path: 'recover', component: ForgotPasswordComponent, canActivate: [NotAuthGuard], data: {animation: 'yes'}},
   {path: 'recover/:token', component: RecoverComponent, canActivate: [NotAuthGuard], data: {animation: 'yes'}},
   {path: 'new-user/:token', component: NewUserComponent, canActivate: [NotAuthGuard], data: {animation: 'yes'}},

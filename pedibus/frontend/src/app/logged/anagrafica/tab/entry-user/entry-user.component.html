@@ -13,7 +13,7 @@
         {{printRole(role)}}<span *ngIf="user.roleIdList.length - 1 !== i">,&nbsp;</span>
       </div>
     </div>
-    <div class="child mat-body user" *ngIf="user.childIdList.length > 0">
+    <div class="child mat-body user" *ngIf="user.roleIdList.includes('ROLE_USER')">
       <b>Figli:&nbsp;</b>
       <span *ngFor="let child of this.childObs; let i = index">
         <ng-container *ngIf="(child | async) as details">

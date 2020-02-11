@@ -21,7 +21,7 @@ export class HeaderService {
   private turni = {icon: 'verified_user', link: 'turni', title: 'Turni'};
   private signIn = {icon: 'vpn_key', link: 'sign-in', title: 'Sign In'};
   private signUp = {icon: 'person_add', link: 'sign-up', title: 'Sign Up'};
-  private lineAdmin = {icon: 'directions_bus', link: 'line-admin', title: 'Linee'};
+  private lineAdmin = {icon: 'directions_bus', link: 'line-admin', title: 'Permessi'};
 
 
   constructor(private auth: AuthService) {

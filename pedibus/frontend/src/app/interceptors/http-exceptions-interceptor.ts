@@ -44,6 +44,13 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
               break;
             case 404:
               break;
+            case 403:
+              // TODO: LOGOUT?
+              this.snackBar.open(
+                'Non hai i permessi per effettuare l\'operazione', '', {
+                  duration: 5000,
+                });
+              break;
             case 504:
               this.snackBar.open(
                 'Errore di Rete, Server non disponibile', '', {

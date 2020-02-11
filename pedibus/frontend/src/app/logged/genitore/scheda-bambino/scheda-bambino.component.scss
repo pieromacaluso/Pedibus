@@ -91,3 +91,21 @@ h3 {
 .ar-header button.add-button {
   color: mat-color($pedibus-theme-accent);
 }
+
+.status {
+  font-weight: bolder;
+}
+.status-ok {
+  font-weight: bolder;
+  color: green !important;
+}
+
+.status-warn {
+  font-weight: bolder;
+  color: orange !important;
+}
+
+.status-nope {
+  font-weight: bolder;
+  color: darkred !important;
+}

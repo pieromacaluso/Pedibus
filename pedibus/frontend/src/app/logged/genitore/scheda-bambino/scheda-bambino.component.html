@@ -24,7 +24,7 @@
     <div class="column" *ngIf="this.andata  else noandata">
       <div *ngIf="(andataStop|async) as res else loading">
         <div class="ar-header">
-          <h3>Andata</h3>
+          <h3 class="primary">Andata</h3>
           <button *ngIf="isPresentOrFuture() && isOnTime(res.orario)" class="edit-button" mat-icon-button color="accent"
                   (click)="editAndata()">
             <mat-icon>edit</mat-icon>
@@ -35,18 +35,17 @@
           </button>
         </div>
         <div>
-          <div>Linea: {{res.nomeLinea}}</div>
-          <div>Fermata: {{res.nome}}</div>
-          <div>Orario: {{res.orario}}</div>
+          <div><b>Linea</b>: {{res.nomeLinea}}</div>
+          <div><b>Fermata</b>: {{res.nome}}</div>
+          <div><b>Orario</b>: {{res.orario}}</div>
           <ng-container *ngIf="!andata.assente">
-            <div>Partenza
-              Effettiva: {{andata.presoInCarico ? (andata.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
-            <div>Arrivo a
-              Scuola: {{andata.arrivatoScuola ? (andata.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
+            <div><span *ngIf="andata.presoInCarico && !andata.arrivatoScuola"
+                       class="status-warn">Partito dalla fermata</span>
+              <span *ngIf="andata.presoInCarico && andata.arrivatoScuola"
+                    class="status-ok">Arrivato a scuola</span></div>
           </ng-container>
           <ng-container *ngIf="andata.assente">
-            <div>Contrassegnato
-              Assente: {{andata.assente ? (andata.assenteDate | date:'medium') : "Non disponibile"}}</div>
+            <div class="status-nope">Assente</div>
           </ng-container>
         </div>
 
@@ -55,7 +54,7 @@
     <div class="column" *ngIf="this.ritorno else noritorno">
       <div *ngIf="(ritornoStop|async) as res; else loading">
         <div class="ar-header">
-          <h3>Ritorno</h3>
+          <h3 class="primary">Ritorno</h3>
           <button class="edit-button" mat-icon-button color="accent" (click)="editRitorno()"
                   *ngIf="isPresentOrFuture() && isOnTime(res.orario)">
             <mat-icon>edit</mat-icon>
@@ -66,18 +65,19 @@
           </button>
         </div>
         <div>
-          <div>Linea: {{res.nomeLinea}}</div>
-          <div>Fermata: {{res.nome}}</div>
-          <div>Orario: {{res.orario}}</div>
+          <div><b>Linea</b>: {{res.nomeLinea}}</div>
+          <div><b>Fermata</b>: {{res.nome}}</div>
+          <div><b>Orario</b>: {{res.orario}}</div>
           <ng-container *ngIf="!ritorno.assente">
-            <div>Partenza
-              Effettiva: {{ritorno.presoInCarico ? (ritorno.presoInCaricoDate | date:'medium') : "Non disponibile"}}</div>
-            <div>Arrivo a
-              Scuola: {{ritorno.arrivatoScuola ? (ritorno.arrivatoScuolaDate| date:'medium') : "Non disponibile"}}</div>
+            <div>
+              <span *ngIf="ritorno.presoInCarico && !ritorno.arrivatoScuola"
+                    class="status-warn">Partito da scuola</span>
+              <span *ngIf="ritorno.presoInCarico && ritorno.arrivatoScuola"
+                    class="status-ok">Arrivato alla fermata</span>
+            </div>
           </ng-container>
           <ng-container *ngIf="ritorno.assente">
-            <div>Contrassegnato
-              Assente: {{ritorno.assente ? (ritorno.assenteDate | date:'medium') : "Non disponibile"}}</div>
+            <div class="status-nope">Assente</div>
           </ng-container>
         </div>
 
