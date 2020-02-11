@@ -2,6 +2,7 @@ package it.polito.ai.mmap.pedibus.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.LineaNotFoundException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
@@ -74,6 +75,21 @@ public class DataCreationService {
         logger.info("Caricamento linee in corso...");
         readPiedibusLines();
         logger.info("Caricamento linee completato.");
+        if (environment.getActiveProfiles()[0].equals("prod")) {
+            logger.info("Creazione Basi di dati di test in corso...");
+            deleteAll();
+            makeChildUser(1);
+            makeChild(50);
+            logger.info("Creazione Basi di dati di test completata.");
+        }
+    }
+
+    public void deleteAll()
+    {
+        reservationRepository.deleteAll();
+        userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))).collect(Collectors.toList()));
+        childRepository.deleteAll();
+        logger.info(PedibusString.ALL_DELETED);
     }
 
     /**
