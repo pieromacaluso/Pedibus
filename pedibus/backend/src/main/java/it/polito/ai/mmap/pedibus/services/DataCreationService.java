@@ -240,9 +240,10 @@ public class DataCreationService {
                 child2.setSurname(parent.getSurname());
                 parent.setChildrenList(new HashSet<>(Arrays.asList(child1.getCodiceFiscale(), child2.getCodiceFiscale())));
                 parent.setEnabled(true);
-
-                childService.createChild(new ChildDTO(child1));
-                childService.createChild(new ChildDTO(child2));
+                if (count > 2) {
+                    childService.createChild(new ChildDTO(child1));
+                    childService.createChild(new ChildDTO(child2));
+                }
                 userRepository.save(parent);
 
                 count++;
