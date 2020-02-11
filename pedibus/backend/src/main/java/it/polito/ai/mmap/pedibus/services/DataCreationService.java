@@ -244,7 +244,6 @@ public class DataCreationService {
                 childService.createChild(new ChildDTO(child2));
                 if (count < 2) {
                     reservationRepository.deleteAllByCfChild(child1.getCodiceFiscale());
-                    reservationRepository.deleteAllByCfChild(child2.getCodiceFiscale());
                 }
                 userRepository.save(parent);
 
