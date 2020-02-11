@@ -14,13 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Profile("dev")
 @RestController
@@ -45,10 +43,7 @@ public class DebugController {
     @GetMapping("/debug/delete")
     public void deleteAll() {
         logger.info(PedibusString.ENDPOINT_CALLED("GET", "/debug/delete"));
-        reservationRepository.deleteAll();
-        userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))).collect(Collectors.toList()));
-        childRepository.deleteAll();
-        logger.info(PedibusString.ALL_DELETED);
+        dataCreationService.deleteAll();
     }
 
 
@@ -83,6 +78,7 @@ public class DebugController {
 
     /**
      * Unisce il json dei bimbi (childEntity_base.json) alla lista di cf (cf.txt)
+     *
      * @return
      * @throws IOException
      */
