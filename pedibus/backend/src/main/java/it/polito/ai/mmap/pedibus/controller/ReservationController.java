@@ -118,7 +118,9 @@ public class ReservationController {
     @ApiOperation("Aggiunge una prenotazione per il bambino indicato")
     public String postReservation(@RequestBody ReservationResource reservationResource, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data) throws JsonProcessingException {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/" + idLinea+"/"+ data));
-        Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        // CONSEGNA: Filtro per consegna
+        Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, false);
+//        Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         //logger.info("Nuova Reservation " + reservationResource.toString());
         ReservationDTO reservationDTO = new ReservationDTO(reservationResource, lineeService.getLineaEntityById(idLinea).getId(), dataFormatted);
         String idReservation = reservationService.addReservation(reservationDTO);
@@ -140,7 +142,9 @@ public class ReservationController {
     @PostMapping("/reservations/handled/{idLinea}/{verso}/{data}/{isSet}")
     public void manageHandled(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/handled/" + idLinea+"/"+verso+"/"+ data + "/" + isSet));
-        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        // CONSEGNA: Filtro per consegna
+        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, false);
+//        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         reservationService.manageHandled(verso, data, datef, isSet, idLinea, cfChild);
     }
 
@@ -155,7 +159,9 @@ public class ReservationController {
     @PostMapping("/reservations/assente/{idLinea}/{verso}/{data}/{isSet}")
     public void manageAssente(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/assente/" + idLinea+"/"+verso+"/"+ data + "/" + isSet));
-        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        // CONSEGNA: Filtro per consegna
+        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, false);
+//        Date datef = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         reservationService.manageAssente(verso, data, datef, isSet, idLinea, cfChild);
     }
 
@@ -172,7 +178,9 @@ public class ReservationController {
     @PostMapping("/reservations/arrived/{idLinea}/{verso}/{data}/{isSet}")
     public void manageArrived(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/arrived/" + idLinea+"/"+verso+"/"+ data + "/" + isSet));
-        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        // CONSEGNA: Filtro per consegna
+        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, false);
+//        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         if (reservationService.manageArrived(verso, date, cfChild, isSet, idLinea))
             logger.info("Child " + cfChild + " is arrived");
     }
@@ -188,7 +196,9 @@ public class ReservationController {
     @PostMapping("/reservations/restore/{idLinea}/{verso}/{data}")
     public void manageRestore(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @RequestBody String cfChild) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/restore/" + idLinea+"/"+verso+"/"+ data));
-        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        // CONSEGNA: Filtro per consegna
+        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, false);
+//        Date date = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
         reservationService.manageRestore(verso, date, cfChild, idLinea);
         logger.info("Child " + cfChild + " is restored");
     }

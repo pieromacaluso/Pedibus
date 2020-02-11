@@ -479,12 +479,14 @@ public class UserService implements UserDetailsService {
             if (permissionResource.isAddOrDel()) {
                 this.addAdmin(userEntity.getUserId());
                 lineeService.addAdminLine(userEntity.getUserId(), permissionResource.getIdLinea());
+                this.notificheService.generatePromotionNotification(userEntity.getUserId(), permissionResource);
                 this.notificheService.sendUpdateNotification();
             } else {
                 lineeService.delAdminLine(userEntity.getUserId(), permissionResource.getIdLinea());
                 userEntity.getLineaIdList().remove(permissionResource.getIdLinea());
                 if (userEntity.getLineaIdList().isEmpty())
                     this.delAdmin(userEntity.getUserId());
+                this.notificheService.generatePromotionNotification(userEntity.getUserId(), permissionResource);
                 this.notificheService.sendUpdateNotification();
             }
         } else {

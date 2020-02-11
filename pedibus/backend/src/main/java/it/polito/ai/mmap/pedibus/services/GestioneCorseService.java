@@ -314,7 +314,9 @@ public class GestioneCorseService {
         LineaDTO lineaDTO = lineeService.getLineaDTOById(turnoDTO.getIdLinea());
         String timeFermata = turnoDTO.getVerso() ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get().getOrario() : lineeService.getPartenzaScuola();
 
-        return MongoTimeService.getMongoZonedDateTimeFromDateTime(turnoDTO.getData(), timeFermata).before(MongoTimeService.getNow());
+        // CONSEGNA: Filtro per evitare che il turno odierno risulti scaduto
+        return MongoTimeService.getMongoZonedDateTimeFromDateTime(turnoDTO.getData(), timeFermata).before(MongoTimeService.getStartOfToday());
+//        return MongoTimeService.getMongoZonedDateTimeFromDateTime(turnoDTO.getData(), timeFermata).before(MongoTimeService.getNow());
 
     }
 
@@ -337,8 +339,7 @@ public class GestioneCorseService {
         } catch (DispNotFoundException ignored) {
             return false;
         }
-        //todo basta controllare isConfirmed ? oppure anche isAck ?
-        return dispEntity.getIsConfirmed();
+        return dispEntity.getIsAck();
 
 
     }

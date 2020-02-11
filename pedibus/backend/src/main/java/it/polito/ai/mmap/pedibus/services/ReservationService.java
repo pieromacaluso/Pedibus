@@ -242,7 +242,9 @@ public class ReservationService {
                 if (isAdmin) {
                     return data.after(MongoTimeService.getStartOfToday());
                 } else {
-                    return data.before(fermataEntity.getDateOrario());
+                    // CONSEGNA: Filtro prenotazione odierna per permettere manipolazione
+                    return data.after(MongoTimeService.getStartOfToday());
+//                    return data.before(fermataEntity.getDateOrario());
                 }
             } else {
                 // reservation per domani o nel futuro

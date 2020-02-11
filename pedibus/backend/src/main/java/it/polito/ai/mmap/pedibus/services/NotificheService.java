@@ -11,12 +11,14 @@ import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.repository.UserRepository;
 import it.polito.ai.mmap.pedibus.resources.DispAllResource;
 import it.polito.ai.mmap.pedibus.resources.DispStateResource;
+import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.resources.ReservationResource;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
@@ -39,6 +41,10 @@ public class NotificheService {
     NotificaRepository notificaRepository;
     @Autowired
     UserRepository userRepository;
+    @Value("${arrivoScuola}")
+    String arrivoScuola;
+    @Value("${partenzaScuola}")
+    String partenzaScuola;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -179,8 +185,8 @@ public class NotificheService {
         for (UserEntity parent : parents) {
             notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
                     childEntity.getSurname() + " " + childEntity.getName() + " " + " è arrivato/a " +
-                            (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + hFormat.format(reservationEntity.getArrivatoScuolaDate()) +
-                            " del " + dateFormat.format(reservationEntity.getArrivatoScuolaDate()), null));
+                            (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + (reservationEntity.isVerso() ? arrivoScuola : fermataEntity.getOrario()) +
+                            " del " + dateFormat.format(reservationEntity.getData()), null));
         }
         return notificaEntities;
     }
@@ -195,8 +201,8 @@ public class NotificheService {
         for (UserEntity parent : parents) {
             notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
                     childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato/a preso/a in carico " +
-                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + hFormat.format(reservationEntity.getPresoInCaricoDate()) +
-                            " del " + dateFormat.format(reservationEntity.getPresoInCaricoDate()), null));
+                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + (!reservationEntity.isVerso() ? partenzaScuola : fermataEntity.getOrario()) +
+                            " del " + dateFormat.format(reservationEntity.getData()), null));
         }
         return notificaEntities;
     }
@@ -211,8 +217,8 @@ public class NotificheService {
         for (UserEntity parent : parents) {
             notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
                     childEntity.getSurname() + " " + childEntity.getName() + " " + " è stato segnalato/a come assente alla partenza " +
-                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + hFormat.format(reservationEntity.getAssenteDate()) +
-                            " del " + dateFormat.format(reservationEntity.getAssenteDate()), null));
+                            (!reservationEntity.isVerso() ? "da scuola" : "dalla fermata " + fermataEntity.getName()) + " alle ore " + (!reservationEntity.isVerso() ? partenzaScuola : fermataEntity.getOrario()) +
+                            " del " + dateFormat.format(reservationEntity.getData()), null));
         }
         return notificaEntities;
     }
@@ -304,5 +310,12 @@ public class NotificheService {
             this.notificaRepository.deleteByDispID(dispId);
             simpMessagingTemplate.convertAndSendToUser(notificaEntity.getUsernameDestinatario(), "/notifiche/trash", notificaCheck);
         }
+    }
+
+    public void generatePromotionNotification(String userId, PermissionResource permissionResource) {
+        NotificaEntity notifica = new NotificaEntity(NotificaEntity.NotificationType.BASE, userId, (permissionResource.isAddOrDel() ? "Sei stato promosso ad " : "Ti sono stati revocati i privilegi di ") + "amministratore per la "
+                + this.lineeService.getLineaEntityById(permissionResource.getIdLinea()).getNome() + ". Si prega di effettuare nuovamente il login.", null);
+        this.notificaRepository.save(notifica);
+        simpMessagingTemplate.convertAndSendToUser(notifica.getUsernameDestinatario(), "/notifiche", notifica);
     }
 }
