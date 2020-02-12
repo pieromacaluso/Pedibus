@@ -18,7 +18,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field style="padding: 5px;">
-        <mat-label>Fermata Andata:</mat-label>
+        <mat-label>Fermata {{this.data.andata ? "Andata" : "Ritorno" }}:</mat-label>
         <mat-select formControlName="stopSelect" [disabled]="!stops || stops.length == 0"
                     (selectionChange)="selectStop($event.value)"
         >

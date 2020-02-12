@@ -213,7 +213,7 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     this.dispUpSub.unsubscribe();
     this.dispStatusSub.unsubscribe();
     this.turnoStatusSub.unsubscribe();
-    this.elencoDispSub.unsubscribe()
+    this.elencoDispSub.unsubscribe();
   }
 
   openTurno(turno: TurnoResource) {
@@ -287,5 +287,18 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
 
   openMapDialog(idFermata: number) {
     this.mapService.openMapDialog(idFermata).subscribe();
+  }
+
+  deleteDisp(disp: DispAllResource) {
+    this.apiService.openConfirmationDialog('Sei sicuro di voler eliminare la disponibilità di ' + disp.guideUsername)
+      .subscribe((response) => {
+      if (response) {
+        this.apiTurniService.deleteDisp(disp.id).subscribe((res) => {
+          // TODO: gestisci successo
+        }, error => {
+          // TODO: gestisci insuccesso.
+        });
+      }
+    });
   }
 }

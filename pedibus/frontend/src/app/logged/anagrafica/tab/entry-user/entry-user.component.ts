@@ -46,7 +46,7 @@ export class EntryUserComponent implements OnInit {
   }
 
   deleteUser() {
-    this.anagraficaService.openConfirmationDialog('Sei sicuro di voler eliminare dell\'elenco '
+    this.anagraficaService.openConfirmationDialog('Sei sicuro di voler eliminare '
       + this.user.name + ' ' + this.user.surname + '?')
       .subscribe((response) => {
         if (response) {

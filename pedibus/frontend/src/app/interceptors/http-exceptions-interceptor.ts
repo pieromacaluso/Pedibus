@@ -36,7 +36,7 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
           switch (error.status) {
             case 401:
               this.snackBar.open(
-                errorMessage, '', {
+                error.error.errorMessage ? errorMessage : 'Non autorizzato', '', {
                   duration: 5000,
                 });
               this.auth.logout();
@@ -61,7 +61,7 @@ export class HttpExceptionsInterceptor implements HttpInterceptor {
               break;
             default:
               this.snackBar.open(
-                errorMessage, '', {
+                error.error.errorMessage ? errorMessage : 'Si è verificato un errore', '', {
                   duration: 5000,
                 });
           }
