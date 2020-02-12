@@ -1,7 +1,9 @@
 {
   "id": "linea2",
   "nome": "Linea 2",
-  "master": "mai.berg@test.it",
+  "masterMail": "marcoxflorian@gmail.com",
+  "masterName": "Master",
+  "masterSurname": "Due",
   "andata": [
     {
       "id": 101,

@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 public class LineaDTO {
     private String id;
     private String nome;
-    private String master;
+    private String masterMail;
+    private String masterName;
+    private String masterSurname;
     private Set<String> adminList;
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
@@ -24,7 +26,9 @@ public class LineaDTO {
     public LineaDTO(LineaEntity lineaEntity, FermataRepository fermataRepository) {
         this.id = lineaEntity.getId();
         this.nome = lineaEntity.getNome();
-        this.master = lineaEntity.getMaster();
+        this.masterMail = lineaEntity.getMasterMail();
+        this.masterSurname = lineaEntity.getMasterSurname();
+        this.adminList = lineaEntity.getAdminList();
         this.adminList = lineaEntity.getAdminList();
         this.andata = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getAndata())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
         this.ritorno = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getRitorno())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));

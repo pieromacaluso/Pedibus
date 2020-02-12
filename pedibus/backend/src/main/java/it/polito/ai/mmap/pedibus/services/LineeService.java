@@ -202,7 +202,7 @@ public class LineeService {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = this.userService.getUserEntity(principal.getId());
         LineaEntity lineaEntity = this.getLineaEntityById(idLinea);
-        return lineaEntity.getMaster().equals(user.getUsername());
+        return lineaEntity.getMasterMail().equals(user.getUsername());
     }
 
     /**
@@ -215,7 +215,7 @@ public class LineeService {
     public boolean isMasterLine(String userID, String idLinea) {
         UserInsertResource user = this.userService.getUserByEmail(userID);
         LineaEntity lineaEntity = this.getLineaEntityById(idLinea);
-        return lineaEntity.getMaster().equals(user.getUserId());
+        return lineaEntity.getMasterMail().equals(user.getUserId());
     }
 
     /**
@@ -247,6 +247,6 @@ public class LineeService {
     }
 
     public List<LineaEntity> getAllLinesMasterMail(String email) {
-        return this.lineaRepository.findAllByMasterIs(email);
+        return this.lineaRepository.findAllByMasterMailIs(email);
     }
 }
