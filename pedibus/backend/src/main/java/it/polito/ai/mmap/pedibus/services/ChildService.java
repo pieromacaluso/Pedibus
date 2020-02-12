@@ -185,6 +185,11 @@ public class ChildService {
         return childrenNotReserved.stream().map(this::getChildDTOById).collect(Collectors.toList());
     }
 
+    /**
+     * Ottiene ChildEntity da un set di codici fiscali
+     * @param cfList set codici fiscali
+     * @return
+     */
     public HashMap<String, ChildEntity> getChildrenEntityByCfList(Set<String> cfList) {
         return (HashMap<String, ChildEntity>) ((List<ChildEntity>) childRepository
                 .findAllById(cfList)).stream().collect(Collectors.toMap(ChildEntity::getCodiceFiscale, c -> c));

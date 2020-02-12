@@ -86,6 +86,9 @@ public class DataCreationService {
         logger.info("Creazione Basi di dati di test completata.");
     }
 
+    /**
+     * Reset di tutti i dati salvati
+     */
     public void deleteAll() {
         reservationRepository.deleteAll();
         userRepository.deleteAll(userRepository.findAll().stream().filter(userEntity -> !userEntity.getRoleList().contains(userService.getRoleEntityById("ROLE_SYSTEM-ADMIN"))).collect(Collectors.toList()));
@@ -168,6 +171,10 @@ public class DataCreationService {
         }
     }
 
+    /**
+     * Crea i Children necessari
+     * @param countCreate indice necessario
+     */
     public void makeChildUser(int countCreate) throws IOException {
         RoleEntity roleUser = userService.getRoleEntityById("ROLE_USER");
         RoleEntity roleAdmin = userService.getRoleEntityById("ROLE_ADMIN");

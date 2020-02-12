@@ -46,8 +46,7 @@ public class GestioneCorseService {
      * Se il turno non è presente sul db per questa terna lo crea
      * Se il turno ha oltrepassato la sua data di scadenza (pedibus partito) viene chiuso o non viene creato
      *
-     * @param turnoDTO
-     * @return
+     * @param turnoDTO turnoDTO ricevuto
      */
     private TurnoEntity getTurnoEntity(TurnoDTO turnoDTO) {
         Optional<TurnoEntity> checkTurno = turnoRepository.findByIdLineaAndDataAndVerso(turnoDTO.getIdLinea(), turnoDTO.getData(), turnoDTO.getVerso());
@@ -70,9 +69,8 @@ public class GestioneCorseService {
     /**
      * Restituisce una dispEntity a partire dal turno e dalla persona indicata
      *
-     * @param turnoDTO
-     * @param guideUsername
-     * @return
+     * @param turnoDTO turnoDTO indicato
+     * @param guideUsername guida specificata
      */
     private DispEntity getDispEntity(TurnoDTO turnoDTO, String guideUsername) throws DispNotFoundException {
         Optional<DispEntity> checkDisp = dispRepository.findByGuideUsernameAndTurnoId(guideUsername, getTurnoEntity(turnoDTO).getTurnoId());
@@ -85,9 +83,7 @@ public class GestioneCorseService {
     /**
      * Restituisce una dispEntity a partire dall' id della disponibilità
      *
-     * @param idDisp
-     * @return
-     * @throws DispNotFoundException
+     * @param idDisp id Disponibilità
      */
     private DispEntity getDispEntitybyId(String idDisp) throws DispNotFoundException {
         Optional<DispEntity> checkDisp = dispRepository.findByDispId(idDisp);
@@ -97,8 +93,7 @@ public class GestioneCorseService {
     /**
      * Controlla che una GUIDE non debba essere in due posti in contemporanea e che quindi abbia una sola prenotazione per verso/data
      *
-     * @param turnoDTO
-     * @return
+     * @param turnoDTO turno selezionato
      */
     private Boolean idDispDuplicate(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -118,9 +113,8 @@ public class GestioneCorseService {
      * Restituisce una dispTurnoResource a partire dal turno e dalla persona loggata
      * Questa risorsa contiene lo stato di tutti i turni per quei parametri ed eventualmente la disponibilità
      *
-     * @param date
-     * @param verso
-     * @return
+     * @param date data specificata
+     * @param verso verso indicato
      */
     public DispTurnoResource getDispTurnoResource(Date date, Boolean verso) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -178,8 +172,8 @@ public class GestioneCorseService {
     /**
      * Aggiorna la disponibilità cambiando l'id della fermata
      *
-     * @param idDisp
-     * @param disp
+     * @param idDisp id della disponibilità in questione
+     * @param disp nuovi dati
      */
     public DispTurnoResource updateDisp(String idDisp, DispAllResource disp) {
         DispEntity e = getDispEntitybyId(idDisp);
@@ -244,8 +238,7 @@ public class GestioneCorseService {
     /**
      * Restituisce tutte le DispAllResource per un turno, sia quelle confirmed che quelle no
      *
-     * @param turnoDTO
-     * @return
+     * @param turnoDTO turno in questione
      */
     public TurnoDispResource getAllTurnoDisp(TurnoDTO turnoDTO) {
         List<DispEntity> dispEntities = dispRepository.findAllByTurnoId(getTurnoEntity(turnoDTO).getTurnoId());
@@ -267,8 +260,8 @@ public class GestioneCorseService {
      * Aggiorna lo stato isConfirmed per ogni disp
      * Controlla che prima il turno sia stato chiuso tramite PUT /turno/state/{idLinea}/{verso}/{data}
      *
-     * @param turnoDTO
-     * @param dispAllResource
+     * @param turnoDTO turno in questione
+     * @param dispAllResource dati della disponibilità necessari
      */
     public void setAllTurnoDisp(TurnoDTO turnoDTO, DispAllResource dispAllResource) {
         if (!getTurnoEntity(turnoDTO).getIsOpen()) {
@@ -291,8 +284,8 @@ public class GestioneCorseService {
     /**
      * Permette a un admin di una linea di modificare lo stato del turno
      *
-     * @param turnoDTO
-     * @param isOpen
+     * @param turnoDTO turno in questione
+     * @param isOpen stato turno
      */
     public void setTurnoState(TurnoDTO turnoDTO, Boolean isOpen) {
         if (lineeService.isAdminLine(turnoDTO.getIdLinea()) || userService.isSysAdmin()) {
@@ -311,7 +304,7 @@ public class GestioneCorseService {
     /**
      * Aggiorniamo lo stato della conferma della guida
      *
-     * @param turnoDTO
+     * @param turnoDTO turno in questione
      */
     public void ackDisp(TurnoDTO turnoDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -326,6 +319,10 @@ public class GestioneCorseService {
         }
     }
 
+    /**
+     * Veridica se il turno indicato è staduto o meno
+     * @param turnoDTO turno in questione
+     */
     private Boolean isTurnoExpired(TurnoDTO turnoDTO) {
         LineaDTO lineaDTO = lineeService.getLineaDTOById(turnoDTO.getIdLinea());
         String timeFermata = turnoDTO.getVerso() ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get().getOrario() : lineeService.getPartenzaScuola();
@@ -339,14 +336,19 @@ public class GestioneCorseService {
     /**
      * Restituisce lo stato di un turno a partire dalla terna contenuta nel dto
      *
-     * @param turnoDTO
-     * @return
+     * @param turnoDTO turno in questione
      */
     public TurnoResource getTurnoState(TurnoDTO turnoDTO) {
         return new TurnoResource(getTurnoEntity(turnoDTO));
     }
 
 
+    /**
+     * Verifica se la guida che ha eseguito l'accesso ha precedentemente confermato la disponibilità per il turno in questione
+     * @param idLinea id linea
+     * @param date data in questione
+     * @param verso verso specificato
+     */
     public Boolean isGuideConfirmed(String idLinea, Date date, Boolean verso) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DispEntity dispEntity;
@@ -364,7 +366,7 @@ public class GestioneCorseService {
      * Dato un id disponibilità la segna come letta (isAck=true e data settata).
      * Usato quando un utente legge la notifica con la quale l'amministratore di linea conferma la disponibilità data.
      *
-     * @param dispID
+     * @param dispID id disponibilità
      */
     public void setAckDisp(ObjectId dispID) {
         DispEntity dispEntity = getDispEntitybyId(dispID.toString());
@@ -376,6 +378,10 @@ public class GestioneCorseService {
         }
     }
 
+    /**
+     * Restituisce un TurnoEntity tramite il suo id
+     * @param turnoId id del turno in questione
+     */
     public TurnoEntity getTurnoEntityById(ObjectId turnoId) {
         Optional<TurnoEntity> turnoCheck = this.turnoRepository.findByTurnoId(turnoId);
         if (turnoCheck.isPresent()) {
