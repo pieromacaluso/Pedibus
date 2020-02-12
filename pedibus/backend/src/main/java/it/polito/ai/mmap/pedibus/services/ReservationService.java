@@ -131,10 +131,9 @@ public class ReservationService {
      * Restituisce la reservation controllando che idLinea e Data corrispondano a
      * quelli del reservation_id
      *
-     * @param idLinea
-     * @param data
-     * @param reservationId
-     * @return
+     * @param idLinea id linea specificata
+     * @param data data indicata
+     * @param reservationId id prenotazione
      */
     public ReservationDTO getReservationCheck(String idLinea, Date data, ObjectId reservationId) {
         ReservationEntity reservationEntity = getReservationEntityById(reservationId);
@@ -147,10 +146,9 @@ public class ReservationService {
     /**
      * Reservation Entity da verso,data,idAlunno
      *
-     * @param verso
-     * @param data
-     * @param cfChild
-     * @return
+     * @param verso verso specificato
+     * @param data data indicata
+     * @param cfChild codice fiscale bambino
      */
     public ReservationEntity getChildReservation(Boolean verso, Date data, String cfChild) {
         Optional<ReservationEntity> check = reservationRepository.findByCfChildAndDataAndVerso(cfChild, data, verso);
@@ -161,6 +159,12 @@ public class ReservationService {
         }
     }
 
+    /**
+     * Reservation Entity da data e idAlunno indipendentemente dal verso
+     *
+     * @param data data indicata
+     * @param cfChild codice fiscale bambino
+     */
     public List<ReservationDTO> getChildReservationsAR(Date data, String cfChild) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal.getChildrenList().contains(cfChild)) {
@@ -173,9 +177,8 @@ public class ReservationService {
     /**
      * Restituisce i bambini iscritti tranne quelli che si sono prenotati per quel giorno linea e verso
      *
-     * @param data
-     * @param verso
-     * @return
+     * @param data data indicata
+     * @param verso verso specificato
      */
     public List<ChildDTO> getChildrenNotReserved(Date data, boolean verso) {
         List<String> childrenDataVerso = reservationRepository.findByDataAndVerso(data, verso).stream().map(ReservationEntity::getCfChild).collect(Collectors.toList());
@@ -211,6 +214,14 @@ public class ReservationService {
         }
     }
 
+    /**
+     * Permette di cancellare una prenotazione di un bambino
+     *
+     * @param codiceFiscale codice fiscale bambino
+     * @param dataFormatted data della prenotazione
+     * @param idLinea id linea
+     * @param verso verso indicato
+     */
     public void deleteReservation(String codiceFiscale, Date dataFormatted, String idLinea, boolean verso) {
         Optional<ReservationEntity> checkReservation = reservationRepository.findByCfChildAndDataAndVerso(codiceFiscale, dataFormatted, verso);
         if (checkReservation.isPresent()) {
@@ -228,9 +239,13 @@ public class ReservationService {
         }
     }
 
+    /**
+     * Se la reservation è per oggi allora controlla che sia prima dell'arrivo alla fermata o che il ruolo sia ADMIN o SYSTEM_ADMIN
+     *
+     * @param data data indicata
+     * @param fermataEntity fermata in questione
+     */
     private boolean checkTime(Date data, FermataEntity fermataEntity) {
-        // se la reservation è per oggi allora controlla che sia prima dell'arrivo alla
-        // fermata o che il ruolo sia ADMIN o SYSTEM_ADMIN
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Boolean isAdmin = principal.getRoleList().contains(userService.getRoleEntityById("ROLE_ADMIN"));
         if (!userService.isSysAdmin()) {
@@ -277,13 +292,12 @@ public class ReservationService {
     /**
      * Admin lina indica che ha preso l'alunno alla fermata
      *
-     * @param verso
-     * @param data
-     * @param datef
-     * @param isSet
-     * @param idLinea
-     * @param cfChild
-     * @throws Exception
+     * @param verso verso indicato
+     * @param data data specificata come stringa
+     * @param datef data indicata
+     * @param isSet indica se il bambino è preno o meno
+     * @param idLinea id linea
+     * @param cfChild codice fiscale bambino
      */
     public void manageHandled(Boolean verso, String data, Date datef, Boolean isSet, String idLinea, String cfChild) throws Exception {
         if (canModify(idLinea, datef, verso)) {
@@ -309,6 +323,16 @@ public class ReservationService {
     }
 
 
+    /**
+     * Admin lina indica che un bambino è assente
+     *
+     * @param verso verso indicato
+     * @param data data specificata come stringa
+     * @param datef data indicata
+     * @param isSet indica se il bambino è preno o meno
+     * @param idLinea id linea
+     * @param cfChild codice fiscale bambino
+     */
     public void manageAssente(Boolean verso, String data, Date datef, Boolean isSet, String idLinea, String cfChild) {
         if (canModify(idLinea, datef, verso)) {
 
@@ -334,6 +358,13 @@ public class ReservationService {
             throw new IllegalStateException();
     }
 
+    /**
+     * Verifica se una guida è autorizzata per modificare lo stato di un bambino e se è il momento adatto
+     *
+     * @param idLinea id linea
+     * @param date data specificata
+     * @param verso verso indicato
+     */
     public boolean canModify(String idLinea, Date date, Boolean verso) {
         if (userService.isSysAdmin())
             return true;
@@ -347,7 +378,6 @@ public class ReservationService {
      * @param data    data
      * @param cfChild id del bambino
      * @param idLinea id della linea
-     * @throws Exception
      */
 
     public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
@@ -408,13 +438,12 @@ public class ReservationService {
     }
 
     /**
-     * Costruisce l'oggetto richiesto da GET
+     * Ritorna l'oggetto richiesto da GET
      * /reservations/verso/{id_linea}/{data}/{verso}
      *
-     * @param idLinea
-     * @param dataFormatted
-     * @param verso
-     * @return
+     * @param idLinea id linea
+     * @param dataFormatted data indicata
+     * @param verso verso specificato
      */
     public GetReservationsIdDataVersoResource getReservationsVersoResource(String idLinea, Date dataFormatted,
                                                                            boolean verso) {
@@ -483,9 +512,10 @@ public class ReservationService {
     }
 
     /**
-     * @param idLinea
-     * @param date
-     * @param verso
+     * Esegue il dump delle prenotazioni per una determinata linea, data e verso
+     * @param idLinea id linea
+     * @param date data indicata
+     * @param verso verso specificato
      * @return il dump delle prenotazioni per la terna idLina, data, verso
      */
     public ReservationsDump getReservationsDump(String idLinea, Date date, boolean verso) {
