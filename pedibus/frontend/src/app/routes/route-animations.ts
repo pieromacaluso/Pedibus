@@ -14,11 +14,13 @@ export const fadeAnimation =
     transition('* => *', [
       query(':enter',
         [
-          style({position: 'absolute',
+          style({
+            position: 'absolute',
             left: 0,
             width: '100%',
             opacity: 0,
-            transform: 'scale(0) translateY(100%)'})
+            transform: 'scale(0) translateY(100%)'
+          })
         ],
         {optional: true}
       ),

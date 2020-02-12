@@ -26,6 +26,9 @@ import {AdminGuideGuard} from '../auth/guards/admin-guide.guard';
 import {NotAuthGuard} from '../auth/guards/not-auth.guard';
 import {SysAdminGuard} from '../auth/guards/sys-admin.guard';
 
+/**
+ * Gestione delle route del sistema
+ */
 const appRoutes: Routes = [
   // {path: 'sign-up', component: SignUpComponent, canActivate: [AuthGuard], data: { animation: 'yes' }},
   {path: 'sign-in', component: SignInComponent, canActivate: [AuthGuard], data: {animation: 'yes'}},
