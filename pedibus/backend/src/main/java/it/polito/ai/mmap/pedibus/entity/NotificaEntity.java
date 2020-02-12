@@ -25,9 +25,8 @@ public class NotificaEntity {
     private NotificationType type;
     private String usernameDestinatario;
     private String msg;
-    private Boolean isTouched;  //todo probabilmente possibile eliminarlo
+    private Boolean isTouched;
     private Date data;
-    //todo aggiunta data
 
 
     //Per type = notifiche.type.Disponibilita, altrimenti impostati a null e false

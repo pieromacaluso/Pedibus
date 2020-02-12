@@ -132,7 +132,7 @@ public class NotificheTest {
         ArrayList<NotificaEntity> notificaEntitiesGenitore = new ArrayList<>();
         notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.Genitore@test.it", "msg1", null));
         notificaEntitiesGenitore.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, "test.Genitore@test.it", "msg2", null));
-        //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testGenitore@test.it","msg3",false,xxx,xxx)); //todo aggiungere una mappa di disponibilità
+        //notificaEntities.add(new NotificaEntity(NotDisponibilita,"testGenitore@test.it","msg3",false,xxx,xxx));
         notificheEntityMap.put("testGenitore", notificaEntitiesGenitore);
 
         ArrayList<NotificaEntity> notificaEntitiesNonGenitore = new ArrayList<>();

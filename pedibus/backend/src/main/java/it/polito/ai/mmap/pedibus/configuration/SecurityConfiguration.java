@@ -98,9 +98,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/notreservations/**").access("hasAnyRole('GUIDE','ADMIN','SYSTEM-ADMIN')")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/reservations/dump/**").access("hasAnyRole('ADMIN','SYSTEM-ADMIN')") //todo permettere anche alle guide?
-                .and()
-                .authorizeRequests()
                 .antMatchers("/children/stops/**").access("hasAnyRole('USER')")
                 .and()
                 .authorizeRequests()

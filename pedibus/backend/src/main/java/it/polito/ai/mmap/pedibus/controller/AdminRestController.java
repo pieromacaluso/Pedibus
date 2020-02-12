@@ -9,14 +9,8 @@ import it.polito.ai.mmap.pedibus.exception.SysAdminException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
-import it.polito.ai.mmap.pedibus.resources.DispAllResource;
-import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
-import it.polito.ai.mmap.pedibus.resources.PermissionResource;
-import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
-import it.polito.ai.mmap.pedibus.services.ChildService;
-import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
-import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.UserService;
+import it.polito.ai.mmap.pedibus.resources.*;
+import it.polito.ai.mmap.pedibus.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +40,10 @@ public class AdminRestController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private GestioneCorseService gestioneCorseService;
+    @Autowired
+    private ReservationService reservationService;
+    @Autowired
+    private MongoTimeService mongoTimeService;
 
     /**
      * Endpoint per ottenere tutti i ruoli disponibili nel database
@@ -257,5 +255,20 @@ public class AdminRestController {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/disp/" + idDisp));
         DispTurnoResource res = gestioneCorseService.updateDisp(idDisp, disp);
         return res.getDisp();
+    }
+
+    /**
+     * Restituisce il dump delle reservations per la terna indicata
+     *
+     * @param idLinea id della linea
+     * @param data    data in esame
+     * @param verso   verso considerato
+     * @return ReservationsDump
+     */
+    @ApiOperation("Restituisce il dump delle reservations per la terna linea/data/verso indicata")
+    @GetMapping("/admin/reservations/dump/{id_linea}/{data}/{verso}")
+    public ReservationsDump getReservationsDump(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
+        logger.info(PedibusString.ENDPOINT_CALLED("GET", "/reservations/dump/" + idLinea + "/" + data + "/" + verso));
+        return reservationService.getReservationsDump(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, false), verso);
     }
 }

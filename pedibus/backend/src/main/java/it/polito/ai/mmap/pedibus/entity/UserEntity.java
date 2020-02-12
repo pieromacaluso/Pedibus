@@ -43,7 +43,6 @@ public class UserEntity implements UserDetails {
 
     public UserEntity(UserDTO userDTO, HashSet<RoleEntity> userRoles, PasswordEncoder passwordEncoder) {
         username = userDTO.getEmail();
-        //todo se si riesce a generare un json con dentro già nome e cogno si può evitare sto pastrocchio, in produzione comunque si toglie tutto (json e costruttore)
         String[] mail_splitted = username.split("@")[0].split("\\.");
         name = StringUtils.capitalize(mail_splitted[0]);
         surname = StringUtils.capitalize(mail_splitted[1]);

@@ -45,21 +45,4 @@ public class TurnoDTO {
 
     }
 
-
-
-//  Serve se restituiamo un TurnoDTO
-//    static class CustomDateSerializer extends StdSerializer<Date> {
-//
-//
-//        protected CustomDateSerializer() {
-//            super(Date.class);
-//        }
-//
-//        @Override
-//        public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-//            jsonGenerator.writeString(MongoZonedDateTime.todo);
-//        }
-//    }
-
-
 }
