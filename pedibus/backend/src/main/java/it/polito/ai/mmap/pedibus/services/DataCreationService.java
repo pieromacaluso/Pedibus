@@ -19,14 +19,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class DataCreationService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -53,7 +54,7 @@ public class DataCreationService {
     MongoTimeService mongoTimeService;
     @Autowired
     NotificheService notificheService;
-
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private Environment environment;
 
@@ -75,13 +76,11 @@ public class DataCreationService {
         logger.info("Caricamento linee in corso...");
         readPiedibusLines();
         logger.info("Caricamento linee completato.");
-        if (environment.getActiveProfiles()[0].equals("prod")) {
-            logger.info("Creazione Basi di dati di test in corso...");
-            deleteAll();
-            makeChildUser(1);
-            makeChild(50);
-            logger.info("Creazione Basi di dati di test completata.");
-        }
+        logger.info("Creazione Basi di dati di test in corso...");
+        deleteAll();
+        makeChildUser(1);
+        makeChild(50);
+        logger.info("Creazione Basi di dati di test completata.");
     }
 
     public void deleteAll() {

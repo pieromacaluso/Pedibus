@@ -105,6 +105,7 @@ export class TabComponent implements OnInit, OnDestroy {
     search.value = '';
     switch (this.type) {
       case ElementType.User:
+        this.anagraficaService.emitKeyword('', this.type);
         this.anagraficaService.getUsers(0, '').subscribe((res) => {
           this.elements = res.content;
           this.pageIndex = 0;
@@ -113,6 +114,7 @@ export class TabComponent implements OnInit, OnDestroy {
         });
         break;
       case ElementType.Child:
+        this.anagraficaService.emitKeyword('', this.type);
         this.anagraficaService.getChildren(0, '').subscribe((res) => {
           this.elements = res.content;
           this.pageIndex = 0;
