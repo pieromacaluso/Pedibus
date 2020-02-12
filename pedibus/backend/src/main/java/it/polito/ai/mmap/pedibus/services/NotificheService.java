@@ -85,7 +85,7 @@ public class NotificheService {
         }
 
     }
-    
+
     /**
      * Elimina una notifica attraverso il suo id. Solo il destinatario di una determinata notifica può eliminarla
      *
@@ -331,5 +331,20 @@ public class NotificheService {
         NotificaEntity notifica = new NotificaEntity(NotificaEntity.NotificationType.BASE, d.getGuideUsername(), "La tua disponibilità per " + (turnoEntity.getVerso() ? "l'andata" : "il ritorno") + " in data " + data + " non è necessaria.", null);
         this.notificaRepository.save(notifica);
         simpMessagingTemplate.convertAndSendToUser(notifica.getUsernameDestinatario(), "/notifiche", notifica);
+    }
+
+    public void generateDeletedReservation(ReservationEntity reservationEntity) {
+        List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
+        ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
+        FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        for (UserEntity parent : parents) {
+            NotificaEntity notificaEntity = new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(), "La prenotazione di " +
+                    childEntity.getSurname() + " " + childEntity.getName() + " " + "per " + (reservationEntity.isVerso() ? "l'andata " : "ritorno ")
+                    + " del " + dateFormat.format(reservationEntity.getData()) +
+                    " è stata cancellata dall'amministratore di sistema."
+                    , null);
+            this.addNotifica(notificaEntity);
+        }
     }
 }

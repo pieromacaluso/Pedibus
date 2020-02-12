@@ -14,7 +14,8 @@ export class EntryUserComponent implements OnInit {
   @Input() user: UserDTO;
   private childObs: Observable<ChildrenDTO>[];
 
-  constructor(private anagraficaService: AnagraficaService) { }
+  constructor(private anagraficaService: AnagraficaService) {
+  }
 
   ngOnInit() {
     this.childObs = [];
@@ -51,9 +52,9 @@ export class EntryUserComponent implements OnInit {
       .subscribe((response) => {
         if (response) {
           this.anagraficaService.deleteUser(this.user.userId).subscribe((res) => {
-            // TODO: gestisci successo
+            // Successo
           }, error => {
-            // TODO: gestisci insuccesso.
+            // Gestito da Interceptor
           });
         }
       });

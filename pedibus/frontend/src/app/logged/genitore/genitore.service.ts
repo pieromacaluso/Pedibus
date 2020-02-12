@@ -11,10 +11,16 @@ export class GenitoreService {
   constructor(private apiService: ApiService) {
   }
 
+  /**
+   * Ottieni i tuoi bambini
+   */
   getChildren(): Observable<ChildrenDTO[]> {
     return this.apiService.getChildren();
   }
 
+  /**
+   * Ottieni le linee
+   */
   getLinee(): Observable<string[]> {
     return this.apiService.getLinee();
   }

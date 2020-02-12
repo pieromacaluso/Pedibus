@@ -56,7 +56,8 @@
               </mat-label>
             </mat-form-field>
           </div>
-          <div fxLayout="row" class="wrap" *ngIf="(this.childSearchObs | async) as children else loading" fxLayoutGap="5px">
+          <div fxLayout="row" class="wrap" *ngIf="(this.childSearchObs | async) as children else loading"
+               fxLayoutGap="5px">
             <button mat-raised-button color="accent" class="margin-bottom" *ngFor="let child of children"
                     (click)="addChild(child.codiceFiscale)"
                     [disabled]="alreadySelected(child.codiceFiscale)">

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DialogAnagraficaComponent } from './dialog-anagrafica.component';
+import {DialogAnagraficaComponent} from './dialog-anagrafica.component';
 
 describe('DialogAnagraficaComponent', () => {
   let component: DialogAnagraficaComponent;
@@ -8,9 +8,9 @@ describe('DialogAnagraficaComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DialogAnagraficaComponent ]
+      declarations: [DialogAnagraficaComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

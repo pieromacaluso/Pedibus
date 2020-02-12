@@ -18,16 +18,28 @@ export class DataShareService {
   constructor() {
   }
 
+  /**
+   * Aggiorna le notifiche
+   * @param notifiche notifiche da emettere
+   */
   updateNotifiche(notifiche: Notifica[]) {
     this.comuArray = notifiche;
     this.comunicazioniSource.next(this.comuArray);
   }
 
+  /**
+   * Aggiorna il totale delle notifiche
+   * @param totalNumber numero totale
+   */
   updateTotal(totalNumber: number) {
     this.totalNotifications = totalNumber;
     this.comunicazioniNumberSource.next(this.totalNotifications);
   }
 
+  /**
+   * Rimuovi la notifica
+   * @param idNotifica idNotifica da eliminare
+   */
   removeNotifica(idNotifica: string) {
     const indexNotifica = this.comuArray.findIndex(n => n.idNotifica === idNotifica);
     if (indexNotifica !== -1) {

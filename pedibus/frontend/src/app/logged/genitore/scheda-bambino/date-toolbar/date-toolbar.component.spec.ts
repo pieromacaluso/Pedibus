@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DateToolbarComponent } from './date-toolbar.component';
+import {DateToolbarComponent} from './date-toolbar.component';
 
 describe('DateToolbarComponent', () => {
   let component: DateToolbarComponent;
@@ -8,9 +8,9 @@ describe('DateToolbarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DateToolbarComponent ]
+      declarations: [DateToolbarComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ChildDialogComponent } from './child-dialog.component';
+import {ChildDialogComponent} from './child-dialog.component';
 
 describe('ChildDialogComponent', () => {
   let component: ChildDialogComponent;
@@ -8,9 +8,9 @@ describe('ChildDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChildDialogComponent ]
+      declarations: [ChildDialogComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

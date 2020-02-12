@@ -20,7 +20,6 @@ import {FortmatLinePipe} from './presenze/toolbar/fortmat-line.pipe';
 import {DisponibilitaComponent} from './disponibilita/disponibilita.component';
 import {TurniComponent} from './turni/turni.component';
 import {NotificheComponent} from './notifiche/notifiche.component';
-import {DeleteDialogComponent} from './presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
 import {AggiuntaDispComponent} from './disponibilita/aggiunta-disp/aggiunta-disp.component';
 import {ElencoDispComponent} from './turni/elenco-disp/elenco-disp.component';
 import {NotificaComponent} from './notifiche/notifica/notifica.component';
@@ -53,7 +52,6 @@ import {DateToolbarComponent} from './genitore/scheda-bambino/date-toolbar/date-
     DisponibilitaComponent,
     TurniComponent,
     NotificheComponent,
-    DeleteDialogComponent,
     AggiuntaDispComponent,
     ElencoDispComponent,
     NotificaComponent,
@@ -101,7 +99,6 @@ import {DateToolbarComponent} from './genitore/scheda-bambino/date-toolbar/date-
   exports: [],
   entryComponents: [
     AdminBookDialogComponent,
-    DeleteDialogComponent,
     DialogAnagraficaComponent,
     DialogPrenotazioneComponent,
     UpdateDispDialogComponent,

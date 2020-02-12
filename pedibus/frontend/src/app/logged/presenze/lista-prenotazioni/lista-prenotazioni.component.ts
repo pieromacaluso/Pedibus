@@ -9,7 +9,6 @@ import {MatBottomSheet, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {Observable, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
-import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
 import {catchError, switchMap, tap} from 'rxjs/operators';
 import {MapService} from '../../../utilities/map.service';
 import {ReservationDTO} from '../../genitore/dtos';
@@ -27,8 +26,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
-  deleteDialogRef: MatDialogRef<DeleteDialogComponent>;
-  bottomCardTitle: string;
   children: any[] = [];
   private loading: boolean;
   private reservationSub: Subscription;
@@ -37,7 +34,10 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   constructor(private syncService: SyncService, private apiService: ApiService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe, private mapService: MapService) {
-    // First Observable
+    /**
+     * First Observable
+     * Ottieni gli alunni per fermata
+     */
     this.firstSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
@@ -60,7 +60,9 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
       }
     );
 
-    // Message reservation
+    /**
+     * WebSocket per monitoraggio aggiornamenti prenotazioni
+     */
     this.reservationSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
@@ -126,31 +128,28 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
         const al = this.resource.alunniPerFermata.find(p => p.fermata.id === res.idFermata).alunni.push(newAlunno);
       }
     });
-    this.setBottoCardTitle();
-
   }
 
-  setBottoCardTitle() {
-    if (this.authService.getRoles().includes('ROLE_USER')) {
-      this.bottomCardTitle = 'Prenota fermata';
-      this.apiService.getChildren().subscribe((childs) => {
-        this.children = childs;
-      });
-    }
-    if (this.authService.getRoles().includes('ROLE_ADMIN')) {
-      this.bottomCardTitle = 'Bambini non prenotati';
-    }
-  }
-
+  /**
+   * Da prenotazione a path per richieste
+   * @param prenotazione prenotazione
+   */
   private pathSub(prenotazione: PrenotazioneRequest) {
     return '/' + this.datePipe.transform(
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 
+  /**
+   * Check if the user is admin
+   */
   isAdmin() {
     return this.authService.isAdmin();
   }
 
+  /**
+   * Open Dialog di prenotazione alunno non prenotato dal genitore
+   * @param alu alunno non prenotato
+   */
   openDialog(alu: AlunnoNotReserved) {
     if (this.canModify()) {
 
@@ -169,22 +168,9 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     }
   }
 
-  openDeleteDialog(alu: Alunno) {
-    this.dialog.closeAll();
-
-    this.deleteDialogRef = this.dialog.open(DeleteDialogComponent, {
-      hasBackdrop: true,
-      data: {
-        alunno: alu,
-        res: this.resource.alunniPerFermata,
-        data: this.prenotazione.data,
-        verso: this.prenotazione.verso,
-        linea: this.prenotazione.linea,
-        resource: this.resource
-      }
-    });
-  }
-
+  /**
+   * Posso modificare la risorsa? Sì se mi arriva un dato tale dal backend e se sono SysAdmin
+   */
   canModify() {
     return this.authService.isSysAdmin() || this.resource.canModify;
     // return true;
@@ -198,6 +184,11 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     return alu.update;
   }
 
+  /**
+   * Toggle presenza
+   * @param id fermata
+   * @param alunno alunno
+   */
   togglePresenza(id: number, alunno: Alunno) {
     if (this.canModify()) {
       this.dialog.open(PresenceDialogComponent, {
@@ -212,40 +203,47 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Ritorna se il bambino è presente
+   * @param id id fermata
+   * @param alunno alunno
+   */
   presente(id: number, alunno: Alunno): boolean {
     return this.resource.alunniPerFermata.find(p => p.fermata.id === id).alunni.find(a => a === alunno).presoInCarico;
   }
 
+  /**
+   * Ritorna gli alunni riordinati
+   * @param alu array di alunni
+   */
   sortedAlunni(alu: Alunno[]) {
     return alu.sort((a, b) => {
       return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
     });
   }
 
+  /**
+   * Ritorna gli alunni non prenotati riordinati
+   * @param alu array di alunni non prenotati
+   */
   sortedNotReserved(alu: AlunnoNotReserved[]) {
-    // if (this.authService.getRoles().includes('ROLE_USER')) {
-    //   // todo: 1. get children, 2. filtra, 3. ordina
-    //   return alu.filter((a) => this.children.find((c) => c.codiceFiscale === a.codiceFiscale))
-    //     .sort((a, b) => {
-    //       return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
-    //     });
-    //
-    // } else {
     return alu.sort((a, b) => {
       return (a.surname !== b.surname) ? a.surname.localeCompare(b.surname) : a.name.localeCompare(b.name);
     });
-    // }
   }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy(): void {
-    console.log("DISTRUZIONE");
     this.reservationSub.unsubscribe();
     this.firstSub.unsubscribe();
   }
 
+  /**
+   * Cancella alunno non prenotato dalla lista
+   * @param al alunno non prenotato
+   */
   deleteNotReserved(al: AlunnoNotReserved) {
     const index: number = this.resource.childrenNotReserved.indexOf(al);
     if (index !== -1) {
@@ -253,36 +251,27 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Apri la mappa della fermata
+   * @param idFermata id della fermata
+   */
   openMapDialog(idFermata: number) {
     this.mapService.openMapDialog(idFermata).subscribe();
   }
 
-  openArrivedDialog() {
-
-  }
-
-  openScuolaRitornoDialog() {
-
-  }
-
-  openScuolaAndataDialog() {
-    let alunniInCarico: Alunno[] = [];
-    for (const stop of this.resource.alunniPerFermata) {
-      for (const alunno of stop.alunni) {
-        if (alunno.presoInCarico) {
-          alunniInCarico.push(alunno);
-        }
-      }
-    }
-    alunniInCarico = this.sortedAlunni(alunniInCarico);
-  }
-
+  /**
+   * Scarica il JSON delle fermate
+   */
   downloadJson() {
     this.apiService.downloadJson(this.prenotazione).subscribe((res) => {
       this.downloadFile(res);
     });
   }
 
+  /**
+   * Funzione che dai dati in JSON permette lo scaricamento del file con un nome ed una procedura user-friendly
+   * @param data dati JSON
+   */
   downloadFile(data: any) {
     const sJson = JSON.stringify(data, null, '\t');
     const element = document.createElement('a');
@@ -297,6 +286,9 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
     document.body.removeChild(element);
   }
 
+  /**
+   * Abilita il download solo per SysAdmin e Admin di linea
+   */
   enableDownload() {
     return this.authService.isSysAdmin() || this.authService.isAdmin();
   }

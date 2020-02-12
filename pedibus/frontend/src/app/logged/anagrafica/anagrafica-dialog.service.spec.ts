@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { AnagraficaDialogService } from './anagrafica-dialog.service';
+import {AnagraficaDialogService} from './anagrafica-dialog.service';
 
 describe('AnagraficaDialogService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

@@ -1,28 +1,31 @@
 <mat-card class="container search-bar" ngClass.lt-md="container-mobile" fxLayout="row">
   <div class="search-bar-div">
     <mat-form-field class="search-bar-div">
-        <input #search (input)="emitKeyword(search.value, paginator);" matInput type="search">
+      <input #search (input)="emitKeyword(search.value, paginator);" matInput type="search">
       <button mat-button *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear"
               (click)="resetValue(search)">
         <mat-icon>close</mat-icon>
       </button>
-      <mat-label><mat-icon>search</mat-icon> Cerca tra {{isUserDTO() ? 'gli utenti' : 'i bambini'}}...</mat-label>
+      <mat-label>
+        <mat-icon>search</mat-icon>
+        Cerca tra {{isUserDTO() ? 'gli utenti' : 'i bambini'}}...
+      </mat-label>
     </mat-form-field>
   </div>
 </mat-card>
 
 <div class="container" ngClass.lt-md="container-mobile">
-    <mat-paginator #paginator [length]="len"
-                   [pageSize]="10"
-                   [pageIndex]="pageIndex"
-                   (page)="cambiaPagina($event)">
-    </mat-paginator>
+  <mat-paginator #paginator [length]="len"
+                 [pageSize]="10"
+                 [pageIndex]="pageIndex"
+                 (page)="cambiaPagina($event)">
+  </mat-paginator>
 
-    <div *ngIf="isUserDTO()">
-      <app-entry-user *ngFor="let user of elements" [user]="user"></app-entry-user>
-    </div>
-    <div *ngIf="isChildDTO()">
-        <app-entry-child *ngFor="let child of elements" [child]="child"></app-entry-child>
-    </div>
+  <div *ngIf="isUserDTO()">
+    <app-entry-user *ngFor="let user of elements" [user]="user"></app-entry-user>
+  </div>
+  <div *ngIf="isChildDTO()">
+    <app-entry-child *ngFor="let child of elements" [child]="child"></app-entry-child>
+  </div>
 </div>
 

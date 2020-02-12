@@ -25,6 +25,10 @@ export class AnagraficaDialogService {
   }
 
 
+  /**
+   * Ottieni informazioni sulla linea a partire dall'id di un fermata in essa contenuta
+   * @param idFermata id della fermata
+   */
   getLineInfo(idFermata: number): Observable<StopsByLine> {
     return this.apiService.getFermata(idFermata).pipe(
       flatMap((res: Fermata) => {
@@ -33,6 +37,9 @@ export class AnagraficaDialogService {
     );
   }
 
+  /**
+   * Ottieni le informazioni di tutte le linee andando a trasformarle in una Mappa
+   */
   getAllLinesInfo(): Observable<Map<string, StopsByLine>> {
     return this.apiService.getLinee().pipe(
       flatMap((res: string[]) => {
@@ -51,38 +58,74 @@ export class AnagraficaDialogService {
       }));
   }
 
+  /**
+   * Aggiungi un bambino
+   * @param child struttura bambino
+   */
   addChild(child: ChildrenDTO) {
     return this.apiService.addChild(child);
   }
 
+  /**
+   * Aggiorna un bambino
+   * @param codiceFiscale codice fiscale del bambino da aggiornare
+   * @param child struttura bambino
+   */
   updateChild(codiceFiscale: string, child: ChildrenDTO) {
     return this.apiService.updateChild(codiceFiscale, child);
   }
 
+  /**
+   * Ottieni i ruoli
+   */
   getRoles(): Observable<string[]> {
     return this.apiService.getRoles();
   }
 
+  /**
+   * Ottieni i dettagli del bambino a partire dal suo codice fiscale
+   * @param value codice fiscale
+   */
   childDetails(value: string): Observable<ChildrenDTO> {
     return this.apiService.getChild(value);
   }
 
+  /**
+   * Aggiorna l'utente
+   * @param oldEmail vecchia email
+   * @param user struttura utente
+   */
   updateUser(oldEmail: string, user: UserDTO) {
     return this.apiService.updateUser(oldEmail, user);
   }
 
+  /**
+   * Ottieni una lista di 5 bambini a partire da una ricerca con keywords
+   * @param value keywords
+   */
   getListChildKey(value: string): Observable<ChildrenDTO[]> {
     return this.apiService.getFirst5Children(value);
   }
 
+  /**
+   * Iscrizione a Keyword Child
+   */
   subscribeKeyword() {
     return this.keywordChild.pipe(debounceTime(1000));
   }
 
+  /**
+   * Emetti Keyword
+   * @param value keyword
+   */
   emitKeyword(value: string) {
     this.keywordChildSource.next(value);
   }
 
+  /**
+   * Crea un utente
+   * @param user struttura utente
+   */
   createUser(user: UserDTO) {
     return this.apiService.createUser(user);
 

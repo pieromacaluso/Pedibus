@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { GenitoreService } from './genitore.service';
+import {GenitoreService} from './genitore.service';
 
 describe('GenitoreService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

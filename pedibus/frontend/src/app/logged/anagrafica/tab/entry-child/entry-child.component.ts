@@ -27,9 +27,9 @@ export class EntryChildComponent implements OnInit {
       .subscribe((response) => {
         if (response) {
           this.anagraficaService.deleteChild(this.child.codiceFiscale).subscribe((res) => {
-            // TODO: gestisci successo
+            // Successo
           }, error => {
-            // TODO: gestisci insuccesso.
+            // Gestito da Interceptor
           });
         }
       });

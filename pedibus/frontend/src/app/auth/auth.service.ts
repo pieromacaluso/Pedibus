@@ -206,10 +206,10 @@ export class AuthService {
   /**
    * Controlla se l'utente attualmente loggato è un utente
    */
-  isSysAdmin() {
+  isSysAdmin(): boolean {
     if (this.isLoggedIn()) {
       const roles = this.getRoles();
-      return roles.find(role => role === 'ROLE_SYSTEM-ADMIN');
+      return !!roles.find(role => role === 'ROLE_SYSTEM-ADMIN');
     }
     return false;
   }

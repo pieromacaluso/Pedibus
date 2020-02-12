@@ -39,8 +39,8 @@
           <mat-form-field>
             <mat-label>Linea Ritorno</mat-label>
             <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required
-                        [value]="details.ritorno.id"  (valueChange)="changeRitorno(details, $event)">
-              <mat-option *ngFor="let line of getLines(details.lines)" [value]="line.id" >{{line.nome}}</mat-option>
+                        [value]="details.ritorno.id" (valueChange)="changeRitorno(details, $event)">
+              <mat-option *ngFor="let line of getLines(details.lines)" [value]="line.id">{{line.nome}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
@@ -55,7 +55,8 @@
           </mat-form-field>
         </div>
         <button [disabled]="!profileForm.valid" mat-raised-button color="primary" (click)="updateChild()">
-          <mat-progress-bar class="progress-bar-button" *ngIf="this.addingChild" mode="indeterminate"></mat-progress-bar>
+          <mat-progress-bar class="progress-bar-button" *ngIf="this.addingChild"
+                            mode="indeterminate"></mat-progress-bar>
           Modifica Bambino
         </button>
 
@@ -82,7 +83,8 @@
         <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="5px">
           <mat-form-field>
             <mat-label>Linea Ritorno</mat-label>
-            <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required (valueChange)="changeRitorno(details, $event)">
+            <mat-select #selectRitorno placeholder="Linea Ritorno" formControlName="idLineaRitorno" required
+                        (valueChange)="changeRitorno(details, $event)">
               <mat-option *ngFor="let line of getLines(details)" [value]="line.id">{{line.nome}}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -100,8 +102,10 @@
 
 
         </div>
-        <button [disabled]="!profileForm.valid" mat-raised-button color="primary" [disableRipple]="this.addingChild" (click)="addChild()">
-          <mat-progress-bar class="progress-bar-button" *ngIf="this.addingChild" mode="indeterminate"></mat-progress-bar>
+        <button [disabled]="!profileForm.valid" mat-raised-button color="primary" [disableRipple]="this.addingChild"
+                (click)="addChild()">
+          <mat-progress-bar class="progress-bar-button" *ngIf="this.addingChild"
+                            mode="indeterminate"></mat-progress-bar>
           Aggiungi Bambino
         </button>
       </div>

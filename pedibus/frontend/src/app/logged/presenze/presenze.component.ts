@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../api.service';
 import {Observable} from 'rxjs';
-import { PrenotazioneRequest } from '../line-details';
+import {PrenotazioneRequest} from '../line-details';
 
 @Component({
   selector: 'app-presenze',

@@ -4,6 +4,7 @@ import {AlunniPerFermata, Alunno, AlunnoNotReserved, LineReservationVerso, Preno
 import {ReservationDTO} from '../../../genitore/dtos';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ApiService} from '../../../api.service';
+import {AuthService} from '../../../../auth/auth.service';
 
 export interface PresenceDialogData {
   alunno: Alunno;
@@ -19,9 +20,11 @@ export interface PresenceDialogData {
   styleUrls: ['./presence-dialog.component.scss']
 })
 export class PresenceDialogComponent implements OnInit {
+  sysadmin: boolean;
+
   constructor(public dialogRef: MatDialogRef<PresenceDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: PresenceDialogData,
-              private apiService: ApiService) {
+              private apiService: ApiService, private authService: AuthService) {
   }
 
   onNoClick(): void {
@@ -29,8 +32,13 @@ export class PresenceDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sysadmin = this.authService.isSysAdmin();
   }
 
+  /**
+   * Seleziona azione
+   * @param id id dell'azione
+   */
   selectAction(id) {
     switch (id) {
       case 0:
@@ -43,7 +51,7 @@ export class PresenceDialogComponent implements OnInit {
         });
         break;
       case 1:
-        // Preso in Carico
+        // Assente
         this.apiService.postAssenza(this.data.alunno, this.data.prenotazione, true).subscribe((rese) => {
           this.data.alunno.update = false;
         }, (error) => {
@@ -52,7 +60,7 @@ export class PresenceDialogComponent implements OnInit {
         });
         break;
       case 2:
-        // Preso in Carico
+        // Arrivato a destinazione
         this.apiService.postArrivato(this.data.alunno, this.data.prenotazione, true).subscribe((rese) => {
           this.data.alunno.update = false;
         }, (error) => {
@@ -61,13 +69,23 @@ export class PresenceDialogComponent implements OnInit {
         });
         break;
       case 3:
-        // Preso in Carico
+        // Ripristina Stato
         this.apiService.postRestore(this.data.alunno, this.data.prenotazione).subscribe((rese) => {
           this.data.alunno.update = false;
         }, (error) => {
           console.error(error);
           this.data.alunno.update = false;
         });
+        break;
+      case 4:
+        // Cancella Prenotazione da parte di admin
+        this.apiService.deletePrenotazioneAdmin(this.data.prenotazione.data, this.data.prenotazione.verso, this.data.alunno.codiceFiscale)
+          .subscribe((rese) => {
+            this.data.alunno.update = false;
+          }, (error) => {
+            console.error(error);
+            this.data.alunno.update = false;
+          });
         break;
 
     }

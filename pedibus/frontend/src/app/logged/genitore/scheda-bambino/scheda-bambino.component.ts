@@ -55,13 +55,13 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
     this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
   }
 
+  /**
+   * Mostrare il dialog attraverso cui modificare la fermata di default
+   */
   showAnagraficaDialog() {
     this.bambinoService.openDialog(this.bambino, this.linee, this.defaultAndata, this.defaultRitorno).subscribe((data) => {
       if (data) {
         const tomorrow = moment().add(1, 'days');
-        // this.bambino = data.data.child;
-        // this.defaultAndata = this.bambinoService.getFermata(this.bambino.idFermataAndata);
-        // this.defaultRitorno = this.bambinoService.getFermata(this.bambino.idFermataRitorno);
         this.bambinoService.updateFermate(data.data.child, tomorrow.toDate()).subscribe((d) => {
         }, (error) => {
         });
@@ -69,14 +69,13 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
     });
   }
 
-  showPrenotazioneDialog() {
-
-  }
-
   ngOnDestroy(): void {
     this.bambinoSub.unsubscribe();
   }
 
+  /**
+   * Aggiungi andata
+   */
   addAndata() {
     this.bambinoService.openDialogReservation(this.bambino, true, this.date, this.linee, true, this.andata)
       .subscribe((data) => {
@@ -89,6 +88,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Aggiungi ritorno
+   */
   addRitorno() {
     this.bambinoService.openDialogReservation(this.bambino, false, this.date, this.linee, true, this.ritorno)
       .subscribe((data) => {
@@ -101,6 +103,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Modifica andata
+   */
   editAndata() {
     this.bambinoService.openDialogReservation(this.bambino, true, this.date, this.linee, false, this.andata)
       .subscribe((data) => {
@@ -113,6 +118,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Modifica ritorno
+   */
   editRitorno() {
     this.bambinoService.openDialogReservation(this.bambino, false, this.date, this.linee, false, this.ritorno)
       .subscribe((data) => {
@@ -125,6 +133,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Cancella Andata
+   */
   deleteAndata() {
     this.bambinoService.deleteReservation(this.andata.idLinea, this.date, this.andata.id)
       .subscribe((d) => {
@@ -132,6 +143,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Cancella Ritorno
+   */
   deleteRitorno() {
     this.bambinoService.deleteReservation(this.ritorno.idLinea, this.date, this.ritorno.id)
       .subscribe((d) => {
@@ -139,6 +153,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * E' presente o Futuro?
+   */
   isPresentOrFuture() {
     const data = new Date();
     const reqData = this.date;
@@ -147,6 +164,10 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
     return reqData >= data;
   }
 
+  /**
+   * Siamo in tempo?
+   * @param orario orario
+   */
   isOnTime(orario: string) {
     const date = new Date();
     const reqData = this.date;
@@ -156,6 +177,10 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
     return date < reqData;
   }
 
+  /**
+   * Modifica la data
+   * @param date data
+   */
   changeDate(date: any) {
     this.date = date;
     if (this.bambino) {
@@ -181,6 +206,9 @@ export class SchedaBambinoComponent implements OnInit, OnDestroy {
       if (this.bambinoRes) {
         this.bambinoRes.unsubscribe();
       }
+      /**
+       * WebSockets per il bambino
+       */
       this.bambinoRes = this.bambinoService.watchChildReservation(this.bambino.codiceFiscale, date).subscribe(
         (message) => {
           const reservation: ReservationDTO = JSON.parse(message.body);

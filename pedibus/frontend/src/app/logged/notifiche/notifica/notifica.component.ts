@@ -51,8 +51,9 @@ export class NotificaComponent implements OnInit {
   }
 
   getDiffMin(date: Date) {
-    return Math.floor((this.now.getTime() - date.getTime()) / (1000 * 60) );
+    return Math.floor((this.now.getTime() - date.getTime()) / (1000 * 60));
   }
+
   getDiffHour(date: Date) {
     return Math.floor((this.now.getTime() - date.getTime()) / (1000 * 60 * 60));
   }

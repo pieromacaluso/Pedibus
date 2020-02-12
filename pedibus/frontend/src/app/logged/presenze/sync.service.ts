@@ -13,6 +13,10 @@ export class SyncService {
   constructor() {
   }
 
+  /**
+   * Aggiornamento prenotazione scelta nella toolbar
+   * @param prenotazione struttura prenotazione
+   */
   updatePrenotazione(prenotazione: PrenotazioneRequest) {
     this.prenotazioneRequest.next(prenotazione);
   }

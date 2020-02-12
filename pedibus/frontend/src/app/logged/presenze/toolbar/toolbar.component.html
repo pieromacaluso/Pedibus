@@ -51,7 +51,8 @@
       </mat-form-field>
       <!-- DATEPICKER -->
       <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%" color="accent">
-        <input class="text-white" matInput (dateChange)="emitRequest()" [matDatepicker]="picker" placeholder="Seleziona data" [(ngModel)]="richiesta.data">
+        <input class="text-white" matInput (dateChange)="emitRequest()" [matDatepicker]="picker"
+               placeholder="Seleziona data" [(ngModel)]="richiesta.data">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>

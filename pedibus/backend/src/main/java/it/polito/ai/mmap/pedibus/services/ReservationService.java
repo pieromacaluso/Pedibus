@@ -204,8 +204,7 @@ public class ReservationService {
                 && reservationEntity.getData().equals(data)
                 && idLinea.equals(reservationEntity.getIdLinea())
                 && (principal.getChildrenList().contains(reservationEntity.getCfChild())
-                || userService.isSysAdmin()
-                || lineeService.isAdminLine(idLinea))) {
+                || userService.isSysAdmin())) {
             reservationRepository.delete(reservationEntity);
         } else {
             throw new IllegalArgumentException("Errore in cancellazione reservation");
@@ -344,8 +343,8 @@ public class ReservationService {
     /**
      * Admin lina indica che ha lasciato l'alunno a scuola/fermata ritorno
      *
-     * @param verso verso
-     * @param data data
+     * @param verso   verso
+     * @param data    data
      * @param cfChild id del bambino
      * @param idLinea id della linea
      * @throws Exception

@@ -42,6 +42,11 @@ export class AnagraficaService {
   constructor(private apiService: ApiService, public dialog: MatDialog, private httpClient: HttpClient, private rxStompService: RxStompService) {
   }
 
+  /**
+   * Emetti una keyword
+   * @param keyword keyword da emettere
+   * @param e per utente o per bambino
+   */
   emitKeyword(keyword: string, e: ElementType) {
     switch (e) {
       case ElementType.User:
@@ -53,11 +58,18 @@ export class AnagraficaService {
     }
   }
 
+  /**
+   * Aggiorna le emissioni
+   */
   updateEmit() {
     this.keywordUserSource.next(this.keywordUserSource.value);
     this.keywordChildSource.next(this.keywordChildSource.value);
   }
 
+  /**
+   * Ottieni la sottoscrizione alle keyword partendo dal tipo
+   * @param e tipo delle keyword
+   */
   getKeywordSub(e: ElementType) {
     switch (e) {
       case ElementType.User:
@@ -67,26 +79,52 @@ export class AnagraficaService {
     }
   }
 
+  /**
+   * Ottieni gli utenti paginati e filtrati per keyword
+   * @param pageNumber numero di pagina
+   * @param keyword keyword
+   */
   getUsers(pageNumber: number, keyword: string): Observable<any> {
     return this.apiService.getUsers(pageNumber, keyword);
   }
 
+  /**
+   * Ottieni i bambini paginati e filtrati per keyword
+   * @param pageNumber numero di pagina
+   * @param s keyword
+   */
   getChildren(pageNumber: number, s: string) {
     return this.apiService.getAllChildren(pageNumber, s);
   }
 
+  /**
+   * Ottieni i dati di un bambino
+   * @param child codice Fiscale
+   */
   getChild(child: any) {
     return this.apiService.getChild(child);
   }
 
+  /**
+   * Cancella il bambino
+   * @param codiceFiscale codice fiscale del bambino
+   */
   deleteChild(codiceFiscale: string) {
     return this.apiService.deleteChild(codiceFiscale);
   }
 
+  /**
+   * Cancella utente
+   * @param userId email dell'utente
+   */
   deleteUser(userId: string) {
     return this.apiService.deleteUser(userId);
   }
 
+  /**
+   * Apri dialog Child
+   * @param child struttura bambino
+   */
   openDialogChild(child: ChildrenDTO): void {
     let dialogRef;
     if (child) {
@@ -101,6 +139,10 @@ export class AnagraficaService {
     });
   }
 
+  /**
+   * Apri dialog user
+   * @param user struttura user
+   */
   openDialogUser(user: UserDTO): void {
     let dialogRef;
     if (user) {
@@ -115,6 +157,10 @@ export class AnagraficaService {
     });
   }
 
+  /**
+   * Apri finestra di conferma indicando il messaggio
+   * @param message messaggio
+   */
   openConfirmationDialog(message: string) {
     let dialogRef;
     dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -125,16 +171,27 @@ export class AnagraficaService {
   }
 
 
+  /**
+   * Websocket per aggiornamenti anagrafica
+   */
   watchUpdates() {
     return this.rxStompService.watch('/user/anagrafica');
   }
 
+  /**
+   * Resetta le keyword
+   */
   resetKeyword() {
     this.keywordUserSource.next('');
     this.keywordChildSource.next('');
   }
 
-
+  /**
+   * Cambia amministratore
+   * @param user struttura utente
+   * @param idLinea id linea
+   * @param addOrDel true se aggiungo, false se tolgo privilegio
+   */
   changeAdmin(user: UserDTO, idLinea: string, addOrDel: boolean) {
     const bodyReq = {
       idLinea,

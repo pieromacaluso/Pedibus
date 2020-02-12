@@ -1,4 +1,4 @@
-import { FortmatLinePipe } from './fortmat-line.pipe';
+import {FortmatLinePipe} from './fortmat-line.pipe';
 
 describe('FortmatLinePipe', () => {
   it('create an instance', () => {

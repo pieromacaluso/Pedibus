@@ -54,7 +54,6 @@ export class ApiService {
 
   /**
    * Ottieni elenco bambini
-   * @deprecated
    */
   getChildren(): Observable<ChildrenDTO[]> {
     return this.httpClient.get<ChildrenDTO[]>(this.baseURL + 'children');
@@ -443,5 +442,18 @@ export class ApiService {
     });
 
     return dialogRef.afterClosed();
+  }
+
+  /**
+   * Cancellazione prenotazione da parte dell'admin di sistema
+   * @param data data
+   * @param verso verso
+   * @param cfChild codice fiscale bambino
+   */
+  deletePrenotazioneAdmin(data: Date, verso: string, cfChild: string) {
+    const idVerso = this.versoToInt(verso);
+    return this.httpClient
+      .delete(this.baseURL + 'sysadmin/reservations/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd') + '/' + idVerso + '/' + cfChild);
   }
 }

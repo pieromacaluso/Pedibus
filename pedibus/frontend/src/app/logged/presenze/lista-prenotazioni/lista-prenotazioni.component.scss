@@ -5,6 +5,7 @@ mat-card-header {
   justify-content: flex-start;
   align-content: center;
 }
+
 .alunno-presenza {
   margin-top: 0.5%;
   margin-right: 0.5%;
@@ -27,13 +28,13 @@ mat-card-header {
   margin-bottom: 0;
 }
 
-.header-stop{
+.header-stop {
   flex-wrap: wrap;
   display: flex;
   align-items: center;
 }
 
-.map-button{
+.map-button {
   color: mat-color($pedibus-theme-accent, default);
 }
 
