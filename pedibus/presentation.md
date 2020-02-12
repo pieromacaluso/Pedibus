@@ -2,15 +2,15 @@
 
 1. Docker: mostrare docker-compose, script per build e lancio docker.
    1. Github Actions: compila tutto
-2. SIGN-IN e Recupero password (abbozzato)
-3. Login, mostriamo cosa avviene in frontend e backend.
-4. Anagrafica, aggiunta bambino e genitore.
-5. NEW-USER flow
-6. Schermata Genitore
-   1. Modifiche delle prenotazioni (MAPPA)
-   2. Handled arrived
-7. Guida - Admin di Linea
-   1. Admin-Linea: Permessi
+2. Sign-in e Recupero pw (abbozzato)  
+3. Login (cod)  
+4. Anagrafica, aggiunta bambino e genitore.  
+5. NEW-USER flow  
+6. Schermata Genitore (forse va come punto 8/9 ? in parallelo alla guida)
+   1. Modifiche delle prenotazioni (mappa)
+   2. Handled/arrived (cod websocket)
+7. Admin - Guida
+   1. Admin: Permessi
    2. Cancellazione Disponibilità (focus su notifiche)
    3. Modifica Disponibilità (focus disp)
    4. Conferma Disponibilità (focus presenze, notifiche)
@@ -20,7 +20,3 @@
    2. Alunno non prenotati
 9. Admin - JSON download
 10. Logger - Documentazione
-
-# Bug Finali
-
-- Ricerca Utente buggata quando aggiungo un bambino
