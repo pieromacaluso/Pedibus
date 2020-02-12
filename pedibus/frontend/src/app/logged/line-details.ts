@@ -56,7 +56,7 @@ export interface NuovaPrenotazione {
 export interface StopsByLine {
   id: string;
   nome: string;
-  master: string;
+  masterMail: string;
   adminList: string[];
   guideList: string[];
   andata: Fermata[];

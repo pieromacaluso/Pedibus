@@ -205,7 +205,7 @@ export class UserDialogComponent implements OnInit, OnDestroy {
    * @param line struttura linea
    */
   isMaster(line: StopsByLine) {
-    return line.master === this.userDTOres.userId;
+    return line.masterMail === this.userDTOres.userId;
   }
 
   /**

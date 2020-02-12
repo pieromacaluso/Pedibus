@@ -76,6 +76,6 @@ export class LineAdminComponent implements OnInit {
    * @param admin user da controllare
    */
   isMaster(admin: UserDTO) {
-    return this.selectedLine.master === admin.userId;
+    return this.selectedLine.masterMail === admin.userId;
   }
 }

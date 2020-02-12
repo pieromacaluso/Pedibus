@@ -29,7 +29,6 @@ public class LineaDTO {
         this.masterMail = lineaEntity.getMasterMail();
         this.masterSurname = lineaEntity.getMasterSurname();
         this.adminList = lineaEntity.getAdminList();
-        this.adminList = lineaEntity.getAdminList();
         this.andata = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getAndata())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
         this.ritorno = ((List<FermataEntity>) fermataRepository.findAllById(lineaEntity.getRitorno())).stream().map(FermataDTO::new).collect(Collectors.toCollection(ArrayList::new));
     }
