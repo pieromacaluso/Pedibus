@@ -8,6 +8,7 @@ import * as jwt_decode from 'jwt-decode';
 import {myRxStompConfig} from '../configuration/my-rx-stomp.config';
 import {InjectableRxStompConfig, RxStompService} from '@stomp/ng2-stompjs';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {DeprecatedCommand} from '@angular/cli/commands/deprecated-impl';
 
 @Injectable({
   providedIn: 'root'
@@ -62,14 +63,13 @@ export class AuthService {
    * @param token token nuovo utente
    * @param model modello da usare per la richiesta
    */
-  newUserPasswordChange(token: any, model: { password: string; passMatch: string; oldPassword: string }) {
+  newUserPasswordChange(token: any, model: { password: string; passMatch: string }) {
     return this.httpClient.post(this.baseURL + 'new-user/' + token, model);
   }
 
   /**
-   * @deprecated
    * Richiesta per conferma token attivazione account
-   *
+   * @deprecated non esiste più il flusso di conferma
    * @param token token conferma
    */
   getConfirm(token: string) {
@@ -85,9 +85,8 @@ export class AuthService {
   }
 
   /**
-   * @deprecated
    * Metodo per eseguire la registrazione all'account
-   *
+   * @deprecated non esiste più il flusso di registrazione
    * @param model modello da usare per la richiesta `SignUpModel`
    */
   signUp(model: SignUpModel) {

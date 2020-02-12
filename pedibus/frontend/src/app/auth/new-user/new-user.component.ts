@@ -10,7 +10,7 @@ import {SignUpModel} from '../models';
 })
 export class NewUserComponent implements OnInit {
 
-  model = {oldPassword: '', password: '', passMatch: ''};
+  model = {password: '', passMatch: ''};
   token;
 
   postStatus = false;

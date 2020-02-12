@@ -12,6 +12,11 @@ import {Observable} from 'rxjs';
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss']
 })
+/**
+ * SignUpComponent
+ *
+ * Componente per la registrazione dell'utente.
+ */
 export class SignUpComponent implements OnInit {
 
 
@@ -77,8 +82,10 @@ export class SignUpComponent implements OnInit {
 
   submit() {
     if (this.form.valid) {
-      const model = {email: this.form.controls.email.value, password:  this.form.controls.password.value,
-        passMatch:  this.form.controls.passMatch.value, terms:  this.form.controls.terms.value};
+      const model = {
+        email: this.form.controls.email.value, password: this.form.controls.password.value,
+        passMatch: this.form.controls.passMatch.value, terms: this.form.controls.terms.value
+      };
       this.auth.signUp(model).subscribe((value => {
         // this.snackBar.open('An email has been sent to your account', 'Undo', {duration: 7000});
         this.success = true;
