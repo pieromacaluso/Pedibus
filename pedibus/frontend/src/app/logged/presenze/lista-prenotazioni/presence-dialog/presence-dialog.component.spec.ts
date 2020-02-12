@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PresenceDialogComponent } from './presence-dialog.component';
+import {PresenceDialogComponent} from './presence-dialog.component';
 
 describe('PresenceDialogComponent', () => {
   let component: PresenceDialogComponent;
@@ -8,9 +8,9 @@ describe('PresenceDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PresenceDialogComponent ]
+      declarations: [PresenceDialogComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

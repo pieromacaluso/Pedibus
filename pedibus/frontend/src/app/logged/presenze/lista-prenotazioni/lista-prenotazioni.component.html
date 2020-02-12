@@ -17,7 +17,13 @@
       *ngIf="showLoading()"
       mode="indeterminate"
     ></mat-progress-bar>
-    <mat-card-header><h1>Prenotazioni</h1> <div class="download-json" *ngIf="enableDownload()"><button mat-button (click)="downloadJson()"><mat-icon>cloud_download</mat-icon></button></div></mat-card-header>
+    <mat-card-header><h1>Prenotazioni</h1>
+      <div class="download-json" *ngIf="enableDownload()">
+        <button mat-button (click)="downloadJson()">
+          <mat-icon>cloud_download</mat-icon>
+        </button>
+      </div>
+    </mat-card-header>
 
     <div *ngIf="!showLoading()">
       <!--Scuola ritorno-->

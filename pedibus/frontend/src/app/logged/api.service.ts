@@ -444,4 +444,11 @@ export class ApiService {
 
     return dialogRef.afterClosed();
   }
+
+  deletePrenotazioneAdmin(data: Date, verso: string, cfChild: string) {
+    const idVerso = this.versoToInt(verso);
+    return this.httpClient
+      .delete(this.baseURL + 'sysadmin/reservations/' + this.datePipe
+        .transform(data, 'yyyy-MM-dd') + '/' + idVerso + '/' + cfChild);
+  }
 }

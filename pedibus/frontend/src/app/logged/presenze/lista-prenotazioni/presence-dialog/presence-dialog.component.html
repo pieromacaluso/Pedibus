@@ -33,4 +33,12 @@
       <span mat-line>Il bambino non è preso in carico</span>
     </a>
   </ng-container>
+
+  <ng-container
+    *ngIf="sysadmin">
+    <a mat-list-item (click)="selectAction(4)">
+      <span mat-line class="text-weight warn">Elimina</span>
+      <span mat-line>Elimina prenotazione</span>
+    </a>
+  </ng-container>
 </mat-nav-list>
