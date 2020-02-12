@@ -1,7 +1,6 @@
 <h1 mat-dialog-title>Modifica Disponibilità</h1>
 <form [formGroup]="dispForm" (ngSubmit)="submit()">
   <div mat-dialog-content class="dialog-theme">
-    <p class="mat-body">Stai modificando la seguente disponibilità:</p>
     <p class="mat-body"><b>Guida:</b> {{data.disps.guideUsername}}</p>
     <p class="mat-body"><b>Data:</b> {{data.turno.data | date:'fullDate'}}</p>
     <p class="mat-body"><b>Linea:</b> {{data.disps.nomeLinea}}</p>

@@ -1,9 +1,10 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {AlunniPerFermata, Alunno, AlunnoNotReserved} from '../../../line-details';
+import {AlunniPerFermata, Alunno, AlunnoNotReserved, StopsByLine} from '../../../line-details';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {ApiService} from '../../../api.service';
+import {Observable} from 'rxjs';
 
 
 export interface DialogData {
@@ -25,12 +26,14 @@ export class AdminBookDialogComponent {
   prenotazioneForm = this.fb.group({
     fermataSelect: ['', [Validators.required]]
   });
+  linea: Observable<StopsByLine>;
 
   constructor(
     public dialogRef: MatDialogRef<AdminBookDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private apiService: ApiService,
     private fb: FormBuilder) {
+    this.linea = this.apiService.getStopsByLine(this.data.linea);
   }
 
   onNoClick(): void {
