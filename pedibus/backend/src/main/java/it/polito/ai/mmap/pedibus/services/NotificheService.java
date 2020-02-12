@@ -333,6 +333,10 @@ public class NotificheService {
         simpMessagingTemplate.convertAndSendToUser(notifica.getUsernameDestinatario(), "/notifiche", notifica);
     }
 
+    /**
+     * Invia una notifica al genitore di un determinato bambino per indicare che una prenotazione di quest ultimo è stata cancellata dal amministratore di sistema
+     * @param reservationEntity prenotazioneEntity
+     */
     public void generateDeletedReservation(ReservationEntity reservationEntity) {
         List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
