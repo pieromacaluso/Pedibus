@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class UserInsertResource {
 
     @Email
+    @NotEmpty
     @Size(min = 7, max = 64)
     private String userId;
     @NotEmpty

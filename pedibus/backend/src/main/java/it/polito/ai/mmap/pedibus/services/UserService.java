@@ -4,6 +4,7 @@ import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.*;
 import it.polito.ai.mmap.pedibus.exception.*;
 import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.RecoverUserDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
@@ -262,7 +263,7 @@ public class UserService implements UserDetailsService {
      * @param userDTO    dati dell'utente
      * @param randomUUID Token
      */
-    public void updateUserPassword(UserDTO userDTO, String randomUUID) {
+    public void updateUserPassword(RecoverUserDTO userDTO, String randomUUID) {
         ObjectId idToken = new ObjectId(randomUUID);
         Optional<RecoverTokenEntity> checkToken = recoverTokenRepository.findById(idToken);
         RecoverTokenEntity token = checkToken.orElseThrow(TokenNotFoundException::new);

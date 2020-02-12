@@ -7,7 +7,9 @@ import it.polito.ai.mmap.pedibus.exception.RecoverProcessNotValidException;
 import it.polito.ai.mmap.pedibus.exception.RegistrationNotValidException;
 import it.polito.ai.mmap.pedibus.exception.TokenProcessException;
 import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
+import it.polito.ai.mmap.pedibus.objectDTO.LoginUserDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.NewUserPassDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.RecoverUserDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.services.JwtTokenService;
 import it.polito.ai.mmap.pedibus.services.UserService;
@@ -53,7 +55,7 @@ public class AuthenticationRestController {
      * @return Response Entity
      */
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity login(@RequestBody @Valid LoginUserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.getFieldErrorCount() == 0) {
             String username = userDTO.getEmail();
             String password = userDTO.getPassword();
@@ -156,7 +158,7 @@ public class AuthenticationRestController {
      */
     @ApiOperation("Permette di specificare le nuove credenziali per l'account nel processo di recupero pw")
     @PostMapping("/recover/{randomUUID}")
-    public void recoverVerification(@ApiParam(name = "userDTO", value = "Le credenzialia aggiornate") @Valid @RequestBody UserDTO userDTO,
+    public void recoverVerification(@ApiParam(name = "userDTO", value = "Le credenzialia aggiornate") @Valid @RequestBody RecoverUserDTO userDTO,
                                     BindingResult bindingResult,
                                     @ApiParam(name = "randomUUID", value = "Il token inviato per mail") @PathVariable("randomUUID") String randomUUID) {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/recover/" + randomUUID));
