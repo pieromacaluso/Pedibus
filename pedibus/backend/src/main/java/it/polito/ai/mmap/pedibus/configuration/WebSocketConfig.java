@@ -23,7 +23,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import java.util.List;
 import java.util.Map;
 
+
+
 /**
+ * Classe utilizzata per configurare i vai websocket necessari per i comportamenti real-time
+ *
  * recente = https://www.baeldung.com/spring-websockets-sendtouser
  * meno recente = https://www.baeldung.com/websockets-spring
  */
