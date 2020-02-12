@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router} from '@angular/router';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {AuthService} from '../auth.service';
 
+
+/**
+ * Guardia che controlla se l'utente è Guida, Admin o SysAdmin
+ */
 @Injectable({
   providedIn: 'root'
 })

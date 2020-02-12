@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
 
+/**
+ * Component per conferma registrazione
+ * @deprecated vecchia implementazione
+ */
 @Component({
   selector: 'app-confirm',
   templateUrl: './confirm.component.html',

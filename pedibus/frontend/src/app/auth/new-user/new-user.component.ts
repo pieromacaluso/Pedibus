@@ -26,7 +26,6 @@ export class NewUserComponent implements OnInit {
     this.token = this.route.snapshot.paramMap.get('token');
   }
 
-
   isLoading() {
     return !this.postStatus;
   }
@@ -35,16 +34,12 @@ export class NewUserComponent implements OnInit {
     return this.confirmStatus && this.postStatus;
   }
 
+  /**
+   * Sottomissione del modello per attivare l'utente
+   * @param event evento form
+   */
   submit(event) {
     if (event.isTrusted) {
-      let formValid = true;
-      for (let count = 0; count < 4; count++) {
-        if (!event.target[count].validity.valid) {
-          formValid = false;
-        }
-      }
-      if (formValid) {
-
         this.auth.newUserPasswordChange(this.token, this.model).subscribe((res) => {
           this.postStatus = true;
           this.confirmStatus = true;
@@ -53,9 +48,11 @@ export class NewUserComponent implements OnInit {
           this.confirmStatus = false;
         });
       }
-    }
   }
 
+  /**
+   * Vai al login
+   */
   goToLogin() {
     this.router.navigate(['sign-in']);
   }

@@ -188,11 +188,17 @@ export class AuthService {
     return false;
   }
 
+  /**
+   * Ottieni i ruoli dell'utente loggato dal JWT nello storage
+   */
   getRoles(): string[] {
     const roles = jwt_decode(localStorage.getItem('id_token')).roles;
     return roles as string[];
   }
 
+  /**
+   * Ottieni lo username dell'utente loggato dal JWT nello storage
+   */
   getUsername() {
     return jwt_decode(localStorage.getItem('id_token')).sub;
   }

@@ -26,9 +26,13 @@ export class SignInComponent implements OnInit {
   ngOnInit() {
   }
 
+  /**
+   * Sottomissione del modello per login dell'utente
+   * @param event evento form
+   */
   submit() {
     if (this.form.valid) {
-      const model = {email: this.form.controls.email.value, password:  this.form.controls.password.value};
+      const model = {email: this.form.controls.email.value, password: this.form.controls.password.value};
       this.auth.signIn(model).subscribe(response => {
         this.router.navigate([this.auth.getHome()]);
       }, (error) => {
