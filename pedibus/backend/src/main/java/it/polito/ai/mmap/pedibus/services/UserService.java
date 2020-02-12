@@ -230,8 +230,8 @@ public class UserService implements UserDetailsService {
      * - corrisponda ad uno degli utenti in corso di verifica
      * - controlla che tale registrazione non sia scaduta
      * <p>
-     * tutto ok -> porta utente allo stato attivo e restituisce 200 – Ok
-     * altrimenti -> restituisce 404 – Not found
+     * tutto ok = porta utente allo stato attivo e restituisce 200 – Ok
+     * altrimenti = restituisce 404 – Not found
      *
      * @param randomUUID token di conferma
      * @deprecated Flusso di conferma non più utilizzato

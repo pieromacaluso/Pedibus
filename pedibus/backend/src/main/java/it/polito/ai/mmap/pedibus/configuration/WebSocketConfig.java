@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * recente -> https://www.baeldung.com/spring-websockets-sendtouser
- * meno recente -> https://www.baeldung.com/websockets-spring
+ * recente = https://www.baeldung.com/spring-websockets-sendtouser
+ * meno recente = https://www.baeldung.com/websockets-spring
  */
 @Configuration
 @EnableWebSocketMessageBroker

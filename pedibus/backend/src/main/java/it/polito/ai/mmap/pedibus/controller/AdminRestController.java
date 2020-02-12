@@ -9,9 +9,12 @@ import it.polito.ai.mmap.pedibus.exception.SysAdminException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
+import it.polito.ai.mmap.pedibus.resources.DispAllResource;
+import it.polito.ai.mmap.pedibus.resources.DispTurnoResource;
 import it.polito.ai.mmap.pedibus.resources.PermissionResource;
 import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import it.polito.ai.mmap.pedibus.services.ChildService;
+import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
 import it.polito.ai.mmap.pedibus.services.LineeService;
 import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
@@ -41,6 +44,8 @@ public class AdminRestController {
     @Autowired
     RoleRepository roleRepository;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private GestioneCorseService gestioneCorseService;
 
     /**
      * Endpoint per ottenere tutti i ruoli disponibili nel database
@@ -237,5 +242,20 @@ public class AdminRestController {
     public List<UserInsertResource> getGuideUsers() throws RoleNotFoundException {
         logger.info(PedibusString.ENDPOINT_CALLED("GET", "/admin/users"));
         return this.userService.getAllGuidesAdmin();
+    }
+
+    /**
+     * Permette a una guide di aggiornare la propria disponibilità
+     *
+     * @param idDisp id disponibilità
+     * @param disp   Dati sulla disponibilità da aggiornare
+     * @return Disponibilità aggiornata
+     */
+    @PutMapping("/admin/disp/{idDisp}")
+    @ApiOperation("Permette di aggiornare una disponibilità")
+    public DispAllResource updateDisp(@PathVariable("idDisp") String idDisp, @RequestBody DispAllResource disp) {
+        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/disp/" + idDisp));
+        DispTurnoResource res = gestioneCorseService.updateDisp(idDisp, disp);
+        return res.getDisp();
     }
 }

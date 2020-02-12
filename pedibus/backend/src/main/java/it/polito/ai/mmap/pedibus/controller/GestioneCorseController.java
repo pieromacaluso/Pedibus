@@ -58,22 +58,6 @@ public class GestioneCorseController {
     }
 
     /**
-     * Permette a una guide di aggiornare la propria disponibilità
-     *
-     * @param idDisp id disponibilità
-     * @param disp   Dati sulla disponibilità da aggiornare
-     * @return Disponibilità aggiornata
-     */
-    @PostMapping("/disp/{idDisp}")
-    @ApiOperation("Permette di aggiornare una disponibilità")
-    public DispAllResource updateDisp(@PathVariable("idDisp") String idDisp, @RequestBody DispAllResource disp) {
-        //todo inserire controllo di sicurezza: solo l'admin/guida stessa (?) può cambiare la fermata di una prenotazione (marcof)
-        logger.info(PedibusString.ENDPOINT_CALLED("POST", "/disp/" + idDisp));
-        DispTurnoResource res = gestioneCorseService.updateDisp(idDisp, disp);
-        return res.getDisp();
-    }
-
-    /**
      * Permette a una guide di annullare la propria disponibilità
      *
      * @param idLinea id linea

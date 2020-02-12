@@ -152,7 +152,6 @@ public class ReservationService {
      * @param data
      * @param cfChild
      * @return
-     * @throws Exception
      */
     public ReservationEntity getChildReservation(Boolean verso, Date data, String cfChild) {
         Optional<ReservationEntity> check = reservationRepository.findByCfChildAndDataAndVerso(cfChild, data, verso);
