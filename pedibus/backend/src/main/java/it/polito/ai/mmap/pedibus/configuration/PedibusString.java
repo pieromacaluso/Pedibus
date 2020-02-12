@@ -34,7 +34,6 @@ public class PedibusString {
         return "<p>Il tuo account è stato appena creato con le seguenti credenziali:</p>" +
                 "<p><ul>" +
                 "<li><b>Username</b>: " + userEntity.getUsername() + "</li>" +
-                "<li><b>Password</b>: " + userEntity.getSurname() + userEntity.getName() + userEntity.getUsername().length() + "</li>" +
                 "</ul></p>" +
                 "<p><a href='" + href + "'>Clicca qui per modificare la password e attivare il tuo account</a></p>";
 

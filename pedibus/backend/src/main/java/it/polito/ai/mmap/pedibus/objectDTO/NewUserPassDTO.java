@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -20,10 +19,6 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewUserPassDTO {
-    @Pattern(regexp = "^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\\S+$).{8,}$", flags = Pattern.Flag.UNICODE_CASE)
-    @Size(min = 3, max = 64)
-    private String oldPassword;
-
     @Pattern(regexp = "^((?=.*[0-9])|(?=.*[@#$%^&+!=]))((?=.*[a-z])|(?=.*[A-Z]))(?=\\S+$).{8,}$", flags = Pattern.Flag.UNICODE_CASE)
     @Size(min = 3, max = 64)
     private String password;

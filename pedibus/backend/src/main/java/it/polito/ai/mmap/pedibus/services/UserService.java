@@ -435,9 +435,6 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> checkUser = userRepository.findById(token.getUserId());
         UserEntity userEntity;
         userEntity = checkUser.orElseThrow(TokenNotFoundException::new);
-        if (!passwordEncoder.matches(newUserPassDTO.getOldPassword(), userEntity.getPassword())) {
-            throw new TokenProcessException();
-        }
         userEntity.setPassword(passwordEncoder.encode(newUserPassDTO.getPassword()));
 
         if (!userEntity.isEnabled()) {
