@@ -1,4 +1,4 @@
-import { InjectableRxStompConfig } from '@stomp/ng2-stompjs';
+import {InjectableRxStompConfig} from '@stomp/ng2-stompjs';
 
 const prepareBrokerURL = (path: string): string => {
   // Create a relative http(s) URL relative to current pageUser
