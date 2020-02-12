@@ -7,7 +7,6 @@ import it.polito.ai.mmap.pedibus.exception.ReservationNotFoundException;
 import it.polito.ai.mmap.pedibus.exception.ReservationNotValidException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.FermataDTO;
-import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.ReservationRepository;
 import it.polito.ai.mmap.pedibus.resources.*;
@@ -339,9 +338,6 @@ public class ReservationService {
     public boolean canModify(String idLinea, Date date, Boolean verso) {
         if (userService.isSysAdmin())
             return true;
-
-        //todo (marcof) io terrei solo il ruolo di guida per gestire la manage e la handle, quello di admin invece concerne la gestione delle disp, turni ecc
-        //TODO : Decommenta per consegna
         return ((lineeService.isAdminLine(idLinea) || gestioneCorseService.isGuideConfirmed(idLinea, date, verso)) && MongoTimeService.isToday(date));
     }
 
@@ -356,7 +352,6 @@ public class ReservationService {
      */
 
     public Boolean manageArrived(Boolean verso, Date data, String cfChild, Boolean isSet, String idLinea) throws Exception {
-        // TODO: check all
         if (canModify(idLinea, data, verso)) {
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
             reservationEntity.setArrivatoScuola(isSet);
@@ -379,16 +374,14 @@ public class ReservationService {
     }
 
     /**
-     * Admin lina indica che ha lasciato l'alunno a scuola/fermata ritorno
+     * Resetta la situazione della prenotazione del bambino indicato
      *
-     * @param verso
-     * @param data
-     * @param cfChild
-     * @param idLinea
-     * @throws Exception
+     * @param verso   verso
+     * @param data    data
+     * @param cfChild codice fiscale bambino
+     * @param idLinea id linea
      */
-    public void manageRestore(Boolean verso, Date data, String cfChild, String idLinea) throws Exception {
-        // TODO: check all
+    public void manageRestore(Boolean verso, Date data, String cfChild, String idLinea) {
         if (canModify(idLinea, data, verso)) {
 
             ReservationEntity reservationEntity = getChildReservation(verso, data, cfChild);
@@ -446,31 +439,6 @@ public class ReservationService {
 
         return res;
     }
-
-    public GetReservationsIdLineaDataResource getReservationsResource(String idLinea, Date dataFormatted) {
-        GetReservationsIdLineaDataResource res = new GetReservationsIdLineaDataResource();
-        // Ordinati temporalmente, quindi seguendo l'andamento del percorso
-        LineaDTO lineaDTO = lineeService.getLineaDTOById(idLinea);
-        res.setAlunniPerFermataAndata(
-                lineaDTO.getAndata().stream().map(FermataAlunniResource::new).collect(Collectors.toList()));
-        // true per indicare l'andata
-        res.getAlunniPerFermataAndata()
-                .forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), true)));
-
-        res.setAlunniPerFermataRitorno(
-                lineaDTO.getRitorno().stream().map(FermataAlunniResource::new).collect(Collectors.toList()));
-        // false per indicare il ritorno
-        res.getAlunniPerFermataRitorno()
-                .forEach((f) -> f.setAlunni(findAlunniFermata(dataFormatted, f.getFermata().getId(), false)));
-
-        //todo provvisorio, per richiedere sia andata che ritorno dovresti essere stato confermato per entrambi o essere admin, ho bypassato con un or (marcof)
-        res.setCanModify(canModify(idLinea, dataFormatted, true) || canModify(idLinea, dataFormatted, false));
-        res.setArrivoScuola(lineeService.getArrivoScuola());
-        res.setPartenzaScuola(lineeService.getPartenzaScuola());
-
-        return res;
-    }
-
 
     /**
      * Questa funzione si preoccupa di andare a inserire tutte le prenotazioni di default di un determinato utente dalla

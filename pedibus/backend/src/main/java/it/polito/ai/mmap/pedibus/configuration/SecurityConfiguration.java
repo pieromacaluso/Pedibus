@@ -66,7 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/new-user/**").permitAll()
-                .and()//TODO remove
+                .and() // CONSEGNA: Abilitato solo in dev
                 .authorizeRequests()
                 .antMatchers("/debug/**").permitAll()
                 .and()

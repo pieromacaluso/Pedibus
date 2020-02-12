@@ -180,14 +180,6 @@ public class LineeService {
         lineaRepository.save(lineaEntity);
     }
 
-
-    // TODO: non utilizzata, eliminare?
-    public FermataDTO getFermataPartenzaOrArrivo(String idLinea, Boolean verso) {
-        LineaDTO lineaDTO = getLineaDTOById(idLinea);
-        return verso ? lineaDTO.getAndata().stream().min(FermataDTO::compareTo).get() : lineaDTO.getRitorno().stream().max(FermataDTO::compareTo).get();
-    }
-
-
     /**
      * Controlla se l'amministratore è tale per la linea specificata
      *

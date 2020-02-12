@@ -85,35 +85,7 @@ public class NotificheService {
         }
 
     }
-
-
-    /**
-     * Restituisce tutte le notifiche non lette dell'utente
-     *
-     * @param username
-     * @return
-     */
-    //TODO verificare forse non serve più
-    /*public ArrayList<NotificaDTO> getNotifiche(String username) {
-
-        UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal.getUsername().equals(username)) {
-            List<NotificaEntity> notifiche = notificaRepository.findAllByUsernameDestinatarioOrderByDataDesc(username);
-            ArrayList<NotificaDTO> notificheDTO = new ArrayList<>();
-            for (NotificaEntity n : notifiche) {
-                notificheDTO.add(new NotificaDTO(n));
-            }
-
-            return notificheDTO;
-
-        } else {
-            throw new UnauthorizedUserException("Operazione non autorizzata");
-        }
-
-
-    }*/
-
-
+    
     /**
      * Elimina una notifica attraverso il suo id. Solo il destinatario di una determinata notifica può eliminarla
      *
@@ -315,6 +287,13 @@ public class NotificheService {
     public void generatePromotionNotification(String userId, PermissionResource permissionResource) {
         NotificaEntity notifica = new NotificaEntity(NotificaEntity.NotificationType.BASE, userId, (permissionResource.isAddOrDel() ? "Sei stato promosso ad " : "Ti sono stati revocati i privilegi di ") + "amministratore per la "
                 + this.lineeService.getLineaEntityById(permissionResource.getIdLinea()).getNome() + ". Si prega di effettuare nuovamente il login.", null);
+        this.notificaRepository.save(notifica);
+        simpMessagingTemplate.convertAndSendToUser(notifica.getUsernameDestinatario(), "/notifiche", notifica);
+    }
+
+    public void generateNotUsedDisp(DispAllResource d, TurnoEntity turnoEntity) {
+        String data = MongoTimeService.dateToString(turnoEntity.getData());
+        NotificaEntity notifica = new NotificaEntity(NotificaEntity.NotificationType.BASE, d.getGuideUsername(), "La tua disponibilità per " + (turnoEntity.getVerso() ? "l'andata" : "il ritorno") + " in data " + data + " non è necessaria.", null);
         this.notificaRepository.save(notifica);
         simpMessagingTemplate.convertAndSendToUser(notifica.getUsernameDestinatario(), "/notifiche", notifica);
     }

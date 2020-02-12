@@ -11,6 +11,12 @@ import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.resources.*;
 import it.polito.ai.mmap.pedibus.services.*;
+import it.polito.ai.mmap.pedibus.resources.PermissionResource;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
+import it.polito.ai.mmap.pedibus.services.ChildService;
+import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
+import it.polito.ai.mmap.pedibus.services.LineeService;
+import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,6 +246,18 @@ public class AdminRestController {
     public List<UserInsertResource> getGuideUsers() throws RoleNotFoundException {
         logger.info(PedibusString.ENDPOINT_CALLED("GET", "/admin/users"));
         return this.userService.getAllGuidesAdmin();
+    }
+
+    /**
+     * Permette a un amministratore di linea di annullare una  disponibilità
+     *
+     * @param idDisp id disponibilità
+     */
+    @DeleteMapping("admin/disp/{idDisp}")
+    @ApiOperation("Permette di annullare una disponibilità")
+    public void deleteDispAdmin(@PathVariable("idDisp") String idDisp) {
+        logger.info(PedibusString.ENDPOINT_CALLED("DELETE", "/disp/" + idDisp));
+        gestioneCorseService.deleteAdminDisp(idDisp);
     }
 
     /**
