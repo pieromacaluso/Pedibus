@@ -3,6 +3,7 @@ import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {DatePipe} from '@angular/common';
 import {DispAllResource} from '../disponibilita/api-disp.service';
+import {first} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +51,12 @@ export class ApiTurniService {
 
   updateDisp(id: string, disp: DispAllResource) {
     return this.httpClient
-      .post(this.baseURL + 'disp/' + id.toString(), disp);
+      .put(this.baseURL + 'admin/disp/' + id.toString(), disp);
+  }
+
+  deleteDisp(id: string) {
+    return this.httpClient
+      .delete(this.baseURL + 'admin/disp/' + id.toString()).pipe(first());
   }
 }
 

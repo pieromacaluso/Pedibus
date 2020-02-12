@@ -29,7 +29,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     PasswordEncoder passwordEncoder;
 
     /**
-     * Si specifica come si accede alle risorse
+     * Classe utilizzata per indicare i permessi necessari per l'accesso alle varie risorse
      *
      * @param http oggetto HttpSecurity
      * @throws Exception eccezione
@@ -66,7 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/new-user/**").permitAll()
-                .and()//TODO remove
+                .and() // CONSEGNA: Abilitato solo in dev
                 .authorizeRequests()
                 .antMatchers("/debug/**").permitAll()
                 .and()

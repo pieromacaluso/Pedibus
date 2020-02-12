@@ -22,10 +22,13 @@
   </mat-sidenav>
   <mat-sidenav-content fxFlexFill>
     <mat-toolbar class="fixed-header dark-theme" color="primary">
-      <div fxShow="true" fxHide.gt-sm="true">
+      <div fxShow="true" fxHide.gt-sm="true" style="position: relative">
         <button mat-icon-button (click)="sidenav.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
+        <span class="notifica notifica-menu"
+              *ngIf="(unReadNotification$ |async) as notificationNumber">
+      </span>
       </div>
       <img class="logo" [src]="logo" alt="Pedibus"/>
       <span class="example-spacer"></span>

@@ -111,7 +111,7 @@ public class ChildService {
                 childEntity.setIdFermataRitorno(stopRes.getIdFermataRitorno());
 
                 childRepository.save(childEntity);
-                // Remove one day todo spostare o riutilizzare cose in mongoTimeService
+                // Remove one day
                 LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).minusDays(1);
                 Date out = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
                 List<UserEntity> parents = this.getChildParents(cfChildNew);

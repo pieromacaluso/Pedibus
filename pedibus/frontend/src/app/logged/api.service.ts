@@ -18,6 +18,8 @@ import {ChildrenDTO, ReservationDTO} from './genitore/dtos';
 import {UserDTO} from './anagrafica/dtos';
 import {debounceTime, distinctUntilChanged, first, flatMap, map, share, take} from 'rxjs/operators';
 import {Line} from 'tslint/lib/verify/lines';
+import {ConfirmationDialogComponent} from '../utilities/confimation-dialog/confirmation-dialog.component';
+import {MatDialog} from '@angular/material';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +28,7 @@ export class ApiService {
 
   baseURL = environment.baseURL;
 
-  constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
+  constructor(private httpClient: HttpClient, private datePipe: DatePipe, public dialog: MatDialog) {
   }
 
   getNotificheNonLette(username: string, pageNumber: number): Observable<any> {
@@ -274,7 +276,16 @@ export class ApiService {
   }
 
   downloadJson(prenotazione: PrenotazioneRequest) {
-    return this.httpClient.get<any>(this.baseURL + '/reservations/dump/' + prenotazione.linea + '/'
+    return this.httpClient.get<any>(this.baseURL + 'admin/reservations/dump/' + prenotazione.linea + '/'
       + this.datePipe.transform(prenotazione.data, 'yyyy-MM-dd') + '/' + this.versoToBool(prenotazione.verso));
+  }
+
+  openConfirmationDialog(message: string) {
+    let dialogRef;
+    dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {message}
+    });
+
+    return dialogRef.afterClosed();
   }
 }

@@ -81,11 +81,7 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) {
-        Optional<UserEntity> check = userRepository.findByUsername(email);
-        if (!check.isPresent()) {
-            throw new UserNotFoundException();
-        }
-        return check.get();
+        return userRepository.findByUsername(email).orElseThrow(UserNotFoundException::new);
     }
 
     /**

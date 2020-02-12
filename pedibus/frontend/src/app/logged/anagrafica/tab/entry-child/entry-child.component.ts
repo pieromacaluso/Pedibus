@@ -22,7 +22,7 @@ export class EntryChildComponent implements OnInit {
   }
 
   deleteChild() {
-    this.anagraficaService.openConfirmationDialog('Sei sicuro di voler eliminare dell\'elenco '
+    this.anagraficaService.openConfirmationDialog('Sei sicuro di voler eliminare '
       + this.child.name + ' ' + this.child.surname + '?')
       .subscribe((response) => {
         if (response) {

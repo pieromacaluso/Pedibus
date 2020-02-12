@@ -63,7 +63,6 @@ public class GestioneCorseService {
             turnoEntity.setIsOpen(!turnoExpired);
             turnoEntity.setIsExpired(turnoExpired);
             if (!turnoExpired) turnoRepository.save(turnoEntity);
-            //throw new IllegalArgumentException("Il turno è chiuso"); //TODO eccezione custom (?)
         }
         return turnoEntity;
     }
@@ -145,14 +144,13 @@ public class GestioneCorseService {
     /**
      * Salva la disponibilità, a patto che:
      * - il turno sia aperto
-     * - ruolo GUIDE //TODO
+     * - ruolo GUIDE
      * - non si già presente una disp per lo stesso verso/data
      *
-     * @param dispDTO
+     * @param dispDTO disponibilità DTO
      */
     public DispTurnoResource addDisp(DispDTO dispDTO) {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //TODO aggiungere stampa su log per salvare che un utente abbia aggiunto la disponibilità
         if (!idDispDuplicate(dispDTO.getTurnoDTO())) {
             TurnoEntity turnoEntity = getTurnoEntity(dispDTO.getTurnoDTO());
 
@@ -224,6 +222,26 @@ public class GestioneCorseService {
     }
 
     /**
+     * Cancella la disponibilità. Utilizzabile solo da Admin di linea
+     *
+     * @param idDisp disp da cancellare
+     */
+    public void deleteAdminDisp(String idDisp) {
+        DispEntity dispEntity = getDispEntitybyId(idDisp);
+        DispAllResource d = new DispAllResource(dispEntity,
+                lineeService.getFermataEntityById(dispEntity.getIdFermata()),
+                lineeService.getLineaEntityById(dispEntity.getIdLinea()));
+        TurnoEntity turnoEntity = this.turnoRepository.findByTurnoId(dispEntity.getTurnoId()).orElseThrow(TurnoNotFoundException::new);
+        if (!turnoEntity.getIsOpen() && !turnoEntity.getIsExpired()) {
+            dispRepository.delete(dispEntity);
+            simpMessagingTemplate.convertAndSendToUser(d.getGuideUsername(), "/dispws/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), new DispTurnoResource());
+            simpMessagingTemplate.convertAndSend("/dispws/del/" + MongoTimeService.dateToString(turnoEntity.getData()) + "/" + turnoEntity.getIdLinea() + "/" + ((turnoEntity.getVerso()) ? 1 : 0), d);
+            this.notificheService.generateNotUsedDisp(d, turnoEntity);
+        } else
+            throw new IllegalStateException();
+    }
+
+    /**
      * Restituisce tutte le DispAllResource per un turno, sia quelle confirmed che quelle no
      *
      * @param turnoDTO
@@ -264,7 +282,6 @@ public class GestioneCorseService {
                 DispStateResource state = new DispStateResource(dispAllResource);
                 simpMessagingTemplate.convertAndSendToUser(dispAllResource.getGuideUsername(), "/dispws/status/" + MongoTimeService.dateToString(turnoDTO.getData()) + "/" + turnoDTO.getIdLinea() + "/" + ((turnoDTO.getVerso()) ? 1 : 0), state);
                 simpMessagingTemplate.convertAndSend("/dispws/status/" + MongoTimeService.dateToString(turnoDTO.getData()) + "/" + turnoDTO.getIdLinea() + "/" + ((turnoDTO.getVerso()) ? 1 : 0), dispAllResource);
-                //todo messaggio per aggiornare l'interfaccia admin, quando arrivato a scuola friz tutti gli utenti
             } else
                 throw new TurnoExpiredException();
         } else
@@ -305,7 +322,6 @@ public class GestioneCorseService {
             this.notificheService.sendNotificheDisp(dispEntity);
             this.notificheService.deleteNotificaDisp(dispEntity.getDispId());
         } else {
-            //todo else questa guida non era stata confermata per quel turno, quindi non dovrebbe mandare l'ack: ignoriamo o segnaliamo errore ?
             throw new IllegalArgumentException("La guida non ha la facoltà di confermare la ricezione.");
         }
     }
@@ -365,8 +381,7 @@ public class GestioneCorseService {
         if (turnoCheck.isPresent()) {
             return turnoCheck.get();
         } else {
-            //TODO: Eccezione Custom?
-            throw new IllegalArgumentException("Turno non presente");
+            throw new TurnoNotFoundException();
         }
     }
 }

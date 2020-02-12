@@ -1,6 +1,7 @@
 package it.polito.ai.mmap.pedibus.services;
 
 import io.jsonwebtoken.*;
+import it.polito.ai.mmap.pedibus.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,8 @@ public class JwtTokenService {
     @Qualifier("userService")
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private UserService userService;
 
     @PostConstruct
     protected void init() {
@@ -62,7 +65,9 @@ public class JwtTokenService {
     }
 
     public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        String username = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        this.userService.loadUserByUsername(username);
+        return username;
     }
 
     /**
@@ -87,8 +92,9 @@ public class JwtTokenService {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             //todo giocare
+            getUsername(token);
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException | UserNotFoundException e) {
             // throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
             return false;
         }
