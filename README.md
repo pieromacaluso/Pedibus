@@ -220,15 +220,3 @@ Per organizzare i turni degli accompagnatori è necessario definire e gestire du
 La prima in cui gli accompagnatori indicano la loro disponibilità per le corse del pedibus (giorno, andata o ritorno) e la seconda in cui l’amministratore (o gli amministratori) del servizio selezionano tra i disponibili gli accompagnatori che effettivamente verranno utilizzati, definendo quindi i turni di ciascun accompagnatore per ciascuna corsa del pedibus.
 A fronte della definizione o della modifica di un turno, le persone coinvolte vengono avvisate tramite un messaggio interno
 all’applicazione del loro impegno.
-
-## Viste
-
-L’applicazione gestirà le seguenti schermate.
-
-### Registrazione utente e login
-
-All’atto della “creazione” di una nuova linea il sistema manderà analoga mail all’indirizzo definito come amministratore della linea (se non già presente e amministratore della stessa).
-
-### Interfaccia accompagnatore: disponibilità
-
-In tale interfaccia, dopo la definizione dei turni per ciascuna corsa, l’accompagnatore potrà verificare se la propria disponibilità è stata utilizzata o no (cioè se è stato assegnato a quel turno), ed eventualmente confermare la presa visione.
