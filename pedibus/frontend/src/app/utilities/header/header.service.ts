@@ -27,6 +27,9 @@ export class HeaderService {
   constructor(private auth: AuthService) {
   }
 
+  /**
+   * Aggiorna le schermate in base al ruolo
+   */
   update() {
     const menu: MenuItem[] = [];
     if (this.auth.isLoggedIn()) {
@@ -50,9 +53,7 @@ export class HeaderService {
     } else {
       menu.push(this.signIn);
     }
-
     this.menuSource.next(menu);
-
   }
 }
 

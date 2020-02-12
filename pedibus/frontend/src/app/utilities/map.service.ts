@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {ChildrenDTO} from '../logged/genitore/dtos';
 import {Observable} from 'rxjs';
@@ -11,8 +11,13 @@ import {MapDialogComponent} from './map-dialog/map-dialog.component';
 })
 export class MapService {
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog) {
+  }
 
+  /**
+   * Apertura del dialog per visualizzare la mappa di una fermata
+   * @param idFermata id della fermata
+   */
   openMapDialog(idFermata: number): Observable<any> {
     const dialogRef = this.dialog.open(MapDialogComponent, {
       hasBackdrop: true,
