@@ -9,6 +9,7 @@ import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.UserDTO;
 import it.polito.ai.mmap.pedibus.repository.*;
+import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,8 @@ public class DataCreationService {
      */
     @PostConstruct
     public void init() throws IOException {
+        deleteAll();
+
         logger.info("Caricamento ruoli e sysAdmin in corso...");
         createRolesAndSysAdmin();
         logger.info("Ruoli e sysAdmin gestiti correttamente.");
@@ -76,8 +79,8 @@ public class DataCreationService {
         logger.info("Caricamento linee in corso...");
         readPiedibusLines();
         logger.info("Caricamento linee completato.");
+
         logger.info("Creazione Basi di dati di test in corso...");
-        deleteAll();
         makeChildUser(1);
         makeChild(50);
         logger.info("Creazione Basi di dati di test completata.");
@@ -151,6 +154,9 @@ public class DataCreationService {
                 lineaRepository.save(lineaEntity);
                 fermataRepository.saveAll(lineaDTO.getAndata().stream().map(fermataDTO -> new FermataEntity(fermataDTO, lineaEntity.getId())).collect(Collectors.toList()));
                 fermataRepository.saveAll(lineaDTO.getRitorno().stream().map(fermataDTO -> new FermataEntity(fermataDTO, lineaEntity.getId())).collect(Collectors.toList()));
+
+                if (!userRepository.findByUsername(lineaDTO.getMasterMail()).isPresent())
+                    userService.insertUser(new UserInsertResource(lineaDTO));
 
                 logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
             }
