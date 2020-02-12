@@ -31,7 +31,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@ApiOperation("Endpoint dedicati al sysadmin")
+@ApiOperation("Endpoint dedicati al sysadmin e admin")
 public class AdminRestController {
     @Autowired
     Environment environment;

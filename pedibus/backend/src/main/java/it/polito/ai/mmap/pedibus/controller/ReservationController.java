@@ -59,8 +59,8 @@ public class ReservationController {
     /**
      * Restituisce la lista dei bambini non prenotati per la data(AAAA-MM-GG) e il verso passati.
      *
-     * @param data
-     * @param verso
+     * @param data data selezionata
+     * @param verso verso selezionato
      * @return
      */
     @ApiOperation("Restituisce i bambini che non hanno prenotazione per una certa data/verso")
@@ -116,9 +116,9 @@ public class ReservationController {
     /**
      * Usato da guide linea per indicare che ha preso il bambino dalla fermata
      *
-     * @param idLinea
-     * @param verso
-     * @param data
+     * @param idLinea id linea
+     * @param verso   verso indicato
+     * @param data    data in esame
      * @param cfChild true per indicare che è stato preso, false per annullare
      */
     @ApiOperation("Permette di indicare la presa in carico di un bambino dalla fermata")
@@ -132,13 +132,14 @@ public class ReservationController {
     }
 
     /**
-     * Usato da guide linea per indicare che ha preso il bambino dalla fermata
+     * Usato da guide linea per indicare che il bambino è assente
      *
-     * @param idLinea
-     * @param verso
-     * @param data
+     * @param idLinea id linea
+     * @param verso   verso indicato
+     * @param data    data in esame
      * @param cfChild true per indicare che è stato preso, false per annullare
      */
+    @ApiOperation("Usato da guide linea per indicare che il bambino è assente")
     @PostMapping("/reservations/assente/{idLinea}/{verso}/{data}/{isSet}")
     public void manageAssente(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/assente/" + idLinea + "/" + verso + "/" + data + "/" + isSet));
@@ -150,14 +151,14 @@ public class ReservationController {
 
 
     /**
-     * Usato da guide linea per indicare che ha lasciato il bambino a scuola
+     * Usato da guide linea per indicare che il bambino è arrivato a scuola
      *
-     * @param verso
-     * @param data
-     * @param cfChild
+     * @param idLinea id linea
+     * @param verso   verso indicato
+     * @param data    data in esame
      * @param isSet   true per indicare che è arrivato, false per annullare
      */
-
+    @ApiOperation("Usato da guide linea per indicare che il bambino è arrivato a scuola")
     @PostMapping("/reservations/arrived/{idLinea}/{verso}/{data}/{isSet}")
     public void manageArrived(@PathVariable("idLinea") String idLinea, @PathVariable("verso") Boolean verso, @PathVariable("data") String data, @PathVariable("isSet") Boolean isSet, @RequestBody String cfChild) throws Exception {
         logger.info(PedibusString.ENDPOINT_CALLED("POST", "/reservations/arrived/" + idLinea + "/" + verso + "/" + data + "/" + isSet));
@@ -223,10 +224,10 @@ public class ReservationController {
     /**
      * Elimina la reservation associata ai 4 parametri
      *
-     * @param codiceFiscale
-     * @param idLinea
-     * @param data
-     * @param verso
+     * @param codiceFiscale codice fiscale del bambino in esame
+     * @param idLinea id linea indicata
+     * @param data data selezionata
+     * @param verso verso indicato
      */
     @DeleteMapping("/reservations/{codiceFiscale}/{id_linea}/{data}/{verso}")
     public void deletePrenotazione(@PathVariable("codiceFiscale") String codiceFiscale, @PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {

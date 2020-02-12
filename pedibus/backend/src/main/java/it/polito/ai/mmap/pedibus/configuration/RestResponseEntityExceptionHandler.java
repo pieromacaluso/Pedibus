@@ -18,6 +18,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.sql.Timestamp;
 import java.time.DateTimeException;
 
+/**
+ * Classe utilizzata per gestire il comportamento delle eccezioni lato frontend
+ */
+
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
