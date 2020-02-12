@@ -54,7 +54,6 @@ export class ApiService {
 
   /**
    * Ottieni elenco bambini
-   * @deprecated
    */
   getChildren(): Observable<ChildrenDTO[]> {
     return this.httpClient.get<ChildrenDTO[]>(this.baseURL + 'children');

@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { BambinoService } from './bambino.service';
+import {BambinoService} from './bambino.service';
 
 describe('BambinoService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

@@ -278,7 +278,7 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *Ack della propria disponibilità
+   * Ack della propria disponibilità
    */
   ackDisp() {
     this.disp.ack = true;

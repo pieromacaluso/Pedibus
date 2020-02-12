@@ -75,7 +75,10 @@ export class DialogPrenotazioneComponent implements OnInit {
     });
   }
 
-
+  /**
+   * Cambio fermate quando viene selezionata una nuova linea
+   * @param value valore dell'evento
+   */
   changeFermate(value: any) {
     this.selectedStop = undefined;
     this.prenotazioneForm.patchValue({
@@ -94,6 +97,10 @@ export class DialogPrenotazioneComponent implements OnInit {
     }
   }
 
+  /**
+   * Seleziona la fermata indicando l'indice
+   * @param value evento
+   */
   selectStopIndex(value: any) {
     this.selectedStop = this.stops[value];
     this.prenotazioneForm.patchValue({
@@ -101,14 +108,25 @@ export class DialogPrenotazioneComponent implements OnInit {
     });
   }
 
+  /**
+   * Seleziona la fermata
+   * @param value valore dell'evento
+   */
   selectStop(value: any) {
     this.selectedStop = this.stops.find((stop) => stop.id === value);
   }
 
+  /**
+   * Chiudi finestra di dialogo
+   */
   cancel() {
     this.dialogRef.close();
   }
 
+  /**
+   * E' in tempo?
+   * @param orario orario
+   */
   isOnTime(orario: string) {
     const date = new Date();
     const reqData = this.data.data;

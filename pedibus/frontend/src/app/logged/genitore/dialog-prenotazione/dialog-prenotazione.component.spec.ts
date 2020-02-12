@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DialogPrenotazioneComponent } from './dialog-prenotazione.component';
+import {DialogPrenotazioneComponent} from './dialog-prenotazione.component';
 
 describe('DialogPrenotazioneComponent', () => {
   let component: DialogPrenotazioneComponent;
@@ -8,9 +8,9 @@ describe('DialogPrenotazioneComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DialogPrenotazioneComponent ]
+      declarations: [DialogPrenotazioneComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
