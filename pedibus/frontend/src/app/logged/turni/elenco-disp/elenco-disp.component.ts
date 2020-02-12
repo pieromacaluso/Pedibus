@@ -50,6 +50,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
   constructor(private syncService: SyncService, private apiService: ApiService, private apiTurniService: ApiTurniService,
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe, private mapService: MapService) {
+    /**
+     * Richiesta per ottenere le disponibilità di quel turno
+     */
     this.elencoDispSub = this.syncService.prenotazioneObs$.pipe(
       debounceTime(1000),
       tap(() => this.loading = true),
@@ -80,7 +83,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // change Disp
+    /**
+     * Observable che si occupa di cambiare lato frontend l'elenco delle disponibilità
+     */
     this.changeDisp.asObservable().subscribe(
       res => {
         this.listDisp = res;
@@ -88,7 +93,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // change Turno
+    /**
+     * Observable che si occupa di cambiare lato frontend il turno
+     */
     this.changeTurno.asObservable().subscribe(
       res => {
         if (!res) {
@@ -101,7 +108,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // WebSocket Turno
+    /**
+     * Websocket che si occupa di cambiare lo stato del turno
+     */
     this.turnoStatusSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(
@@ -115,7 +124,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       this.changeTurno.next(res);
     });
 
-    // WebSocket Disponibilità add
+    /**
+     * Websocket che si occupa di aggiungere una nuova disponibilità
+     */
     this.dispAddSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
@@ -131,7 +142,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // WebSocket Disponibilità deleted
+    /**
+     * Websocket che si occupa di eliminare una disponibilità eliminata
+     */
     this.dispDelSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
@@ -150,7 +163,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // WebSocket Disponibilità updated
+    /**
+     * Websocket che si occupa di aggiornare i dati di una disponibilità
+     */
     this.dispUpSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
@@ -179,7 +194,9 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // WebSocket Disponibilità status
+    /**
+     * Websocket che si occupa di modificare lo stato di una disponibilità
+     */
     this.dispStatusSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
@@ -216,52 +233,47 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
     this.elencoDispSub.unsubscribe();
   }
 
-  openTurno(turno: TurnoResource) {
-    this.turno.opening = true;
-    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, true).pipe(first()).subscribe(response => {
-      turno.isOpen = true;
-      this.changeTurno.next(turno);
-    }, (error) => {
-      // TODO: errore
-    });
-  }
-
-  closeTurno(turno: TurnoResource) {
-    this.turno.closing = true;
-    this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, false).pipe(first()).subscribe(response => {
-      turno.isOpen = false;
-      this.changeTurno.next(this.turno);
-    }, (error) => {
-      // TODO: errore
-    });
-  }
-
+  /**
+   * Cambio stato turno
+   * @param checked true se aperto, falso altrimenti
+   */
   statusTurno(checked: boolean) {
     this.turno.opening = true;
     this.apiTurniService.setStateTurno(this.p.linea, this.p.verso, this.p.data, checked).pipe(first()).subscribe(response => {
       this.turno.isOpen = checked;
       this.changeTurno.next(this.turno);
     }, (error) => {
-      // TODO: errore
+      // Gestito da Interceptor
     });
   }
 
+  /**
+   * Conferma Disponibilità
+   * @param disp struttura disponibilità
+   */
   confermaDisp(disp: DispAllResource) {
     disp.isConfirmed = true;
     this.apiTurniService.confirmDisp(this.p.linea, this.p.verso, this.p.data, disp).pipe(first()).subscribe(response => {
       this.changeDisp.next(this.listDisp);
     }, (error) => {
-      // TODO: errore
+      // Gestito da Interceptor
     });
 
   }
 
-
+  /**
+   * Da prenotazione a Path per richiesta
+   * @param prenotazione prenotazione
+   */
   private pathSub(prenotazione: PrenotazioneRequest) {
     return '/' + this.datePipe.transform(
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 
+  /**
+   * Aggiorna disponibilità
+   * @param disp struttura disponibilità
+   */
   updateDisp(disp: DispAllResource) {
 
     this.dialog.closeAll();
@@ -274,31 +286,29 @@ export class ElencoDispComponent implements OnInit, OnDestroy {
         linea: (this.turno.verso ? this.linea.andata : this.linea.ritorno)
       }
     });
-    // disp.idFermata = 2;
-    // console.log(disp);
-    // this.apiTurniService.updateDisp(disp.id, disp).pipe(first()).subscribe(response => {
-    //   this.changeDisp.next(this.listDisp);
-    // }, (error) => {
-    //   // TODO: errore
-    // });
-
-
   }
 
+  /**
+   * Apri dialog con mappa della fermata
+   * @param idFermata id della fermata
+   */
   openMapDialog(idFermata: number) {
     this.mapService.openMapDialog(idFermata).subscribe();
   }
 
+  /**
+   * Cancellazione della disponibilità
+   * @param disp struttura disponibilità
+   */
   deleteDisp(disp: DispAllResource) {
     this.apiService.openConfirmationDialog('Sei sicuro di voler eliminare la disponibilità di ' + disp.guideUsername)
       .subscribe((response) => {
-      if (response) {
-        this.apiTurniService.deleteDisp(disp.id).subscribe((res) => {
-          // TODO: gestisci successo
-        }, error => {
-          // TODO: gestisci insuccesso.
-        });
-      }
-    });
+        if (response) {
+          this.apiTurniService.deleteDisp(disp.id).subscribe((res) => {
+          }, error => {
+            // Gestito da Interceptor
+          });
+        }
+      });
   }
 }

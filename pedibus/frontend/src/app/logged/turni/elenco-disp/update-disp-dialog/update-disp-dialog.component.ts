@@ -45,11 +45,15 @@ export class UpdateDispDialogComponent {
     }
   }
 
+  /**
+   * Aggiornamento Disponibilità
+   * @param data struttura disponibilità
+   */
   updateDisp(data: DispAllResource) {
     this.apiTurniService.updateDisp(data.id, data).pipe(first()).subscribe(response => {
       this.dialogRef.close();
     }, (error) => {
-      // TODO: errore
+      // Gestito da Interceptor
     });
   }
 
