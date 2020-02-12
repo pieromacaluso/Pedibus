@@ -31,7 +31,7 @@ export class TabComponent implements OnInit, OnDestroy {
     this.keywordSub = this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
         this.searchKeyword(res, 0);
       }, error => {
-        // TODO: error management
+        // Gestito da Interceptor
       }
     );
     this.updatesSub = this.anagraficaService.watchUpdates().subscribe((res) => {
@@ -39,6 +39,10 @@ export class TabComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Cambio della pagina
+   * @param $event evento
+   */
   cambiaPagina($event: PageEvent) {
     switch (this.type) {
       case ElementType.User:
@@ -46,7 +50,7 @@ export class TabComponent implements OnInit, OnDestroy {
         this.keywordSub = this.anagraficaService.getKeywordSub(this.type).subscribe((res) => {
             this.searchKeyword(res, $event.pageIndex);
           }, error => {
-            // TODO: error management
+            // Gestito da Interceptor
           }
         );
         break;
@@ -63,15 +67,28 @@ export class TabComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Aggiornamento emit
+   */
   updateEmit() {
     this.anagraficaService.updateEmit();
   }
 
+  /**
+   * Emit una nuova keyword
+   * @param keyword keyword
+   * @param paginator paginatore
+   */
   emitKeyword(keyword: string, paginator: MatPaginator) {
     this.anagraficaService.emitKeyword(keyword, this.type);
     paginator.firstPage();
   }
 
+  /**
+   * Cerca parola chiave
+   * @param keyword parola chiave
+   * @param pageIndex pagina da ricercare
+   */
   searchKeyword(keyword: string, pageIndex: number) {
     switch (this.type) {
       case ElementType.User:
@@ -79,7 +96,7 @@ export class TabComponent implements OnInit, OnDestroy {
           this.elements = res.content;
           this.len = res.totalElements;
         }, (error) => {
-          // TODO: Errore cambio pagina
+          // Gestito da Interceptor
         });
         break;
       case ElementType.Child:
@@ -87,20 +104,30 @@ export class TabComponent implements OnInit, OnDestroy {
           this.elements = res.content;
           this.len = res.totalElements;
         }, (error) => {
-          // TODO: Errore cambio pagina
+          // Gestito da Interceptor
         });
         break;
     }
   }
 
+  /**
+   * E' un userDTO
+   */
   isUserDTO() {
     return this.type === ElementType.User;
   }
 
+  /**
+   * E' un ChildDTO?
+   */
   isChildDTO() {
     return this.type === ElementType.Child;
   }
 
+  /**
+   * Resetta valori
+   * @param search
+   */
   resetValue(search: HTMLInputElement) {
     search.value = '';
     switch (this.type) {
@@ -110,7 +137,7 @@ export class TabComponent implements OnInit, OnDestroy {
           this.elements = res.content;
           this.pageIndex = 0;
         }, (error) => {
-          // TODO: Errore cambio pagina
+          // Gestito da Interceptor
         });
         break;
       case ElementType.Child:
@@ -119,7 +146,7 @@ export class TabComponent implements OnInit, OnDestroy {
           this.elements = res.content;
           this.pageIndex = 0;
         }, (error) => {
-          // TODO: Errore cambio pagina
+          // Gestito da Interceptor
         });
         break;
 

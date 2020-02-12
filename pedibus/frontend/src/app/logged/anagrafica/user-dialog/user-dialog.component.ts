@@ -76,6 +76,9 @@ export class UserDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Aggiorna Utente
+   */
   updateUserDialog() {
     if (!this.addingUser) {
       this.addingUser = true;
@@ -98,27 +101,29 @@ export class UserDialogComponent implements OnInit, OnDestroy {
 
       if (this.data) {
         this.anagraficaDialogService.updateUser(this.oldEmail, user).subscribe((u) => {
-          // TODO: Gestisci successo
           this.addingUser = false;
           this.dialogRef.close();
         }, error => {
-          // TODO: Gestisci errore.
+          // Gestito da Interceptor
           this.addingUser = false;
         });
       } else {
         this.anagraficaDialogService.createUser(user).subscribe((u) => {
-          // TODO: Gestisci successo
           this.addingUser = false;
-
           this.dialogRef.close();
         }, error => {
           this.addingUser = false;
-          // TODO: Gestisci errore.
+          // Gestito da Interceptor
         });
       }
     }
   }
 
+  /**
+   * Cambia la lista delle linee
+   * @param $event evento di modifica
+   * @param id id della linea aggiunta o tolta
+   */
   changeLineList($event: MatCheckboxChange, id: string) {
     if ($event.checked) {
       this.userDTOres.lineaIdList.push(id);
@@ -130,10 +135,18 @@ export class UserDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Ottieni array da mappa
+   * @param linee mappa linee
+   */
   getArray(linee: Map<string, StopsByLine>) {
     return Array.from(linee.values());
   }
 
+  /**
+   * Emetti i nuovi dati ricaricando la pagina
+   * @param value valore
+   */
   newData(value: string) {
     this.anagraficaDialogService.emitKeyword(value);
   }
@@ -141,15 +154,27 @@ export class UserDialogComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
+  /**
+   * Controlla se già selezionato
+   * @param codiceFiscale codice fiscale
+   */
   alreadySelected(codiceFiscale: string) {
     return this.userDTOres.childIdList.includes(codiceFiscale);
   }
 
+  /**
+   * Aggiungi bambino
+   * @param codiceFiscale codice fiscale
+   */
   addChild(codiceFiscale: string) {
     this.userDTOres.childIdList.push(codiceFiscale);
     this.childObs.set(codiceFiscale, this.anagraficaDialogService.childDetails(codiceFiscale));
   }
 
+  /**
+   * Rimuovi bambino
+   * @param codiceFiscale codice fiscale
+   */
   removeChild(codiceFiscale: string) {
     const index = this.userDTOres.childIdList.indexOf(codiceFiscale, 0);
     if (index > -1) {
@@ -158,20 +183,35 @@ export class UserDialogComponent implements OnInit, OnDestroy {
     this.childObs.delete(codiceFiscale);
   }
 
+  /**
+   * Ottieni array dei bambini
+   */
   getArrayChild() {
     return Array.from(this.childObs.values());
   }
 
+  /**
+   * Cambia linea amministratore
+   * @param $event evento checkbox
+   */
   lineAdminChange($event: MatCheckboxChange) {
     if (!$event.checked) {
       this.userDTOres.lineaIdList = [];
     }
   }
 
+  /**
+   * E' master della linea?
+   * @param line struttura linea
+   */
   isMaster(line: StopsByLine) {
     return line.master === this.userDTOres.userId;
   }
 
+  /**
+   * E' amministratore master di una linea?
+   * @param linee mappa delle linee
+   */
   isMasterAdmin(linee: Map<string, StopsByLine>) {
     for (const lineI of Array.from(linee.values())) {
       if (this.isMaster(lineI)) {

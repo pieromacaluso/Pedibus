@@ -1,5 +1,11 @@
 <mat-tab-group #tabs mat-align-tabs="center" backgroundColor="primary">
-  <mat-tab label="UTENTI"> <app-tab *ngIf="(pageUser | async) as pu" [page]="pu" [type]="0"></app-tab></mat-tab>
-  <mat-tab label="BAMBINI"> <app-tab *ngIf="(pageChildren | async) as pc" [page]="pc" [type]="1"></app-tab></mat-tab>
+  <mat-tab label="UTENTI">
+    <app-tab *ngIf="(pageUser | async) as pu" [page]="pu" [type]="0"></app-tab>
+  </mat-tab>
+  <mat-tab label="BAMBINI">
+    <app-tab *ngIf="(pageChildren | async) as pc" [page]="pc" [type]="1"></app-tab>
+  </mat-tab>
 </mat-tab-group>
-<button class="add-button" mat-fab color="primary" (click)="openDialog(tabs.selectedIndex)"><mat-icon>add</mat-icon></button>
+<button class="add-button" mat-fab color="primary" (click)="openDialog(tabs.selectedIndex)">
+  <mat-icon>add</mat-icon>
+</button>
