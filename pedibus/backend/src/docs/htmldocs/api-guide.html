@@ -613,20 +613,29 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request"><a class="link" href="#_example_request">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-lines/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /lines HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcHBsaWNhemlvbmkuaW50ZXJuZXQubW1hcEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1NZU1RFTS1BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNjgsImV4cCI6MTU4MTUyNzE2OH0.h0p9oeJGe2pOL8k4R-0ecu5Rg_RKr_HPKIM87q69uyI
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request"><a class="link" href="#_curl_request">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-lines/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/lines' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcHBsaWNhemlvbmkuaW50ZXJuZXQubW1hcEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1NZU1RFTS1BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNjgsImV4cCI6MTU4MTUyNzE2OH0.h0p9oeJGe2pOL8k4R-0ecu5Rg_RKr_HPKIM87q69uyI'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body"><a class="link" href="#_example_response_body">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-lines/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>[ "linea1", "linea2" ]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -637,20 +646,134 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_2"><a class="link" href="#_example_request_2">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-line-id/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /lines/linea1 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcHBsaWNhemlvbmkuaW50ZXJuZXQubW1hcEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1NZU1RFTS1BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNjMsImV4cCI6MTU4MTUyNzE2M30.XI930anKfD29OitdVaETz0Su2MDJTC08M_F2uoGSALQ
+Content-Type: application/json
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_2"><a class="link" href="#_curl_request_2">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-line-id/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/lines/linea1' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcHBsaWNhemlvbmkuaW50ZXJuZXQubW1hcEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX1NZU1RFTS1BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNjMsImV4cCI6MTU4MTUyNzE2M30.XI930anKfD29OitdVaETz0Su2MDJTC08M_F2uoGSALQ' \
+    -H 'Content-Type: application/json'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_2"><a class="link" href="#_example_response_body_2">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-line-id/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "id" : "linea1",
+  "nome" : "Linea 1",
+  "master" : "reed.snyder@test.it",
+  "adminList" : [ "reed.snyder@test.it", "test.Nonno@test.it" ],
+  "andata" : [ {
+    "id" : 1,
+    "nome" : "Ferrucci",
+    "orario" : "07:20",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.062553,
+      "y" : 7.655359,
+      "type" : "Point",
+      "coordinates" : [ 45.062553, 7.655359 ]
+    }
+  }, {
+    "id" : 2,
+    "nome" : "Mediterraneo",
+    "orario" : "07:30",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.061319,
+      "y" : 7.658548,
+      "type" : "Point",
+      "coordinates" : [ 45.061319, 7.658548 ]
+    }
+  }, {
+    "id" : 3,
+    "nome" : "Einaudi",
+    "orario" : "07:40",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.06071,
+      "y" : 7.661373,
+      "type" : "Point",
+      "coordinates" : [ 45.06071, 7.661373 ]
+    }
+  }, {
+    "id" : 4,
+    "nome" : "Politecnico",
+    "orario" : "08:00",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.06263,
+      "y" : 7.66278,
+      "type" : "Point",
+      "coordinates" : [ 45.06263, 7.66278 ]
+    }
+  } ],
+  "ritorno" : [ {
+    "id" : 5,
+    "nome" : "Politecnico",
+    "orario" : "13:10",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.06263,
+      "y" : 7.66278,
+      "type" : "Point",
+      "coordinates" : [ 45.06263, 7.66278 ]
+    }
+  }, {
+    "id" : 6,
+    "nome" : "Einaudi",
+    "orario" : "13:30",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.06071,
+      "y" : 7.661373,
+      "type" : "Point",
+      "coordinates" : [ 45.06071, 7.661373 ]
+    }
+  }, {
+    "id" : 7,
+    "nome" : "Mediterraneo",
+    "orario" : "13:45",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.061319,
+      "y" : 7.658548,
+      "type" : "Point",
+      "coordinates" : [ 45.061319, 7.658548 ]
+    }
+  }, {
+    "id" : 8,
+    "nome" : "Ferrucci",
+    "orario" : "14:00",
+    "idLinea" : "linea1",
+    "nomeLinea" : null,
+    "location" : {
+      "x" : 45.062553,
+      "y" : 7.655359,
+      "type" : "Point",
+      "coordinates" : [ 45.062553, 7.655359 ]
+    }
+  } ]
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -666,20 +789,43 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_3"><a class="link" href="#_example_request_3">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-res/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /reservations/linea1/2020-02-14/ HTTP/1.1
+Content-Length: 77
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzY4LCJleHAiOjE1ODE1MjcxNjh9.oWTbv3q9HVunowjagHBzA7FhKkZW8bkkTv7kqp5M6A8
+Content-Type: application/json
+Host: localhost:8080
+
+{
+  "cfChild" : "RSSMRA30A01H501I",
+  "idFermata" : 1,
+  "verso" : true
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_3"><a class="link" href="#_curl_request_3">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-res/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/reservations/linea1/2020-02-14/' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzY4LCJleHAiOjE1ODE1MjcxNjh9.oWTbv3q9HVunowjagHBzA7FhKkZW8bkkTv7kqp5M6A8' \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "cfChild" : "RSSMRA30A01H501I",
+  "idFermata" : 1,
+  "verso" : true
+}'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_3"><a class="link" href="#_example_response_body_3">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-res/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>"5e4406509103341af85506aa"</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -690,14 +836,35 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_4"><a class="link" href="#_example_request_4">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/put-res/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /reservations/linea1/2020-02-14/5e4406479103341af855066e HTTP/1.1
+Content-Length: 77
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzU5LCJleHAiOjE1ODE1MjcxNTl9.Pl1SN7ALNiGwBUTbDZ2wqW6RB4j_cKeBFedkImgTb84
+Host: localhost:8080
+
+{
+  "cfChild" : "RSSMRA30A01H501I",
+  "idFermata" : 2,
+  "verso" : true
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_4"><a class="link" href="#_curl_request_4">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/put-res/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/reservations/linea1/2020-02-14/5e4406479103341af855066e' -i -X PUT \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzU5LCJleHAiOjE1ODE1MjcxNTl9.Pl1SN7ALNiGwBUTbDZ2wqW6RB4j_cKeBFedkImgTb84' \
+    -d '{
+  "cfChild" : "RSSMRA30A01H501I",
+  "idFermata" : 2,
+  "verso" : true
+}'</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -711,14 +878,23 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_5"><a class="link" href="#_example_request_5">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-res/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /reservations/linea1/2020-02-14/5e4406479103341af855066e HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzU5LCJleHAiOjE1ODE1MjcxNTl9.Pl1SN7ALNiGwBUTbDZ2wqW6RB4j_cKeBFedkImgTb84
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_5"><a class="link" href="#_curl_request_5">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-res/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/reservations/linea1/2020-02-14/5e4406479103341af855066e' -i -X DELETE \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzU5LCJleHAiOjE1ODE1MjcxNTl9.Pl1SN7ALNiGwBUTbDZ2wqW6RB4j_cKeBFedkImgTb84'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -729,14 +905,23 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_6"><a class="link" href="#_example_request_6">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-res-alt/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /reservations/RSSMRA30A01H501I/LineaEntity(id=linea1,%20nome=Linea%201,%20master=reed.snyder@test.it,%20adminList=%5Breed.snyder@test.it%5D,%20andata=%5B1,%202,%203,%204%5D,%20ritorno=%5B5,%206,%207,%208%5D)/2020-02-14/true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzYxLCJleHAiOjE1ODE1MjcxNjF9.1k9CZ3Ayky2WUQP6uMSKcjba6YftIGJQ43ORNSu-8DA
+Content-Type: application/json
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_6"><a class="link" href="#_curl_request_6">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-res-alt/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/reservations/RSSMRA30A01H501I/LineaEntity(id=linea1,%20nome=Linea%201,%20master=reed.snyder@test.it,%20adminList=%5Breed.snyder@test.it%5D,%20andata=%5B1,%202,%203,%204%5D,%20ritorno=%5B5,%206,%207,%208%5D)/2020-02-14/true' -i -X DELETE \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2MzYxLCJleHAiOjE1ODE1MjcxNjF9.1k9CZ3Ayky2WUQP6uMSKcjba6YftIGJQ43ORNSu-8DA' \
+    -H 'Content-Type: application/json'</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -747,20 +932,812 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_7"><a class="link" href="#_example_request_7">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-res-verso/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /reservations/verso/linea1/2020-02-14/true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2NCwiZXhwIjoxNTgxNTI3MTY0fQ.2Z7TpPaQQVj6_nu5tedpUtsBLxWDU61US5RtIst8zl4
+Content-Type: application/json
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_7"><a class="link" href="#_curl_request_7">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-res-verso/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/reservations/verso/linea1/2020-02-14/true' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2NCwiZXhwIjoxNTgxNTI3MTY0fQ.2Z7TpPaQQVj6_nu5tedpUtsBLxWDU61US5RtIst8zl4' \
+    -H 'Content-Type: application/json'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_4"><a class="link" href="#_example_response_body_4">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-res-verso/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "alunniPerFermata" : [ {
+    "fermata" : {
+      "id" : 1,
+      "nome" : "Ferrucci",
+      "orario" : "07:20",
+      "idLinea" : "linea1",
+      "nomeLinea" : null,
+      "location" : {
+        "x" : 45.062553,
+        "y" : 7.655359,
+        "type" : "Point",
+        "coordinates" : [ 45.062553, 7.655359 ]
+      }
+    },
+    "alunni" : [ {
+      "codiceFiscale" : "RSSMRA30A01H501I",
+      "name" : "Mario",
+      "surname" : "Rossi",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "CRHRRT24U49G051M",
+      "name" : "Stacy",
+      "surname" : "Chambers",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "HTFJBV07C28Z819N",
+      "name" : "Fitzpatrick",
+      "surname" : "Yates",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "ACYDDT47U62Z530X",
+      "name" : "Magdalena",
+      "surname" : "Barlow",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "MRAZZR62V44R517J",
+      "name" : "Leigh",
+      "surname" : "Myers",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "HXMWPR01X71E239C",
+      "name" : "Lupe",
+      "surname" : "Mcmahon",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "XSAQBQ87P20C857T",
+      "name" : "Melisa",
+      "surname" : "Petty",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "OHOSCH14S72U487Z",
+      "name" : "Glenda",
+      "surname" : "Greene",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "DSRAWG10L55R523E",
+      "name" : "Shawna",
+      "surname" : "Wallace",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "ZFWPGW06X75P343F",
+      "name" : "Sherri",
+      "surname" : "Wallace",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "TSFEGT77Z60S589H",
+      "name" : "Casey",
+      "surname" : "Gill",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "QASUBP03J62E522Z",
+      "name" : "Boyle",
+      "surname" : "Burris",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "DZWZGG20X45X240B",
+      "name" : "Morrow",
+      "surname" : "Moody",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "CJRTOD17R87Q864Y",
+      "name" : "David",
+      "surname" : "Gross",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "SGMPEQ26A17Q948L",
+      "name" : "Alexandria",
+      "surname" : "Mckinney",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "UEIRBP06Y33C549F",
+      "name" : "Clay",
+      "surname" : "Petty",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "ERSGHB28V24M270S",
+      "name" : "Deleon",
+      "surname" : "Barrera",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FFTVRG70K67X706N",
+      "name" : "Monroe",
+      "surname" : "Goodman",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "XLEYZL18C95F617B",
+      "name" : "Vaughan",
+      "surname" : "Crawford",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    } ]
+  }, {
+    "fermata" : {
+      "id" : 2,
+      "nome" : "Mediterraneo",
+      "orario" : "07:30",
+      "idLinea" : "linea1",
+      "nomeLinea" : null,
+      "location" : {
+        "x" : 45.061319,
+        "y" : 7.658548,
+        "type" : "Point",
+        "coordinates" : [ 45.061319, 7.658548 ]
+      }
+    },
+    "alunni" : [ {
+      "codiceFiscale" : "QZZYVD49G38A342W",
+      "name" : "Debbie",
+      "surname" : "Davidson",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "VFSUPH93Y58R654Z",
+      "name" : "Wooten",
+      "surname" : "Kane",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "JJHSOF73H17F402M",
+      "name" : "Carroll",
+      "surname" : "Kent",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "YOQRJY56V93X623A",
+      "name" : "Carmella",
+      "surname" : "Wynn",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "GLNBLO21W99G269R",
+      "name" : "Finley",
+      "surname" : "Mercado",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "JOXNTH26N99F772P",
+      "name" : "Charlene",
+      "surname" : "Lindsay",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "HUOSMX67G28I584I",
+      "name" : "Lou",
+      "surname" : "Chaney",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "RYMQBZ71S48Y253W",
+      "name" : "Sondra",
+      "surname" : "Gardner",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "LOYGCO97B66K523V",
+      "name" : "Oconnor",
+      "surname" : "Ruiz",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "DZESTY15U93T352D",
+      "name" : "Julie",
+      "surname" : "Finch",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "LPGKLL60L70B773K",
+      "name" : "Samantha",
+      "surname" : "Hardy",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "SFCUQW05Q78X199N",
+      "name" : "Cheryl",
+      "surname" : "Sawyer",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "XYPLPL15G53C141G",
+      "name" : "Mari",
+      "surname" : "Yates",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "QTLMUH51K36D839B",
+      "name" : "Cooke",
+      "surname" : "Kent",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "KPSDYL15O97O249Y",
+      "name" : "Kirk",
+      "surname" : "Duffy",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "RAJWNW95F99H657P",
+      "name" : "Tara",
+      "surname" : "Ruiz",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "IBZHBY45Z19Q327X",
+      "name" : "Singleton",
+      "surname" : "Donovan",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "EJHDML19G90N610G",
+      "name" : "Adele",
+      "surname" : "Blankenship",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "LJKYOP28G48A154R",
+      "name" : "Bullock",
+      "surname" : "Sawyer",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "WDLVFO72O43D783J",
+      "name" : "Ericka",
+      "surname" : "Burris",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "PPQQTG70W46S046K",
+      "name" : "Jan",
+      "surname" : "Morse",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "JFWAVS83V40D781Q",
+      "name" : "Jillian",
+      "surname" : "Moody",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "UILDQX33K56S476W",
+      "name" : "Cabrera",
+      "surname" : "Morse",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "ADZQOY60O47B282M",
+      "name" : "Hardy",
+      "surname" : "Buchanan",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "KMINVO31A81B288E",
+      "name" : "Barnett",
+      "surname" : "Lott",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "CXWWOP40W60B601R",
+      "name" : "Crystal",
+      "surname" : "Gill",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    } ]
+  }, {
+    "fermata" : {
+      "id" : 3,
+      "nome" : "Einaudi",
+      "orario" : "07:40",
+      "idLinea" : "linea1",
+      "nomeLinea" : null,
+      "location" : {
+        "x" : 45.06071,
+        "y" : 7.661373,
+        "type" : "Point",
+        "coordinates" : [ 45.06071, 7.661373 ]
+      }
+    },
+    "alunni" : [ {
+      "codiceFiscale" : "TYJKPM84L31W633K",
+      "name" : "Lara",
+      "surname" : "Gross",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "OWBBCZ94R27V723X",
+      "name" : "Kerri",
+      "surname" : "Chaney",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "RISXOC58K30A620K",
+      "name" : "Susie",
+      "surname" : "Lindsay",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "APXRKZ30G50A305S",
+      "name" : "Norma",
+      "surname" : "Barrera",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "XBPNJN33W82N049A",
+      "name" : "May",
+      "surname" : "Allen",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FXZSYJ04Q04P952V",
+      "name" : "Stafford",
+      "surname" : "Wilkerson",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "PYHDRE85Y55P620A",
+      "name" : "Bernice",
+      "surname" : "Mercado",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "HWFHUR62V67W617D",
+      "name" : "Decker",
+      "surname" : "Wynn",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "PCBFYI66P13Y476T",
+      "name" : "Caitlin",
+      "surname" : "Hardy",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "GOZDBB65S70X287Q",
+      "name" : "Ann",
+      "surname" : "Duffy",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "VNGPUK99Z98E248L",
+      "name" : "Castaneda",
+      "surname" : "Barlow",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "LPWJNG37F20L854X",
+      "name" : "Hodges",
+      "surname" : "Garner",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "RSTVAV79S91X442Y",
+      "name" : "Miranda",
+      "surname" : "Strong",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "YDUONO08J90N628L",
+      "name" : "Savage",
+      "surname" : "Mcmahon",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "YPYAXY73C65Z443C",
+      "name" : "Raymond",
+      "surname" : "Witt",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "VEDKEE26I91S670X",
+      "name" : "Cecilia",
+      "surname" : "Browning",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "MDCIGO66W22J851Z",
+      "name" : "Esperanza",
+      "surname" : "Wilkerson",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "CDIQSO14J18X034A",
+      "name" : "Velez",
+      "surname" : "Chambers",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FKRNSO06L17G534E",
+      "name" : "Jo",
+      "surname" : "Bryan",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "IQOWUE84Q45M062A",
+      "name" : "Sybil",
+      "surname" : "Mann",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "XEJIYR07M26R997O",
+      "name" : "Candace",
+      "surname" : "Payne",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "KRWMPJ96B05C988H",
+      "name" : "Mercedes",
+      "surname" : "Witt",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "DUCYGF78M73D763Z",
+      "name" : "Ava",
+      "surname" : "Holloway",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FDATUO26I59J593G",
+      "name" : "Guthrie",
+      "surname" : "Payne",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "BVHZBH95K85N820T",
+      "name" : "Norris",
+      "surname" : "Myers",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "HVJPJF00B41I762B",
+      "name" : "Eve",
+      "surname" : "Guy",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    } ]
+  }, {
+    "fermata" : {
+      "id" : 4,
+      "nome" : "Politecnico",
+      "orario" : "08:00",
+      "idLinea" : "linea1",
+      "nomeLinea" : null,
+      "location" : {
+        "x" : 45.06263,
+        "y" : 7.66278,
+        "type" : "Point",
+        "coordinates" : [ 45.06263, 7.66278 ]
+      }
+    },
+    "alunni" : [ {
+      "codiceFiscale" : "JLOQUD74V96Q076X",
+      "name" : "Robinson",
+      "surname" : "Moses",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "NSQZPY42Y88O972Q",
+      "name" : "Tabitha",
+      "surname" : "Garner",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "ENUSSE55Y65Z677W",
+      "name" : "Irene",
+      "surname" : "Walker",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "WQUPAB17G44L766V",
+      "name" : "Alyce",
+      "surname" : "Barton",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "GMKGLL39P59C066W",
+      "name" : "Kaye",
+      "surname" : "Mckinney",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "TCVQZM71N75X065C",
+      "name" : "Manning",
+      "surname" : "Walker",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "VXEBJB64T10L093Q",
+      "name" : "Amanda",
+      "surname" : "Barton",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "UMPXPE60P11G555W",
+      "name" : "Gwen",
+      "surname" : "Blankenship",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "JVTDHF29O64N535M",
+      "name" : "Donaldson",
+      "surname" : "Moses",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "MZAOUT60A88U903E",
+      "name" : "Thornton",
+      "surname" : "Lott",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FSUQLR03X54Z315S",
+      "name" : "Vaughn",
+      "surname" : "Mann",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FGCZNP86J66L315Q",
+      "name" : "Morin",
+      "surname" : "Davidson",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "HGNKLJ79L22Z067W",
+      "name" : "Sharlene",
+      "surname" : "Greene",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "APYUZD13H27U680C",
+      "name" : "Clayton",
+      "surname" : "Kane",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "TPUIFP95F83A373W",
+      "name" : "Ginger",
+      "surname" : "Browning",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FJSZFT82B48A785F",
+      "name" : "Battle",
+      "surname" : "Bryan",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "BHTFLB73X14Q809E",
+      "name" : "Compton",
+      "surname" : "Reilly",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "WXVYKK24S15B616G",
+      "name" : "Tammy",
+      "surname" : "Gardner",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "TWIXWH46Z69L529K",
+      "name" : "Duffy",
+      "surname" : "Buchanan",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "GSLDVM27P75O935K",
+      "name" : "Chelsea",
+      "surname" : "Guy",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "MCIGPK34V70F697X",
+      "name" : "Bolton",
+      "surname" : "Finch",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "SPXOSX37A53R720G",
+      "name" : "Jeanie",
+      "surname" : "Strong",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "PHZPGJ64G46L221M",
+      "name" : "Mona",
+      "surname" : "Goodman",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "JTWXXP60X79R726D",
+      "name" : "Holloway",
+      "surname" : "Allen",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "UPIPKT17F57B243R",
+      "name" : "Estelle",
+      "surname" : "Todd",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "FUVVTZ26O27B695I",
+      "name" : "Jennifer",
+      "surname" : "Todd",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    }, {
+      "codiceFiscale" : "ZIXKKR18W60T968A",
+      "name" : "Oneil",
+      "surname" : "Donovan",
+      "presoInCarico" : false,
+      "arrivatoScuola" : false,
+      "assente" : false
+    } ]
+  } ],
+  "orarioScuola" : "08:15",
+  "childrenNotReserved" : [ {
+    "codiceFiscale" : "ONRHFI89U08X990E",
+    "name" : "Glenna",
+    "surname" : "Reilly",
+    "idFermataAndata" : 2,
+    "idFermataRitorno" : 7
+  }, {
+    "codiceFiscale" : "RFRHYF01X36N749H",
+    "name" : "Santiago",
+    "surname" : "Crawford",
+    "idFermataAndata" : 2,
+    "idFermataRitorno" : 6
+  }, {
+    "codiceFiscale" : "NPQZKP14P64U828T",
+    "name" : "Tameka",
+    "surname" : "Holloway",
+    "idFermataAndata" : 3,
+    "idFermataRitorno" : 7
+  }, {
+    "codiceFiscale" : "SNDPTN80C15H501C",
+    "name" : "Sandro",
+    "surname" : "Pertini",
+    "idFermataAndata" : null,
+    "idFermataRitorno" : null
+  }, {
+    "codiceFiscale" : "CLLCRL80A01H501D",
+    "name" : "Carlo",
+    "surname" : "Collodi",
+    "idFermataAndata" : null,
+    "idFermataRitorno" : null
+  } ],
+  "canModify" : false
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -771,20 +1748,67 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_8"><a class="link" href="#_example_request_8">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-notres/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /notreservations/2020-02-14/true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2NSwiZXhwIjoxNTgxNTI3MTY1fQ.WccCUiiCwqixTA4Ze06v4lUEpZHSACS0K46dHAMDF3g
+Content-Type: application/json
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_8"><a class="link" href="#_curl_request_8">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-notres/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/notreservations/2020-02-14/true' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2NSwiZXhwIjoxNTgxNTI3MTY1fQ.WccCUiiCwqixTA4Ze06v4lUEpZHSACS0K46dHAMDF3g' \
+    -H 'Content-Type: application/json'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_5"><a class="link" href="#_example_response_body_5">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-notres/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>[ {
+  "codiceFiscale" : "ONRHFI89U08X990E",
+  "name" : "Glenna",
+  "surname" : "Reilly",
+  "idFermataAndata" : 2,
+  "idFermataRitorno" : 7
+}, {
+  "codiceFiscale" : "RFRHYF01X36N749H",
+  "name" : "Santiago",
+  "surname" : "Crawford",
+  "idFermataAndata" : 2,
+  "idFermataRitorno" : 6
+}, {
+  "codiceFiscale" : "NPQZKP14P64U828T",
+  "name" : "Tameka",
+  "surname" : "Holloway",
+  "idFermataAndata" : 3,
+  "idFermataRitorno" : 7
+}, {
+  "codiceFiscale" : "RSSMRA30A01H501I",
+  "name" : "Mario",
+  "surname" : "Rossi",
+  "idFermataAndata" : null,
+  "idFermataRitorno" : null
+}, {
+  "codiceFiscale" : "SNDPTN80C15H501C",
+  "name" : "Sandro",
+  "surname" : "Pertini",
+  "idFermataAndata" : null,
+  "idFermataRitorno" : null
+}, {
+  "codiceFiscale" : "CLLCRL80A01H501D",
+  "name" : "Carlo",
+  "surname" : "Collodi",
+  "idFermataAndata" : null,
+  "idFermataRitorno" : null
+} ]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -800,14 +1824,27 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_9"><a class="link" href="#_example_request_9">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-handled/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /reservations/handled/linea1/true/2020-02-14/true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2NSwiZXhwIjoxNTgxNTI3MTY1fQ.WccCUiiCwqixTA4Ze06v4lUEpZHSACS0K46dHAMDF3g
+Content-Length: 16
+Content-Type: application/json
+Host: localhost:8080
+
+RSSMRA30A01H501I</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_9"><a class="link" href="#_curl_request_9">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-handled/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/reservations/handled/linea1/true/2020-02-14/true' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2NSwiZXhwIjoxNTgxNTI3MTY1fQ.WccCUiiCwqixTA4Ze06v4lUEpZHSACS0K46dHAMDF3g' \
+    -H 'Content-Type: application/json' \
+    -d 'RSSMRA30A01H501I'</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -818,14 +1855,27 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_10"><a class="link" href="#_example_request_10">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-arrived/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /reservations/arrived/linea1/true/2020-02-14/true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2MiwiZXhwIjoxNTgxNTI3MTYyfQ.796xQdsNScBs37sX9iPCIWUtQTFsD59hu6iYabtESI0
+Content-Length: 16
+Content-Type: application/json
+Host: localhost:8080
+
+RSSMRA30A01H501I</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_10"><a class="link" href="#_curl_request_10">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-arrived/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/reservations/arrived/linea1/true/2020-02-14/true' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImlhdCI6MTU4MTUxNjM2MiwiZXhwIjoxNTgxNTI3MTYyfQ.796xQdsNScBs37sX9iPCIWUtQTFsD59hu6iYabtESI0' \
+    -H 'Content-Type: application/json' \
+    -d 'RSSMRA30A01H501I'</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -841,20 +1891,48 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_11"><a class="link" href="#_example_request_11">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-disp/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /disp/true/2020-05-04 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzQsImV4cCI6MTU4MTUyNzE3NH0.XygSfn5FniRU5_L87GVQcsvWm72Q-xrtJ4BWBpyzvQU
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_11"><a class="link" href="#_curl_request_11">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-disp/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/true/2020-05-04' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzQsImV4cCI6MTU4MTUyNzE3NH0.XygSfn5FniRU5_L87GVQcsvWm72Q-xrtJ4BWBpyzvQU'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_6"><a class="link" href="#_example_response_body_6">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-disp/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "disp" : {
+    "id" : "5e4406569103341af85506cd",
+    "guideUsername" : "test.Nonno@test.it",
+    "idLinea" : "linea1",
+    "nomeLinea" : "Linea 1",
+    "idFermata" : 1,
+    "nomeFermata" : "Ferrucci",
+    "orario" : "07:20",
+    "isConfirmed" : false,
+    "isAck" : false
+  },
+  "turno" : {
+    "idLinea" : "linea1",
+    "data" : "2020-05-04T12:30:30.500+0000",
+    "verso" : true,
+    "isOpen" : true,
+    "isExpired" : false
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -865,20 +1943,45 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_12"><a class="link" href="#_example_request_12">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-disp/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /disp/linea1/true/2020-05-04 HTTP/1.1
+Content-Type: application/json
+Content-Length: 1
+Host: localhost:8080
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzUsImV4cCI6MTU4MTUyNzE3NX0.GPLRSsF2dqo8mPe8tLdnwLwXu_dHGuSRfsMWVlbYBjU
+
+1</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_12"><a class="link" href="#_curl_request_12">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-disp/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2020-05-04' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzUsImV4cCI6MTU4MTUyNzE3NX0.GPLRSsF2dqo8mPe8tLdnwLwXu_dHGuSRfsMWVlbYBjU' \
+    -d '1'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_7"><a class="link" href="#_example_response_body_7">Example response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-disp/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "id" : "5e4406579103341af85506d5",
+  "guideUsername" : "test.Nonno@test.it",
+  "idLinea" : "linea1",
+  "nomeLinea" : "Linea 1",
+  "idFermata" : 1,
+  "nomeFermata" : "Ferrucci",
+  "orario" : "07:20",
+  "isConfirmed" : false,
+  "isAck" : false
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -889,20 +1992,35 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_13"><a class="link" href="#_example_request_13">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-disp/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /disp/linea1/true/2020-05-04 HTTP/1.1
+Host: localhost:8080
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzUsImV4cCI6MTU4MTUyNzE3NX0.GPLRSsF2dqo8mPe8tLdnwLwXu_dHGuSRfsMWVlbYBjU</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_13"><a class="link" href="#_curl_request_13">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-disp/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/disp/linea1/true/2020-05-04' -i -X DELETE \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzUsImV4cCI6MTU4MTUyNzE3NX0.GPLRSsF2dqo8mPe8tLdnwLwXu_dHGuSRfsMWVlbYBjU'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response"><a class="link" href="#_example_response">Example response</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-disp/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Pragma: no-cache
+X-XSS-Protection: 1; mode=block
+Expires: 0
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -918,20 +2036,35 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_14"><a class="link" href="#_example_request_14">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-turno/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/state/linea1/true/2020-05-04 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzYsImV4cCI6MTU4MTUyNzE3Nn0.mzs_A2gKNhYMQSqt3bnpn_MHLpzSa2KGB8IbGsI52SQ
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_14"><a class="link" href="#_curl_request_14">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-turno/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2020-05-04' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzYsImV4cCI6MTU4MTUyNzE3Nn0.mzs_A2gKNhYMQSqt3bnpn_MHLpzSa2KGB8IbGsI52SQ'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_8"><a class="link" href="#_example_response_body_8">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-turno/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "idLinea" : "linea1",
+  "data" : "2020-05-04T12:30:30.500+0000",
+  "verso" : true,
+  "isOpen" : true,
+  "isExpired" : false
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -942,20 +2075,41 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_15"><a class="link" href="#_example_request_15">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/put-turno/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /turno/state/linea1/true/2020-05-04 HTTP/1.1
+Content-Length: 5
+Content-Type: application/json
+Host: localhost:8080
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzUsImV4cCI6MTU4MTUyNzE3NX0.GPLRSsF2dqo8mPe8tLdnwLwXu_dHGuSRfsMWVlbYBjU
+
+false</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_15"><a class="link" href="#_curl_request_15">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/put-turno/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/state/linea1/true/2020-05-04' -i -X PUT \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzUsImV4cCI6MTU4MTUyNzE3NX0.GPLRSsF2dqo8mPe8tLdnwLwXu_dHGuSRfsMWVlbYBjU' \
+    -d 'false'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_2"><a class="link" href="#_example_response_2">Example Response</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/put-turno/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Pragma: no-cache
+X-XSS-Protection: 1; mode=block
+Expires: 0
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -966,20 +2120,50 @@ Intro intro intro
 </div>
 <div class="sect3">
 <h4 id="_example_request_16"><a class="link" href="#_example_request_16">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-turno-disp/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /turno/disp/linea1/true/2020-05-04 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzMsImV4cCI6MTU4MTUyNzE3M30.MfzYYDHb5zPiDyztgZcgJF7gOWqU3FLEVMr-NJu0QRw
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_16"><a class="link" href="#_curl_request_16">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-turno-disp/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2020-05-04' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzMsImV4cCI6MTU4MTUyNzE3M30.MfzYYDHb5zPiDyztgZcgJF7gOWqU3FLEVMr-NJu0QRw'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_9"><a class="link" href="#_example_response_body_9">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-turno-disp/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "turno" : {
+    "idLinea" : "linea1",
+    "data" : "2020-05-04T12:30:30.500+0000",
+    "verso" : true,
+    "isOpen" : true,
+    "isExpired" : false
+  },
+  "listDisp" : {
+    "Ferrucci" : [ {
+      "id" : "5e4406559103341af85506c9",
+      "guideUsername" : "test.Nonno@test.it",
+      "idLinea" : "linea1",
+      "nomeLinea" : "Linea 1",
+      "idFermata" : 1,
+      "nomeFermata" : "Ferrucci",
+      "orario" : "07:20",
+      "isConfirmed" : false,
+      "isAck" : false
+    } ]
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -991,20 +2175,61 @@ N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 </div>
 <div class="sect3">
 <h4 id="_example_request_17"><a class="link" href="#_example_request_17">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-turno-disp/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/linea1/true/2020-05-04 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzIsImV4cCI6MTU4MTUyNzE3Mn0.R8n1zLNdOIWKWI0Em88lIKUyZx7r-AF_GpBrCfqSwHM
+Content-Type: application/json
+Host: localhost:8080
+Content-Length: 256
+
+{
+  "id" : "5e4406549103341af85506c4",
+  "guideUsername" : "test.Nonno@test.it",
+  "idLinea" : "linea1",
+  "nomeLinea" : "Linea 1",
+  "idFermata" : 1,
+  "nomeFermata" : "Ferrucci",
+  "orario" : "07:20",
+  "isConfirmed" : true,
+  "isAck" : false
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_3"><a class="link" href="#_example_response_3">Example Response</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-turno-disp/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Pragma: no-cache
+X-XSS-Protection: 1; mode=block
+Expires: 0
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_17"><a class="link" href="#_curl_request_17">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-turno-disp/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/linea1/true/2020-05-04' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzIsImV4cCI6MTU4MTUyNzE3Mn0.R8n1zLNdOIWKWI0Em88lIKUyZx7r-AF_GpBrCfqSwHM' \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "id" : "5e4406549103341af85506c4",
+  "guideUsername" : "test.Nonno@test.it",
+  "idLinea" : "linea1",
+  "nomeLinea" : "Linea 1",
+  "idFermata" : 1,
+  "nomeFermata" : "Ferrucci",
+  "orario" : "07:20",
+  "isConfirmed" : true,
+  "isAck" : false
+}'</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1016,20 +2241,35 @@ N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 </div>
 <div class="sect3">
 <h4 id="_example_request_18"><a class="link" href="#_example_request_18">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-disp-ack/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /turno/disp/ack/linea1/true/2020-05-04 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzEsImV4cCI6MTU4MTUyNzE3MX0.ZpTdKAxTjedZw9aSKrBlKMfyQ5Vp_nx06e04RQsDiUs
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_18"><a class="link" href="#_curl_request_18">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-disp-ack/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/turno/disp/ack/linea1/true/2020-05-04' -i -X POST \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lk5vbm5vQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX0dVSURFIiwiUk9MRV9BRE1JTiJdLCJpYXQiOjE1ODE1MTYzNzEsImV4cCI6MTU4MTUyNzE3MX0.ZpTdKAxTjedZw9aSKrBlKMfyQ5Vp_nx06e04RQsDiUs'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_4"><a class="link" href="#_example_response_4">Example Response</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/post-disp-ack/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Pragma: no-cache
+X-XSS-Protection: 1; mode=block
+Expires: 0
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1045,20 +2285,74 @@ N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 </div>
 <div class="sect3">
 <h4 id="_example_request_19"><a class="link" href="#_example_request_19">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-notifiche/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /notifiche/all/test.Genitore@test.it HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2Mzc3LCJleHAiOjE1ODE1MjcxNzd9.Xc9KisdGo3AgFjmW4b2-MtxQdeizlL8vYxV8ZoNPYIA
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_19"><a class="link" href="#_curl_request_19">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-notifiche/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/notifiche/all/test.Genitore@test.it' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2Mzc3LCJleHAiOjE1ODE1MjcxNzd9.Xc9KisdGo3AgFjmW4b2-MtxQdeizlL8vYxV8ZoNPYIA'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_10"><a class="link" href="#_example_response_body_10">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/get-notifiche/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "content" : [ {
+    "idNotifica" : "5e4406599103341af85506f5",
+    "type" : "BASE",
+    "dispID" : null,
+    "usernameDestinatario" : "test.Genitore@test.it",
+    "msg" : "msg1",
+    "isTouched" : false,
+    "isAck" : null,
+    "data" : "2020-02-12T14:06:17.595+0000"
+  }, {
+    "idNotifica" : "5e4406599103341af85506f6",
+    "type" : "BASE",
+    "dispID" : null,
+    "usernameDestinatario" : "test.Genitore@test.it",
+    "msg" : "msg2",
+    "isTouched" : false,
+    "isAck" : null,
+    "data" : "2020-02-12T14:06:17.595+0000"
+  } ],
+  "pageable" : {
+    "sort" : {
+      "sorted" : false,
+      "unsorted" : true,
+      "empty" : true
+    },
+    "offset" : 0,
+    "pageSize" : 20,
+    "pageNumber" : 0,
+    "paged" : true,
+    "unpaged" : false
+  },
+  "totalElements" : 2,
+  "totalPages" : 1,
+  "last" : true,
+  "size" : 20,
+  "number" : 0,
+  "first" : true,
+  "sort" : {
+    "sorted" : false,
+    "unsorted" : true,
+    "empty" : true
+  },
+  "numberOfElements" : 2,
+  "empty" : false
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1069,20 +2363,65 @@ N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 </div>
 <div class="sect3">
 <h4 id="_example_request_20"><a class="link" href="#_example_request_20">Example Request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-notifica/http-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /notifiche/all/test.Genitore@test.it HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2Mzc3LCJleHAiOjE1ODE1MjcxNzd9.Xc9KisdGo3AgFjmW4b2-MtxQdeizlL8vYxV8ZoNPYIA
+Host: localhost:8080</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_curl_request_20"><a class="link" href="#_curl_request_20">CURL request</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-notifica/curl-request.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/notifiche/all/test.Genitore@test.it' -i -X GET \
+    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0Lkdlbml0b3JlQHRlc3QuaXQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNTgxNTE2Mzc3LCJleHAiOjE1ODE1MjcxNzd9.Xc9KisdGo3AgFjmW4b2-MtxQdeizlL8vYxV8ZoNPYIA'</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_example_response_body_11"><a class="link" href="#_example_response_body_11">Example Response body</a></h4>
-<div class="paragraph">
-<p>Unresolved directive in api-guide.adoc - include::/home/pieromack/development/homework/app/Applicazioni-Internet-Lab-Project/pedibus/backend/target/generated-snippets/delete-notifica/response-body.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "content" : [ {
+    "idNotifica" : "5e4406599103341af85506ed",
+    "type" : "BASE",
+    "dispID" : null,
+    "usernameDestinatario" : "test.Genitore@test.it",
+    "msg" : "msg2",
+    "isTouched" : false,
+    "isAck" : null,
+    "data" : "2020-02-12T14:06:17.100+0000"
+  } ],
+  "pageable" : {
+    "sort" : {
+      "sorted" : false,
+      "unsorted" : true,
+      "empty" : true
+    },
+    "offset" : 0,
+    "pageSize" : 20,
+    "pageNumber" : 0,
+    "paged" : true,
+    "unpaged" : false
+  },
+  "totalElements" : 1,
+  "totalPages" : 1,
+  "last" : true,
+  "size" : 20,
+  "number" : 0,
+  "first" : true,
+  "sort" : {
+    "sorted" : false,
+    "unsorted" : true,
+    "empty" : true
+  },
+  "numberOfElements" : 1,
+  "empty" : false
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1091,7 +2430,7 @@ N.B il turno deve prima essere chiuso con l&#8217;apposita PUT</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-02-10 15:05:02 CET
+Last updated 2020-02-08 19:53:20 CET
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
