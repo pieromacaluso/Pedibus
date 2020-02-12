@@ -89,7 +89,8 @@
                 <div *ngIf="this.linee" fxFlex="100%">
                   <mat-form-field color="accent" fxFlex="100%">
                     <mat-label>Seleziona la linea</mat-label>
-                    <mat-select *ngIf="this.linee" (selectionChange)="getTurno(lineaSelect.value)" #lineaSelect [(value)]="selectedLine">
+                    <mat-select *ngIf="this.linee" (selectionChange)="getTurno(lineaSelect.value)" #lineaSelect
+                                [(value)]="selectedLine">
                       <mat-option *ngFor="let linea of linee" [value]="linea">
                         <p>{{(linea | fortmatLine)}}</p>
                       </mat-option>

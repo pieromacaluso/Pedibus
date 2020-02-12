@@ -14,10 +14,21 @@ export class ApiDispService {
   constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
   }
 
+  /**
+   * From Verso to Int
+   * @param verso verso come stringa
+   */
   static versoToInt(verso: string) {
     return verso === 'Andata' ? 1 : 0;
   }
 
+  /**
+   * Post Disponibilità
+   * @param idLinea id Linea
+   * @param idFermata id Fermata
+   * @param verso verso
+   * @param data data
+   */
   postDisp(idLinea: string, idFermata: string, verso: string, data: Date) {
     // @PostMapping("/disp/{idLinea}/{verso}/{data}")
     const idVerso = ApiDispService.versoToInt(verso);
@@ -26,6 +37,13 @@ export class ApiDispService {
         .transform(data, 'yyyy-MM-dd'), idFermata);
   }
 
+  /**
+   * Cancellazione Disponibilità
+   * @param idLinea id Linea
+   * @param idFermata id Fermata
+   * @param verso verso
+   * @param data data
+   */
   delDisp(idLinea: string, idFermata: string, verso: string, data: Date) {
     // @PostMapping("/disp/{idLinea}/{verso}/{data}")
     const idVerso = ApiDispService.versoToInt(verso);
@@ -34,6 +52,11 @@ export class ApiDispService {
         .transform(data, 'yyyy-MM-dd'));
   }
 
+  /**
+   * Get della disponibilità
+   * @param verso verso
+   * @param data data
+   */
   getDisp(verso: string, data: Date) {
     // @GetMapping("/disp/{verso}/{data}")
     const idVerso = ApiDispService.versoToInt(verso);
@@ -42,6 +65,12 @@ export class ApiDispService {
         .transform(data, 'yyyy-MM-dd'));
   }
 
+  /**
+   * Ack della disponibilità
+   * @param idLinea id linea
+   * @param verso verso
+   * @param data data
+   */
   ackDisp(idLinea: string, verso: string, data: Date) {
     const idVerso = ApiDispService.versoToInt(verso);
     return this.httpClient

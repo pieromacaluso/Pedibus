@@ -72,7 +72,9 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
               private authService: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private rxStompService: RxStompService, private datePipe: DatePipe, private fb: FormBuilder
   ) {
-    // Main Observable
+    /**
+     * Observable principale che ottiene le disponibilità, se presenti per l'utente in questione
+     */
     this.mainSub = this.syncService.prenotazioneObs$.pipe(
       tap(() => this.loading = true),
       switchMap(pren => {
@@ -105,7 +107,9 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
         }
       });
 
-    // change Disp
+    /**
+     * Observable che serve a eseguire modifiche sui cambi di disponibilità
+     */
     this.changeDisp.asObservable().subscribe(
       res => {
         this.disp = res;
@@ -118,7 +122,9 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // change Turno
+    /**
+     * Observable che serve a eseguire modifiche sui cambi di stato turno
+     */
     this.changeTurno.asObservable().subscribe(
       res => {
         this.turno = res;
@@ -133,7 +139,10 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
         });
       }
     );
-    // WebSocket Disponibilità creazione/eliminazione
+
+    /**
+     *Websocket per creazione, modifica o eliminazione della disponibilità comunicata
+     */
     this.dispCreateDelSub = this.changeLinea.asObservable().pipe(
       switchMap(linea => {
         return this.rxStompService.watch('/user/dispws' + this.pathSub(this.p));
@@ -146,11 +155,14 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
         } else {
           this.changeDisp.next(this.emptyDisp);
           this.changeTurno.next(null);
+          this.changeLinea.next(this.selectedLine);
         }
       }
     );
 
-    // WebSocket Disponibilità status
+    /**
+     *Websocket per stato della disponibilità comunicata
+     */
     this.dispStatusSub = this.changeLinea.asObservable().pipe(
       switchMap(linea => {
         return this.rxStompService.watch('/user/dispws/status' + this.pathSub(this.p));
@@ -163,7 +175,9 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       }
     );
 
-    // WebSocket Turno cambio stato
+    /**
+     * Websocket per stato del turno
+     */
     this.turnoStatusSub = this.changeLinea.asObservable().pipe(
       switchMap(
         linea => {
@@ -175,6 +189,9 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       this.changeTurno.next(res);
     });
 
+    /**
+     * Observable che rileva un cambio di linea nel form di compilazione. Serve per andare a inserire le opportune fermate nel form.
+     */
     this.changeLinea.asObservable().pipe(
       mergeMap(linea => {
           return this.apiService.getStopsByLine(linea).pipe(first());
@@ -199,6 +216,9 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       }
     );
 
+    /**
+     * Observable che rileva un cambio di linea nel form di compilazione. Serve per richiedere il nuovo turno da gestire
+     */
     this.changeLinea.asObservable().pipe(
       mergeMap(linea => {
           return this.apiTurniService.getTurnoState(linea, this.p.verso, this.p.data).pipe(first());
@@ -226,6 +246,10 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     return this.loading;
   }
 
+  /**
+   * Aggiungi una disponibilità per l'utente corrente
+   * @param idFermata id della fermata
+   */
   addDisp(idFermata: string) {
     this.disp.add = true;
     this.apiDispService.postDisp(this.p.linea, idFermata, this.p.verso, this.p.data).subscribe(response => {
@@ -239,6 +263,9 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Cancellare la propria disponibilità
+   */
   delDisp() {
     this.disp.delete = true;
     this.apiDispService.delDisp(this.p.linea, this.disp.idFermata.toString(), this.p.verso, this.p.data).subscribe(response => {
@@ -246,31 +273,45 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
       this.changeLinea.next(this.selectedLine);
       this.changeTurno.next(null);
     }, (error) => {
-      // TODO: errore aggiunta disponibilità
+      // Gestito da Interceptor
     });
   }
 
+  /**
+   *Ack della propria disponibilità
+   */
   ackDisp() {
     this.disp.ack = true;
     this.apiDispService.ackDisp(this.p.linea, this.p.verso, this.p.data).subscribe(response => {
       this.disp.isAck = true;
       this.changeDisp.next(this.disp);
     }, (error) => {
-      // TODO: errore aggiunta disponibilità
+      // Gestito da Interceptor
     });
   }
 
+  /**
+   * Con il cambio della linea triggera il cambio turno
+   * @param value nuovo id linea
+   */
   getTurno(value: any) {
-
     this.p.linea = value;
     this.changeLinea.next(value);
   }
 
+  /**
+   * Ottieni il path per effettuare richieste con la prenotazione in questione
+   * @param prenotazione prenotazione
+   */
   private pathSub(prenotazione: PrenotazioneRequest) {
     return '/' + this.datePipe.transform(
       prenotazione.data, 'yyyy-MM-dd') + '/' + prenotazione.linea + '/' + this.apiService.versoToInt(prenotazione.verso);
   }
 
+  /**
+   * Selezione della fermata
+   * @param $event evento
+   */
   selectFermata($event: number) {
     if (!this.turno.isOpen || this.turno.isExpired) {
       return;
@@ -285,6 +326,10 @@ export class AggiuntaDispComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Selezione Indice della fermata
+   * @param index indice
+   */
   selectFermataIndex(index: number) {
     if (!this.turno.isOpen || this.turno.isExpired) {
       return;
