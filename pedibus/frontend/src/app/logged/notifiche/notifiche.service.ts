@@ -46,15 +46,23 @@ export class NotificheService implements OnInit {
     });
   }
 
+  /**
+   * Get delle notifiche paginate non lette dal database
+   * @param page pagina da scaricare
+   */
   getNotifiche(page: number) {
     const username = this.authService.getUsername();
     this.apiService.getNotificheNonLette(username, page).pipe(take(1)).subscribe((notifiche) => {
       this.dataService.updateNotifiche(notifiche.content);
       this.len = notifiche.totalElements;
       this.dataService.updateTotal(this.len);
-    }, (err) => {});
+    }, (err) => {
+    });
   }
 
+  /**
+   * Websocket per monitoraggio delle notifiche. Triggerano il ricaricamento della pagina notifiche in visualizzazione
+   */
   watchNotifiche() {
     this.websocketNotification = this.rxStompService.watch('/user/notifiche').subscribe(message => {
       this.getNotifiche(this.pageIndex);
@@ -64,13 +72,21 @@ export class NotificheService implements OnInit {
     });
   }
 
+  /**
+   * Cancellazione della notifica
+   * @param idNotifica id della notifica da cancellare
+   */
   deleteNotifica(idNotifica: string) {
     this.apiService.deleteNotifica(idNotifica).subscribe((el) => {
       this.getNotifiche(this.pageIndex);
-    }, (err) => {});
+    }, (err) => {
+    });
   }
 
-
+  /**
+   * Cambio della pagina
+   * @param $event PageEvent
+   */
   cambiaPagina($event: PageEvent) {
     this.pageIndex = $event.pageIndex;
     this.getNotifiche(this.pageIndex);

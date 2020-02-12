@@ -445,6 +445,12 @@ export class ApiService {
     return dialogRef.afterClosed();
   }
 
+  /**
+   * Cancellazione prenotazione da parte dell'admin di sistema
+   * @param data data
+   * @param verso verso
+   * @param cfChild codice fiscale bambino
+   */
   deletePrenotazioneAdmin(data: Date, verso: string, cfChild: string) {
     const idVerso = this.versoToInt(verso);
     return this.httpClient

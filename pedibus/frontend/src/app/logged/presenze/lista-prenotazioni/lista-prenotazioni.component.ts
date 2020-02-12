@@ -9,7 +9,6 @@ import {MatBottomSheet, MatSnackBar} from '@angular/material';
 import {RxStompService} from '@stomp/ng2-stompjs';
 import {Observable, Subscription} from 'rxjs';
 import {DatePipe} from '@angular/common';
-import {DeleteDialogComponent} from './delete-dialog/delete-dialog.component';
 import {catchError, switchMap, tap} from 'rxjs/operators';
 import {MapService} from '../../../utilities/map.service';
 import {ReservationDTO} from '../../genitore/dtos';
@@ -27,8 +26,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
   cross: any = '../assets/svg/cross.svg';
   prenotazione: PrenotazioneRequest;
   componentMatDialogRef: MatDialogRef<AdminBookDialogComponent>;
-  deleteDialogRef: MatDialogRef<DeleteDialogComponent>;
-  bottomCardTitle: string;
   children: any[] = [];
   private loading: boolean;
   private reservationSub: Subscription;
@@ -169,26 +166,6 @@ export class ListaPrenotazioniComponent implements OnInit, OnDestroy {
         }
       });
     }
-  }
-
-  /**
-   * Apertura dialog di cancellazione prenotazione alunno
-   * @param alu prenotazione alunno
-   */
-  openDeleteDialog(alu: Alunno) {
-    this.dialog.closeAll();
-
-    this.deleteDialogRef = this.dialog.open(DeleteDialogComponent, {
-      hasBackdrop: true,
-      data: {
-        alunno: alu,
-        res: this.resource.alunniPerFermata,
-        data: this.prenotazione.data,
-        verso: this.prenotazione.verso,
-        linea: this.prenotazione.linea,
-        resource: this.resource
-      }
-    });
   }
 
   /**

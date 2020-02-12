@@ -21,6 +21,7 @@ export interface PresenceDialogData {
 })
 export class PresenceDialogComponent implements OnInit {
   sysadmin: boolean;
+
   constructor(public dialogRef: MatDialogRef<PresenceDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: PresenceDialogData,
               private apiService: ApiService, private authService: AuthService) {
@@ -77,14 +78,14 @@ export class PresenceDialogComponent implements OnInit {
         });
         break;
       case 4:
-        // Cancella Utente
+        // Cancella Prenotazione da parte di admin
         this.apiService.deletePrenotazioneAdmin(this.data.prenotazione.data, this.data.prenotazione.verso, this.data.alunno.codiceFiscale)
           .subscribe((rese) => {
-          this.data.alunno.update = false;
-        }, (error) => {
-          console.error(error);
-          this.data.alunno.update = false;
-        });
+            this.data.alunno.update = false;
+          }, (error) => {
+            console.error(error);
+            this.data.alunno.update = false;
+          });
         break;
 
     }

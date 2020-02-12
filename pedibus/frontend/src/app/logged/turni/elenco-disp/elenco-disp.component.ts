@@ -11,7 +11,6 @@ import {defer, forkJoin, Observable, Subject, Subscription} from 'rxjs';
 import {PrenotazioneRequest, StopsByLine} from '../../line-details';
 import {ApiTurniService, MapDisp, TurnoDispResource, TurnoResource} from '../api-turni.service';
 import {variable} from '@angular/compiler/src/output/output_ast';
-import {DeleteDialogComponent} from '../../presenze/lista-prenotazioni/delete-dialog/delete-dialog.component';
 import {UpdateDispDialogComponent} from './update-disp-dialog/update-disp-dialog.component';
 import {MapService} from '../../../utilities/map.service';
 

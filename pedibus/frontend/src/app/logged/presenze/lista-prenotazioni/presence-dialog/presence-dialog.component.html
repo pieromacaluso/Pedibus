@@ -13,6 +13,14 @@
       <span mat-line class="text-weight warn">Assente</span>
       <span mat-line>L'alunno è assente alla fermata</span>
     </a>
+
+    <ng-container
+      *ngIf="sysadmin">
+      <a mat-list-item (click)="selectAction(4)">
+        <span mat-line class="text-weight warn">Elimina</span>
+        <span mat-line>Elimina prenotazione</span>
+      </a>
+    </ng-container>
   </ng-container>
 
   <ng-container *ngIf="this.data.alunno.presoInCarico && !this.data.alunno.arrivatoScuola">
@@ -34,11 +42,5 @@
     </a>
   </ng-container>
 
-  <ng-container
-    *ngIf="sysadmin">
-    <a mat-list-item (click)="selectAction(4)">
-      <span mat-line class="text-weight warn">Elimina</span>
-      <span mat-line>Elimina prenotazione</span>
-    </a>
-  </ng-container>
+
 </mat-nav-list>

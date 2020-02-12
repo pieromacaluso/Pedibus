@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { NotificheService } from './notifiche.service';
-import { Notifica } from './dtos';
-import { Observable } from 'rxjs';
-import { DataShareService } from 'src/app/data-share.service';
+import {Component, OnInit} from '@angular/core';
+import {NotificheService} from './notifiche.service';
+import {Notifica} from './dtos';
+import {Observable} from 'rxjs';
+import {DataShareService} from 'src/app/data-share.service';
 import {PageEvent} from '@angular/material';
 
 @Component({
