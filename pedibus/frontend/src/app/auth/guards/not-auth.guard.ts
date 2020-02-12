@@ -3,6 +3,10 @@ import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Route
 import {Observable} from 'rxjs';
 import {AuthService} from '../auth.service';
 
+
+/**
+ * Guardia che controlla sia loggato ed evita che questo vada ad accedere a pagine che non potrebbe visualizzare da loggato
+ */
 @Injectable({
   providedIn: 'root'
 })

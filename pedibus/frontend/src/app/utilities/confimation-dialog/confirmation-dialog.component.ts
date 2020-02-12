@@ -4,6 +4,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 export interface DialogData {
   message: string;
 }
+
+/**
+ * Componente che viene utilizzato per mostrare una finestra di conferma all'utente prima di un'operazione
+ */
 @Component({
   selector: 'app-confimation-dialog',
   templateUrl: './confirmation-dialog.component.html',
@@ -13,7 +17,8 @@ export class ConfirmationDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+  }
 
   onNoClick(): void {
     this.dialogRef.close(false);

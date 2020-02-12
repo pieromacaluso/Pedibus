@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 
+
+/**
+ * Pagina non trovata
+ */
 @Component({
   selector: 'app-page-not-found',
   templateUrl: './page-not-found.component.html',
@@ -10,7 +14,8 @@ export class PageNotFoundComponent implements OnInit {
 
   error404logo: any = '../../assets/svg/error404.svg';
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+  }
 
   ngOnInit() {
   }

@@ -3,6 +3,9 @@ import {ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanActivate, Route
 import {Observable} from 'rxjs';
 import {AuthService} from '../auth.service';
 
+/**
+ * Guardia che controlla se l'utente è Admin o SysAdmin
+ */
 @Injectable({
   providedIn: 'root'
 })

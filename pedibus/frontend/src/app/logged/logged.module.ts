@@ -37,10 +37,10 @@ import {EntryUserComponent} from './anagrafica/tab/entry-user/entry-user.compone
 import {EntryChildComponent} from './anagrafica/tab/entry-child/entry-child.component';
 import {ChildDialogComponent} from './anagrafica/child-dialog/child-dialog.component';
 import {UserDialogComponent} from './anagrafica/user-dialog/user-dialog.component';
-import { LineAdminComponent } from './line-admin/line-admin.component';
-import { GuideEntryComponent } from './line-admin/guide-entry/guide-entry.component';
+import {LineAdminComponent} from './line-admin/line-admin.component';
+import {GuideEntryComponent} from './line-admin/guide-entry/guide-entry.component';
 import {UtilitiesModule} from '../utilities/utilities.module';
-import { DateToolbarComponent } from './genitore/scheda-bambino/date-toolbar/date-toolbar.component';
+import {DateToolbarComponent} from './genitore/scheda-bambino/date-toolbar/date-toolbar.component';
 
 
 @NgModule({
@@ -108,7 +108,7 @@ import { DateToolbarComponent } from './genitore/scheda-bambino/date-toolbar/dat
     PresenceDialogComponent,
     UserDialogComponent,
     ChildDialogComponent
-    ]
+  ]
 })
 export class LoggedModule {
 }

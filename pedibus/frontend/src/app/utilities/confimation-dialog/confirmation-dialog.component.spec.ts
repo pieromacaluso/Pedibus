@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ConfirmationDialogComponent } from './confirmation-dialog.component';
+import {ConfirmationDialogComponent} from './confirmation-dialog.component';
 
 describe('ConfimationDialogComponent', () => {
   let component: ConfirmationDialogComponent;
@@ -8,9 +8,9 @@ describe('ConfimationDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmationDialogComponent ]
+      declarations: [ConfirmationDialogComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

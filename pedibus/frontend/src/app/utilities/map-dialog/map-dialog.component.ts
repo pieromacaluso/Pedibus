@@ -9,6 +9,9 @@ export interface MapDialogData {
   idFermata: number;
 }
 
+/**
+ * Dialog che mostra la mappa di una determinata fermata
+ */
 @Component({
   selector: 'app-map-dialog',
   templateUrl: './map-dialog.component.html',

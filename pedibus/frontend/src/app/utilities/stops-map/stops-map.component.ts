@@ -3,7 +3,9 @@ import {Point} from 'geojson';
 import {AgmMap} from '@agm/core';
 import {StopsByLine} from '../../logged/line-details';
 
-
+/**
+ * Componente che visualizza la mappa per un'intera linea
+ */
 @Component({
   selector: 'app-stops-map',
   templateUrl: './stops-map.component.html',

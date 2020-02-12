@@ -34,15 +34,12 @@ export class RecoverComponent implements OnInit {
     return this.confirmStatus && this.postStatus;
   }
 
+  /**
+   * Sottomissione del modello per recupero della password
+   * @param event evento form
+   */
   submit(event) {
     if (event.isTrusted) {
-      let formValid = true;
-      for (let count = 0; count < 4; count++) {
-        if (!event.target[count].validity.valid) {
-          formValid = false;
-        }
-      }
-      if (formValid) {
         this.auth.postNewPassword(this.token, this.model).subscribe((res) => {
           this.postStatus = true;
           this.confirmStatus = true;
@@ -50,7 +47,6 @@ export class RecoverComponent implements OnInit {
           this.postStatus = true;
           this.confirmStatus = false;
         });
-      }
     }
   }
 

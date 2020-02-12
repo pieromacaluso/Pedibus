@@ -15,10 +15,20 @@ export class ApiTurniService {
   constructor(private httpClient: HttpClient, private datePipe: DatePipe) {
   }
 
+  /**
+   * Da verso a int
+   * @param verso verso
+   */
   static versoToInt(verso: string) {
     return verso === 'Andata' ? 1 : 0;
   }
 
+  /**
+   * Ottieni il turno partendo dai dati
+   * @param idLinea id della linea
+   * @param verso verso
+   * @param data data
+   */
   getTurno(idLinea: string, verso: string, data: Date) {
     // @GetMapping("/turno/disp/{idLinea}/{verso}/{data}")
     const idVerso = ApiTurniService.versoToInt(verso);
@@ -27,6 +37,12 @@ export class ApiTurniService {
         .transform(data, 'yyyy-MM-dd'));
   }
 
+  /**
+   * Ottieni lo stato del turno
+   * @param idLinea id Linea
+   * @param verso verso
+   * @param data data
+   */
   getTurnoState(idLinea: string, verso: string, data: Date) {
     // @GetMapping("/turno/state/{idLinea}/{verso}/{data}")
     const idVerso = ApiTurniService.versoToInt(verso);
@@ -35,6 +51,13 @@ export class ApiTurniService {
         .transform(data, 'yyyy-MM-dd'));
   }
 
+  /**
+   * Set lo stato del turno
+   * @param idLinea id linea
+   * @param verso verso
+   * @param data data
+   * @param b true se aperto, false altrimenti
+   */
   setStateTurno(idLinea: string, verso: string, data: Date, b: boolean) {
     const idVerso = ApiTurniService.versoToInt(verso);
     return this.httpClient
@@ -42,6 +65,13 @@ export class ApiTurniService {
         .transform(data, 'yyyy-MM-dd'), b ? 1 : 0);
   }
 
+  /**
+   * Conferma disponibilità
+   * @param idLinea id della linea
+   * @param verso verso
+   * @param data data
+   * @param disp struttura disponibilità
+   */
   confirmDisp(idLinea: string, verso: string, data: Date, disp: DispAllResource) {
     const idVerso = ApiTurniService.versoToInt(verso);
     return this.httpClient
@@ -49,11 +79,20 @@ export class ApiTurniService {
         .transform(data, 'yyyy-MM-dd'), disp);
   }
 
+  /**
+   * Aggiorna disponibilità
+   * @param id id della disponibilità
+   * @param disp struttura disponibilità
+   */
   updateDisp(id: string, disp: DispAllResource) {
     return this.httpClient
       .put(this.baseURL + 'admin/disp/' + id.toString(), disp);
   }
 
+  /**
+   * Cancella disponibilità
+   * @param id id disponibilità da cancellare
+   */
   deleteDisp(id: string) {
     return this.httpClient
       .delete(this.baseURL + 'admin/disp/' + id.toString()).pipe(first());

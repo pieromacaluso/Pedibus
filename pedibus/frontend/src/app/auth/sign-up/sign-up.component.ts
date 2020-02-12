@@ -7,6 +7,9 @@ import {AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErr
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
+/**
+ * @deprecated vecchio flusso dell'applicazione
+ */
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
