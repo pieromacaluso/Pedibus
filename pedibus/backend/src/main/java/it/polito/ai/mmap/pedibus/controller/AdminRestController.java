@@ -4,19 +4,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.polito.ai.mmap.pedibus.configuration.PedibusString;
 import it.polito.ai.mmap.pedibus.entity.ChildEntity;
+import it.polito.ai.mmap.pedibus.entity.ReservationEntity;
 import it.polito.ai.mmap.pedibus.entity.UserEntity;
 import it.polito.ai.mmap.pedibus.exception.SysAdminException;
 import it.polito.ai.mmap.pedibus.objectDTO.ChildDTO;
 import it.polito.ai.mmap.pedibus.objectDTO.LineaDTO;
+import it.polito.ai.mmap.pedibus.objectDTO.ReservationDTO;
 import it.polito.ai.mmap.pedibus.repository.RoleRepository;
 import it.polito.ai.mmap.pedibus.resources.*;
 import it.polito.ai.mmap.pedibus.services.*;
-import it.polito.ai.mmap.pedibus.resources.PermissionResource;
-import it.polito.ai.mmap.pedibus.resources.UserInsertResource;
-import it.polito.ai.mmap.pedibus.services.ChildService;
-import it.polito.ai.mmap.pedibus.services.GestioneCorseService;
-import it.polito.ai.mmap.pedibus.services.LineeService;
-import it.polito.ai.mmap.pedibus.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.management.relation.RoleNotFoundException;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -50,6 +47,8 @@ public class AdminRestController {
     private ReservationService reservationService;
     @Autowired
     private MongoTimeService mongoTimeService;
+    @Autowired
+    private NotificheService notificheService;
 
     /**
      * Endpoint per ottenere tutti i ruoli disponibili nel database
@@ -293,5 +292,22 @@ public class AdminRestController {
     public ReservationsDump getReservationsDump(@PathVariable("id_linea") String idLinea, @PathVariable("data") String data, @PathVariable("verso") boolean verso) {
         logger.info(PedibusString.ENDPOINT_CALLED("GET", "/reservations/dump/" + idLinea + "/" + data + "/" + verso));
         return reservationService.getReservationsDump(idLinea, mongoTimeService.getMongoZonedDateTimeFromDate(data, false), verso);
+    }
+
+    /**
+     * Elimina la reservation indicata. Funzione utilizzabile solo dal systemadmin
+     *
+     * @param data    data
+     * @param verso   verso
+     * @param cfChild codice fiscale bambino
+     */
+    @DeleteMapping("/sysadmin/reservations/{data}/{verso}/{cfChild}")
+    public void deleteReservation(@PathVariable("data") String data, @PathVariable("verso") boolean verso, @PathVariable("cfChild") String cfChild) {
+        Date dataFormatted = mongoTimeService.getMongoZonedDateTimeFromDate(data, true);
+        logger.info(PedibusString.ENDPOINT_CALLED("DELETE", "/reservations/" + data + "/" + verso + "/" + cfChild));
+        ReservationEntity reservationEntity = reservationService.getChildReservation(verso, dataFormatted, cfChild);
+        reservationService.deleteReservation(reservationEntity.getIdLinea(), dataFormatted, reservationEntity.getId());
+        this.notificheService.sendReservationNotification(new ReservationDTO(reservationEntity), true);
+        this.notificheService.generateDeletedReservation(reservationEntity);
     }
 }

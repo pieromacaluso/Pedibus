@@ -91,7 +91,6 @@ public class JwtTokenService {
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            //todo giocare
             getUsername(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException | UserNotFoundException e) {
