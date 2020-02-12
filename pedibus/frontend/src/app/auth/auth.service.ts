@@ -109,8 +109,6 @@ export class AuthService {
    * @param model modello richiesta `SignInModel`
    */
   signIn(model: SignInModel) {
-    // We are calling shareReplay to prevent the receiver of this Observable from
-    // accidentally triggering multiple POST requests due to multiple subscriptions.
     return this.httpClient.post(this.baseURL + 'login', model).pipe(tap(res => this.setSession(res)), shareReplay());
   }
 
