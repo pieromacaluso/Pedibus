@@ -344,10 +344,10 @@ public class ReservationService {
     /**
      * Admin lina indica che ha lasciato l'alunno a scuola/fermata ritorno
      *
-     * @param verso
-     * @param data
-     * @param cfChild
-     * @param idLinea
+     * @param verso verso
+     * @param data data
+     * @param cfChild id del bambino
+     * @param idLinea id della linea
      * @throws Exception
      */
 

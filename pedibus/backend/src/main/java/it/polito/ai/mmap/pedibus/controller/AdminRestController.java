@@ -85,6 +85,7 @@ public class AdminRestController {
      * che verrà inviato all'utente, il quale potrà procedere con il cambio password e l'abilitazione dell'utente.
      *
      * @param userInsertResource DTO per inserimento Utente da parte dell'amministratore
+     * @param bindingResult      contiene i risultati del processo di validazione
      * @return UserEntity dell'utente inserito correttamente
      */
     @PostMapping("/sysadmin/users")
@@ -101,7 +102,9 @@ public class AdminRestController {
     /**
      * Modifica i dati di un utente già creato, da parte dell'amministratore.
      *
+     * @param userId             id dell'utente
      * @param userInsertResource l'utente i cui dettagli vanno aggiornati
+     * @param bindingResult      contiene i risultati della validazione
      */
     @PutMapping("/sysadmin/users/{userId}")
     @ApiOperation("Modifica i dati di un utente già creato")
@@ -182,13 +185,14 @@ public class AdminRestController {
     /**
      * Modifica di un bambino sul database da parte di un amministratore.
      *
-     * @param childId  id del bambino da modificare
-     * @param childDTO Dati del bambino da modificare
+     * @param childId       id del bambino da modificare
+     * @param childDTO      Dati del bambino da modificare
+     * @param bindingResult validazione oggetto
      * @return ChildDTO del bambino modificato
      */
     @PutMapping("/sysadmin/children/{childId}")
     @ApiOperation("Modifica i dati di un bambino già creato")
-    public ChildDTO updateChild(@ApiParam(name = "userId", value = "Il codice fiscale del bambino da modificare") @PathVariable("childId") String childId,
+    public ChildDTO updateChild(@ApiParam(name = "childId", value = "Il codice fiscale del bambino da modificare") @PathVariable("childId") String childId,
                                 @ApiParam(name = "childDTO", value = "Contiene i dati aggiornati del bambino") @Valid @RequestBody ChildDTO childDTO,
                                 BindingResult bindingResult) {
         logger.info(PedibusString.ENDPOINT_CALLED("PUT", "/sysadmin/children/" + childId));
@@ -229,7 +233,7 @@ public class AdminRestController {
     }
 
     /**
-     * Ritorna le linee di cui il principal è amministratore.
+     * @return le linee di cui il principal è amministratore.
      */
     @GetMapping("/admin/lines")
     @ApiOperation("Restituisce le linee di cui è admin il richiedente")
@@ -239,7 +243,8 @@ public class AdminRestController {
     }
 
     /**
-     * Restituisce gli utenti che possono essere resi amministratori di linea
+     * @return gli utenti che possono essere resi amministratori di linea
+     * @throws RoleNotFoundException errore di sistema
      */
     @ApiOperation("Restituisce gli utenti che possono essere resi amministratori di linea")
     @GetMapping("/admin/users")

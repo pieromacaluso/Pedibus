@@ -1,0 +1,11 @@
+it.polito.ai.mmap.pedibus
+it.polito.ai.mmap.pedibus.configuration
+it.polito.ai.mmap.pedibus.controller
+it.polito.ai.mmap.pedibus.entity
+it.polito.ai.mmap.pedibus.exception
+it.polito.ai.mmap.pedibus.filter
+it.polito.ai.mmap.pedibus.objectDTO
+it.polito.ai.mmap.pedibus.repository
+it.polito.ai.mmap.pedibus.resources
+it.polito.ai.mmap.pedibus.services
+it.polito.ai.mmap.pedibus.validator
