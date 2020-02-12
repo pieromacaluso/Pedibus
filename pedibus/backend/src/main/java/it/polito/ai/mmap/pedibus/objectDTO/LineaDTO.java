@@ -21,12 +21,6 @@ public class LineaDTO {
     ArrayList<FermataDTO> andata;
     ArrayList<FermataDTO> ritorno;
 
-    /**
-     * Crea una lineaDTO inserendo tutte le info sulle fermate
-     *
-     * @param lineaEntity
-     * @param fermataRepository
-     */
     public LineaDTO(LineaEntity lineaEntity, FermataRepository fermataRepository) {
         this.id = lineaEntity.getId();
         this.nome = lineaEntity.getNome();

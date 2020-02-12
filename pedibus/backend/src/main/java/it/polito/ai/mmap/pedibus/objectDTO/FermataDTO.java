@@ -22,12 +22,6 @@ public class FermataDTO {
     private String nomeLinea;
     private GeoJsonPoint location;
 
-
-    /**
-     * Conversione da Entity a DTO
-     *
-     * @param fermataEntity
-     */
     public FermataDTO(FermataEntity fermataEntity) {
         id = fermataEntity.getId();
         nome = fermataEntity.getName();

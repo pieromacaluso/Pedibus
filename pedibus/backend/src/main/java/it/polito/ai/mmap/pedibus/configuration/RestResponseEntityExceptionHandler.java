@@ -15,6 +15,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.management.relation.RoleNotFoundException;
 import java.sql.Timestamp;
 import java.time.DateTimeException;
 
@@ -47,7 +48,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             DispNotValidException.class,
             NotificaNotFoundException.class,
             NotificaWrongTypeException.class,
-            SysAdminException.class})
+            SysAdminException.class,
+            RoleNotFoundException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ErrorDTO e = ErrorDTO.builder()
                 .exception(ex.getClass().getSimpleName())
