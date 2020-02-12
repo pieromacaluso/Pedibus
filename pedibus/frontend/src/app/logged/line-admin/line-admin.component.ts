@@ -38,22 +38,43 @@ export class LineAdminComponent implements OnInit {
     });
   }
 
+  /**
+   * Cambio linea
+   * @param $event evento
+   * @param lines mappa delle linee
+   */
   lineChange($event: any, lines: Map<string, StopsByLine>) {
     this.selectedLine = lines.get($event);
   }
 
+  /**
+   * E' già admin
+   * @param guide guida da controllare
+   */
   isAlreadyAdmin(guide: UserDTO) {
     return guide.roleIdList.includes('ROLE_ADMIN') && guide.lineaIdList.includes(this.selectedLine.id);
   }
 
+  /**
+   * E' SysAdmin
+   * @param guide guida da controllare
+   */
   isSysAdmin(guide: UserDTO) {
     return guide.roleIdList.includes('ROLE_SYSTEM-ADMIN');
   }
 
+  /**
+   * Ottieni array della linea
+   * @param lines mappa della linea
+   */
   getArrayLine(lines: Map<string, StopsByLine>) {
     return Array.from(lines.values());
   }
 
+  /**
+   * Controllo se master della linea
+   * @param admin user da controllare
+   */
   isMaster(admin: UserDTO) {
     return this.selectedLine.master === admin.userId;
   }

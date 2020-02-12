@@ -38,18 +38,18 @@ export class GuideEntryComponent implements OnInit {
   deleteAdmin() {
     this.anagraficaService.changeAdmin(this.user, this.lineID, false)
       .subscribe((res) => {
-        // TODO: gestisci successo
+        // Successo
       }, error => {
-        // TODO: gestisci fallimento
+        // Gestito da Interceptor
       });
   }
 
   addAdmin() {
     this.anagraficaService.changeAdmin(this.user, this.lineID, true)
       .subscribe((res) => {
-        // TODO: gestisci successo
+        // Successo
       }, error => {
-        // TODO: gestisci fallimento
+        // Gestito da Interceptor
       });
   }
 
