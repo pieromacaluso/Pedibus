@@ -18,6 +18,9 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class GMailService {
 
+    /**
+     * Service utilizzato per inviare una mail specificando il destinatario, il messaggio e l'oggetto
+     */
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 

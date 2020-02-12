@@ -62,8 +62,8 @@ public class NotificheService {
     /**
      * Restituisce le notifiche non lette con type
      *
-     * @param username
-     * @return
+     * @param username email destinatario
+     * @param type tipo di notifica voluta
      */
     public ArrayList<NotificaDTO> getNotificheType(String username, NotificaEntity.NotificationType type) {
         if (type.compareTo(NotificaEntity.NotificationType.BASE) == 0 || type.compareTo(NotificaEntity.NotificationType.DISPONIBILITA) == 0) {
@@ -147,22 +147,10 @@ public class NotificheService {
             throw new NotificaNotFoundException();
     }
 
-    public List<NotificaEntity> generateArrivedNotification(ReservationEntity reservationEntity) {
-        List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
-        ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
-        FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
-        SimpleDateFormat hFormat = new SimpleDateFormat("HH:mm");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        List<NotificaEntity> notificaEntities = new ArrayList<>();
-        for (UserEntity parent : parents) {
-            notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
-                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è arrivato/a " +
-                            (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + (reservationEntity.isVerso() ? arrivoScuola : fermataEntity.getOrario()) +
-                            " del " + dateFormat.format(reservationEntity.getData()), null));
-        }
-        return notificaEntities;
-    }
-
+    /**
+     * Permette di inviare una notifica quando un bambino è stato preso in carico da un pedibus
+     * @param reservationEntity Entity della prenotazione del bambino specificato
+     */
     public List<NotificaEntity> generateHandledNotification(ReservationEntity reservationEntity) {
         List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
@@ -179,6 +167,31 @@ public class NotificheService {
         return notificaEntities;
     }
 
+    /**
+     * Permette di inviare una notifica quando un bambino è arrivato a scuola o alla fermata di ritorno
+     * @param reservationEntity Entity della prenotazione del bambino specificato
+     */
+    public List<NotificaEntity> generateArrivedNotification(ReservationEntity reservationEntity) {
+        List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
+        ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
+        FermataEntity fermataEntity = this.lineeService.getFermataEntityById(reservationEntity.getIdFermata());
+        SimpleDateFormat hFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        List<NotificaEntity> notificaEntities = new ArrayList<>();
+        for (UserEntity parent : parents) {
+            notificaEntities.add(new NotificaEntity(NotificaEntity.NotificationType.BASE, parent.getUsername(),
+                    childEntity.getSurname() + " " + childEntity.getName() + " " + " è arrivato/a " +
+                            (reservationEntity.isVerso() ? "a scuola" : "alla fermata " + fermataEntity.getName()) + " alle ore " + (reservationEntity.isVerso() ? arrivoScuola : fermataEntity.getOrario()) +
+                            " del " + dateFormat.format(reservationEntity.getData()), null));
+        }
+        return notificaEntities;
+    }
+
+
+    /**
+     * Permette di inviare una notifica quando un bambino è assente ad una fermata
+     * @param reservationEntity Entity della prenotazione del bambino specificato
+     */
     public List<NotificaEntity> generateAssenteNotification(ReservationEntity reservationEntity) {
         List<UserEntity> parents = childService.getChildParents(reservationEntity.getCfChild());
         ChildEntity childEntity = this.childService.getChildrenEntity(reservationEntity.getCfChild());
@@ -195,6 +208,10 @@ public class NotificheService {
         return notificaEntities;
     }
 
+    /**
+     * Gestione webSocket per una disponibilità
+     * @param dispEntity disponibilità in questione
+     */
     public void sendNotificheDisp(DispEntity dispEntity) {
         DispAllResource d = new DispAllResource(dispEntity,
                 lineeService.getFermataEntityById(dispEntity.getIdFermata()),
@@ -208,6 +225,10 @@ public class NotificheService {
         }
     }
 
+    /**
+     * Crea una notifica per avvisare un accompagnatore che la sua disponibilità è stata confermata
+     * @param dispEntity disponibilità in questione
+     */
     public NotificaEntity generateDispNotification(DispEntity dispEntity) {
         TurnoEntity turnoEntity = gestioneCorseService.getTurnoEntityById(dispEntity.getTurnoId());
         FermataEntity fermataEntity = lineeService.getFermataEntityById(dispEntity.getIdFermata());
@@ -275,6 +296,10 @@ public class NotificheService {
 
     }
 
+    /**
+     * cancella una notifica riguardante una disponibilità dato l'id della disponibilità stessa
+     * @param dispId id disponibilità
+     */
     public void deleteNotificaDisp(ObjectId dispId) {
         Optional<NotificaEntity> notificaCheck = this.notificaRepository.findByDispID(dispId);
         if (notificaCheck.isPresent()) {
@@ -284,6 +309,11 @@ public class NotificheService {
         }
     }
 
+    /**
+     * Genera una notifica per una guida che è stata promossa ad amministratore di linea oppure per un amministratore di linea che è stato declassato a guida semplce
+     * @param userId email guida
+     * @param permissionResource permessi associati
+     */
     public void generatePromotionNotification(String userId, PermissionResource permissionResource) {
         NotificaEntity notifica = new NotificaEntity(NotificaEntity.NotificationType.BASE, userId, (permissionResource.isAddOrDel() ? "Sei stato promosso ad " : "Ti sono stati revocati i privilegi di ") + "amministratore per la "
                 + this.lineeService.getLineaEntityById(permissionResource.getIdLinea()).getNome() + ". Si prega di effettuare nuovamente il login.", null);
@@ -291,6 +321,11 @@ public class NotificheService {
         simpMessagingTemplate.convertAndSendToUser(notifica.getUsernameDestinatario(), "/notifiche", notifica);
     }
 
+    /**
+     * Invia notifica per indicare che la disponibilità di una guida riferita ad un determinato turno non è necessaria
+     * @param d info della disponibilità
+     * @param turnoEntity turno in questione
+     */
     public void generateNotUsedDisp(DispAllResource d, TurnoEntity turnoEntity) {
         String data = MongoTimeService.dateToString(turnoEntity.getData());
         NotificaEntity notifica = new NotificaEntity(NotificaEntity.NotificationType.BASE, d.getGuideUsername(), "La tua disponibilità per " + (turnoEntity.getVerso() ? "l'andata" : "il ritorno") + " in data " + data + " non è necessaria.", null);

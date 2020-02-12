@@ -41,6 +41,10 @@ public class MongoTimeService {
         return Date.from(londonTime.toInstant());
     }
 
+    /**
+     * Conversione da Date a String
+     * @param date data in questione
+     */
     public static String dateToString(Date date) {
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);

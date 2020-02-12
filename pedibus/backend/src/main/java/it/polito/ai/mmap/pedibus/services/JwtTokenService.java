@@ -41,9 +41,8 @@ public class JwtTokenService {
 
     /**
      * Crea il token da associare al user. Può contenere diverse info, o tramite i setter standard o tramite le claims stile chiave-valore
-     * @param username
-     * @param roles
-     * @return
+     * @param username email utente
+     * @param roles ruoli utenti
      */
     public String createToken(String username, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(username);
@@ -64,6 +63,10 @@ public class JwtTokenService {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    /**
+     * Estrae l'username dal token specificato
+     * @param token token indicato
+     */
     public String getUsername(String token) {
         String username = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
         this.userService.loadUserByUsername(username);
@@ -72,8 +75,7 @@ public class JwtTokenService {
 
     /**
      * Estrapola il token dall' header Authorization
-     * @param req
-     * @return
+     * @param req servletRequest
      */
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
@@ -85,8 +87,7 @@ public class JwtTokenService {
 
     /**
      * Verifica che il token sia ancora valido
-     * @param token
-     * @return
+     * @param token token in questione
      */
     public boolean validateToken(String token) {
         try {
