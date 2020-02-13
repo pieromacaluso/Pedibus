@@ -156,8 +156,9 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * @param idRole
-     * @return una RoleEntity a partire dal suo identificativo
+     * Restituisce una RoleEntity a partire dal suo identificativo
+     *
+     * @param idRole id ruolo
      */
     public RoleEntity getRoleEntityById(String idRole) {
         Optional<RoleEntity> checkRole = roleRepository.findById(idRole);
@@ -370,21 +371,33 @@ public class UserService implements UserDetailsService {
         userRepository.save(userEntity);
     }
 
+    /**
+     * Verifica se l'utente loggato è admin di sistema
+     */
     public Boolean isSysAdmin() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getRoleList().contains(getRoleEntityById("ROLE_SYSTEM-ADMIN"));
     }
 
+    /**
+     * Verifica se l'utente loggato è admin
+     */
     public Boolean isAdmin() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getRoleList().contains(getRoleEntityById("ROLE_ADMIN"));
     }
 
+    /**
+     * Verifica se l'utente loggato è una guida
+     */
     public Boolean isGuide() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getRoleList().contains(getRoleEntityById("ROLE_GUIDE"));
     }
 
+    /**
+     * Verifica se l'utente loggato è un genitore
+     */
     public boolean isUser() {
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getRoleList().contains(getRoleEntityById("ROLE_USER"));
@@ -393,8 +406,7 @@ public class UserService implements UserDetailsService {
     /**
      * Metodo da usare in altri service in modo da non dover fare sempre i controlli
      *
-     * @param idParent
-     * @return
+     * @param idParent email utente genitore
      */
     public UserEntity getUserEntity(ObjectId idParent) {
         Optional<UserEntity> checkUser = userRepository.findById(idParent);
@@ -443,6 +455,9 @@ public class UserService implements UserDetailsService {
     }
 
 
+    /**
+     * Restituisce tutti gli admin di linea e le guide
+     */
     public List<UserInsertResource> getAllGuidesAdmin() throws RoleNotFoundException {
         List<UserEntity> userEntities =
                 this.userRepository.findAllByRoleListContainingOrderBySurnameAscNameAscUsernameAsc(
@@ -452,6 +467,10 @@ public class UserService implements UserDetailsService {
         return userEntities.stream().distinct().map(e -> new UserInsertResource(e, this.lineeService.getAdminLineForUser(e.getUsername()))).collect(Collectors.toList());
     }
 
+    /**
+     * Restituisce l'utente dato una email
+     * @param email email richiesta
+     */
     public UserInsertResource getUserByEmail(String email) {
         UserEntity user = this.userRepository.findByUsername(email).orElseThrow(UserNotFoundException::new);
         return new UserInsertResource(user, this.lineeService.getAdminLineForUser(user.getUsername()));

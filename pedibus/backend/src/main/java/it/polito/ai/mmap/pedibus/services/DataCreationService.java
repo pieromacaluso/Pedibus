@@ -158,8 +158,7 @@ public class DataCreationService {
                 fermataRepository.saveAll(lineaDTO.getAndata().stream().map(fermataDTO -> new FermataEntity(fermataDTO, lineaEntity.getId())).collect(Collectors.toList()));
                 fermataRepository.saveAll(lineaDTO.getRitorno().stream().map(fermataDTO -> new FermataEntity(fermataDTO, lineaEntity.getId())).collect(Collectors.toList()));
 
-                if (!userRepository.findByUsername(lineaDTO.getMasterMail()).isPresent())
-                    userService.insertUser(new UserInsertResource(lineaDTO));
+                userService.insertUser(new UserInsertResource(lineaDTO));
 
                 logger.info("Linea " + lineaDTO.getNome() + " caricata e salvata.");
             }
@@ -173,6 +172,7 @@ public class DataCreationService {
 
     /**
      * Crea i Children necessari
+     *
      * @param countCreate indice necessario
      */
     public void makeChildUser(int countCreate) throws IOException {
