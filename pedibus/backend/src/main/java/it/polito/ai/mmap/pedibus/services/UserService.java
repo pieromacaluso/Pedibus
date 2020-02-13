@@ -466,6 +466,7 @@ public class UserService implements UserDetailsService {
      * @param mail               email
      */
     public void setUserAdmin(PermissionResource permissionResource, String mail) {
+        if (lineeService.isMasterLine(mail, permissionResource.getIdLinea())) throw new PermissionDeniedException();
         UserEntity principal = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ((lineeService.isAdminLine(permissionResource.getIdLinea()) && !lineeService.isMasterLine(mail, permissionResource.getIdLinea()) && !principal.getUsername().equals(mail))
                 || this.isSysAdmin()) {
