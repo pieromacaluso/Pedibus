@@ -23,6 +23,7 @@
 - [Team](#team)
 - [Pedibus](#pedibus)
   - [Indicazioni generali](#indicazioni-generali)
+  - [Presentazione](#presentazione)
   - [Ruoli](#ruoli)
     - [Amministratore di Sistema](#amministratore-di-sistema)
     - [Amministratore di Linea](#amministratore-di-linea)
@@ -39,10 +40,6 @@
     - [Permessi](#permessi)
     - [Comunicazioni](#comunicazioni)
       - [Notifiche Principali](#notifiche-principali)
-    - [Disponibilità e turni](#disponibilit%c3%a0-e-turni)
-  - [Viste](#viste)
-    - [Registrazione utente e login](#registrazione-utente-e-login)
-    - [Interfaccia accompagnatore: disponibilità](#interfaccia-accompagnatore-disponibilit%c3%a0)
 
 # Introduzione
 
@@ -76,7 +73,30 @@ Compito dell’applicazione è quello di fornire supporto alla gestione e organi
 # Pedibus
 
 ## Indicazioni generali
-**Tecnologie Utilizzate**: Java Spring, Angular 2+, MongoDB
+**Tecnologie Utilizzate**: Java Spring, Angular 2+, MongoDB, JWT
+
+## Presentazione
+
+1. Docker: mostrare docker-compose, script per build e lancio docker.
+   1. Github Actions: compila tutto
+2. Sign-in e Recupero pw (abbozzato)  
+3. Login (cod)  
+4. Anagrafica, aggiunta bambino e genitore.  
+5. NEW-USER flow  
+6. Schermata Genitore (forse va come punto 8/9 ? in parallelo alla guida)
+   1. Modifiche delle prenotazioni (mappa)
+   2. Handled/arrived (cod websocket)
+7. Admin - Guida
+   1. Admin: Permessi
+   2. Cancellazione Disponibilità (focus su notifiche)
+   3. Modifica Disponibilità (focus disp)
+   4. Conferma Disponibilità (focus presenze, notifiche)
+   5. Ack Disponibilità
+8. Guida - Presenze
+   1. Preso in carico, arrivato, assente, annulla
+   2. Alunno non prenotati
+9. Admin - JSON download
+10. Logger - Documentazione
 
 ## Ruoli
 
@@ -99,7 +119,6 @@ A differenza di una semplice guida o di un amministratore di linea, questo utent
 Ogni linea può avere più amministratori della stessa. Tra questi, uno solo sarà il master: questo viene indicato nel JSON contenente i dettagli sulle linee. Il master non può essere eliminato.
 
 Può gestire [Presenze](#presenze) odierne, [Turni](#turni) e [amministratori delle proprie linee](#linee).
-
 
 ### Accompagnatore
 
@@ -213,10 +232,3 @@ Abbiamo deciso di implementare le seguenti notifiche:
 - **Notifiche Genitore** *[BASE]*: al genitore vengono comunicate la presa in carico da fermata/scuola, l'arrivo a scuola/fermata e l'eventuale assenza del bambino.
 - **Notifiche Guida** *[AZIONE]*: quando un amministratore di linea chiude il turno e conferma la disponibilità comunicata dalla guida, questa riceve una notifica tramite la quale potrà segnalare l'avvenuta lettura.
 - **Notifiche Amministratore** *[BASE]*: quando un utente viene promosso (o declassato) ad amministratore di linea, viene avvertito tramite l'opportuna notifica.
-
-### Disponibilità e turni
-
-Per organizzare i turni degli accompagnatori è necessario definire e gestire due fasi distinte.
-La prima in cui gli accompagnatori indicano la loro disponibilità per le corse del pedibus (giorno, andata o ritorno) e la seconda in cui l’amministratore (o gli amministratori) del servizio selezionano tra i disponibili gli accompagnatori che effettivamente verranno utilizzati, definendo quindi i turni di ciascun accompagnatore per ciascuna corsa del pedibus.
-A fronte della definizione o della modifica di un turno, le persone coinvolte vengono avvisate tramite un messaggio interno
-all’applicazione del loro impegno.
