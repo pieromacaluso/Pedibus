@@ -8,6 +8,17 @@ Il gruppo MMAP è composto da:
 - **Marco Nanci** - s255089
 - **Angelo Turco** - s255270
 
+## Mappe
+Per poter andare a utilizzare le mappe all'interno dell'applicazione sarà necessario andare a inserire il proprio token API di Google Maps. Dopo averlo ottenuto sarà necessario andarlo a inserire in `app.module.ts` nell'applicazione angular di frontend, sostituendolo al placeholder `{API_TOKEN_GMAPS}`.
+
+```ts
+...
+AgmCoreModule.forRoot({
+      apiKey: '{API_TOKEN_GMAPS}'
+    }),
+...
+```
+
 ## Avvio Applicazione con Docker
 Dopo aver scompattato l'archivio `mmap-lab05-v1.zip`, posizionarsi da terminale nella cartella `mmap-lab05-v1` e seguire le seguenti istruzioni.
 ### Build Backend
