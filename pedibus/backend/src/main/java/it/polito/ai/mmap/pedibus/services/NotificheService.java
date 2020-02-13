@@ -316,7 +316,7 @@ public class NotificheService {
      */
     public void generatePromotionNotification(String userId, PermissionResource permissionResource) {
         NotificaEntity notifica = new NotificaEntity(NotificaEntity.NotificationType.BASE, userId, (permissionResource.isAddOrDel() ? "Sei stato promosso ad " : "Ti sono stati revocati i privilegi di ") + "amministratore per la "
-                + this.lineeService.getLineaEntityById(permissionResource.getIdLinea()).getNome() + ". Si prega di effettuare nuovamente il login.", null);
+                + this.lineeService.getLineaEntityById(permissionResource.getIdLinea()).getNome() + ".", null);
         this.notificaRepository.save(notifica);
         simpMessagingTemplate.convertAndSendToUser(notifica.getUsernameDestinatario(), "/notifiche", notifica);
     }
