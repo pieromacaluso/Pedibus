@@ -34,7 +34,7 @@ registerLocaleData(localeitIT);
   imports: [
     BrowserModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyBMo_rSgOdamFX_yHIbnmd24A-U7D7f2-0'
+      apiKey: '{API_TOKEN_GMAPS}'
     }),
     BrowserAnimationsModule,
     MatTabsModule,
