@@ -6,7 +6,7 @@
 3. Login (cod)  
 4. Anagrafica, aggiunta bambino e genitore.  
 5. NEW-USER flow  
-6. Schermata Genitore (forse va come punto 8/9 ? in parallelo alla guida)
+6. Schermata Genitore
    1. Modifiche delle prenotazioni (mappa)
    2. Handled/arrived (cod websocket)
 7. Admin - Guida
